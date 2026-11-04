@@ -356,6 +356,45 @@ fn unknown_clock_consensus_ignores_an_outlier_but_requires_three_flights() {
 }
 
 #[test]
+fn downloaded_but_short_tracks_report_missing_reference_coverage() {
+    let (_dir, mut job, detected) = events();
+    job.search_mode = SearchMode::RegionalGrid;
+    let mut tracks = soundgeo::demo::tracks();
+    for track in &mut tracks {
+        let closest = track
+            .samples
+            .iter()
+            .min_by(|a, b| {
+                a.point
+                    .distance(soundgeo::demo::TRUTH)
+                    .total_cmp(&b.point.distance(soundgeo::demo::TRUTH))
+            })
+            .unwrap()
+            .time;
+        track.samples.retain(|p| (p.time - closest).abs() <= 12.);
+    }
+    let result = soundgeo::search::locate(
+        &job,
+        &detected,
+        &tracks,
+        &mut Terrain::new(None, job.ground_m),
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    assert!(result.candidates.is_empty());
+    assert!(result.hypotheses > 0);
+    assert!(
+        result
+            .warnings
+            .iter()
+            .any(|w| w.contains("reference-position coverage")),
+        "Downloaded flight files with incomplete temporal coverage must be distinguished from a failed curve fit: {:?}",
+        result.warnings
+    );
+}
+
+#[test]
 fn unknown_media_clock_rate_is_recovered_across_three_flights() {
     let (_dir, mut job, mut detected) = events();
     job.search_mode = SearchMode::FlightCorridors;

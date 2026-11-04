@@ -471,6 +471,11 @@ pub fn locate(
             }
         }
         let (objective, matches) = exact_score(&seed, events, tracks, c);
+        // Missing temporal coverage produces no matches; count it before that
+        // early return so downloaded-but-incomplete tracks remain visible.
+        if !objective.is_finite() {
+            incomplete_references += 1;
+        }
         if matches.len() < events.len().min(3) {
             continue;
         }
@@ -485,9 +490,6 @@ pub fn locate(
             if max - min < 600. {
                 continue;
             }
-        }
-        if !objective.is_finite() {
-            incomplete_references += 1;
         }
         let score = if objective.is_finite() {
             match_error(&matches)

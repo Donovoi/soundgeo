@@ -358,9 +358,6 @@ fn ingest_trace(
             *skipped += 1;
             continue;
         };
-        if geometric.is_none() && row[6].as_u64().unwrap_or(0) & 8 == 0 {
-            *barometric += 1;
-        }
         let p = Point {
             lat,
             lon,
@@ -380,6 +377,9 @@ fn ingest_trace(
             .is_some_and(|s| t >= s.time && t - s.time < 2.)
         {
             continue;
+        }
+        if geometric.is_none() && row[6].as_u64().unwrap_or(0) & 8 == 0 {
+            *barometric += 1;
         }
         samples.push(Sample::new(t, p));
         *total += 1;

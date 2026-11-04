@@ -160,6 +160,73 @@ fn readsb_trace_uses_geometric_altitude_and_seconds() {
 }
 
 #[test]
+fn pressure_altitude_warning_counts_only_imported_positions() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("trace.json");
+    let mut trace: Vec<_> = (0..24)
+        .map(|i| {
+            serde_json::json!([
+                i,
+                35.,
+                -110. + i as f64 * 0.0005,
+                3000,
+                100,
+                90,
+                0,
+                0,
+                null,
+                "adsb_icao",
+                4000
+            ])
+        })
+        .collect();
+    // Pressure-only positions outside the chosen region must not warn about
+    // the geometric-altitude track actually used by the solver.
+    trace.push(serde_json::json!([30, 50., 0., 3000, 100, 90, 0, 0]));
+    // Nor may a point removed by the two-second input sampling count.
+    trace.insert(1, serde_json::json!([0.5, 35., -110., 3000, 100, 90, 0, 0]));
+    std::fs::write(
+        &path,
+        serde_json::to_vec(&serde_json::json!({
+            "icao": "abc123", "timestamp": 1788861600., "trace": trace
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    let job = Job {
+        tracks: path,
+        bounds: Some(Bounds {
+            south: 34.9,
+            north: 35.1,
+            west: -110.1,
+            east: -109.9,
+        }),
+        ..Default::default()
+    };
+    let result = data::load_for_job(&job, 30., &Control::default()).unwrap();
+    assert_eq!(result.tracks[0].samples.len(), 12);
+    assert!(
+        !result
+            .warnings
+            .iter()
+            .any(|w| w.contains("pressure altitude")),
+        "{:?}",
+        result.warnings
+    );
+    let mut value: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&job.tracks).unwrap()).unwrap();
+    value["trace"][0][10] = serde_json::Value::Null;
+    std::fs::write(&job.tracks, serde_json::to_vec(&value).unwrap()).unwrap();
+    let pressure = data::load_for_job(&job, 30., &Control::default()).unwrap();
+    assert!(
+        pressure
+            .warnings
+            .iter()
+            .any(|w| w.starts_with("1 positions use pressure altitude"))
+    );
+}
+
+#[test]
 fn synthetic_video_unknown_clock_recovers_location() {
     let dir = tempfile::tempdir().unwrap();
     let mut job = soundgeo::demo::create(dir.path()).unwrap();
