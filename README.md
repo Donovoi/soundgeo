@@ -27,7 +27,7 @@ Two first-choice locations were near the correct camera: 27 m and 92 m away.
 Both recordings came from Midway. Both results still had insufficient support for a clear answer.
 The Lake Hood and Southampton tests failed.
 
-All 45 software tests pass locally. CI also checks Windows and Ubuntu.
+All 47 software tests pass locally. CI also checks Windows and Ubuntu.
 Software test success does not establish location accuracy.
 See the [validation record](validation/README.md) for results, data sources, and failures.
 

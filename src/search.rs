@@ -189,21 +189,100 @@ fn sampled_curve_fit(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) ->
     // Compare plausible associations with the measured curves at one shared
     // clock. One flight segment cannot corroborate two separate detections.
     edges.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.1.cmp(&b.1)).then(a.2.cmp(&b.2)));
-    let mut selected = vec![usize::MAX; events.len()];
-    let mut used = std::collections::HashSet::new();
-    let mut errors = Vec::new();
-    for (error, event, track) in edges {
-        if selected[event] == usize::MAX && used.insert(track) {
-            selected[event] = track;
-            errors.push(error);
-        }
-    }
-    let score = core_score(&mut errors);
+    let (score, selected) = independent_curve_assignment(&edges, events.len(), required);
     if score < current_score {
         (score, selected)
     } else {
         (current_score, seed.indices.clone())
     }
+}
+
+fn independent_curve_assignment(
+    edges: &[(f64, usize, usize)],
+    event_count: usize,
+    required: usize,
+) -> (f64, Vec<usize>) {
+    let mut selected = vec![usize::MAX; event_count];
+    let mut used = std::collections::HashSet::new();
+    let mut greedy = Vec::new();
+    for (i, &(_, event, track)) in edges.iter().enumerate() {
+        if selected[event] == usize::MAX && used.insert(track) {
+            selected[event] = track;
+            if greedy.len() < required {
+                greedy.push(i);
+            }
+        }
+    }
+    if required == 0 || edges.len() < required {
+        return (f64::INFINITY, selected);
+    }
+    if greedy.len() < required {
+        let tracks: std::collections::HashSet<_> = edges.iter().map(|e| e.2).collect();
+        let events: std::collections::HashSet<_> = edges.iter().map(|e| e.1).collect();
+        if tracks.len() < required || events.len() < required {
+            return (f64::INFINITY, selected);
+        }
+    }
+    let mut best = if greedy.len() == required {
+        (greedy.iter().map(|&i| edges[i].0).sum::<f64>(), greedy)
+    } else {
+        (f64::INFINITY, Vec::new())
+    };
+
+    // Only the best three independent pairs define the coarse objective.
+    // Search that small core exactly. Sorted costs give an admissible lower
+    // bound, so conflict-free greedy choices finish without branching.
+    fn choose(
+        edges: &[(f64, usize, usize)],
+        from: usize,
+        remaining: usize,
+        cost: f64,
+        chosen: &mut Vec<usize>,
+        best: &mut (f64, Vec<usize>),
+    ) {
+        if edges.len() - from < remaining {
+            return;
+        }
+        for i in from..=edges.len() - remaining {
+            let lower = cost + edges[i..i + remaining].iter().map(|e| e.0).sum::<f64>();
+            if lower >= best.0 {
+                break;
+            }
+            let edge = edges[i];
+            if chosen
+                .iter()
+                .any(|&j| edges[j].1 == edge.1 || edges[j].2 == edge.2)
+            {
+                continue;
+            }
+            chosen.push(i);
+            if remaining == 1 {
+                *best = (cost + edge.0, chosen.clone());
+                chosen.pop();
+                break;
+            }
+            choose(edges, i + 1, remaining - 1, cost + edge.0, chosen, best);
+            chosen.pop();
+        }
+    }
+    choose(edges, 0, required, 0., &mut Vec::new(), &mut best);
+    if !best.0.is_finite() {
+        return (f64::INFINITY, selected);
+    }
+    selected.fill(usize::MAX);
+    used.clear();
+    for i in best.1 {
+        let (_, event, track) = edges[i];
+        selected[event] = track;
+        used.insert(track);
+    }
+    // Retain additional independent associations for full-curve corroboration.
+    for &(_, event, track) in edges {
+        if selected[event] == usize::MAX && used.insert(track) {
+            selected[event] = track;
+        }
+    }
+    ((best.0 / required as f64).sqrt(), selected)
 }
 
 fn profile_seed_clock(seed: &mut Seed, job: &Job, events: &[Event], tracks: &[Track]) {
@@ -814,6 +893,85 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
 mod tests {
     use super::*;
     use crate::{audio::RidgePoint, demo};
+
+    #[test]
+    fn alternative_associations_resolve_conflicts_before_rejecting_consensus() {
+        // The cheapest edge consumes the only flight available to event 1.
+        // Event 0 must use its second choice to retain three independent flights.
+        let edges = [(0.01, 0, 10), (0.02, 1, 10), (0.03, 2, 30), (0.04, 0, 20)];
+        let (score, selected) = independent_curve_assignment(&edges, 3, 3);
+        assert!(score.is_finite(), "A valid three-flight assignment exists");
+        assert_eq!(selected, vec![20, 10, 30]);
+        assert!((score - (0.09_f64 / 3.).sqrt()).abs() < 1e-12);
+
+        let mut expensive_fallback = edges.to_vec();
+        expensive_fallback.push((0.8, 1, 40));
+        assert_eq!(
+            independent_curve_assignment(&expensive_fallback, 3, 3).1,
+            selected,
+            "A complete greedy assignment can still miss the least-error core"
+        );
+
+        let impossible = [(0.01, 0, 10), (0.02, 1, 10), (0.03, 2, 30)];
+        assert!(
+            !independent_curve_assignment(&impossible, 3, 3)
+                .0
+                .is_finite()
+        );
+    }
+
+    #[test]
+    fn independent_curve_assignment_matches_exhaustive_small_graphs() {
+        let mut random = 829_u64;
+        for _ in 0..64 {
+            let mut edges = Vec::new();
+            for event in 0..5 {
+                for track in 0..5 {
+                    random = random.wrapping_mul(6364136223846793005).wrapping_add(1);
+                    if random >> 62 != 0 {
+                        edges.push((((random >> 32) % 1000) as f64 / 1000., event, track));
+                    }
+                }
+            }
+            edges.sort_by(|a, b| a.0.total_cmp(&b.0));
+            let mut expected = f64::INFINITY;
+            for i in 0..edges.len() {
+                for j in i + 1..edges.len() {
+                    for k in j + 1..edges.len() {
+                        let (a, b, c) = (edges[i], edges[j], edges[k]);
+                        if a.1 != b.1
+                            && a.1 != c.1
+                            && b.1 != c.1
+                            && a.2 != b.2
+                            && a.2 != c.2
+                            && b.2 != c.2
+                        {
+                            expected = expected.min((a.0 + b.0 + c.0) / 3.);
+                        }
+                    }
+                }
+            }
+            let (actual, selected) = independent_curve_assignment(&edges, 5, 3);
+            assert!((actual.powi(2) - expected).abs() < 1e-12);
+            let assigned: Vec<_> = selected.iter().filter(|&&x| x != usize::MAX).collect();
+            let unique: std::collections::HashSet<_> = assigned.iter().copied().collect();
+            assert_eq!(assigned.len(), unique.len());
+            let mut selected_costs: Vec<_> = selected
+                .iter()
+                .enumerate()
+                .filter(|(_, track)| **track != usize::MAX)
+                .map(|(event, &track)| {
+                    edges
+                        .iter()
+                        .find(|e| e.1 == event && e.2 == track)
+                        .unwrap()
+                        .0
+                })
+                .collect();
+            selected_costs.sort_by(f64::total_cmp);
+            assert!((selected_costs[..3].iter().sum::<f64>() / 3. - expected).abs() < 1e-12);
+        }
+    }
 
     #[test]
     fn a_linear_drift_does_not_corroborate_an_unrelated_flight() {

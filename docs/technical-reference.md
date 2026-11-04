@@ -63,6 +63,9 @@ Both search modes compare sampled sound curves before they remove proposals.
 A proposal keeps up to three plausible flights for each detected sound.
 The model compares these alternatives with one shared recording clock.
 A flight segment cannot support two detections in the same proposal.
+Selection finds the least-error independent set required for the coarse score, using up to three matches.
+This resolves conflicts where one early choice would block another event's only available flight.
+Other independent matches can provide additional support during refinement.
 Final refinement and acceptance use every retained sample in each sound curve.
 These bounded choices do not make the search exhaustive.
 
