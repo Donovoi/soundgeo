@@ -8,7 +8,7 @@ use std::{
     time::{Duration, Instant},
 };
 
-pub const SAMPLE_RATE: usize = 4000;
+pub const SAMPLE_RATE: usize = 8000;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct RidgePoint {
     pub time_s: f64,
@@ -62,7 +62,7 @@ pub fn decode(job: &Job, control: &Control) -> Result<Vec<f32>> {
     let stderr = std::fs::File::create(&log)?;
     // Decode 1 sample beyond the cap so long recordings are rejected, never silently truncated.
     let mut child=quiet_command(ffmpeg_path(job)).args(["-nostdin","-hide_banner","-loglevel","error","-y","-i"])
-        .arg(&job.media).args(["-map","0:a:0","-vn","-ac","1","-ar","4000","-t","7200.001","-c:a","pcm_f32le"])
+        .arg(&job.media).args(["-map","0:a:0","-vn","-ac","1","-ar","8000","-t","7200.001","-c:a","pcm_f32le"])
         .arg(&wav).stdin(Stdio::null()).stdout(Stdio::null()).stderr(stderr).spawn()
         .context("FFmpeg could not start. Install FFmpeg, place it beside SoundGeo, or set its path in Advanced settings.")?;
     let start = Instant::now();
@@ -156,10 +156,10 @@ fn detect_scale(
     progress: &Progress<'_>,
     fast: bool,
 ) -> Result<Vec<Event>> {
-    let fft_size = if fast { 512 } else { 8192 };
-    let hop = if fast { 100 } else { 2000 };
+    let fft_size = if fast { 1024 } else { 16384 };
+    let hop = if fast { 200 } else { 4000 };
     let (min_hz, max_hz) = if fast {
-        (500., 1900.)
+        (500., 3900.)
     } else {
         (job.min_hz, job.max_hz)
     };
@@ -221,6 +221,22 @@ fn detect_scale(
         }
         windows.extend(starts.into_iter().map(|start| (start, window)));
     }
+    let bands = if fast {
+        vec![
+            (
+                low,
+                (1900. * fft_size as f64 / SAMPLE_RATE as f64).floor() as usize,
+                false,
+            ),
+            (
+                (1400. * fft_size as f64 / SAMPLE_RATE as f64).ceil() as usize,
+                high,
+                true,
+            ),
+        ]
+    } else {
+        vec![(low, high, false)]
+    };
     let mut found = vec![];
     for (i, &(start, window)) in windows.iter().enumerate() {
         control.check()?;
@@ -229,25 +245,69 @@ fn detect_scale(
             if fast { 0.30 } else { 0.16 }
                 + if fast { 0.04 } else { 0.08 } * i as f32 / windows.len() as f32,
         );
-        let mut patch = spectrum[start..start + window].to_vec();
-        // Several ridges let a strong stationary hum coexist with a quiet aircraft tone.
-        for _ in 0..4 {
-            let ridge = trace(&patch, low, start, fft_size, hop);
-            if let Some(event) = fit(&ridge, job, fast) {
-                found.push(event);
-            }
-            for (frame, p) in patch.iter_mut().zip(&ridge) {
-                let b =
-                    (p.hz * fft_size as f64 / SAMPLE_RATE as f64).round() as isize - low as isize;
-                for j in b - 5..=b + 5 {
-                    if j >= 0 && (j as usize) < bins {
-                        frame[j as usize] = -20.;
+        for &(band_low, band_high, require_harmonic) in &bands {
+            // Separate bands keep high-frequency noise from consuming the
+            // original low-band ridge budget. The extension needs corroboration.
+            let mut patch: Vec<Vec<f32>> = spectrum[start..start + window]
+                .iter()
+                .map(|row| row[band_low - low..=band_high - low].to_vec())
+                .collect();
+            for _ in 0..4 {
+                let ridge = trace(&patch, band_low, start, fft_size, hop);
+                if let Some(event) = fit(&ridge, job, fast)
+                    && (!require_harmonic
+                        || harmonic_support(&event, &spectrum, low, fft_size, hop))
+                {
+                    found.push(event);
+                }
+                for (frame, p) in patch.iter_mut().zip(&ridge) {
+                    let b = (p.hz * fft_size as f64 / SAMPLE_RATE as f64).round() as isize
+                        - band_low as isize;
+                    for j in b - 5..=b + 5 {
+                        if j >= 0 && (j as usize) < frame.len() {
+                            frame[j as usize] = -20.;
+                        }
                     }
                 }
             }
         }
     }
     Ok(found)
+}
+
+fn harmonic_support(
+    event: &Event,
+    spectrum: &[Vec<f32>],
+    low: usize,
+    fft_size: usize,
+    hop: usize,
+) -> bool {
+    // Independent noise ridges can fit a smooth curve when the band is wide.
+    // A real harmonic must share the *whole moving frequency pattern*, not
+    // merely intersect a stationary tone at one instant. Inspect unmasked bins.
+    [0.5, 1. / 3., 0.25, 2.].into_iter().any(|ratio| {
+        let mut contrast = vec![];
+        for point in &event.ridge {
+            let frame =
+                ((point.time_s * SAMPLE_RATE as f64 - fft_size as f64 * 0.5) / hop as f64).round();
+            let bin = (point.hz * ratio * fft_size as f64 / SAMPLE_RATE as f64).round() as isize
+                - low as isize;
+            if frame >= 0.
+                && bin >= 0
+                && let Some(value) = spectrum
+                    .get(frame as usize)
+                    .and_then(|row| row.get(bin as usize))
+            {
+                contrast.push(*value);
+            }
+        }
+        if contrast.is_empty() || contrast.len() * 5 < event.ridge.len() * 4 {
+            return false;
+        }
+        let middle = contrast.len() / 2;
+        contrast.select_nth_unstable_by(middle, f32::total_cmp);
+        contrast[middle] >= 4.
+    })
 }
 
 fn trace(

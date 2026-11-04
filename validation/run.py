@@ -24,6 +24,8 @@ def main():
     parser.add_argument('--cli', type=Path, required=True)
     parser.add_argument('--media-root', type=Path, required=True)
     parser.add_argument('--cache', type=Path, required=True)
+    parser.add_argument('--sample-cache', type=Path,
+                        help='Full-day free ADS-B Exchange sample cache for November 1 cases')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--case', help='One case ID; omit to run every case')
     args = parser.parse_args()
@@ -31,6 +33,9 @@ def main():
     cases = [c for c in manifest['cases'] if not args.case or c['id'] == args.case]
     if not cases:
         parser.error('Unknown case ID')
+    if any(c.get('reference_provider') == 'adsb_exchange_free_sample' for c in cases):
+        if not args.sample_cache or not args.sample_cache.is_dir():
+            parser.error('November 1 cases require --sample-cache; see validation/README.md')
     args.output.mkdir(parents=True, exist_ok=True)
     rows = []
     for case in cases:
@@ -43,8 +48,14 @@ def main():
             'media': str(media), 'tracks': '', 'start_utc': None,
             'archive': {'date_from': case['utc_day'], 'cache': str(args.cache.resolve())},
             'bounds': case['bounds'], 'ground_m': case['ground_m'],
-            'search_mode': 'flight_corridors', 'max_hypotheses': 5000000,
+            'ground_datum': case.get('ground_datum', 'wgs84_ellipsoid'),
+            'smooth_tracks': True,
+            'search_mode': 'flight_corridors',
+            'max_hypotheses': case.get('max_hypotheses', 5000000),
         }
+        if case.get('reference_provider') == 'adsb_exchange_free_sample':
+            job.pop('archive')
+            job['tracks'] = str(args.sample_cache.resolve())
         config = args.output / f"{case['id']}-job.json"
         report_path = args.output / f"{case['id']}-report.json"
         config.write_text(json.dumps(job, indent=2))

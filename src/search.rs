@@ -513,15 +513,82 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
         return (f64::INFINITY, vec![]);
     }
     // Optimize a fixed-size independent consensus, so an unrelated detection
-    // cannot pull the clock or point away. Report every additional passing fit.
+    // cannot pull the clock or point away. Extra associations must also preserve
+    // the joint acceptance threshold; individually plausible fits can otherwise
+    // invalidate a passing core merely because more sounds were detected.
     matches
         .sort_by(|a, b| (a.rmse_hz / a.fitted_tone_hz).total_cmp(&(b.rmse_hz / b.fitted_tone_hz)));
     let objective = match_error(&matches[..required]);
-    let passing = matches
-        .iter()
-        .take_while(|m| m.rmse_hz / m.fitted_tone_hz <= 0.015)
-        .count();
-    matches.truncate(passing.max(required));
+    let mut passing = required;
+    while passing < matches.len()
+        && matches[passing].rmse_hz / matches[passing].fitted_tone_hz <= 0.015
+        && match_error(&matches[..=passing]) <= 1.0
+    {
+        passing += 1;
+    }
+    matches.truncate(passing);
     matches.sort_by_key(|m| m.event_index);
     (objective, matches)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{audio::RidgePoint, demo};
+
+    #[test]
+    fn weak_extra_match_preserves_a_passing_three_flight_consensus() {
+        let mut tracks = Vec::new();
+        let mut events = Vec::new();
+        for index in 0..4 {
+            let shift = index as f64 * 200.;
+            let mut track = demo::tracks().remove(0);
+            track.id = format!("flight-{index}");
+            for sample in &mut track.samples {
+                sample.time += shift;
+            }
+            let noise = if index == 3 { 1.4 } else { 0.92 };
+            let ridge = (0..120)
+                .map(|i| {
+                    let time_s = 10. + i as f64 * 0.5 + shift;
+                    let factor = track
+                        .factor(demo::TRUTH.ecef(), demo::EPOCH + time_s, 340.39)
+                        .unwrap();
+                    RidgePoint {
+                        time_s,
+                        hz: 100. * factor + if i % 2 == 0 { noise } else { -noise },
+                        contrast_db: 20.,
+                    }
+                })
+                .collect();
+            events.push(Event {
+                start_s: 10. + shift,
+                end_s: 69.5 + shift,
+                cpa_s: 39. + shift,
+                base_hz: 100.,
+                speed_mps: 72.,
+                slant_m: 1300.,
+                fit_rmse_hz: noise,
+                contrast_db: 20.,
+                ridge,
+            });
+            tracks.push(track);
+        }
+        let seed = Seed {
+            point: demo::TRUTH,
+            start: demo::EPOCH,
+            indices: vec![0, 1, 2, 3],
+            score: 0.,
+        };
+        let (core_error, matches) = exact_score(&seed, &events, &tracks, 340.39);
+        assert!(core_error < 1., "The three-flight core must pass");
+        assert!(
+            match_error(&matches) <= 1.,
+            "Adding a weaker fourth fit must not invalidate the core"
+        );
+        assert_eq!(
+            matches.iter().map(|m| m.event_index).collect::<Vec<_>>(),
+            vec![Some(0), Some(1), Some(2)]
+        );
+    }
 }

@@ -1,7 +1,7 @@
 # Real-video validation
 
 This is a failing acceptance benchmark, not a claim of reliable geolocation.
-Four recordings from two public cameras were captured locally on 2026-11-04.
+Seven recordings from two public cameras were captured locally on 2026-11-04.
 The known UTC reference day and an approximately 40 km regional search box are
 provided; the recording clock, camera coordinates, aircraft identities, tone
 bands and flyover intervals are not supplied to the application. Every solver
@@ -48,7 +48,8 @@ blind geolocation. At a plausible shared clock, the original five short detected
 windows had only about 7–68% modeled flight coverage at the camera. Several
 traces began after the audible pass had already started. The model deliberately
 does not invent positions beyond the recorded track. A separate historical
-provider returned HTTP 403; no alternate authenticated data was available.
+provider's direct HTTP endpoint returned 403. Its documented free S3 sample
+interface subsequently worked for November 1; see below.
 
 ## Changes prompted by failures
 
@@ -102,4 +103,100 @@ All four final consensus runs returned `insufficient_evidence`, with no candidat
 
 Software checks: all 25 deterministic tests, strict Clippy, formatting and release compilation pass locally on Windows. Desktop checks covered automatic-download/date-range controls, manual import, partial-match counts, and correct event-to-curve association in a clearly labelled synthetic UI fixture. These checks do not establish real-video accuracy.
 
-Next experiment uses only free data: ADS-B Exchange documents a free first-of-month sample bucket with public demonstration credentials. The direct web trace URL was unavailable, but its documented S3 sample endpoint was accessible. November 1 public-camera captures and whole-day sample references are being collected; no result from that experiment is claimed here.
+## Free November 1 reference data
+
+The additional three recordings are two one-hour Midway clips and one one-hour
+Southampton clip. The user requires free sources only. ADS-B Exchange publishes
+a [free first-of-month sample](https://www.adsbexchange.com/data-products/sample-data/)
+and [public demo S3 access](https://www.adsbexchange.com/pull-data/). The documented
+sample interface worked without a private account. No paid data was used.
+
+All 288 worldwide five-minute snapshots for November 1 were downloaded. Aircraft
+were discovered throughout the entire UTC day in broad regions (Midway:
+41.00–42.66, -88.9–-86.6; Southampton: 50.15–51.81, -2.6–-0.08), followed by their
+full-day traces. An audit preserving non-ICAO `~` prefixes found 4,483 identifiers:
+4,466 trace files were available and 17 returned `NoSuchKey`. There were no extra
+or substituted identities. Flights entirely between discovery snapshots may
+still be absent. Reference coverage is therefore not claimed complete.
+
+The complete cache is a root folder containing `traces/` and `supplement/`; both
+must be supplied, not just the first directory. Pass this root as `--sample-cache`
+to `run.py` when reproducing November 1 cases. The application can import these
+readsb files; its integrated automatic downloader currently retrieves ADSB.lol.
+The supplemental sample download was a separate validation operation. Provider
+data and camera media are retained locally and are not redistributed here.
+
+The prior eight-event matcher found no candidates in all three full-reference
+runs. The name `midway-nov1-holdout` denotes a later same-site capture; repeated
+development evaluation does not make it a fresh independent holdout.
+
+## Diagnostics and subsequent fixes
+
+Known-position checks are explicitly excluded from acceptance. On the first
+Midway November 1 recording, the source clock advances 3,600 seconds between the
+first and last sampled segment starts while audio/video PTS advances about
+3,593.2 seconds. Audio decoding with timestamp compensation retained the same
+duration. Early and late independently fitted passes prefer clocks about seven
+seconds apart. The matcher still requires a single clock and does not silently
+shift individual events to force a result.
+
+The ground-height input also needed a datum conversion: PROJ independently
+calculates about -33.808 m of EGM96 geoid undulation at this Midway camera. The
+app now applies the global bundled grid at each hypothesis when EGM96 is selected,
+and always converts SRTM heights. A centered ten-second local linear fit reduces
+flight-position quantization before estimating velocity; gaps are preserved.
+
+The detector now retains up to 24 events, with eight strongest search anchors.
+Coarse selection uses the same minimum consensus as final fitting. The bounded
+refinement pool was expanded from 48 to 512, and an analytic propagation solution
+replaces iterative bisection; an independent bisection regression verifies it.
+
+With the height/noise fixes, a **diagnostic** search restricted to a known
+2.2 × 2.5 km region returned an ambiguous candidate 88.2 m from the Midway camera,
+matching three of 17 detections. The recording clock was absent, but the small
+region was chosen using ground truth. This is not a successful blind benchmark
+and is not included in the acceptance count. Only the original broad-region
+jobs qualify in `results.json`.
+
+
+## Full-region rerun after propagation and search fixes
+
+The complete seven-case rerun used the original broad bounds, no recording
+clock, corrected height datums, smoothed references and the 4 kHz detector.
+The earlier narrow-region diagnostic is still excluded. The first Midway
+November 1 clip returned the same candidate in its original broad region:
+**88.184 m from the camera**, three matches among 17 detections, 0.930% relative
+fit error, inferred start 2026-11-01T17:57:37.345Z. It is explicitly **ambiguous**.
+
+| Case | Events | Flight segments | Hypotheses | Result |
+|---|---:|---:|---:|---|
+| midway | 5 | 4947 | 1329717 | insufficient_evidence |
+| southampton | 3 | 4336 | 814840 | insufficient_evidence |
+| midway-arrivals | 5 | 4947 | 1792967 | insufficient_evidence |
+| midway-holdout | 4 | 4947 | 963091 | insufficient_evidence |
+| midway-nov1 | 17 | 5381 | 7214462 | ambiguous; 88.184 m |
+| midway-nov1-holdout | 10 | 5381 | 4088117 | insufficient_evidence |
+| southampton-nov1 | 8 | 4134 | 162775 | insufficient_evidence |
+
+Coordinate hits within 250 m: **1/7**. Accepted unambiguous locations: **0/7**.
+The matched coordinates alone do not override the ambiguity flag. All case
+hashes were verified, and decoded durations replace nominal capture durations
+in the manifest. Previously named holdouts are now development retests because
+they have been inspected repeatedly.
+
+The parallel corridor implementation produced the same first-Midway candidate
+as the serial implementations. Windows and Ubuntu passed all 30 software tests,
+formatting, strict Clippy and release compilation at commit
+`3707cee64e28e0ffcbf90aa69685842d81ca4791`. This is software validation, not
+successful real-video acceptance.
+
+## Wider-band development
+
+The decoder now preserves frequencies up to 4 kHz. A simple widened search
+initially introduced false extra detections and failed a synthetic CLI test.
+Independent low/high tracing bands and harmonic consistency for the high band
+fixed that regression. A separate score regression demonstrated that an
+individually plausible fourth fit could invalidate a passing three-flight core;
+additional matches now must also preserve the joint error limit. All original
+coverage and error thresholds remain unchanged. Real-video reruns of these
+changes are tracked separately from the preceding 4 kHz results.

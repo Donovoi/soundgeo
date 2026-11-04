@@ -1,6 +1,10 @@
 use soundgeo::{Control, Job, audio};
 
 fn signal(seconds: usize, passes: &[(f64, f64, f64, f64)]) -> Vec<f32> {
+    synthesize(seconds, passes, false)
+}
+
+fn synthesize(seconds: usize, passes: &[(f64, f64, f64, f64)], harmonic: bool) -> Vec<f32> {
     let rate = audio::SAMPLE_RATE;
     let c = 340.39;
     let mut random = 83_u64;
@@ -28,11 +32,39 @@ fn signal(seconds: usize, passes: &[(f64, f64, f64, f64)]) -> Vec<f32> {
                 let emit = (lo + hi) * 0.5;
                 let distance = f64::hypot(speed * (emit - center), slant);
                 let envelope = (1. - ((emit - center) / 15.).powi(2)).max(0.);
-                value += envelope * slant / distance * (std::f64::consts::TAU * tone * emit).sin();
+                let phase = std::f64::consts::TAU * tone * emit;
+                let wave = if harmonic {
+                    0.08 * phase.sin() + (2. * phase).sin()
+                } else {
+                    phase.sin()
+                };
+                value += envelope * slant / distance * wave;
             }
             value as f32
         })
         .collect()
+}
+
+#[test]
+fn upper_jet_harmonics_are_retained_with_a_faint_fundamental() {
+    let samples = synthesize(
+        90,
+        &[(22., 77., 130., 1300.), (65., 86., 250., 1400.)],
+        true,
+    );
+    let events = audio::detect(&samples, &Job::default(), &Control::default(), &|_, _| {}).unwrap();
+    assert_eq!(events.len(), 2, "{events:?}");
+    for (event, center) in events
+        .iter()
+        .zip([22. + 130. / 340.39, 65. + 250. / 340.39])
+    {
+        assert!((event.cpa_s - center).abs() < 1.);
+        assert!(
+            (2400. ..3000.).contains(&event.base_hz),
+            "{}",
+            event.base_hz
+        );
+    }
 }
 
 #[test]
