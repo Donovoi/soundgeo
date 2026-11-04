@@ -47,12 +47,14 @@ pub fn ffmpeg_path(job: &Job) -> PathBuf {
     PathBuf::from("ffmpeg")
 }
 pub fn quiet_command(path: impl AsRef<std::ffi::OsStr>) -> Command {
-    let mut cmd = Command::new(path);
+    let cmd = Command::new(path);
     #[cfg(windows)]
-    {
+    let cmd = {
         use std::os::windows::process::CommandExt;
+        let mut cmd = cmd;
         cmd.creation_flags(0x08000000);
-    }
+        cmd
+    };
     cmd
 }
 pub fn decode(job: &Job, control: &Control) -> Result<Vec<f32>> {
