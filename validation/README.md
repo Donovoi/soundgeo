@@ -1,7 +1,7 @@
 # Real-video validation
 
 This is a failing acceptance benchmark, not a claim of reliable geolocation.
-Eight recordings from three public cameras were captured locally on 2026-11-04.
+Nine recordings from three public cameras were captured locally on 2026-11-04.
 The known UTC reference day and an approximately 40 km regional search box are
 provided; the recording clock, camera coordinates, aircraft identities, tone
 bands and flyover intervals are not supplied to the application. Every solver
@@ -249,6 +249,37 @@ on exactly the same observations. Optimization remains finite outside this
 acceptance boundary so nearby valid solutions can still be refined. The baseline
 RMSE is retained in each new JSON match; older reports remain readable.
 
-All 34 local software tests, strict Clippy and release compilation pass. A rerun
-of the eight cases is in progress; rejecting an incorrect candidate alone does
-not satisfy real-location acceptance. No acceptance threshold was relaxed.
+All 34 software tests, formatting, strict Clippy and release compilation passed
+on Windows and Ubuntu at `dc30a884e395c864511504bf5e28defd07dc00df`.
+All nine curvature runs are complete: the first Midway November 1 result remains
+74.706 m away, four matches, ambiguous; every other case returns no candidate.
+Coordinate hits: **1/9**. Accepted locations: **0/9**. Rejecting incorrect candidates
+does not satisfy real-location acceptance. No acceptance threshold was relaxed.
+
+
+## Second Lake Hood reference day and media clock regression
+
+A ninth case, `lake-hood-nov1`, retains a separate 60-minute public-camera capture
+and a full-day free ADS-B Exchange Alaska sample. All 288 five-minute global
+snapshots were inspected across a broad Alaska region, without a recording-clock
+filter: 570 identifiers were discovered, 568 traces were available, and two
+returned NoSuchKey. Non-ICAO prefixes are preserved. The original reference
+cache was not changed. Use `--alaska-sample-cache` alongside `--sample-cache`
+when reproducing all cases with `validation/run.py`; `--type-catalog` supplies
+the shared aircraft type catalog. This ninth case returned no candidate under
+the curvature-qualified matcher. The November 3 Lake Hood rerun also returned
+no candidate, removing the earlier incorrect 3.1 km result without recovering
+the camera.
+
+A diagnostic at the known Midway camera found that three later flyovers fit
+one shared clock-rate correction of about +2078 ppm with 0.788% joint error.
+That diagnostic used the known location and clock, so it is not an acceptance
+result. A regression based on independently synthesized emission-phase audio
+reproduced failure of the fixed-rate solver over an 86-minute recording. The
+bounded affine clock now recovers it, while rejecting an inconsistent flight
+time and preserving fixed-rate operation when disabled. Real runs of this
+change are recorded separately; software regression success is not accuracy
+validation.
+
+The affine-clock change passes all 36 local software tests, formatting, strict
+Clippy and release compilation. Its nine real-video reruns are in progress.

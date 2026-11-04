@@ -1,10 +1,10 @@
 # SoundGeo
 
-A native Rust desktop workbench that takes video or audio, extracts aircraft-like Doppler sweeps, and ranks recording locations against historical flight tracks. Unknown recording time is supported: the search fits **one shared UTC start time** across matched events.
+A native Rust desktop workbench that takes video or audio, extracts aircraft-like Doppler sweeps, and ranks recording locations against historical flight tracks. Unknown recording time is supported: the search fits **one shared UTC start time** across matched events, with a bounded media clock-rate correction for long recordings.
 
 **Research software.** It returns candidate coordinates and evidence, not a guaranteed location. A video alone cannot identify its date or location without suitable reference flight records. This is an independent implementation inspired by [colsto's demonstration](https://www.youtube.com/watch?v=UytYrhYLOKI); the creator did not release that pipeline's code.
 
-**Real-video acceptance is not met.** Eight public-camera recordings from three known locations were tested with their recording clocks withheld. The 8 kHz run returned a top candidate 75 m from the Midway camera, supported by four flights, but still ambiguous. Lake Hood returned an incorrect top candidate 3.1 km away, also marked ambiguous. No recording produced an accepted unambiguous location. Dates and broad regions were supplied. See [the validation record](validation/README.md). Passing software tests must not be presented as real-world geolocation reliability.
+**Real-video acceptance is not met.** Nine public-camera recordings from three known locations were tested with their recording clocks withheld. The curvature-qualified run returned a top candidate 75 m from the Midway camera, supported by four flights, but still ambiguous. Both Lake Hood recordings returned no candidate; the earlier incorrect 3.1 km candidate is now rejected. No recording produced an accepted unambiguous location. Dates and broad regions were supplied. See [the validation record](validation/README.md). Passing software tests must not be presented as real-world geolocation reliability.
 
 ## Desktop quick start
 
@@ -109,3 +109,10 @@ The integration test independently synthesizes two flyovers from emission-time p
 Automatic references can also be configured in JSON: `"archive": {"date_from":"2026-11-01", "date_to":"2026-11-03", "cache":"flight-cache"}`. Cache paths in JSON resolve relative to that file. Set `"start_utc": null` to withhold the recording clock. Short-pass detection is enabled by default; `"fast_flyovers": false` disables it.
 
 The short-jet regression independently synthesizes fast fan tones under strong bass and stationary hum. The consensus regression retains the true unknown-clock location with an unrelated detection, then rejects it when one of the three supporting flights has inconsistent timing.
+
+For recordings with at least three matched flyovers spanning ten minutes, the
+solver can fit one shared clock rate, bounded by `max_clock_drift_ppm` (default
+5000, maximum 5000). Set it to zero to use fixed-rate media time. Each candidate
+reports `recording_clock_rate`: UTC elapsed seconds equal media elapsed seconds
+multiplied by this rate. This handles uniform clock drift; it does not grant
+individual flyovers independent timing offsets or repair discontinuous edits.

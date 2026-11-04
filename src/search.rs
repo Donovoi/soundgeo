@@ -52,6 +52,9 @@ pub struct Candidate {
     pub ground_m: f64,
     pub recording_start_utc: String,
     pub recording_start_unix: f64,
+    /// UTC elapsed seconds per media second; a single rate for every flyover.
+    #[serde(default = "unit_clock_rate")]
+    pub recording_clock_rate: f64,
     pub relative_error_percent: f64,
     pub matches: Vec<Match>,
     #[serde(default)]
@@ -68,8 +71,13 @@ pub struct SearchResult {
 pub(crate) struct Seed {
     pub point: Point,
     pub start: f64,
+    pub clock_rate: f64,
     pub indices: Vec<usize>,
     pub score: f64,
+}
+
+fn unit_clock_rate() -> f64 {
+    1.
 }
 
 /// An unmatched detection is retained as an outlier, never counted as evidence.
@@ -117,6 +125,7 @@ pub(crate) fn complete_seed(
     Some(Seed {
         point,
         start,
+        clock_rate: 1.,
         indices,
         // Coarse selection must use the same consensus size as exact fitting.
         // Rewarding every loose association first lets unrelated sounds crowd
@@ -262,6 +271,19 @@ pub fn locate(
     let mut candidates = vec![];
     let count = diverse.len();
     let mut incomplete_references = 0;
+    let first_event = events.iter().map(|e| e.cpa_s).fold(f64::INFINITY, f64::min);
+    let last_event = events.iter().map(|e| e.cpa_s).fold(0., f64::max);
+    // A short recording cannot constrain another clock parameter independently.
+    let drift = if events.len() >= 3 && last_event - first_event >= 600. {
+        job.max_clock_drift_ppm * 1e-6
+    } else {
+        0.
+    };
+    let pivot = if job.start_utc.is_none() {
+        (first_event + last_event) * 0.5
+    } else {
+        0.
+    };
     for (i, mut seed) in diverse.into_iter().enumerate() {
         control.check()?;
         progress(
@@ -271,10 +293,11 @@ pub fn locate(
         seed.score = exact_score(&seed, events, tracks, c).0;
         let mut spatial = (spacing * 0.6).max(job.grid_m);
         let mut temporal = 4.;
-        for iteration in 0..26 {
+        let mut rate_step = drift * 0.5;
+        for iteration in 0..if drift > 0. { 50 } else { 26 } {
             control.check()?;
             let mut improved = false;
-            for axis in 0..3 {
+            for axis in 0..if drift > 0. { 4 } else { 3 } {
                 for sign in [-1., 1.] {
                     let mut trial = seed.clone();
                     match axis {
@@ -283,9 +306,16 @@ pub fn locate(
                             trial.point.lon += sign * spatial
                                 / (111320. * trial.point.lat.to_radians().cos().max(0.05))
                         }
-                        _ => trial.start += sign * temporal,
+                        2 => trial.start += sign * temporal,
+                        _ => {
+                            trial.clock_rate += sign * rate_step;
+                            trial.start -= sign * rate_step * pivot;
+                        }
                     }
-                    if !bounds.contains(trial.point) || !within_time(job, trial.start) {
+                    if !bounds.contains(trial.point)
+                        || !within_time(job, trial.start)
+                        || (trial.clock_rate - 1.).abs() > drift + 1e-12
+                    {
                         continue;
                     }
                     trial.point.alt = terrain.elevation(trial.point);
@@ -299,14 +329,27 @@ pub fn locate(
             if !improved || iteration % 5 == 4 {
                 spatial *= 0.5;
                 temporal *= 0.5;
+                rate_step *= 0.5;
             }
-            if spatial < 15. && temporal < 0.08 {
+            if spatial < 15. && temporal < 0.08 && rate_step < 0.000025 {
                 break;
             }
         }
         let (objective, matches) = exact_score(&seed, events, tracks, c);
         if matches.len() < events.len().min(3) {
             continue;
+        }
+        if (seed.clock_rate - 1.).abs() > 1e-12 {
+            let mut matched_times = matches
+                .iter()
+                .filter_map(|m| m.event_index)
+                .map(|i| events[i].cpa_s);
+            let first = matched_times.next().unwrap_or(0.);
+            let (min, max) =
+                matched_times.fold((first, first), |(min, max), t| (min.min(t), max.max(t)));
+            if max - min < 600. {
+                continue;
+            }
         }
         if !objective.is_finite() {
             incomplete_references += 1;
@@ -330,7 +373,7 @@ pub fn locate(
             continue;
         };
         let conflicts = if job.silence_mode != SilenceMode::Off {
-            silence_conflicts(events, tracks, seed.point, seed.start, c)
+            silence_conflicts_with_rate(events, tracks, seed.point, seed.start, seed.clock_rate, c)
         } else {
             vec![]
         };
@@ -343,6 +386,7 @@ pub fn locate(
             ground_m: seed.point.alt,
             recording_start_utc: time.to_rfc3339(),
             recording_start_unix: seed.start,
+            recording_clock_rate: seed.clock_rate,
             relative_error_percent: score,
             matches,
             silence_conflicts: conflicts,
@@ -368,6 +412,10 @@ pub fn locate(
                 alt: 0.,
             }) < 250.
                 && (candidate.recording_start_unix - s.recording_start_unix).abs() < 10.
+                && (candidate.recording_start_unix - s.recording_start_unix
+                    + last_event * (candidate.recording_clock_rate - s.recording_clock_rate))
+                    .abs()
+                    < 10.
         }) {
             continue;
         }
@@ -427,6 +475,17 @@ pub fn silence_conflicts(
     start: f64,
     c: f64,
 ) -> Vec<SilenceConflict> {
+    silence_conflicts_with_rate(events, tracks, point, start, 1., c)
+}
+
+fn silence_conflicts_with_rate(
+    events: &[Event],
+    tracks: &[Track],
+    point: Point,
+    start: f64,
+    rate: f64,
+    c: f64,
+) -> Vec<SilenceConflict> {
     let radius = events
         .iter()
         .map(|e| e.slant_m)
@@ -434,8 +493,8 @@ pub fn silence_conflicts(
         * 0.8;
     let mut conflicts = vec![];
     for gap in events.windows(2) {
-        let from = start + gap[0].end_s + 10.;
-        let to = start + gap[1].start_s - 10.;
+        let from = start + rate * (gap[0].end_s + 10.);
+        let to = start + rate * (gap[1].start_s - 10.);
         if to - from < 10. {
             continue;
         }
@@ -449,7 +508,7 @@ pub fn silence_conflicts(
             {
                 conflicts.push(SilenceConflict {
                     aircraft: track.id.clone(),
-                    time_in_recording_s: arrival - start,
+                    time_in_recording_s: (arrival - start) / rate,
                     slant_m: range,
                 });
             }
@@ -480,7 +539,11 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
         let mut ff = 0.;
         let mut yf = 0.;
         for p in &event.ridge {
-            if let Some(f) = track.factor(seed.point.ecef(), seed.start + p.time_s, c) {
+            if let Some(f) = track.factor(
+                seed.point.ecef(),
+                seed.start + seed.clock_rate * p.time_s,
+                c,
+            ) {
                 ff += f * f;
                 yf += p.hz * f;
                 predicted.push(f);
@@ -593,6 +656,7 @@ mod tests {
         let seed = Seed {
             point,
             start: demo::EPOCH,
+            clock_rate: 1.,
             indices: vec![0],
             score: 0.,
         };
@@ -644,6 +708,7 @@ mod tests {
         let seed = Seed {
             point: demo::TRUTH,
             start: demo::EPOCH,
+            clock_rate: 1.,
             indices: vec![0, 1, 2, 3],
             score: 0.,
         };

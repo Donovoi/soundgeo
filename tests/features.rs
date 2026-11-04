@@ -110,6 +110,13 @@ fn indexed_country_extent_search_recovers_unknown_time() {
     )
     .unwrap();
     assert_eq!(result.method, "indexed_flight_corridors");
+    assert!(
+        result
+            .candidates
+            .iter()
+            .all(|c| c.recording_clock_rate == 1.),
+        "Two flyovers must not fit an underconstrained clock rate"
+    );
     assert_eq!(result.coarse_grid_m, job.grid_m);
     let best = result
         .candidates
@@ -346,4 +353,118 @@ fn unknown_clock_consensus_ignores_an_outlier_but_requires_three_flights() {
             "Two flights alone must not corroborate a recording with four detections"
         );
     }
+}
+
+#[test]
+fn unknown_media_clock_rate_is_recovered_across_three_flights() {
+    let (_dir, mut job, mut detected) = events();
+    job.search_mode = SearchMode::FlightCorridors;
+    job.silence_mode = SilenceMode::Off;
+    let mut tracks = soundgeo::demo::tracks();
+    let mut third = detected[1].clone();
+    third.start_s += 5000.;
+    third.end_s += 5000.;
+    third.cpa_s += 5000.;
+    for p in &mut third.ridge {
+        p.time_s += 5000.;
+    }
+    detected.push(third);
+    let mut flight = tracks[1].clone();
+    flight.id = "third-independent-flight".into();
+    for sample in &mut flight.samples {
+        sample.time += 5000.;
+    }
+    tracks.push(flight);
+    // Simulate a recording clock running short. The independent emission-phase
+    // audio fixture supplies the curves; no model prediction generates them.
+    let rate = 1.004;
+    for event in &mut detected {
+        event.start_s /= rate;
+        event.end_s /= rate;
+        event.cpa_s /= rate;
+        event.base_hz *= rate;
+        for p in &mut event.ridge {
+            p.time_s /= rate;
+            p.hz *= rate;
+        }
+    }
+    let result = soundgeo::search::locate(
+        &job,
+        &detected,
+        &tracks,
+        &mut Terrain::new(None, job.ground_m),
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    let best = result
+        .candidates
+        .first()
+        .expect("A shared clock-rate error must not discard three valid flyovers");
+    assert!(
+        Point {
+            lat: best.latitude,
+            lon: best.longitude,
+            alt: best.ground_m
+        }
+        .distance(soundgeo::demo::TRUTH)
+            < 200.
+    );
+    assert!((best.recording_start_unix - soundgeo::demo::EPOCH).abs() < 3.);
+    assert!((best.recording_clock_rate - rate).abs() < 0.0004);
+    job.max_clock_drift_ppm = 0.;
+    let fixed = soundgeo::search::locate(
+        &job,
+        &detected,
+        &tracks,
+        &mut Terrain::new(None, job.ground_m),
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    assert!(
+        fixed.candidates.is_empty(),
+        "A fixed clock cannot explain this long recording"
+    );
+    // A separate timing discontinuity cannot be absorbed by the shared rate.
+    job.max_clock_drift_ppm = 5000.;
+    for sample in &mut tracks[0].samples {
+        sample.time += 100.;
+    }
+    let inconsistent = soundgeo::search::locate(
+        &job,
+        &detected,
+        &tracks,
+        &mut Terrain::new(None, job.ground_m),
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    assert!(inconsistent.candidates.is_empty());
+}
+
+#[test]
+fn clock_configuration_limits_and_older_reports_remain_supported() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut job = soundgeo::demo::create(dir.path()).unwrap();
+    for invalid in [-1., 5001., f64::NAN, f64::INFINITY] {
+        job.max_clock_drift_ppm = invalid;
+        assert!(
+            job.validate()
+                .unwrap_err()
+                .to_string()
+                .contains("clock drift")
+        );
+    }
+    for valid in [0., 5000.] {
+        job.max_clock_drift_ppm = valid;
+        job.validate().unwrap();
+    }
+    let old_job: Job = serde_json::from_str("{}").unwrap();
+    assert_eq!(old_job.max_clock_drift_ppm, 5000.);
+    let old = serde_json::json!({"latitude": 35., "longitude": -110., "ground_m": 0.,
+        "recording_start_utc": "2026-09-08T10:00:00Z", "recording_start_unix": 1788861600.,
+        "relative_error_percent": 0.5, "matches": []});
+    let candidate: soundgeo::search::Candidate = serde_json::from_value(old).unwrap();
+    assert_eq!(candidate.recording_clock_rate, 1.);
 }

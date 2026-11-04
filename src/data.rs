@@ -93,7 +93,7 @@ pub fn load_for_job_sources(
         time: job.start_utc.map(|t| {
             (
                 t - job.time_tolerance_s - 180.,
-                t + job.time_tolerance_s + duration + 180.,
+                t + job.time_tolerance_s + duration * (1. + job.max_clock_drift_ppm * 1e-6) + 180.,
             )
         }),
     };

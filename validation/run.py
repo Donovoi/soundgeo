@@ -26,6 +26,8 @@ def main():
     parser.add_argument('--cache', type=Path, required=True)
     parser.add_argument('--sample-cache', type=Path,
                         help='Full-day free ADS-B Exchange sample cache for November 1 cases')
+    parser.add_argument('--alaska-sample-cache', type=Path,
+                        help='Separate full-day free sample cache for the Lake Hood November 1 case')
     parser.add_argument('--type-catalog', type=Path,
                         help='Aircraft type catalog used by the November 1 reference runs')
     parser.add_argument('--output', type=Path, required=True)
@@ -35,9 +37,14 @@ def main():
     cases = [c for c in manifest['cases'] if not args.case or c['id'] == args.case]
     if not cases:
         parser.error('Unknown case ID')
-    if any(c.get('reference_provider') == 'adsb_exchange_free_sample' for c in cases):
-        if not args.sample_cache or not args.sample_cache.is_dir():
-            parser.error('November 1 cases require --sample-cache; see validation/README.md')
+    sample_roots = {'main': args.sample_cache, 'alaska': args.alaska_sample_cache}
+    for case in cases:
+        if case.get('reference_provider') == 'adsb_exchange_free_sample':
+            region = case.get('sample_region', 'main')
+            sample_root = sample_roots.get(region)
+            if not sample_root or not sample_root.is_dir():
+                flag = '--alaska-sample-cache' if region == 'alaska' else '--sample-cache'
+                parser.error(f"{case['id']} requires {flag}; see validation/README.md")
     args.output.mkdir(parents=True, exist_ok=True)
     rows = []
     for case in cases:
@@ -57,7 +64,7 @@ def main():
         }
         if case.get('reference_provider') == 'adsb_exchange_free_sample':
             job.pop('archive')
-            job['tracks'] = str(args.sample_cache.resolve())
+            job['tracks'] = str(sample_roots[case.get('sample_region', 'main')].resolve())
             if args.type_catalog:
                 job['type_catalog'] = str(args.type_catalog.resolve())
         config = args.output / f"{case['id']}-job.json"

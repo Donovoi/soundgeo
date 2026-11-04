@@ -28,6 +28,8 @@ pub struct Job {
     pub terrain: Option<PathBuf>,
     pub start_utc: Option<f64>,
     pub time_tolerance_s: f64,
+    /// Maximum shared media-clock rate error; zero fixes UTC/media seconds 1:1.
+    pub max_clock_drift_ppm: f64,
     pub bounds: Option<geo::Bounds>,
     pub ground_m: f64,
     pub ground_datum: geo::ElevationDatum,
@@ -56,6 +58,7 @@ impl Default for Job {
             terrain: None,
             start_utc: None,
             time_tolerance_s: 60.,
+            max_clock_drift_ppm: 5000.,
             bounds: None,
             ground_m: 0.,
             ground_datum: Default::default(),
@@ -123,6 +126,11 @@ impl Job {
         }
         if !self.time_tolerance_s.is_finite() || !(0. ..=86400.).contains(&self.time_tolerance_s) {
             bail!("Time tolerance must be 0–86400 seconds.");
+        }
+        if !self.max_clock_drift_ppm.is_finite()
+            || !(0. ..=5000.).contains(&self.max_clock_drift_ppm)
+        {
+            bail!("Media clock drift limit must be 0–5000 ppm.");
         }
         if self
             .start_utc

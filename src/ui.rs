@@ -280,6 +280,7 @@ impl App {
                 });
                 egui::Grid::new("advanced").num_columns(2).show(ui,|ui|{
                     for (label,value) in [("Low frequency (Hz)",&mut self.job.min_hz),("High frequency (Hz)",&mut self.job.max_hz),("Min contrast (dB)",&mut self.job.min_snr_db),("Temperature (°C)",&mut self.job.temperature_c),("Grid target (m)",&mut self.job.grid_m)]{ui.label(label);ui.add(egui::DragValue::new(value).speed(1.));ui.end_row();}
+                    ui.label("Media clock drift limit (ppm)");ui.add(egui::DragValue::new(&mut self.job.max_clock_drift_ppm).range(0. ..=5000.));ui.end_row();
                     ui.label("Grid point budget");ui.add(egui::DragValue::new(&mut self.job.max_grid_points).range(100..=50000));ui.end_row();
                     ui.label("Indexed hypothesis limit");ui.add(egui::DragValue::new(&mut self.job.max_hypotheses).range(100..=100_000_000));ui.end_row();
                 });
@@ -519,6 +520,10 @@ impl App {
                         ui.label(format!(
                             "Inferred recording start: {}",
                             current.recording_start_utc
+                        ));
+                        ui.label(format!(
+                            "Media clock correction: {:+.0} ppm",
+                            (current.recording_clock_rate - 1.) * 1e6
                         ));
                         ui.label(format!(
                             "{} of {} detections matched",
