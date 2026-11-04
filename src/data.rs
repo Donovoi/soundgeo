@@ -49,7 +49,7 @@ pub fn parse_time(s: &str) -> Result<f64> {
 }
 
 pub fn load(path: &Path, control: &Control) -> Result<Dataset> {
-    load_filtered(path, control, &Filter::default())
+    load_filtered(&[path.to_owned()], control, &Filter::default())
 }
 
 #[derive(Default)]
@@ -73,6 +73,14 @@ impl Filter {
     }
 }
 pub fn load_for_job(job: &Job, duration: f64, control: &Control) -> Result<Dataset> {
+    load_for_job_sources(job, std::slice::from_ref(&job.tracks), duration, control)
+}
+pub fn load_for_job_sources(
+    job: &Job,
+    sources: &[PathBuf],
+    duration: f64,
+    control: &Control,
+) -> Result<Dataset> {
     let filter = Filter {
         bounds: job.bounds,
         aircraft: job.aircraft_filter,
@@ -89,32 +97,39 @@ pub fn load_for_job(job: &Job, duration: f64, control: &Control) -> Result<Datas
             )
         }),
     };
-    load_filtered(&job.tracks, control, &filter)
+    load_filtered(sources, control, &filter)
 }
-fn load_filtered(path: &Path, control: &Control, filter: &Filter) -> Result<Dataset> {
+fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Result<Dataset> {
     let mut raw: BTreeMap<String, Vec<Sample>> = BTreeMap::new();
     let mut kinds = BTreeMap::new();
     let mut skipped = 0usize;
     let mut barometric = 0usize;
     let mut total = 0usize;
-    let paths: Vec<PathBuf> = if path.is_dir() {
-        walkdir::WalkDir::new(path)
-            .follow_links(false)
-            .into_iter()
-            .filter_map(|e| e.ok())
-            .filter(|e| e.file_type().is_file())
-            .map(|e| e.into_path())
-            .filter(|p| {
-                let n = p.file_name().unwrap_or_default().to_string_lossy();
-                n.ends_with(".csv")
-                    || n.starts_with("trace_full_")
-                    || n.ends_with(".tar.aa")
-                    || n.ends_with(".tar")
-            })
-            .collect()
-    } else {
-        vec![path.to_owned()]
-    };
+    let mut paths: Vec<PathBuf> = sources
+        .iter()
+        .flat_map(|path| {
+            if path.is_dir() {
+                walkdir::WalkDir::new(path)
+                    .follow_links(false)
+                    .into_iter()
+                    .filter_map(|e| e.ok())
+                    .filter(|e| e.file_type().is_file())
+                    .map(|e| e.into_path())
+                    .filter(|p| {
+                        let n = p.file_name().unwrap_or_default().to_string_lossy();
+                        n.ends_with(".csv")
+                            || n.starts_with("trace_full_")
+                            || n.ends_with(".tar.aa")
+                            || n.ends_with(".tar")
+                    })
+                    .collect()
+            } else {
+                vec![path.to_owned()]
+            }
+        })
+        .collect();
+    paths.sort();
+    paths.dedup();
     if paths.is_empty() {
         bail!("No CSV or readsb trace files found in this folder.");
     }
@@ -428,8 +443,30 @@ pub fn download_day(
         .timeout(Duration::from_secs(30))
         .build()?;
     progress("Looking up the daily archive", 0.01);
-    let mut release = None;
+    let dir = destination.join(date);
+    let manifest = dir.join("archive-manifest.json");
+    // A saved manifest pins the selected release and lets a complete, hash-checked
+    // cache work offline. Missing/corrupt parts are fetched from that same release.
+    let mut release: Option<Value> = if manifest.is_file() {
+        if std::fs::metadata(&manifest)?.len() > 4_000_000 {
+            bail!("Archive manifest exceeds 4 MB");
+        }
+        let value: Value = serde_json::from_reader(File::open(&manifest)?)?;
+        let prefix = format!("v{}-planes-readsb-", day.format("%Y.%m.%d"));
+        if !value["tag_name"]
+            .as_str()
+            .is_some_and(|s| s.starts_with(&prefix))
+        {
+            bail!("Cached archive manifest belongs to a different date");
+        }
+        Some(value)
+    } else {
+        None
+    };
     for instance in ["prod-0", "prod-1", "staging-0"] {
+        if release.is_some() {
+            break;
+        }
         control.check()?;
         let tag = format!("v{}-planes-readsb-{instance}", day.format("%Y.%m.%d"));
         let url = format!(
@@ -455,8 +492,10 @@ pub fn download_day(
         bail!("No split archive files in this release.");
     }
     let total: u64 = assets.iter().map(|v| v["size"].as_u64().unwrap_or(0)).sum();
-    let dir = destination.join(date);
     std::fs::create_dir_all(&dir)?;
+    let mut manifest_tmp = tempfile::NamedTempFile::new_in(&dir)?;
+    serde_json::to_writer_pretty(manifest_tmp.as_file_mut(), &release)?;
+    manifest_tmp.persist(&manifest)?;
     let mut completed = 0u64;
     let mut first = None;
     for asset in assets {

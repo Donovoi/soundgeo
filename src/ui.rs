@@ -50,7 +50,14 @@ impl App {
             .insert(egui::TextStyle::Button, egui::FontId::proportional(15.));
         cc.egui_ctx.set_style(style);
         Self {
-            job: Job::default(),
+            job: Job {
+                archive: Some(soundgeo::archive::ArchiveRequest {
+                    date_from: String::new(),
+                    date_to: None,
+                    cache: PathBuf::from("flight-cache"),
+                }),
+                ..Job::default()
+            },
             clock: String::new(),
             use_bounds: false,
             bounds: Bounds {
@@ -172,6 +179,7 @@ impl App {
                         self.job.type_catalog = catalog;
                     }
                     self.job.tracks = path;
+                    self.job.archive = None;
                     self.status = "Flight archive ready".into();
                     self.receiver = None;
                 }
@@ -210,8 +218,23 @@ impl App {
             file_field(ui,&mut self.job.media,"Choose recording…",&["mp4","mov","mkv","webm","avi","wav","mp3","flac","m4a"]);
             ui.label(RichText::new("You can also drop a file into this window.").small().color(MUTED));
             ui.add_space(6.);ui.label(RichText::new("2  Historical flight data").strong());
+            let mut automatic = self.job.archive.is_some();
+            if ui.checkbox(&mut automatic,"Download missing flight data automatically").changed() {
+                self.job.archive = automatic.then(|| soundgeo::archive::ArchiveRequest {date_from:self.date.clone(),date_to:None,cache:PathBuf::from("flight-cache")});
+            }
+            if let Some(request) = &mut self.job.archive {
+                ui.label(RichText::new("Possible UTC date; exact recording time stays unknown. Each uncached day is several GB.").small().color(MUTED));
+                ui.add(egui::TextEdit::singleline(&mut request.date_from).hint_text("YYYY-MM-DD").desired_width(f32::INFINITY));
+                let mut several = request.date_to.is_some();
+                if ui.checkbox(&mut several,"Search several possible dates").changed(){request.date_to=several.then(String::new);}
+                if let Some(to)=&mut request.date_to{ui.add(egui::TextEdit::singleline(to).hint_text("Last date, inclusive (YYYY-MM-DD)").desired_width(f32::INFINITY));}
+                let mut cache=request.cache.display().to_string();
+                if ui.text_edit_singleline(&mut cache).changed(){request.cache=PathBuf::from(cache);}
+                if ui.small_button("Choose cache folder…").clicked() && let Some(path)=rfd::FileDialog::new().pick_folder(){request.cache=path;}
+            } else {
             file_field(ui,&mut self.job.tracks,"Choose flight data…",&["csv","json","gz","aa","tar"]);
             if ui.small_button("Or choose an archive folder").clicked()&& let Some(p)=rfd::FileDialog::new().pick_folder(){self.job.tracks=p;}
+            }
             ui.label(RichText::new("Searches all dates in the supplied data. The recording stays on your computer.").small().color(MUTED));
             egui::CollapsingHeader::new("Download a public flight archive").show(ui,|ui|{
                 ui.label("Choose a possible recording date. Each day is several GB; no API key is needed.");
@@ -241,6 +264,8 @@ impl App {
                 if let Some(p)=&self.job.terrain{ui.label(RichText::new(p.display().to_string()).small());if ui.small_button("Clear terrain").clicked(){self.job.terrain=None;}}
             });
             egui::CollapsingHeader::new("Advanced audio & search").show(ui,|ui|{
+                ui.checkbox(&mut self.job.fast_flyovers,"Also detect short flyovers (500–1900 Hz)");
+                if self.job.fast_flyovers {ui.horizontal(|ui|{ui.label("Short-pass contrast (dB)");ui.add(egui::DragValue::new(&mut self.job.fast_min_snr_db).range(6. ..=60.));});}
                 use soundgeo::search::SearchMode;
                 egui::ComboBox::from_id_salt("search-mode").selected_text(match self.job.search_mode{SearchMode::Auto=>"Automatic search method",SearchMode::RegionalGrid=>"Regional grid",SearchMode::FlightCorridors=>"Indexed flight corridors"}).show_ui(ui,|ui|{
                     ui.selectable_value(&mut self.job.search_mode,SearchMode::Auto,"Automatic search method");ui.selectable_value(&mut self.job.search_mode,SearchMode::FlightCorridors,"Indexed flight corridors");ui.selectable_value(&mut self.job.search_mode,SearchMode::RegionalGrid,"Regional grid");
@@ -487,6 +512,11 @@ impl App {
                             "Inferred recording start: {}",
                             current.recording_start_utc
                         ));
+                        ui.label(format!(
+                            "{} of {} detections matched",
+                            current.matches.len(),
+                            report.events.len()
+                        ));
                         ui.label(
                             RichText::new(format!(
                                 "Curve error {:.3}% · a fit metric, not a confidence percentage",
@@ -556,10 +586,13 @@ impl App {
                     .small()
                     .color(MUTED),
                 );
-                let modeled = report
-                    .candidates
-                    .get(self.selected)
-                    .and_then(|c| c.matches.get(i));
+                let modeled = report.candidates.get(self.selected).and_then(|c| {
+                    c.matches
+                        .iter()
+                        .enumerate()
+                        .find(|(j, m)| m.event_index.unwrap_or(*j) == i)
+                        .map(|(_, m)| m)
+                });
                 curve_plot(ui, e, modeled.map(|m| m.modeled_hz.as_slice()));
                 if let Some(m) = modeled {
                     ui.label(format!(
@@ -568,6 +601,8 @@ impl App {
                         m.rmse_hz,
                         m.coverage * 100.
                     ));
+                } else if !report.candidates.is_empty() {
+                    ui.label("Unmatched detection — does not support this candidate.");
                 }
                 ui.add_space(15.);
             }

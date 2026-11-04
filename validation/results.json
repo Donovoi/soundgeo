@@ -1,0 +1,149 @@
+{
+  "software_version": "0.3.0-dev.1",
+  "cli_sha256": "b4a7414f6457d55995a8ecc34fbca8151b11b48b74600caa293508ee0995e3fc",
+  "real_accuracy_established": false,
+  "cases": [
+    {
+      "case": "midway",
+      "media_sha256": "38e22e7253db6eb19c1fb90d2d852ad6807467d3705f8d28e5635a2d6766b276",
+      "clock_supplied": false,
+      "reference_day": "2026-11-03",
+      "stages": {
+        "original": {
+          "version": "0.2.0",
+          "status": "insufficient_evidence",
+          "events": 0,
+          "candidates": 0,
+          "flight_segments": 0,
+          "hypotheses": 0,
+          "recording_clock": null,
+          "passed": false
+        },
+        "short_passes": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 5,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 941371,
+          "recording_clock": null,
+          "passed": false
+        },
+        "consensus": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 5,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 1780948,
+          "recording_clock": null,
+          "passed": false
+        }
+      }
+    },
+    {
+      "case": "southampton",
+      "media_sha256": "88fadc80a7209432e01350aec3adc901e296e3174ee1f469022d6ec47c1d7e30",
+      "clock_supplied": false,
+      "reference_day": "2026-11-03",
+      "stages": {
+        "original": {
+          "version": "0.2.0",
+          "status": "insufficient_evidence",
+          "events": 8,
+          "candidates": 0,
+          "flight_segments": 990,
+          "hypotheses": 38034,
+          "recording_clock": null,
+          "passed": false
+        },
+        "short_passes": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 3,
+          "candidates": 0,
+          "flight_segments": 4336,
+          "hypotheses": 626727,
+          "recording_clock": null,
+          "passed": false
+        },
+        "consensus": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 3,
+          "candidates": 0,
+          "flight_segments": 4336,
+          "hypotheses": 794649,
+          "recording_clock": null,
+          "passed": false
+        }
+      }
+    },
+    {
+      "case": "midway-arrivals",
+      "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+      "clock_supplied": false,
+      "reference_day": "2026-11-03",
+      "stages": {
+        "original": {
+          "version": "0.2.0",
+          "status": "insufficient_evidence",
+          "events": 2,
+          "candidates": 0,
+          "flight_segments": 627,
+          "hypotheses": 9984,
+          "recording_clock": null,
+          "passed": false
+        },
+        "short_passes": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 5,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 480374,
+          "recording_clock": null,
+          "passed": false
+        },
+        "consensus": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 5,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 2281111,
+          "recording_clock": null,
+          "passed": false
+        }
+      }
+    },
+    {
+      "case": "midway-holdout",
+      "media_sha256": "985b9035059956f43f989d8c14049d00d08679902e8b3d421fa7f1c9f63d6f04",
+      "clock_supplied": false,
+      "reference_day": "2026-11-03",
+      "stages": {
+        "short_passes": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 4,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 383165,
+          "recording_clock": null,
+          "passed": false
+        },
+        "consensus": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 4,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 1344934,
+          "recording_clock": null,
+          "passed": false
+        }
+      }
+    }
+  ]
+}

@@ -9,8 +9,6 @@ use std::{
 };
 
 pub const SAMPLE_RATE: usize = 4000;
-const FFT: usize = 8192;
-const HOP: usize = 2000;
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct RidgePoint {
     pub time_s: f64,
@@ -115,77 +113,19 @@ pub fn detect(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<Vec<Event>> {
-    let mut planner = FftPlanner::<f32>::new();
-    let fft = planner.plan_fft_forward(FFT);
-    let low = (job.min_hz * FFT as f64 / SAMPLE_RATE as f64).ceil() as usize;
-    let high = (job.max_hz * FFT as f64 / SAMPLE_RATE as f64).floor() as usize;
-    let bins = high - low + 1;
-    let frames = (samples.len() - FFT) / HOP + 1;
-    let win: Vec<f32> = (0..FFT)
-        .map(|i| 0.5 - 0.5 * (std::f32::consts::TAU * i as f32 / (FFT - 1) as f32).cos())
-        .collect();
-    let mut spectrum = Vec::with_capacity(frames);
-    let mut buffer = vec![Complex::default(); FFT];
-    for frame in 0..frames {
-        if frame % 100 == 0 {
-            control.check()?;
-            progress(
-                "Building the low-frequency spectrogram",
-                0.10 + 0.10 * frame as f32 / frames as f32,
-            );
-        }
-        for i in 0..FFT {
-            buffer[i] = Complex::new(samples[frame * HOP + i] * win[i], 0.);
-        }
-        fft.process(&mut buffer);
-        let values: Vec<f32> = buffer[low..=high]
-            .iter()
-            .map(|v| 10. * v.norm_sqr().max(1e-20).log10())
-            .collect();
-        let mut sorted = values.clone();
-        sorted.sort_by(f32::total_cmp);
-        let noise = sorted[bins / 2];
-        spectrum.push(values.iter().map(|v| v - noise).collect::<Vec<_>>());
-    }
-    // 90-second windows overlap by 45 seconds, so complete flyovers survive boundaries.
-    let window = 180usize.min(frames);
-    let step = 90;
-    let mut starts: Vec<usize> = (0..frames.saturating_sub(window) + 1)
-        .step_by(step)
-        .collect();
-    if starts.last().copied() != Some(frames - window) {
-        starts.push(frames - window);
-    }
-    let mut found = vec![];
-    for (i, &start) in starts.iter().enumerate() {
-        control.check()?;
-        progress(
-            "Tracing and fitting Doppler sweeps",
-            0.20 + 0.14 * i as f32 / starts.len() as f32,
-        );
-        let mut patch = spectrum[start..start + window].to_vec();
-        // Several ridges let a strong stationary hum coexist with a quiet aircraft tone.
-        for _ in 0..4 {
-            let ridge = trace(&patch, low, start);
-            if let Some(event) = fit(&ridge, job) {
-                found.push(event);
-            }
-            for (frame, p) in patch.iter_mut().zip(&ridge) {
-                let b = (p.hz * FFT as f64 / SAMPLE_RATE as f64).round() as isize - low as isize;
-                for j in b - 5..=b + 5 {
-                    if j >= 0 && (j as usize) < bins {
-                        frame[j as usize] = -20.;
-                    }
-                }
-            }
-        }
+    let mut found = detect_scale(samples, job, control, progress, false)?;
+    if job.fast_flyovers {
+        found.extend(detect_scale(samples, job, control, progress, true)?);
     }
     found.sort_by(|a, b| {
-        (b.contrast_db / (1. + b.fit_rmse_hz)).total_cmp(&(a.contrast_db / (1. + a.fit_rmse_hz)))
+        let quality = |e: &Event| {
+            e.contrast_db * (e.end_s - e.start_s).min(20.).sqrt()
+                / (1. + 100. * e.fit_rmse_hz / e.base_hz)
+        };
+        quality(b).total_cmp(&quality(a))
     });
     let mut events: Vec<Event> = vec![];
     for e in found {
-        // Overlapping/harmonic ridges count as one event, not independent evidence.
         if events
             .iter()
             .any(|p| e.start_s < p.end_s && p.start_s < e.end_s)
@@ -201,7 +141,114 @@ pub fn detect(
     Ok(events)
 }
 
-fn trace(spec: &[Vec<f32>], low: usize, start: usize) -> Vec<RidgePoint> {
+fn detect_scale(
+    samples: &[f32],
+    job: &Job,
+    control: &Control,
+    progress: &Progress<'_>,
+    fast: bool,
+) -> Result<Vec<Event>> {
+    let fft_size = if fast { 512 } else { 8192 };
+    let hop = if fast { 100 } else { 2000 };
+    let (min_hz, max_hz) = if fast {
+        (500., 1900.)
+    } else {
+        (job.min_hz, job.max_hz)
+    };
+    let mut planner = FftPlanner::<f32>::new();
+    let fft = planner.plan_fft_forward(fft_size);
+    let low = (min_hz * fft_size as f64 / SAMPLE_RATE as f64).ceil() as usize;
+    let high = (max_hz * fft_size as f64 / SAMPLE_RATE as f64).floor() as usize;
+    let bins = high - low + 1;
+    let frames = (samples.len() - fft_size) / hop + 1;
+    let win: Vec<f32> = (0..fft_size)
+        .map(|i| 0.5 - 0.5 * (std::f32::consts::TAU * i as f32 / (fft_size - 1) as f32).cos())
+        .collect();
+    let mut spectrum = Vec::with_capacity(frames);
+    let mut buffer = vec![Complex::default(); fft_size];
+    for frame in 0..frames {
+        if frame % 100 == 0 {
+            control.check()?;
+            progress(
+                if fast {
+                    "Scanning short high-frequency flyovers"
+                } else {
+                    "Building the low-frequency spectrogram"
+                },
+                if fast { 0.24 } else { 0.10 } + 0.06 * frame as f32 / frames as f32,
+            );
+        }
+        for i in 0..fft_size {
+            buffer[i] = Complex::new(samples[frame * hop + i] * win[i], 0.);
+        }
+        fft.process(&mut buffer);
+        let values: Vec<f32> = buffer[low..=high]
+            .iter()
+            .map(|v| 10. * v.norm_sqr().max(1e-20).log10())
+            .collect();
+        // Wind/jet roar has a steep, changing spectral slope. A single median
+        // across the whole band mistakes bass for a tone and hides fan ridges.
+        let mut neighbors = Vec::with_capacity(25);
+        let mut contrast = Vec::with_capacity(bins);
+        for (b, &value) in values.iter().enumerate() {
+            neighbors.clear();
+            neighbors.extend_from_slice(&values[b.saturating_sub(12)..(b + 13).min(bins)]);
+            let middle = neighbors.len() / 2;
+            neighbors.select_nth_unstable_by(middle, f32::total_cmp);
+            contrast.push(value - neighbors[middle]);
+        }
+        spectrum.push(contrast);
+    }
+    // Short jets need both 10- and 20-second windows. Slow propeller curves
+    // need 90 seconds. Half-window overlap retains passes near boundaries.
+    let lengths = if fast { vec![800usize, 400] } else { vec![180] };
+    let mut windows = vec![];
+    for length in lengths {
+        let window = length.min(frames);
+        let mut starts: Vec<usize> = (0..frames.saturating_sub(window) + 1)
+            .step_by(window / 2)
+            .collect();
+        if starts.last().copied() != Some(frames - window) {
+            starts.push(frames - window);
+        }
+        windows.extend(starts.into_iter().map(|start| (start, window)));
+    }
+    let mut found = vec![];
+    for (i, &(start, window)) in windows.iter().enumerate() {
+        control.check()?;
+        progress(
+            "Tracing and fitting Doppler sweeps",
+            if fast { 0.30 } else { 0.16 }
+                + if fast { 0.04 } else { 0.08 } * i as f32 / windows.len() as f32,
+        );
+        let mut patch = spectrum[start..start + window].to_vec();
+        // Several ridges let a strong stationary hum coexist with a quiet aircraft tone.
+        for _ in 0..4 {
+            let ridge = trace(&patch, low, start, fft_size, hop);
+            if let Some(event) = fit(&ridge, job, fast) {
+                found.push(event);
+            }
+            for (frame, p) in patch.iter_mut().zip(&ridge) {
+                let b =
+                    (p.hz * fft_size as f64 / SAMPLE_RATE as f64).round() as isize - low as isize;
+                for j in b - 5..=b + 5 {
+                    if j >= 0 && (j as usize) < bins {
+                        frame[j as usize] = -20.;
+                    }
+                }
+            }
+        }
+    }
+    Ok(found)
+}
+
+fn trace(
+    spec: &[Vec<f32>],
+    low: usize,
+    start: usize,
+    fft_size: usize,
+    hop: usize,
+) -> Vec<RidgePoint> {
     let n = spec.len();
     let bins = spec[0].len();
     let mut prev = spec[0].clone();
@@ -216,7 +263,8 @@ fn trace(spec: &[Vec<f32>], low: usize, start: usize) -> Vec<RidgePoint> {
                 if old < 0 || old >= bins as i32 {
                     continue;
                 }
-                let score = prev[old as usize] - 0.35 * (d as f32).abs();
+                let penalty = if fft_size < 2048 { 1.2 } else { 0.35 };
+                let score = prev[old as usize] - penalty * (d as f32).abs();
                 if score > best {
                     best = score;
                     delta = d as i8;
@@ -257,20 +305,25 @@ fn trace(spec: &[Vec<f32>], low: usize, start: usize) -> Vec<RidgePoint> {
                 0.
             };
             RidgePoint {
-                time_s: ((start + t) * HOP + FFT / 2) as f64 / SAMPLE_RATE as f64,
-                hz: (low as f64 + b as f64 + delta as f64) * SAMPLE_RATE as f64 / FFT as f64,
+                time_s: ((start + t) * hop + fft_size / 2) as f64 / SAMPLE_RATE as f64,
+                hz: (low as f64 + b as f64 + delta as f64) * SAMPLE_RATE as f64 / fft_size as f64,
                 contrast_db: spec[t][b] as f64,
             }
         })
         .collect()
 }
 
-fn fit(points: &[RidgePoint], job: &Job) -> Option<Event> {
+fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
+    let minimum_contrast = if fast {
+        job.fast_min_snr_db
+    } else {
+        job.min_snr_db
+    };
     let mut contrasts: Vec<_> = points.iter().map(|p| p.contrast_db).collect();
     contrasts.sort_by(f64::total_cmp);
     // A ridge continues through noise after the plane fades. Trim by sustained
     // contrast relative to the actual tone, not isolated high noise bins.
-    let cutoff = job.min_snr_db.max(contrasts[contrasts.len() * 3 / 4] - 18.);
+    let cutoff = minimum_contrast.max(contrasts[contrasts.len() * 3 / 4] - 18.);
     let strong: Vec<usize> = (2..points.len() - 2)
         .filter(|&i| {
             let mut local: Vec<_> = points[i - 2..=i + 2]
@@ -292,7 +345,7 @@ fn fit(points: &[RidgePoint], job: &Job) -> Option<Event> {
         .cloned()
         .collect();
     if ridge.len() < 40
-        || ridge.last()?.time_s - ridge[0].time_s < 20.
+        || ridge.last()?.time_s - ridge[0].time_s < if fast { 4. } else { 20. }
         || ridge.len() as f64 / ((end - start + 1) as f64) < 0.7
     {
         return None;
@@ -304,7 +357,7 @@ fn fit(points: &[RidgePoint], job: &Job) -> Option<Event> {
         .map(|p| p.hz)
         .sum::<f64>()
         / count as f64;
-    if head - tail < 4. || (head - tail) / head < 0.035 {
+    if head - tail < 4. || (head - tail) / head < if fast { 0.08 } else { 0.035 } {
         return None;
     }
     let time_start = ridge[0].time_s;
@@ -328,9 +381,15 @@ fn fit(points: &[RidgePoint], job: &Job) -> Option<Event> {
         (mse, base)
     };
     let mut best = (f64::INFINITY, middle, 80., 1500., 0.);
+    let distances = if fast {
+        vec![50., 100., 200., 400., 800., 1500., 3000.]
+    } else {
+        vec![300., 700., 1500., 3000., 6000., 12000.]
+    };
     for v in [35., 55., 80., 110., 150., 200., 250.] {
-        for d in [300., 700., 1500., 3000., 6000., 12000.] {
-            for offset in [-20., -10., 0., 10., 20.] {
+        for &d in &distances {
+            for offset in [-2., -1., 0., 1., 2.] {
+                let offset = offset * if fast { 2. } else { 10. };
                 let t = middle + offset;
                 let (s, b) = score(t, v, d);
                 if s < best.0 {
@@ -339,17 +398,22 @@ fn fit(points: &[RidgePoint], job: &Job) -> Option<Event> {
             }
         }
     }
-    let mut steps = [10., 25., 1000.];
+    let mut steps = if fast {
+        [2., 25., 200.]
+    } else {
+        [10., 25., 1000.]
+    };
     for _ in 0..60 {
         let mut improved = false;
         for axis in 0..3 {
             for sign in [-1., 1.] {
                 let mut p = [best.1, best.2, best.3];
                 p[axis] += sign * steps[axis];
-                if p[0] < time_start + 3.
-                    || p[0] > time_end - 3.
+                let edge = if fast { 0.5 } else { 3. };
+                if p[0] < time_start + edge
+                    || p[0] > time_end - edge
                     || !(25. ..=260.).contains(&p[1])
-                    || !(100. ..=20000.).contains(&p[2])
+                    || !(if fast { 25. } else { 100. }..=20000.).contains(&p[2])
                 {
                     continue;
                 }
@@ -370,7 +434,10 @@ fn fit(points: &[RidgePoint], job: &Job) -> Option<Event> {
     let mean = ridge.iter().map(|p| p.hz).sum::<f64>() / ridge.len() as f64;
     let variance = ridge.iter().map(|p| (p.hz - mean).powi(2)).sum::<f64>() / ridge.len() as f64;
     let contrast = ridge.iter().map(|p| p.contrast_db).sum::<f64>() / ridge.len() as f64;
-    if rmse > 1.5_f64.max(mean * 0.008) || best.0 / variance > 0.12 || contrast < job.min_snr_db {
+    if rmse > 1.5_f64.max(mean * if fast { 0.015 } else { 0.008 })
+        || best.0 / variance > 0.12
+        || contrast < minimum_contrast
+    {
         return None;
     }
     Some(Event {

@@ -33,6 +33,9 @@ pub struct SilenceConflict {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Match {
+    /// Original detection index. None keeps older reports readable in order.
+    #[serde(default)]
+    pub event_index: Option<usize>,
     pub aircraft: String,
     pub rmse_hz: f64,
     pub fitted_tone_hz: f64,
@@ -64,6 +67,56 @@ pub(crate) struct Seed {
     pub start: f64,
     pub indices: Vec<usize>,
     pub score: f64,
+}
+
+/// An unmatched detection is retained as an outlier, never counted as evidence.
+/// Three or more detections require at least three independent flight matches.
+pub(crate) fn complete_seed(
+    point: Point,
+    start: f64,
+    anchor: usize,
+    track: usize,
+    initial_error: f64,
+    events: &[Event],
+    mut nearby: impl FnMut(f64, &Event) -> Vec<(usize, f64, f64, f64)>,
+) -> Option<Seed> {
+    let mut indices = vec![usize::MAX; events.len()];
+    indices[anchor] = track;
+    let mut score = initial_error;
+    let mut matched = 1;
+    for (i, event) in events.iter().enumerate().filter(|(i, _)| *i != anchor) {
+        let wanted = start + event.cpa_s;
+        let best = nearby(wanted, event)
+            .into_iter()
+            .filter(|(j, time, range, speed)| {
+                !indices.contains(j)
+                    && *speed >= 25.
+                    && *range <= 40000.
+                    && (time - wanted).abs() <= 45.
+            })
+            .map(|(j, time, range, speed)| {
+                (
+                    j,
+                    feature_error(event, range, speed) + ((time - wanted) / 10.).powi(2),
+                )
+            })
+            .filter(|(_, error)| *error <= 12.)
+            .min_by(|a, b| a.1.total_cmp(&b.1));
+        if let Some((j, error)) = best {
+            indices[i] = j;
+            score += error;
+            matched += 1;
+        }
+    }
+    if matched < events.len().min(3) {
+        return None;
+    }
+    Some(Seed {
+        point,
+        start,
+        indices,
+        score: (events.len() - matched) as f64 * 100. + score / matched as f64,
+    })
 }
 
 fn inferred_bounds(tracks: &[Track]) -> Result<Bounds> {
@@ -118,7 +171,6 @@ pub fn locate(
         p.alt = terrain.elevation(*p);
     }
     let c = job.sound_speed();
-    let first = &events[0];
     let (mut seeds, hypotheses) = if indexed {
         crate::index::corridor_seeds(job, events, tracks, bounds, terrain, control, progress)?
     } else {
@@ -142,55 +194,32 @@ pub fn locate(
             .flat_map_iter(|&point| {
                 let cpas: Vec<_> = tracks.iter().map(|t| t.cpa(point.ecef(), c)).collect();
                 let mut here = vec![];
-                for (i, cpa) in cpas.iter().enumerate() {
-                    let Some((arrival, range, speed)) = *cpa else {
-                        continue;
-                    };
-                    if speed < 25. || range > 40000. {
-                        continue;
-                    }
-                    let start = arrival - first.cpa_s;
-                    if !within_time(job, start) {
-                        continue;
-                    }
-                    let mut score = feature_error(first, range, speed);
-                    if score > 12. {
-                        continue;
-                    }
-                    let mut indices = vec![i];
-                    for event in events.iter().skip(1) {
-                        let wanted = start + event.cpa_s;
-                        let best = cpas
-                            .iter()
-                            .enumerate()
-                            .filter(|(j, _)| !indices.contains(j))
-                            .filter_map(|(j, cpa)| {
-                                let (time, range, speed) = (*cpa)?;
-                                if speed < 25. || range > 40000. || (time - wanted).abs() > 45. {
-                                    return None;
-                                }
-                                Some((
-                                    j,
-                                    feature_error(event, range, speed)
-                                        + ((time - wanted) / 10.).powi(2),
-                                ))
-                            })
-                            .min_by(|a, b| a.1.total_cmp(&b.1));
-                        if let Some((j, s)) = best {
-                            indices.push(j);
-                            score += s;
-                        } else {
-                            score = f64::INFINITY;
-                            break;
+                for (anchor, first) in events.iter().enumerate() {
+                    for (i, cpa) in cpas.iter().enumerate() {
+                        let Some((arrival, range, speed)) = *cpa else {
+                            continue;
+                        };
+                        if speed < 25. || range > 40000. {
+                            continue;
                         }
-                    }
-                    if score.is_finite() {
-                        here.push(Seed {
-                            point,
-                            start,
-                            indices,
-                            score,
-                        });
+                        let start = arrival - first.cpa_s;
+                        if !within_time(job, start) {
+                            continue;
+                        }
+                        let score = feature_error(first, range, speed);
+                        if score > 12. {
+                            continue;
+                        }
+                        if let Some(seed) =
+                            complete_seed(point, start, anchor, i, score, events, |_, _| {
+                                cpas.iter()
+                                    .enumerate()
+                                    .filter_map(|(j, cpa)| cpa.map(|(t, r, v)| (j, t, r, v)))
+                                    .collect()
+                            })
+                        {
+                            here.push(seed);
+                        }
                     }
                 }
                 here.sort_by(|a, b| a.score.total_cmp(&b.score));
@@ -218,6 +247,7 @@ pub fn locate(
     }
     let mut candidates = vec![];
     let count = diverse.len();
+    let mut incomplete_references = 0;
     for (i, mut seed) in diverse.into_iter().enumerate() {
         control.check()?;
         progress(
@@ -260,7 +290,15 @@ pub fn locate(
                 break;
             }
         }
-        let (score, matches) = exact_score(&seed, events, tracks, c);
+        let (objective, matches) = exact_score(&seed, events, tracks, c);
+        if !objective.is_finite() {
+            incomplete_references += 1;
+        }
+        let score = if objective.is_finite() {
+            match_error(&matches)
+        } else {
+            objective
+        };
         if !score.is_finite()
             || score > 1.0
             || matches
@@ -294,8 +332,10 @@ pub fn locate(
         });
     }
     candidates.sort_by(|a, b| {
-        (a.relative_error_percent + 0.25 * a.silence_conflicts.len() as f64)
-            .total_cmp(&(b.relative_error_percent + 0.25 * b.silence_conflicts.len() as f64))
+        b.matches.len().cmp(&a.matches.len()).then_with(|| {
+            (a.relative_error_percent + 0.25 * a.silence_conflicts.len() as f64)
+                .total_cmp(&(b.relative_error_percent + 0.25 * b.silence_conflicts.len() as f64))
+        })
     });
     let mut distinct: Vec<Candidate> = vec![];
     for candidate in candidates {
@@ -328,6 +368,12 @@ pub fn locate(
     }
     if distinct.is_empty() {
         warnings.push("No candidate passed the joint curve-fit threshold in the supplied flight data and search region. This does not prove the location is absent.".into());
+    }
+    if distinct.iter().any(|c| c.matches.len() < events.len()) {
+        warnings.push("Some candidates leave detections unmatched. Only explicitly indexed matches support a candidate; the other sounds may be unrelated or lack reference data. Partial consensus remains ambiguous.".into());
+    }
+    if incomplete_references > 0 {
+        warnings.push(format!("{incomplete_references} of {count} refined hypotheses lacked enough independent events with at least 90% reference-position coverage. A downloaded archive can still have receiver-coverage gaps; a denser reference source may be needed."));
     }
     if distinct.len() > 1
         && distinct[1].relative_error_percent < distinct[0].relative_error_percent * 1.5 + 0.05
@@ -392,10 +438,21 @@ pub fn silence_conflicts(
     conflicts
 }
 
+fn match_error(matches: &[Match]) -> f64 {
+    (matches
+        .iter()
+        .map(|m| (100. * m.rmse_hz / m.fitted_tone_hz).powi(2) + (1. - m.coverage).powi(2))
+        .sum::<f64>()
+        / matches.len() as f64)
+        .sqrt()
+}
+
 fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64, Vec<Match>) {
     let mut matches = vec![];
-    let mut relative = 0.;
-    for (event, &index) in events.iter().zip(&seed.indices) {
+    for (event_index, (event, &index)) in events.iter().zip(&seed.indices).enumerate() {
+        if index == usize::MAX {
+            continue;
+        }
         let track = &tracks[index];
         let mut predicted = vec![];
         let mut used = vec![];
@@ -413,7 +470,7 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
         }
         let coverage = used.len() as f64 / event.ridge.len() as f64;
         if coverage < 0.9 || ff == 0. {
-            return (f64::INFINITY, vec![]);
+            continue;
         }
         let base = yf / ff;
         let mut sum = 0.;
@@ -428,8 +485,8 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
             }
         }
         let rmse = (sum / used.len() as f64).sqrt();
-        relative += (100. * rmse / base).powi(2) + (1. - coverage).powi(2);
         matches.push(Match {
+            event_index: Some(event_index),
             aircraft: track.id.clone(),
             rmse_hz: rmse,
             fitted_tone_hz: base,
@@ -437,5 +494,20 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
             modeled_hz: predicted,
         });
     }
-    ((relative / events.len() as f64).sqrt(), matches)
+    let required = events.len().min(3);
+    if matches.len() < required {
+        return (f64::INFINITY, vec![]);
+    }
+    // Optimize a fixed-size independent consensus, so an unrelated detection
+    // cannot pull the clock or point away. Report every additional passing fit.
+    matches
+        .sort_by(|a, b| (a.rmse_hz / a.fitted_tone_hz).total_cmp(&(b.rmse_hz / b.fitted_tone_hz)));
+    let objective = match_error(&matches[..required]);
+    let passing = matches
+        .iter()
+        .take_while(|m| m.rmse_hz / m.fitted_tone_hz <= 0.015)
+        .count();
+    matches.truncate(passing.max(required));
+    matches.sort_by_key(|m| m.event_index);
+    (objective, matches)
 }

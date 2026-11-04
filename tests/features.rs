@@ -48,6 +48,7 @@ fn aircraft_classification_and_catalog_filtering() {
     let mut job = Job {
         tracks: path,
         type_catalog: Some(catalog),
+        aircraft_filter: AircraftFilter::PropellerOrUnknown,
         ..Default::default()
     };
     let data = soundgeo::data::load_for_job(&job, 230., &Control::default()).unwrap();
@@ -211,4 +212,93 @@ fn quiet_gap_constraint_uses_only_known_closer_propellers() {
             .iter()
             .all(|c| c.silence_conflicts.is_empty())
     );
+}
+
+#[test]
+fn unknown_clock_consensus_ignores_an_outlier_but_requires_three_flights() {
+    let (_dir, mut job, mut detected) = events();
+    let mut tracks = soundgeo::demo::tracks();
+    let mut third = detected[1].clone();
+    third.start_s += 250.;
+    third.end_s += 250.;
+    third.cpa_s += 250.;
+    for p in &mut third.ridge {
+        p.time_s += 250.;
+    }
+    detected.push(third);
+    let mut third_track = tracks[1].clone();
+    third_track.id = "THIRD".into();
+    for p in &mut third_track.samples {
+        p.time += 250.;
+    }
+    tracks.push(third_track);
+    // A curved non-aircraft detection occurs before the real flyovers.
+    let mut outlier = detected[0].clone();
+    outlier.start_s -= 100.;
+    outlier.end_s -= 100.;
+    outlier.cpa_s -= 100.;
+    for p in &mut outlier.ridge {
+        p.time_s -= 100.;
+    }
+    detected.insert(0, outlier);
+    for event in &mut detected {
+        event.start_s += 100.;
+        event.end_s += 100.;
+        event.cpa_s += 100.;
+        for p in &mut event.ridge {
+            p.time_s += 100.;
+        }
+    }
+    for mode in [SearchMode::RegionalGrid, SearchMode::FlightCorridors] {
+        job.search_mode = mode;
+        let mut terrain = Terrain::new(None, job.ground_m);
+        let result = soundgeo::search::locate(
+            &job,
+            &detected,
+            &tracks,
+            &mut terrain,
+            &Control::default(),
+            &|_, _| {},
+        )
+        .unwrap();
+        let best = result
+            .candidates
+            .first()
+            .expect("Three consistent flights must survive an unrelated detection");
+        assert_eq!(best.matches.len(), 3);
+        assert_eq!(
+            best.matches
+                .iter()
+                .map(|m| m.event_index.unwrap())
+                .collect::<Vec<_>>(),
+            vec![1, 2, 3]
+        );
+        assert!(
+            Point {
+                lat: best.latitude,
+                lon: best.longitude,
+                alt: best.ground_m
+            }
+            .distance(soundgeo::demo::TRUTH)
+                < 200.
+        );
+        assert!((best.recording_start_unix - (soundgeo::demo::EPOCH - 100.)).abs() < 3.);
+        let mut wrong = tracks.clone();
+        for p in &mut wrong[2].samples {
+            p.time += 140.;
+        }
+        let negative = soundgeo::search::locate(
+            &job,
+            &detected,
+            &wrong,
+            &mut terrain,
+            &Control::default(),
+            &|_, _| {},
+        )
+        .unwrap();
+        assert!(
+            negative.candidates.is_empty(),
+            "Two flights alone must not corroborate a recording with four detections"
+        );
+    }
 }

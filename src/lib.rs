@@ -1,4 +1,5 @@
 pub mod aircraft;
+pub mod archive;
 pub mod audio;
 pub mod data;
 pub mod demo;
@@ -23,6 +24,7 @@ use std::{
 pub struct Job {
     pub media: PathBuf,
     pub tracks: PathBuf,
+    pub archive: Option<archive::ArchiveRequest>,
     pub terrain: Option<PathBuf>,
     pub start_utc: Option<f64>,
     pub time_tolerance_s: f64,
@@ -32,6 +34,8 @@ pub struct Job {
     pub min_hz: f64,
     pub max_hz: f64,
     pub min_snr_db: f64,
+    pub fast_flyovers: bool,
+    pub fast_min_snr_db: f64,
     pub grid_m: f64,
     pub max_grid_points: usize,
     pub ffmpeg: Option<PathBuf>,
@@ -46,6 +50,7 @@ impl Default for Job {
         Self {
             media: PathBuf::new(),
             tracks: PathBuf::new(),
+            archive: None,
             terrain: None,
             start_utc: None,
             time_tolerance_s: 60.,
@@ -55,6 +60,8 @@ impl Default for Job {
             min_hz: 40.,
             max_hz: 400.,
             min_snr_db: 10.,
+            fast_flyovers: true,
+            fast_min_snr_db: 6.,
             grid_m: 200.,
             max_grid_points: 6000,
             ffmpeg: None,
@@ -71,7 +78,9 @@ impl Job {
         if !self.media.is_file() {
             bail!("Choose an existing video or audio file.");
         }
-        if !self.tracks.exists() {
+        if let Some(request) = &self.archive {
+            request.dates()?;
+        } else if !self.tracks.exists() {
             bail!("Choose a flight CSV, readsb trace, or archive folder.");
         }
         if !(self.min_hz.is_finite()
@@ -104,6 +113,9 @@ impl Job {
         }
         if !self.min_snr_db.is_finite() || !(6. ..=60.).contains(&self.min_snr_db) {
             bail!("Minimum signal contrast must be 6–60 dB.");
+        }
+        if !self.fast_min_snr_db.is_finite() || !(6. ..=60.).contains(&self.fast_min_snr_db) {
+            bail!("Short-pass signal contrast must be 6–60 dB.");
         }
         if !self.time_tolerance_s.is_finite() || !(0. ..=86400.).contains(&self.time_tolerance_s) {
             bail!("Time tolerance must be 0–86400 seconds.");
@@ -163,6 +175,8 @@ pub struct Report {
     #[serde(default)]
     pub hypotheses: usize,
     pub created_utc: String,
+    #[serde(default)]
+    pub reference_sources: Vec<PathBuf>,
 }
 
 pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<Report> {
@@ -190,7 +204,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     let mut report = Report { version: env!("CARGO_PKG_VERSION").into(), status: "insufficient_evidence".into(),
         media: job.media.clone(), job: job.clone(), duration_s, track_count: 0, events,
         candidates: vec![], warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
-        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339() };
+        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![] };
     if report.events.is_empty() {
         report.warnings.push("No sufficiently strong, curved descending tone was detected. Try a longer outdoor recording or adjust the frequency band.".into());
         return Ok(report);
@@ -198,8 +212,24 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     if report.events.len() == 1 && job.start_utc.is_none() {
         report.warnings.push("Only one flyover and no known clock: time and location can be ambiguous, especially on straight flight paths.".into());
     }
+    let sources = if let Some(request) = &job.archive {
+        request.ensure(control, &|m, p| progress(m, 0.34 + p * 0.02))?
+    } else {
+        vec![job.tracks.clone()]
+    };
+    let mut prepared = job.clone();
+    if prepared.type_catalog.is_none() {
+        prepared.type_catalog = sources
+            .iter()
+            .filter_map(|p| p.parent())
+            .map(|p| p.join("aircraft-types.json"))
+            .find(|p| p.is_file());
+    }
+    let job = &prepared;
+    report.job = job.clone();
+    report.reference_sources = sources.clone();
     progress("Reading historical flight paths", 0.36);
-    let dataset = data::load_for_job(job, duration_s, control)?;
+    let dataset = data::load_for_job_sources(job, &sources, duration_s, control)?;
     report.track_count = dataset.tracks.len();
     report.warnings.extend(dataset.warnings);
     let mut terrain = geo::Terrain::new(job.terrain.clone(), job.ground_m);
@@ -219,6 +249,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     report.warnings.extend(result.warnings);
     if !report.candidates.is_empty() {
         let ambiguous = report.events.len() < 2
+            || report.candidates[0].matches.len() < report.events.len()
             || (report.candidates.len() > 1
                 && report.candidates[1].relative_error_percent
                     < report.candidates[0].relative_error_percent * 1.5 + 0.05);
@@ -242,6 +273,8 @@ pub fn save_report(report: &Report, path: &std::path::Path) -> Result<()> {
         for input in [&report.media, &report.job.tracks]
             .into_iter()
             .chain(report.job.type_catalog.iter())
+            .chain(report.reference_sources.iter())
+            .chain(report.job.archive.iter().map(|a| &a.cache))
         {
             if let Ok(source) = input.canonicalize()
                 && (target == source || (source.is_dir() && target.starts_with(&source)))
@@ -249,6 +282,20 @@ pub fn save_report(report: &Report, path: &std::path::Path) -> Result<()> {
                 bail!(
                     "A report cannot overwrite an input recording, flight-data file, or catalog. Choose a separate output path."
                 );
+            }
+            // A split .aa archive reads all sibling parts. Protect those too.
+            if input.to_string_lossy().ends_with(".tar.aa")
+                && let (Some(parent), Some(name)) = (input.parent(), input.file_name())
+                && let Ok(parent) = parent.canonicalize()
+                && target.parent() == Some(parent.as_path())
+            {
+                let prefix = name.to_string_lossy().trim_end_matches("aa").to_owned();
+                if target
+                    .file_name()
+                    .is_some_and(|n| n.to_string_lossy().starts_with(&prefix))
+                {
+                    bail!("A report cannot overwrite a split flight-archive part");
+                }
             }
         }
     }

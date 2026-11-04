@@ -1,21 +1,23 @@
 # SoundGeo
 
-A native Rust desktop workbench that takes video or audio, extracts aircraft-like Doppler sweeps, and ranks recording locations against historical flight tracks. Unknown recording time is supported: the search fits **one shared UTC start time** across the detected events.
+A native Rust desktop workbench that takes video or audio, extracts aircraft-like Doppler sweeps, and ranks recording locations against historical flight tracks. Unknown recording time is supported: the search fits **one shared UTC start time** across matched events.
 
 **Research software.** It returns candidate coordinates and evidence, not a guaranteed location. A video alone cannot identify its date or location without suitable reference flight records. This is an independent implementation inspired by [colsto's demonstration](https://www.youtube.com/watch?v=UytYrhYLOKI); the creator did not release that pipeline's code.
+
+**Real-video acceptance is not met.** Four public-camera recordings from two known locations were tested with their recording clocks withheld. None produced an accepted location. See [the validation record](validation/README.md). Passing software tests must not be presented as real-world geolocation reliability.
 
 ## Desktop quick start
 
 1. Run `soundgeo.exe` on Windows, or `cargo run --release` from source.
 2. Choose or drop a video/audio file. FFmpeg must be on PATH, beside the executable, or selected in Advanced settings.
-3. Choose a flight CSV, a readsb trace, a split archive's `.tar.aa` file, or a folder containing these files. The app can download an ADSB.lol archive for a possible recording date. Downloads are explicit and can be several GB per day.
-4. Leave Recording time empty if unknown. Supply a UTC time and tolerance when available. If the date is unknown too, import a folder containing the dates you want searched.
+3. Leave **Download missing flight data automatically** enabled, enter a possible UTC date or a range of up to 31 days, and choose a cache folder. Analysis downloads missing parts and verifies/reuses completed archives. Each uncached day is several GB. Alternatively disable it and choose a CSV, readsb trace, split archive's `.tar.aa` file, or folder.
+4. Leave Recording time empty if unknown. Supply a UTC time and tolerance when available. A date range selects reference data without supplying the recording clock. If no date information exists, choose a finite range to investigate. The app cannot infer the date from an arbitrary video alone.
 5. Search area is optional: large extents automatically use indexed flight corridors. A smaller area makes searches faster. Optional SRTM terrain tiles improve the elevation model; otherwise enter an approximate ground elevation.
 6. Click **Analyze recording**. Inspect candidate locations, inferred time, observed/predicted curves, and limitations. Export a JSON report.
 
 **Try a synthetic demo** creates a noisy two-flyover recording and flight CSV locally. Click Analyze recording after it loads. It demonstrates the pipeline without flight-data downloads. Synthetic success does not establish real-world accuracy.
 
-No AI API key is needed. Recordings are never uploaded. Only the explicit archive download and map/source links use the network. Opening a map sends the selected coordinates to OpenStreetMap.
+No AI API key is needed. Recordings are never uploaded. Enabled archive/catalog downloads and map/source links use the network. Opening a map sends the selected coordinates to OpenStreetMap.
 
 ## Flight data
 
@@ -27,25 +29,26 @@ example,2026-09-08T10:00:00Z,35.0000,-110.0200,1200
 example,2026-09-08T10:00:02Z,35.0000,-110.0184,1200
 ```
 
-Optional CSV columns `type_code` (e.g. `C172`) and `type_description` (ICAO engine description, e.g. `L1P`) enable aircraft-type filtering. By default, known jets/rotorcraft are excluded and unknown types are retained with a warning. Choose **Known propellers only** to exclude unknowns. ICAO `L/S/A` aircraft with piston (`P`) or turboprop (`T`) engines are propellers; helicopters/gyrocopters are classified separately. Type descriptions can be resolved using the small [Mictronics catalog](https://github.com/Mictronics/readsb-protobuf/blob/dev/webapp/src/db/types.json), downloadable in the app or with `soundgeo catalog`. Archive download obtains this catalog automatically; a neighboring `aircraft-types.json` is detected and recorded in the report configuration.
+Optional CSV columns `type_code` (e.g. `C172`) and `type_description` (ICAO engine description, e.g. `L1P`) enable aircraft-type filtering. All aircraft types are included by default because both propeller and short jet tones are analyzed. Choose **Known propellers only** to exclude unknowns. ICAO `L/S/A` aircraft with piston (`P`) or turboprop (`T`) engines are propellers; helicopters/gyrocopters are classified separately. Type descriptions can be resolved using the small [Mictronics catalog](https://github.com/Mictronics/readsb-protobuf/blob/dev/webapp/src/db/types.json), downloadable in the app or with `soundgeo catalog`. Archive download obtains this catalog automatically; a neighboring `aircraft-types.json` is detected and recorded in the report configuration.
 
 Prefer geometric altitude with a consistent vertical datum. Correct pressure altitude before importing a custom CSV. Keep independent flights under separate aircraft IDs if practical. Input order is normalized, duplicate timestamps are removed, and large gaps or implausible speeds split tracks.
 
 Readsb JSON/gzip and ADSB.lol split TAR archives are read directly. Archives are streamed, **not extracted**. Absolute base timestamps are combined with per-point offsets. Geometric altitude is preferred; pressure-altitude fallback is reported. Ground/stale/missing-position records are skipped. Readsb data is reduced to a minimum two-second interval. A selected search area/time filters records during ingestion while keeping an acoustic buffer around the region.
 
-The downloader tries `prod-0`, then `prod-1`, then `staging-0` if a release is absent. Published SHA-256 digests are verified when supplied; every completed part also gets a local SHA-256 cache stamp. Corrupt cached parts are not reused. Interrupted/invalid partial parts are discarded, and cancellation interrupts stalled body reads. The release manifest and attribution are saved beside the archive. This does not prove coverage completeness or combine replicas automatically. Directory import merges multiple days. Near midnight, include adjacent days to retain crossing flights.
+The downloader tries `prod-0`, then `prod-1`, then `staging-0` if a release is absent. Published SHA-256 digests are verified when supplied; every completed part also gets a local SHA-256 cache stamp. Corrupt cached parts are not reused. Interrupted/invalid partial parts are discarded, and cancellation interrupts stalled body reads. The release manifest and attribution are saved beside the archive. A pinned manifest allows fully cached analysis offline. Date-range analysis loads only the requested dates, reports the exact reference paths, and fails if any requested day is unavailable; unrelated cached dates are not included. This does not prove coverage completeness or combine replicas automatically. Directory import merges multiple days. Near midnight, include adjacent days to retain crossing flights.
 
 References: [ADSB.lol historical archive](https://www.adsb.lol/docs/open-data/historical), [readsb trace schema](https://github.com/wiedehopf/readsb/blob/dev/README-json.md). The archive is licensed under [ODbL 1.0](https://opendatacommons.org/licenses/odbl/1-0/); a licence notice is saved with downloads. Respect attribution and applicable share-alike terms when redistributing derived databases.
 
 ## Method
 
 - FFmpeg decodes the first audio stream to 4 kHz mono. Input files are unchanged.
-- A Hann-window STFT (8192 samples, 0.5-second hop) exposes narrow tones. Viterbi tracing searches overlapping 90-second windows. Sustained signal contrast, sweep shape and a propagation-aware flyover fit reject weak/noisy traces and stationary tones.
+- A Hann-window STFT (8192 samples, 0.5-second hop) exposes low-frequency tones. A second scale (512 samples, 0.025-second hop, 500–1900 Hz) handles fast jet sweeps. Local spectral-median subtraction reduces interference from bass/wind. Viterbi tracing searches overlapping 90-second windows for slow curves and 10/20-second windows for short passes. Sustained signal contrast, sweep shape and a propagation-aware flyover fit reject weak/noisy traces and stationary tones.
 - Overlapping ridges/harmonics count as one event. Up to eight independent events are retained.
 - Regional searches use a spatial grid. Large-area searches index flight positions in time/ECEF buckets and generate observer hypotheses on both sides of aircraft corridors at a fixed spatial spacing, across several slant-distance estimates. Country extent does not force a coarser grid. Candidate flights for later events are retrieved from this index using both arrival-time and distance constraints. Unknown time comes from received closest approach, not the file's creation timestamp.
+- Every detection can seed the shared clock. For three or more detections, at least three distinct flight segments must fit; smaller recordings require every event. Unmatched detections remain explicit outliers. Partial consensus is reported as ambiguous, and no per-event clock shifts are allowed.
 - Candidate basins are refined using interpolated WGS84 ECEF positions. The model solves `t_receive = t_emit + range(t_emit) / c`, computes radial velocity at emission, then fits one source tone per event and a common recording start. It never extrapolates across gaps.
 - Quiet gaps between detected events provide a silence constraint with ten-second edge guards. A known propeller predicted to pass within 80% of the closest observed flyover's slant distance is recorded as a conflict. Default mode adds a ranking penalty; strict mode rejects conflicting candidates; off mode disables this evidence. Unknown types do not create silence conflicts. **Audibility is an assumption**, so strict mode can reject a true location.
-- Reports retain input paths/configuration, observed ridges, matched segment IDs, modeled frequencies, errors, warnings and inferred time. Error percentages are residual fit metrics, not probabilities.
+- Reports retain input paths/configuration, observed ridges, matched segment IDs and original event indices, modeled frequencies, errors, warnings and inferred time. Error percentages are residual fit metrics, not probabilities.
 
 ## Limits and scope
 
@@ -71,7 +74,7 @@ cargo run --release -- download --date 2026-09-08 --output cache
 cargo run --release -- catalog --output cache/aircraft-types.json
 ```
 
-Configuration paths are relative to the JSON file. `start_utc: null` means unknown time; `bounds: null` uses the retained flight-data extent. `demo/job.json` is a complete example. Analysis writes only the requested report; decoded audio is temporary. Closing the GUI requests cancellation.
+Configuration paths are relative to the JSON file. `start_utc: null` means unknown time; `bounds: null` uses the retained flight-data extent. `demo/job.json` is a complete example. Analysis writes the requested report and, when enabled, caches downloaded references; decoded audio is temporary. Closing the GUI requests cancellation.
 
 ### Automation
 
@@ -81,13 +84,17 @@ The package includes **`soundgeo-cli.exe`**, a dedicated console executable for 
 # Direct inputs, with unknown recording time and automatic search by default
 soundgeo-cli.exe analyze --input "recording.mp4" --tracks "flight-data" --output "report.json"
 
+# Download missing daily references automatically; no recording clock supplied
+soundgeo-cli.exe analyze --config "region.json" --input "recording.mp4" --date 2026-11-03 --cache "flight-cache" --output "report.json"
+
+# Search an inclusive date range with --date 2026-11-01 --date-to 2026-11-03
 # Saved settings, replacing the recording per batch item; JSON only on stdout
 soundgeo-cli.exe analyze --config "job.json" --input "next.mp4" --output - --quiet --require-match
 ```
 
-`--input` and `--tracks` override the configuration and resolve relative to the caller's working directory. Other configuration paths resolve relative to the JSON file. Without `--config`, both input paths are required and all other settings use their documented defaults. Use a job JSON to control terrain, search bounds/budgets, aircraft filtering and silence constraints.
+`--input` and `--tracks` override the configuration and resolve relative to the caller's working directory. Other configuration paths resolve relative to the JSON file. Without `--config`, `--input` and either `--tracks` or `--date` are required; other settings use their defaults. `--date` enables automatic references and overrides a configured archive request. `--tracks` disables a configured automatic request unless `--date` is also given. `--cache` resolves from the caller's working directory and defaults to `flight-cache`. Use a job JSON to control terrain, search bounds/budgets, aircraft filtering and silence constraints.
 
-`--output -` emits the complete report as JSON to stdout; progress goes to stderr. `--quiet` suppresses progress/success text, but preserves JSON and errors. Report fields include `status`, `candidates`, `events`, `warnings`, the effective `job`, and `version`. Each candidate includes coordinates, inferred UTC start and per-event evidence. Exit codes: **0** completed (including no candidates); **1** input, processing or I/O failure; **2** invalid CLI arguments; **3** completed without candidates when `--require-match` is set. Code 3 still writes the report. Candidate presence is not a confidence guarantee.
+`--output -` emits the complete report as JSON to stdout; progress goes to stderr. `--quiet` suppresses progress/success text, but preserves JSON and errors. Report fields include `status`, `candidates`, `events`, `warnings`, the effective `job`, exact `reference_sources`, and `version`. Each candidate includes coordinates, inferred UTC start and per-event evidence. Exit codes: **0** completed (including no candidates); **1** input, processing or I/O failure; **2** invalid CLI arguments; **3** completed without candidates when `--require-match` is set. Code 3 still writes the report. Candidate presence is not a confidence guarantee.
 
 On Windows, use `soundgeo-cli.exe` for automation so the shell waits normally and exposes `$LASTEXITCODE`. For example: `$report = & .\soundgeo-cli.exe analyze --config .\Demo\job.json --output - --quiet | ConvertFrom-Json`. Python can use `subprocess.run([...], capture_output=True, text=True)` and parse stdout with `json.loads`.
 
@@ -98,3 +105,7 @@ cargo test --release --locked
 ```
 
 The integration test independently synthesizes two flyovers from emission-time phase, encodes an MP4 with AAC, analyzes that video with an unknown clock, and checks location/start-time recovery. A country-extent fixture adds 64 distant/differently timed flights and verifies indexed recovery without coarsening. Other tests cover aircraft catalogs/filtering, quiet-gap conflicts and strict rejection, propagation/Doppler signs, missing gaps, invalid inputs, trace units, split archives, terrain, budgets, stalled-network cancellation, checksums/corrupt caches, truncated downloads, and noise/hum/silence rejection. CI runs formatting, strict Clippy, every test and the release build on both Windows and Linux.
+
+Automatic references can also be configured in JSON: `"archive": {"date_from":"2026-11-01", "date_to":"2026-11-03", "cache":"flight-cache"}`. Cache paths in JSON resolve relative to that file. Set `"start_utc": null` to withhold the recording clock. Short-pass detection is enabled by default; `"fast_flyovers": false` disables it.
+
+The short-jet regression independently synthesizes fast fan tones under strong bass and stationary hum. The consensus regression retains the true unknown-clock location with an unrelated detection, then rejects it when one of the three supporting flights has inconsistent timing.

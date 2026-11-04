@@ -1,0 +1,89 @@
+{
+  "accuracy_target_m": 250,
+  "cases": [
+    {
+      "id": "midway",
+      "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+      "sha256": "38e22e7253db6eb19c1fb90d2d852ad6807467d3705f8d28e5635a2d6766b276",
+      "duration_s": 1800.0,
+      "utc_day": "2026-11-03",
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      },
+      "ground_m": 180,
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209,
+        "basis": "Published StreamTime LIVE camera coordinates in the source description"
+      },
+      "clock_supplied": false,
+      "role": "development"
+    },
+    {
+      "id": "southampton",
+      "source": "https://www.youtube.com/watch?v=QO-hO_kwwmY",
+      "sha256": "88fadc80a7209432e01350aec3adc901e296e3174ee1f469022d6ec47c1d7e30",
+      "duration_s": 3600.0,
+      "utc_day": "2026-11-03",
+      "bounds": {
+        "east": -1.05,
+        "north": 51.16,
+        "south": 50.8,
+        "west": -1.63
+      },
+      "ground_m": 10,
+      "ground_truth": {
+        "latitude": 50.89677,
+        "longitude": -1.40477,
+        "basis": "La Regata public ferry-camera host building; approximate building centroid, about 15 m uncertainty"
+      },
+      "clock_supplied": false,
+      "role": "development"
+    },
+    {
+      "id": "midway-arrivals",
+      "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+      "sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+      "duration_s": 1200.0,
+      "utc_day": "2026-11-03",
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      },
+      "ground_m": 180,
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209,
+        "basis": "Published StreamTime LIVE camera coordinates in the source description"
+      },
+      "clock_supplied": false,
+      "role": "development"
+    },
+    {
+      "id": "midway-holdout",
+      "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+      "sha256": "985b9035059956f43f989d8c14049d00d08679902e8b3d421fa7f1c9f63d6f04",
+      "duration_s": 1800.0,
+      "utc_day": "2026-11-03",
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      },
+      "ground_m": 180,
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209,
+        "basis": "Published StreamTime LIVE camera coordinates in the source description"
+      },
+      "clock_supplied": false,
+      "role": "holdout"
+    }
+  ]
+}

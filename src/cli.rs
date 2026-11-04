@@ -31,8 +31,17 @@ enum Commands {
         #[arg(long, required_unless_present = "config")]
         input: Option<PathBuf>,
         /// Flight data path; overrides the configuration's tracks path.
-        #[arg(long, required_unless_present = "config")]
+        #[arg(long, required_unless_present_any = ["config", "date"])]
         tracks: Option<PathBuf>,
+        /// Download/reuse the full UTC day's flight data; recording time stays unknown.
+        #[arg(long)]
+        date: Option<String>,
+        /// Last inclusive archive date, when searching several possible days.
+        #[arg(long, requires = "date")]
+        date_to: Option<String>,
+        /// Cache directory for automatically fetched flight archives.
+        #[arg(long, requires = "date")]
+        cache: Option<PathBuf>,
         /// Report file, or - for JSON on stdout.
         #[arg(long)]
         output: PathBuf,
@@ -89,6 +98,9 @@ fn run(args: Args) -> Result<u8> {
             config,
             input,
             tracks,
+            date,
+            date_to,
+            cache,
             output,
             require_match,
         }) => {
@@ -111,9 +123,14 @@ fn run(args: Args) -> Result<u8> {
                 .and_then(std::path::Path::parent)
                 .unwrap_or_else(|| std::path::Path::new("."));
             for path in [&mut job.media, &mut job.tracks] {
-                if path.is_relative() {
+                if !path.as_os_str().is_empty() && path.is_relative() {
                     *path = parent.join(&*path);
                 }
+            }
+            if let Some(request) = &mut job.archive
+                && request.cache.is_relative()
+            {
+                request.cache = parent.join(&request.cache);
             }
             if let Some(path) = &mut job.terrain
                 && path.is_relative()
@@ -137,6 +154,14 @@ fn run(args: Args) -> Result<u8> {
             }
             if let Some(tracks) = tracks {
                 job.tracks = tracks;
+                job.archive = None;
+            }
+            if let Some(date_from) = date {
+                job.archive = Some(soundgeo::archive::ArchiveRequest {
+                    date_from,
+                    date_to,
+                    cache: cache.unwrap_or_else(|| PathBuf::from("flight-cache")),
+                });
             }
             let report = soundgeo::analyze(&job, &Control::default(), &progress)?;
             if output == std::path::Path::new("-") {
