@@ -29,7 +29,7 @@ The Lake Hood and Southampton tests failed.
 
 The latest changes have not completed this full benchmark.
 
-All 49 software tests pass locally. CI also checks Windows and Ubuntu.
+All 51 software tests pass locally. CI also checks Windows and Ubuntu.
 Software test success does not establish location accuracy.
 See the [validation record](validation/README.md) for results, data sources, and failures.
 

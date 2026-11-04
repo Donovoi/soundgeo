@@ -5,7 +5,10 @@ use crate::{
     audio::Event,
     geo::{Bounds, Point, Terrain, Vec3},
     model::Track,
-    search::{Seed, complete_seed, feature_error, score_and_prune_seeds, within_time},
+    search::{
+        FEATURE_ERROR_LIMIT, Seed, complete_seed, feature_error, feature_range_factor,
+        score_and_prune_seeds, within_time,
+    },
 };
 use anyhow::{Result, bail};
 use rayon::prelude::*;
@@ -218,6 +221,29 @@ fn track_seeds(
     let c = job.sound_speed();
     let first = &events[anchor];
     let mut seeds = vec![];
+    let range_factor = feature_range_factor();
+    // The straight-flight audio summary can underestimate range on turns or
+    // partial curves. Sample the range interval already allowed by the feature
+    // gate; the previous 0.5..2 interval could reject all valid proposals.
+    let mut slants: Vec<_> = [
+        1. / range_factor,
+        0.125,
+        0.25,
+        0.5,
+        0.75,
+        1.,
+        1.5,
+        2.,
+        3.,
+        5.,
+        8.,
+        range_factor,
+    ]
+    .into_iter()
+    .map(|scale| (first.slant_m.max(100.) * scale).min(40000.))
+    .collect();
+    slants.sort_by(f64::total_cmp);
+    slants.dedup_by(|a, b| (*a - *b).abs() < 1.);
     for pair in track.samples.windows(2) {
         let dt = pair[1].time - pair[0].time;
         if dt <= 0. || dt > 60. {
@@ -253,8 +279,7 @@ fn track_seeds(
                 continue;
             }
             let anchor_ground = terrain.elevation(plane);
-            for scale in [0.5, 0.75, 1., 1.5, 2.] {
-                let slant = (first.slant_m * scale).min(40000.);
+            for &slant in &slants {
                 let height = plane.alt - anchor_ground;
                 if slant < height.abs() {
                     continue;
@@ -301,12 +326,13 @@ fn track_seeds(
                         continue;
                     }
                     let score = feature_error(first, range, actual_speed);
-                    if score > 12. {
+                    if score > FEATURE_ERROR_LIMIT {
                         continue;
                     }
                     if let Some(seed) =
                         complete_seed(point, start, anchor, id, score, events, |wanted, event| {
-                            let radius = (event.slant_m * 2.5).clamp(5000., 40000.);
+                            let radius =
+                                (event.slant_m.max(100.) * range_factor).clamp(5000., 40000.);
                             index
                                 .nearby(point, wanted, radius, c)
                                 .into_iter()

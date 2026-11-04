@@ -354,7 +354,7 @@ pub(crate) fn complete_seed(
                     feature_error(event, range, speed) + ((time - wanted) / 10.).powi(2),
                 )
             })
-            .filter(|(_, error)| *error <= 12.)
+            .filter(|(_, error)| *error <= FEATURE_ERROR_LIMIT)
             .collect();
         choices.sort_by(|a, b| a.1.total_cmp(&b.1).then(a.0.cmp(&b.0)));
         choices.truncate(3);
@@ -411,8 +411,14 @@ fn inferred_bounds(tracks: &[Track]) -> Result<Bounds> {
     b.validate()?;
     Ok(b)
 }
+pub(crate) const FEATURE_ERROR_LIMIT: f64 = 12.;
+const RANGE_FEATURE_SIGMA: f64 = 0.7;
+pub(crate) fn feature_range_factor() -> f64 {
+    (RANGE_FEATURE_SIGMA * FEATURE_ERROR_LIMIT.sqrt()).exp()
+}
 pub(crate) fn feature_error(e: &Event, range: f64, speed: f64) -> f64 {
-    ((range / e.slant_m.max(100.)).ln() / 0.7).powi(2) + ((speed / e.speed_mps).ln() / 0.5).powi(2)
+    ((range / e.slant_m.max(100.)).ln() / RANGE_FEATURE_SIGMA).powi(2)
+        + ((speed / e.speed_mps).ln() / 0.5).powi(2)
 }
 pub(crate) fn within_time(job: &Job, start: f64) -> bool {
     job.start_utc
@@ -478,7 +484,7 @@ pub fn locate(
                             continue;
                         }
                         let score = feature_error(first, range, speed);
-                        if score > 12. {
+                        if score > FEATURE_ERROR_LIMIT {
                             continue;
                         }
                         if let Some(seed) =
@@ -1252,6 +1258,79 @@ mod tests {
                 .map(|c| c.matches[0].aircraft.as_str()),
             Some(real.id.as_str()),
             "The measured curve must survive regional pruning even when CPA summary features favor several other flights"
+        );
+    }
+
+    #[test]
+    fn indexed_search_retains_ranges_allowed_by_its_feature_gate() {
+        let tracks = demo::tracks();
+        let c = Job::default().sound_speed();
+        let events: Vec<_> = tracks
+            .iter()
+            .enumerate()
+            .map(|(n, track)| {
+                let (arrival, range, speed) = track.cpa(demo::TRUTH.ecef(), c).unwrap();
+                let begin = if n == 0 { 10. } else { 135. };
+                let event = Event {
+                    activity_span_s: None,
+                    start_s: begin,
+                    end_s: begin + 69.5,
+                    cpa_s: arrival - demo::EPOCH,
+                    base_hz: 100.,
+                    speed_mps: speed,
+                    slant_m: range * 0.2,
+                    fit_rmse_hz: 0.,
+                    contrast_db: 20.,
+                    ridge: (0..140)
+                        .map(|i| {
+                            let time_s = begin + i as f64 * 0.5;
+                            RidgePoint {
+                                time_s,
+                                hz: 100.
+                                    * track
+                                        .factor(demo::TRUTH.ecef(), demo::EPOCH + time_s, c)
+                                        .unwrap(),
+                                contrast_db: 20.,
+                            }
+                        })
+                        .collect(),
+                };
+                assert!(feature_error(&event, range, speed) < 12.);
+                event
+            })
+            .collect();
+        let job = Job {
+            bounds: Some(Bounds {
+                south: 34.97,
+                north: 35.03,
+                west: -110.04,
+                east: -109.96,
+            }),
+            ground_m: demo::TRUTH.alt,
+            grid_m: 200.,
+            search_mode: SearchMode::FlightCorridors,
+            silence_mode: SilenceMode::Off,
+            max_hypotheses: 1_000_000,
+            ..Default::default()
+        };
+        let result = locate(
+            &job,
+            &events,
+            &tracks,
+            &mut Terrain::new(None, job.ground_m),
+            &Control::default(),
+            &|_, _| {},
+        )
+        .unwrap();
+        assert!(
+            result.candidates.iter().any(|candidate| Point {
+                lat: candidate.latitude,
+                lon: candidate.longitude,
+                alt: candidate.ground_m
+            }
+            .distance(demo::TRUTH)
+                < 250.),
+            "A permitted range error must not eliminate every observer proposal before curve fitting"
         );
     }
 

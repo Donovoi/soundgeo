@@ -325,6 +325,9 @@ fn detect_scale(
                 .iter()
                 .map(|row| row[band_low - low..=band_high - low].to_vec())
                 .collect();
+            if !fast {
+                suppress_stationary_tones(&mut patch);
+            }
             for _ in 0..4 {
                 let ridge = trace(&patch, band_low, start, fft_size, hop);
                 if let Some(event) = fit(&ridge, job, fast)
@@ -354,6 +357,22 @@ fn detect_scale(
     Ok(found)
 }
 
+fn suppress_stationary_tones(patch: &mut [Vec<f32>]) {
+    let Some(first) = patch.first() else { return };
+    let bins = first.len();
+    let mut column = Vec::with_capacity(patch.len());
+    for bin in 0..bins {
+        column.clear();
+        column.extend(patch.iter().map(|row| row[bin]));
+        let middle = column.len() / 2;
+        column.select_nth_unstable_by(middle, f32::total_cmp);
+        let persistent = column[middle].max(0.);
+        for row in patch.iter_mut() {
+            row[bin] -= persistent;
+        }
+    }
+}
+
 fn extend_slow_event(
     event: &Event,
     spectrum: &[Vec<f32>],
@@ -376,32 +395,27 @@ fn extend_slow_event(
         return None;
     }
     let width = (event.base_hz * 0.04).max(4.);
-    let patch: Vec<Vec<f32>> = spectrum[start..end]
-        .iter()
-        .enumerate()
-        .map(|(i, row)| {
-            let t = ((start + i) * hop + fft_size / 2) as f64 / SAMPLE_RATE as f64;
-            let predicted = event.base_hz
-                * straight_factor(
-                    t,
-                    event.cpa_s,
-                    event.speed_mps,
-                    event.slant_m,
-                    job.sound_speed(),
-                );
-            row.iter()
-                .enumerate()
-                .map(|(bin, &value)| {
-                    let hz = (low + bin) as f64 * SAMPLE_RATE as f64 / fft_size as f64;
-                    if (hz - predicted).abs() <= width {
-                        value
-                    } else {
-                        -50.
-                    }
-                })
-                .collect()
-        })
-        .collect();
+    let mut patch = spectrum[start..end].to_vec();
+    // Remove persistent tones before masking the guided band. Masked samples
+    // must not distort the background estimate at a frequency crossing.
+    suppress_stationary_tones(&mut patch);
+    for (i, row) in patch.iter_mut().enumerate() {
+        let t = ((start + i) * hop + fft_size / 2) as f64 / SAMPLE_RATE as f64;
+        let predicted = event.base_hz
+            * straight_factor(
+                t,
+                event.cpa_s,
+                event.speed_mps,
+                event.slant_m,
+                job.sound_speed(),
+            );
+        for (bin, value) in row.iter_mut().enumerate() {
+            let hz = (low + bin) as f64 * SAMPLE_RATE as f64 / fft_size as f64;
+            if (hz - predicted).abs() > width {
+                *value = -50.;
+            }
+        }
+    }
     let ridge = trace(&patch, low, start, fft_size, hop);
     let refined = fit(&ridge, job, false)?;
     if refined.end_s - refined.start_s < event.end_s - event.start_s + 20.

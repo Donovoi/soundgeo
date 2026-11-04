@@ -68,10 +68,17 @@ This resolves conflicts where one early choice would block another event's only 
 Other independent matches can provide additional support during refinement.
 Final refinement and acceptance use every retained sample in each sound curve.
 These bounded choices do not make the search exhaustive.
+Corridor seeds sample the distance-ratio range allowed by the existing feature-error limit.
+Flight queries use the same range bound. The maximum reference distance remains 40 km.
+The straight-flight audio estimate can be inaccurate for partial curves or turning aircraft.
+The wider proposal range can increase computation and consume the hypothesis budget sooner.
 
 ## Long sound curves
 
 The first scan uses overlapping 90-second windows for slow flyovers.
+Each slow window subtracts the positive time median at each frequency before tracing.
+This prevents persistent tones from consuming the tracing budget or attracting a crossing curve.
+The short-jet scan is unchanged.
 A detected curve can guide a second trace through up to 180 seconds of audio.
 The second trace uses the original spectrum. It must retain sufficient signal strength and fit quality.
 When slow curves overlap, selection favors evidence before and after the closest approach.

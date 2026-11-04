@@ -169,3 +169,55 @@ fn long_propeller_pass_retains_both_sides_of_its_frequency_curve() {
     assert!((event.speed_mps / speed - 1.).abs() < 0.15);
     assert!((event.slant_m / slant - 1.).abs() < 0.2);
 }
+
+#[test]
+fn persistent_tones_do_not_exhaust_the_slow_curve_tracing_budget() {
+    let (speed, slant, tone, center, c) = (80_f64, 1800_f64, 120_f64, 70_f64, 340.39_f64);
+    let rate = audio::SAMPLE_RATE;
+    let mut random = 3983_u64;
+    let samples: Vec<f32> = (0..160 * rate)
+        .map(|i| {
+            let receive = i as f64 / rate as f64;
+            let (mut lo, mut hi) = (receive - 90., receive);
+            for _ in 0..32 {
+                let emit = (lo + hi) * 0.5;
+                if emit + f64::hypot(speed * (emit - center), slant) / c < receive {
+                    lo = emit;
+                } else {
+                    hi = emit;
+                }
+            }
+            let emit = (lo + hi) * 0.5;
+            let envelope = (1. - ((emit - center) / 65.).powi(2)).max(0.);
+            random = random.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let noise = (random >> 32) as u32 as f64 / u32::MAX as f64 - 0.5;
+            let stationary: f64 = [82., 100., 119., 139., 160.]
+                .iter()
+                .map(|hz| 0.15 * (std::f64::consts::TAU * hz * receive).sin())
+                .sum();
+            (stationary
+                + 0.001 * noise
+                + 0.025 * envelope * (std::f64::consts::TAU * tone * emit).sin()) as f32
+        })
+        .collect();
+    let job = Job {
+        fast_flyovers: false,
+        ..Default::default()
+    };
+    let events = audio::detect(&samples, &job, &Control::default(), &|_, _| {}).unwrap();
+    let received_cpa = center + slant / c;
+    let event = events
+        .iter()
+        .find(|e| (e.cpa_s - received_cpa).abs() < 3.)
+        .expect("A moving tone must survive five louder stationary tones, including crossings");
+    assert!(
+        (event.speed_mps / speed - 1.).abs() < 0.15,
+        "speed {}",
+        event.speed_mps
+    );
+    assert!(
+        (event.slant_m / slant - 1.).abs() < 0.25,
+        "slant {}",
+        event.slant_m
+    );
+}
