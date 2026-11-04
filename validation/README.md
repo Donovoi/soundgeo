@@ -1,7 +1,7 @@
 # Real-video validation
 
 This is a failing acceptance benchmark, not a claim of reliable geolocation.
-Nine recordings from three public cameras were captured locally on 2026-11-04.
+Ten recordings from three public cameras were captured locally on 2026-11-04.
 The known UTC reference day and an approximately 40 km regional search box are
 provided; the recording clock, camera coordinates, aircraft identities, tone
 bands and flyover intervals are not supplied to the application. Every solver
@@ -324,3 +324,33 @@ entire November 1 UTC day. A lower sound speed and an approximate QNH correction
 for pressure-altitude fallbacks improved one clear event but did not establish
 three jointly consistent flyovers. It used the known location/time for diagnosis,
 is excluded from acceptance, and has not changed the production weather model.
+
+
+## Fresh Lake Hood capture and coarse clock profiling
+
+A tenth case, `lake-hood-nov1-later`, is a separate 60-minute November 1 capture
+from the same public camera and free full-day Alaska reference cache. Its first
+frame independently confirms the date. Live-playlist discontinuities were
+avoided by deriving its DVR sequence from the earlier verified November 1
+capture. The application still receives no recording clock. Under
+`8559bd7c047a31f1d317d07a1a70729e1c142985`, it produced seven wrong ambiguous
+candidates, the first **10,579.371 m** away. The later Midway case remained empty.
+Both are failures. All 38 software tests and required checks passed on Windows
+and Ubuntu for that revision.
+
+The full nine-case diversity run at
+`3b724b4d7ee406019a48f944fe48bd0a3278153a` retained the first Midway result at
+82.526 m, but introduced additional wrong lower-ranked alternatives. All other
+cases failed: arrivals' top candidate was 27,613.271 m away; seven cases returned
+no candidate. `results.json` now explicitly records per-case latest revisions
+and how many cases have been tested against the newest evaluated revision;
+its combined latest-case totals do not imply a complete run of one executable.
+
+A further regression reproduced an inconsistent model between stages: early
+beam ranking assumed unit clock rate even when final refinement allowed drift.
+Coarse scoring now profiles the same bounded shared rate, preserving the
+anchor's received CPA. It uses 16 samples spread across each curve to bound
+proposal-search cost; final ranking, refinement and all acceptance thresholds
+still use every observed sample. The independent long-recording integration
+regression remains in place. All 39 local software tests, formatting, strict
+Clippy and release compilation pass. Two targeted real reruns are in progress.

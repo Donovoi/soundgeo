@@ -227,6 +227,32 @@
       "reference_provider": "adsb_exchange_free_sample",
       "max_hypotheses": 20000000,
       "sample_region": "alaska"
+    },
+    {
+      "id": "lake-hood-nov1-later",
+      "source": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+      "sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "duration_s": 3600.0,
+      "requested_duration_s": 3600,
+      "utc_day": "2026-11-01",
+      "bounds": {
+        "south": 61.0,
+        "north": 61.36,
+        "west": -150.36,
+        "east": -149.62
+      },
+      "ground_m": 27,
+      "ground_datum": "egm96",
+      "ground_truth": {
+        "latitude": 61.179633,
+        "longitude": -149.9719665,
+        "basis": "Public camera owner Google Maps pin at Alaska Aviation Museum: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+      },
+      "clock_supplied": false,
+      "role": "later_capture_after_early_curve_scoring",
+      "reference_provider": "adsb_exchange_free_sample",
+      "max_hypotheses": 20000000,
+      "sample_region": "alaska"
     }
   ]
 }

@@ -72,6 +72,7 @@ pub(crate) struct Seed {
     pub point: Point,
     pub start: f64,
     pub clock_rate: f64,
+    pub anchor: usize,
     pub indices: Vec<usize>,
     pub score: f64,
 }
@@ -106,18 +107,100 @@ pub(crate) fn prune_coarse_seeds(seeds: &mut Vec<Seed>, limit: usize, spacing: f
 pub(crate) fn score_and_prune_seeds(
     seeds: &mut Vec<Seed>,
     limit: usize,
-    spacing: f64,
+    job: &Job,
     events: &[Event],
     tracks: &[Track],
-    c: f64,
     control: &Control,
 ) -> Result<()> {
     for seed in seeds.iter_mut() {
         control.check()?;
-        seed.score = exact_score(seed, events, tracks, c).0;
+        profile_seed_clock(seed, job, events, tracks);
     }
-    prune_coarse_seeds(seeds, limit, spacing);
+    prune_coarse_seeds(seeds, limit, job.grid_m);
     Ok(())
+}
+
+fn allowed_clock_drift(job: &Job, events: &[Event]) -> f64 {
+    let first = events.iter().map(|e| e.cpa_s).fold(f64::INFINITY, f64::min);
+    let last = events.iter().map(|e| e.cpa_s).fold(0., f64::max);
+    if events.len() >= 3 && last - first >= 600. {
+        job.max_clock_drift_ppm * 1e-6
+    } else {
+        0.
+    }
+}
+
+/// Proposal ranking only: sample the curve across its full extent. Final
+/// optimization and acceptance still evaluate every observed ridge sample.
+fn sampled_curve_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> f64 {
+    let observer = seed.point.ecef();
+    let mut errors = Vec::new();
+    for (event, &index) in events.iter().zip(&seed.indices) {
+        let n = event.ridge.len().min(16);
+        if index == usize::MAX || n < 2 {
+            continue;
+        }
+        let (mut ff, mut yf, mut yy, mut used) = (0., 0., 0., 0);
+        for i in 0..n {
+            let p = &event.ridge[i * (event.ridge.len() - 1) / (n - 1)];
+            if let Some(f) =
+                tracks[index].factor(observer, seed.start + seed.clock_rate * p.time_s, c)
+            {
+                ff += f * f;
+                yf += p.hz * f;
+                yy += p.hz * p.hz;
+                used += 1;
+            }
+        }
+        let coverage = used as f64 / n as f64;
+        if coverage >= 0.9 && ff > 0. && yf > 0. {
+            let base = yf / ff;
+            let mse = (yy - yf * yf / ff).max(0.) / used as f64;
+            errors.push(10000. * mse / base.powi(2) + (1. - coverage).powi(2));
+        }
+    }
+    let required = events.len().min(3);
+    if required == 0 || errors.len() < required {
+        return f64::INFINITY;
+    }
+    errors.sort_by(f64::total_cmp);
+    (errors[..required].iter().sum::<f64>() / required as f64).sqrt()
+}
+
+fn profile_seed_clock(seed: &mut Seed, job: &Job, events: &[Event], tracks: &[Track]) {
+    let c = job.sound_speed();
+    let drift = allowed_clock_drift(job, events);
+    seed.score = sampled_curve_score(seed, events, tracks, c);
+    if drift == 0. {
+        return;
+    }
+    // The initial start was derived from this anchor's received CPA. Preserve
+    // that observation while profiling one rate shared by all associations.
+    let pivot = events[seed.anchor].cpa_s;
+    let unit_start = seed.start + (seed.clock_rate - 1.) * pivot;
+    let try_rate = |seed: &mut Seed, rate: f64| {
+        let start = unit_start - (rate - 1.) * pivot;
+        if (rate - 1.).abs() > drift + 1e-12 || !within_time(job, start) {
+            return;
+        }
+        let mut trial = seed.clone();
+        trial.clock_rate = rate;
+        trial.start = start;
+        trial.score = sampled_curve_score(&trial, events, tracks, c);
+        if trial.score < seed.score {
+            *seed = trial;
+        }
+    };
+    for step in -4..=4 {
+        try_rate(seed, 1. + drift * step as f64 / 4.);
+    }
+    let mut step = drift / 4.;
+    for _ in 0..6 {
+        step *= 0.5;
+        for sign in [-1., 1.] {
+            try_rate(seed, seed.clock_rate + sign * step);
+        }
+    }
 }
 
 /// An unmatched detection is retained as an outlier, never counted as evidence.
@@ -166,6 +249,7 @@ pub(crate) fn complete_seed(
         point,
         start,
         clock_rate: 1.,
+        anchor,
         indices,
         // Coarse selection must use the same consensus size as exact fitting.
         // Rewarding every loose association first lets unrelated sounds crowd
@@ -298,6 +382,7 @@ pub fn locate(
     // proposals using all observed curve samples before applying the final cap.
     for seed in &mut seeds {
         control.check()?;
+        profile_seed_clock(seed, job, events, tracks);
         seed.score = exact_score(seed, events, tracks, c).0;
     }
     seeds.sort_by(|a, b| a.score.total_cmp(&b.score));
@@ -324,11 +409,7 @@ pub fn locate(
     let first_event = events.iter().map(|e| e.cpa_s).fold(f64::INFINITY, f64::min);
     let last_event = events.iter().map(|e| e.cpa_s).fold(0., f64::max);
     // A short recording cannot constrain another clock parameter independently.
-    let drift = if events.len() >= 3 && last_event - first_event >= 600. {
-        job.max_clock_drift_ppm * 1e-6
-    } else {
-        0.
-    };
+    let drift = allowed_clock_drift(job, events);
     let pivot = if job.start_utc.is_none() {
         (first_event + last_event) * 0.5
     } else {
@@ -711,6 +792,7 @@ mod tests {
             point,
             start: demo::EPOCH,
             clock_rate: 1.,
+            anchor: 0,
             indices: vec![0],
             score: 0.,
         };
@@ -763,6 +845,7 @@ mod tests {
             point: demo::TRUTH,
             start: demo::EPOCH,
             clock_rate: 1.,
+            anchor: 0,
             indices: vec![0, 1, 2, 3],
             score: 0.,
         };
@@ -783,6 +866,7 @@ mod tests {
             point: demo::TRUTH,
             start: demo::EPOCH,
             clock_rate: 1.,
+            anchor: 0,
             indices: vec![0, 1, 2],
             score: 0.,
         };
@@ -844,6 +928,7 @@ mod tests {
             point: demo::TRUTH,
             start: demo::EPOCH,
             clock_rate: 1.,
+            anchor: 0,
             indices: vec![0],
             score: 1.,
         };
@@ -854,10 +939,9 @@ mod tests {
         score_and_prune_seeds(
             &mut seeds,
             1,
-            200.,
+            &Job::default(),
             &[event],
             &tracks,
-            340.39,
             &Control::default(),
         )
         .unwrap();
@@ -865,5 +949,73 @@ mod tests {
             seeds[0].point.distance(demo::TRUTH) < 1.,
             "A cheap CPA summary must not evict the proposal whose full curve fits"
         );
+    }
+    #[test]
+    fn coarse_scoring_profiles_the_same_shared_clock_as_refinement() {
+        let rate = 1.004;
+        let mut events = vec![];
+        let mut tracks = vec![];
+        for shift in [0., 1000., 5000.] {
+            let mut track = demo::tracks().remove(0);
+            for p in &mut track.samples {
+                p.time += shift;
+            }
+            let ridge = (0..120)
+                .map(|i| {
+                    let time_s = (10. + i as f64 * 0.5 + shift) / rate;
+                    RidgePoint {
+                        time_s,
+                        hz: 100.
+                            * track
+                                .factor(demo::TRUTH.ecef(), demo::EPOCH + rate * time_s, 340.39)
+                                .unwrap(),
+                        contrast_db: 20.,
+                    }
+                })
+                .collect();
+            events.push(Event {
+                start_s: (10. + shift) / rate,
+                end_s: (69.5 + shift) / rate,
+                cpa_s: (39. + shift) / rate,
+                base_hz: 100.,
+                speed_mps: 72.,
+                slant_m: 1300.,
+                fit_rmse_hz: 0.,
+                contrast_db: 20.,
+                ridge,
+            });
+            tracks.push(track);
+        }
+        let seed = Seed {
+            point: demo::TRUTH,
+            start: demo::EPOCH + (rate - 1.) * events[2].cpa_s,
+            clock_rate: 1.,
+            anchor: 2,
+            indices: vec![0, 1, 2],
+            score: 0.,
+        };
+        assert!(exact_score(&seed, &events, &tracks, 340.39).0 > 1.);
+        let mut seeds = vec![seed.clone()];
+        score_and_prune_seeds(
+            &mut seeds,
+            1,
+            &Job::default(),
+            &events,
+            &tracks,
+            &Control::default(),
+        )
+        .unwrap();
+        assert!(
+            (seeds[0].clock_rate - rate).abs() < 0.00005,
+            "Early pruning must not assume a fixed rate for a clock-drift job"
+        );
+        assert!(exact_score(&seeds[0], &events, &tracks, 340.39).0 < 0.05);
+        let job = Job {
+            max_clock_drift_ppm: 0.,
+            ..Default::default()
+        };
+        let mut fixed = vec![seed];
+        score_and_prune_seeds(&mut fixed, 1, &job, &events, &tracks, &Control::default()).unwrap();
+        assert_eq!(fixed[0].clock_rate, 1.);
     }
 }
