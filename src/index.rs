@@ -5,7 +5,7 @@ use crate::{
     audio::Event,
     geo::{Bounds, Point, Terrain, Vec3},
     model::Track,
-    search::{Seed, complete_seed, feature_error, prune_coarse_seeds, within_time},
+    search::{Seed, complete_seed, feature_error, score_and_prune_seeds, within_time},
 };
 use anyhow::{Result, bail};
 use rayon::prelude::*;
@@ -187,7 +187,15 @@ pub(crate) fn corridor_seeds(
                 for seed in result? {
                     seeds.push(seed);
                     if seeds.len() >= 8192 {
-                        prune_coarse_seeds(&mut seeds, 2048, job.grid_m);
+                        score_and_prune_seeds(
+                            &mut seeds,
+                            2048,
+                            job.grid_m,
+                            events,
+                            tracks,
+                            job.sound_speed(),
+                            control,
+                        )?;
                     }
                 }
             }
@@ -325,7 +333,15 @@ fn track_seeds(
                         // Bound each worker's retained hypotheses as well as
                         // the global beam, even for unusually long tracks.
                         if seeds.len() >= 8192 {
-                            prune_coarse_seeds(&mut seeds, 2048, job.grid_m);
+                            score_and_prune_seeds(
+                                &mut seeds,
+                                2048,
+                                job.grid_m,
+                                events,
+                                tracks,
+                                job.sound_speed(),
+                                control,
+                            )?;
                         }
                     }
                 }

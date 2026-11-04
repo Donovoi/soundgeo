@@ -1,8 +1,8 @@
 {
   "software_version": "0.3.0-dev.1",
-  "latest_stage": "curvature",
-  "evaluated_code_commit": "dc30a884e395c864511504bf5e28defd07dc00df",
-  "cli_sha256": "95d93e68688504b6771dbe65d3af5b5800986596543d2df6b2d0fc7d93639dd9",
+  "latest_stage": "affine",
+  "evaluated_code_commit": "15edcdfb74550820af1e0d714b9cd9e72e618077",
+  "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c",
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
   "date_and_broad_region_supplied": true,
@@ -125,6 +125,20 @@
           "passed": false,
           "report_sha256": "428802e9ec0fd0ce1391667cbf72abe8bb5c772c193c92cbbe055cb5ffa01129",
           "cli_sha256": "95d93e68688504b6771dbe65d3af5b5800986596543d2df6b2d0fc7d93639dd9"
+        },
+        "affine": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 4,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 1209623,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "0ba98c65f0c14fd51232354ea7566475589039cf3c3537ced79d31489c6acd66",
+          "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c"
         }
       }
     },
@@ -242,6 +256,20 @@
           "passed": false,
           "report_sha256": "af7505caf8c912dc61c48a263014f6be79eb595d38437d9bcbf4ea789b8b6df3",
           "cli_sha256": "95d93e68688504b6771dbe65d3af5b5800986596543d2df6b2d0fc7d93639dd9"
+        },
+        "affine": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 3,
+          "candidates": 0,
+          "flight_segments": 4336,
+          "hypotheses": 702289,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "c92408eb1a6c29bb89a55250a0cc1732668f92c42666371b8eb2f431bb27270c",
+          "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c"
         }
       }
     },
@@ -359,6 +387,25 @@
           "passed": false,
           "report_sha256": "65288cb3dd9c0d058ccd0d5496f731792b296aa9c4b462b2b71c42e3d920506b",
           "cli_sha256": "95d93e68688504b6771dbe65d3af5b5800986596543d2df6b2d0fc7d93639dd9"
+        },
+        "affine": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 6,
+          "candidates": 1,
+          "flight_segments": 4947,
+          "hypotheses": 1925357,
+          "recording_clock": null,
+          "duration_s": 1199.984125,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "736ed5330953df214f20e5a0e124a88aa09e0804b1a256fd140e5b5466fc3436",
+          "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c",
+          "candidate_errors_m": [
+            27470.586
+          ],
+          "top_error_m": 27470.586,
+          "top_matches": 3
         }
       }
     },
@@ -463,6 +510,20 @@
           "passed": false,
           "report_sha256": "e491175979b72d5936fd755592b6a3dc7ce349931603cacb6a75067c59676b02",
           "cli_sha256": "95d93e68688504b6771dbe65d3af5b5800986596543d2df6b2d0fc7d93639dd9"
+        },
+        "affine": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 1,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 488250,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "63db7b65863511f654765d2771caba7fa556c60d99ba15712702fa0c64c6a0fd",
+          "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c"
         }
       }
     },
@@ -582,6 +643,26 @@
           ],
           "top_error_m": 74.706,
           "top_matches": 4
+        },
+        "affine": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 19,
+          "candidates": 2,
+          "flight_segments": 5381,
+          "hypotheses": 6773575,
+          "recording_clock": null,
+          "duration_s": 3598.187375,
+          "coordinate_hit": true,
+          "passed": false,
+          "report_sha256": "7b1acf99b693159e3febcb0b935ce3ba5ab119e60555b4ea54f716c9f7861633",
+          "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c",
+          "candidate_errors_m": [
+            82.526,
+            385.129
+          ],
+          "top_error_m": 82.526,
+          "top_matches": 4
         }
       }
     },
@@ -674,6 +755,20 @@
           "passed": false,
           "report_sha256": "e5d99be542be97b1bc5461c2e681bd3b2a4e77bb2fa152dc5890f5c3ccc0ad93",
           "cli_sha256": "95d93e68688504b6771dbe65d3af5b5800986596543d2df6b2d0fc7d93639dd9"
+        },
+        "affine": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 11,
+          "candidates": 0,
+          "flight_segments": 5381,
+          "hypotheses": 5040888,
+          "recording_clock": null,
+          "duration_s": 3596.6085,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "7fd8b2c06bdd500b7b28aab2667d5ad89bf3ca566c7cff8c4fd1a4079565dca6",
+          "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c"
         }
       }
     },
@@ -766,6 +861,20 @@
           "passed": false,
           "report_sha256": "45f94809db5412e756b38ee9c05499af29bfeb680138fff99bb1111b1f883e65",
           "cli_sha256": "95d93e68688504b6771dbe65d3af5b5800986596543d2df6b2d0fc7d93639dd9"
+        },
+        "affine": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 11,
+          "candidates": 0,
+          "flight_segments": 4134,
+          "hypotheses": 162775,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "17bb4d5f79d6b6313f3c15433074de7bcd80f3f9251d85ff4d0ede075fcb9307",
+          "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c"
         }
       }
     },
@@ -812,6 +921,20 @@
           "passed": false,
           "report_sha256": "997e85980b69c8f5ba2313096e60734626b193e14e644d558c4abc1f2c463b28",
           "cli_sha256": "95d93e68688504b6771dbe65d3af5b5800986596543d2df6b2d0fc7d93639dd9"
+        },
+        "affine": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 24,
+          "candidates": 0,
+          "flight_segments": 1430,
+          "hypotheses": 3895880,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "aab6b751ad5332f083a71f5b9ffaaf00f68a5cef06a896a5360c67126f3e46aa",
+          "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c"
         }
       }
     },
@@ -834,6 +957,20 @@
           "passed": false,
           "report_sha256": "99834e94f66bc609dbbf1968d8460e1f164bd4672dc2ffb0439ab5c439160341",
           "cli_sha256": "95d93e68688504b6771dbe65d3af5b5800986596543d2df6b2d0fc7d93639dd9"
+        },
+        "affine": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 24,
+          "candidates": 0,
+          "flight_segments": 1040,
+          "hypotheses": 2058777,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "746dd91b991b67f331fa93fa8e4ae6a13592bb55b87d806da3cb50abe4d3fef7",
+          "cli_sha256": "5105b0f137e947b14e3462fe64b6c8f19ad3676d59ac5eed421604fb4971bf1c"
         }
       }
     }

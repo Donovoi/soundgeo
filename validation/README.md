@@ -296,8 +296,31 @@ curve error before the refinement cap. All 37 local software tests, formatting,
 strict Clippy and release compilation pass. Another nine-case real rerun is in
 progress; this change has not yet established real-world accuracy.
 
-Additional free-source checks found that ADSBiq's published archive ends on
+Additional free-source checks found that [ADSBiq's published archive](https://github.com/Sky-Power-Services/adsbiq-data) ends on
 2026-10-10, before these cases. Direct historical requests to ADSB.fi and
 Airplanes.live did not yield usable public traces (403); TheAirTraffic returned
 non-JSON content. These probes do not establish that those services lack data,
 and no access restrictions were bypassed.
+
+
+## Completed affine-clock run and earlier scoring
+
+All nine affine-clock cases are complete for
+`15edcdfb74550820af1e0d714b9cd9e72e618077`. The first Midway November 1 top
+candidate is 82.526 m away (four matches, ambiguous). Midway arrivals returns
+one incorrect ambiguous candidate 27,470.586 m away. The other seven cases
+return insufficient evidence. Coordinate hits: **1/9**; accepted locations:
+**0/9**. These failures remain in `results.json`.
+
+The diversity-only revision still missed the later Midway recording in the
+original broad region. A second regression exposed that full-curve scoring
+happened after earlier beam truncations. It now runs before both worker and
+global beam pruning. All 38 local software tests, formatting, strict Clippy
+and release compilation pass; the affected broad-region case is running before
+another complete real-video evaluation.
+
+A separate Lake Hood diagnostic used the [free IEM PANC weather archive](https://mesonet.agron.iastate.edu/request/download.phtml) for the
+entire November 1 UTC day. A lower sound speed and an approximate QNH correction
+for pressure-altitude fallbacks improved one clear event but did not establish
+three jointly consistent flyovers. It used the known location/time for diagnosis,
+is excluded from acceptance, and has not changed the production weather model.

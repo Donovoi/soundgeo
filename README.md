@@ -4,7 +4,7 @@ A native Rust desktop workbench that takes video or audio, extracts aircraft-lik
 
 **Research software.** It returns candidate coordinates and evidence, not a guaranteed location. A video alone cannot identify its date or location without suitable reference flight records. This is an independent implementation inspired by [colsto's demonstration](https://www.youtube.com/watch?v=UytYrhYLOKI); the creator did not release that pipeline's code.
 
-**Real-video acceptance is not met.** Nine public-camera recordings from three known locations were tested with their recording clocks withheld. The curvature-qualified run returned a top candidate 75 m from the Midway camera, supported by four flights, but still ambiguous. Both Lake Hood recordings returned no candidate; the earlier incorrect 3.1 km candidate is now rejected. No recording produced an accepted unambiguous location. Dates and broad regions were supplied. See [the validation record](validation/README.md). Passing software tests must not be presented as real-world geolocation reliability.
+**Real-video acceptance is not met.** Nine public-camera recordings from three known locations were tested with their recording clocks withheld. The completed clock-rate run returned a top candidate 83 m from the Midway camera, supported by four flights, but still ambiguous. Another Midway clip returned a wrong ambiguous candidate 27 km away. Both Lake Hood recordings returned no candidate; the earlier incorrect 3.1 km candidate remains rejected. No recording produced an accepted unambiguous location. Dates and broad regions were supplied. See [the validation record](validation/README.md). Passing software tests must not be presented as real-world geolocation reliability.
 
 ## Desktop quick start
 

@@ -103,6 +103,23 @@ pub(crate) fn prune_coarse_seeds(seeds: &mut Vec<Seed>, limit: usize, spacing: f
     });
 }
 
+pub(crate) fn score_and_prune_seeds(
+    seeds: &mut Vec<Seed>,
+    limit: usize,
+    spacing: f64,
+    events: &[Event],
+    tracks: &[Track],
+    c: f64,
+    control: &Control,
+) -> Result<()> {
+    for seed in seeds.iter_mut() {
+        control.check()?;
+        seed.score = exact_score(seed, events, tracks, c).0;
+    }
+    prune_coarse_seeds(seeds, limit, spacing);
+    Ok(())
+}
+
 /// An unmatched detection is retained as an outlier, never counted as evidence.
 /// Three or more detections require at least three independent flight matches.
 pub(crate) fn complete_seed(
@@ -795,5 +812,58 @@ mod tests {
         assert!(seeds.iter().any(|s| (s.start - base.start).abs() > 100.));
         assert!(seeds.iter().any(|s| s.point.distance(base.point) > 1000.));
         assert_eq!(seeds[0].score, 0.);
+    }
+    #[test]
+    fn observed_curves_rank_before_coarse_beam_truncation() {
+        let tracks = demo::tracks();
+        let ridge: Vec<_> = (0..120)
+            .map(|i| {
+                let time_s = 10. + i as f64 * 0.5;
+                RidgePoint {
+                    time_s,
+                    hz: 100.
+                        * tracks[0]
+                            .factor(demo::TRUTH.ecef(), demo::EPOCH + time_s, 340.39)
+                            .unwrap(),
+                    contrast_db: 20.,
+                }
+            })
+            .collect();
+        let event = Event {
+            start_s: 10.,
+            end_s: 69.5,
+            cpa_s: 39.,
+            base_hz: 100.,
+            speed_mps: 72.,
+            slant_m: 1300.,
+            fit_rmse_hz: 0.,
+            contrast_db: 20.,
+            ridge,
+        };
+        let correct = Seed {
+            point: demo::TRUTH,
+            start: demo::EPOCH,
+            clock_rate: 1.,
+            indices: vec![0],
+            score: 1.,
+        };
+        let mut wrong = correct.clone();
+        wrong.point.lat += 0.03;
+        wrong.score = 0.;
+        let mut seeds = vec![wrong, correct];
+        score_and_prune_seeds(
+            &mut seeds,
+            1,
+            200.,
+            &[event],
+            &tracks,
+            340.39,
+            &Control::default(),
+        )
+        .unwrap();
+        assert!(
+            seeds[0].point.distance(demo::TRUTH) < 1.,
+            "A cheap CPA summary must not evict the proposal whose full curve fits"
+        );
     }
 }
