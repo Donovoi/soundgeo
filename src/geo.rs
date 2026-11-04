@@ -155,6 +155,12 @@ pub struct Terrain {
     pub missing: usize,
 }
 impl Terrain {
+    pub(crate) fn has_tiles(&self) -> bool {
+        self.root.is_some()
+    }
+    pub(crate) fn empty_cache_clone(&self) -> Self {
+        Self::with_datum(self.root.clone(), self.fallback, self.datum)
+    }
     pub fn new(root: Option<PathBuf>, fallback: f64) -> Self {
         Self::with_datum(root, fallback, ElevationDatum::Wgs84Ellipsoid)
     }

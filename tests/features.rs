@@ -215,6 +215,45 @@ fn quiet_gap_constraint_uses_only_known_closer_propellers() {
 }
 
 #[test]
+fn parallel_corridors_match_serial_fallback_terrain() {
+    let (dir, mut job, events) = events();
+    job.search_mode = SearchMode::FlightCorridors;
+    let tracks = soundgeo::demo::tracks();
+    // The caller-supplied Terrain is authoritative even if its fallback
+    // differs from the Job; workers must not silently reconstruct it.
+    let supplied_height = job.ground_m + 7.5;
+    let mut terrain = Terrain::new(None, supplied_height);
+    let parallel = soundgeo::search::locate(
+        &job,
+        &events,
+        &tracks,
+        &mut terrain,
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    // An empty tile folder exercises the serial terrain-cache path with
+    // exactly the same fallback heights and search inputs.
+    job.terrain = Some(dir.path().join("missing-tiles"));
+    let mut terrain = Terrain::new(job.terrain.clone(), supplied_height);
+    let serial = soundgeo::search::locate(
+        &job,
+        &events,
+        &tracks,
+        &mut terrain,
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    assert_eq!(parallel.hypotheses, serial.hypotheses);
+    assert!(!parallel.candidates.is_empty());
+    assert_eq!(
+        serde_json::to_value(parallel.candidates).unwrap(),
+        serde_json::to_value(serial.candidates).unwrap()
+    );
+}
+
+#[test]
 fn unknown_clock_consensus_ignores_an_outlier_but_requires_three_flights() {
     let (_dir, mut job, mut detected) = events();
     let mut tracks = soundgeo::demo::tracks();
