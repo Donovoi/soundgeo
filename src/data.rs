@@ -167,9 +167,9 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                     provided
                 };
                 kinds.insert(row.aircraft.clone(), kind);
-                if !filter.aircraft.accepts(kind) {
-                    continue;
-                }
+                // CSV type metadata may first appear on a later row or file.
+                // Apply aircraft filtering after all rows have resolved it;
+                // region/time filtering still bounds the positions retained.
                 if !filter.accepts(point, time) {
                     continue;
                 }

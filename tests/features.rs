@@ -57,6 +57,12 @@ fn aircraft_classification_and_catalog_filtering() {
     let data = soundgeo::data::load_for_job(&job, 230., &Control::default()).unwrap();
     assert_eq!(data.tracks.len(), 1);
     assert!(data.tracks[0].id.starts_with("prop/"));
+    assert_eq!(
+        data.tracks[0].samples.len(),
+        12,
+        "Late type metadata must preserve earlier positions"
+    );
+    assert_eq!(data.tracks[0].samples[0].time, 1788861600.);
     job.aircraft_filter = AircraftFilter::All;
     assert_eq!(
         soundgeo::data::load_for_job(&job, 230., &Control::default())
