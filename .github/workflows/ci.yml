@@ -33,4 +33,6 @@ jobs:
         if: runner.os == 'Windows'
         with:
           name: soundgeo-windows
-          path: target/release/soundgeo.exe
+          path: |
+            target/release/soundgeo.exe
+            target/release/soundgeo-cli.exe

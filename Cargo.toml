@@ -4,6 +4,7 @@ version = "0.2.0"
 edition = "2024"
 description = "Local aircraft-Doppler geolocation workbench"
 rust-version = "1.88"
+default-run = "soundgeo"
 
 [dependencies]
 anyhow = "1"

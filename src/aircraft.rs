@@ -52,6 +52,9 @@ pub fn classify(description: &str) -> AircraftKind {
 pub struct Catalog(BTreeMap<String, AircraftKind>);
 impl Catalog {
     pub fn read(path: &Path) -> Result<Self> {
+        if std::fs::metadata(path)?.len() > 4_000_000 {
+            bail!("Aircraft catalog exceeds 4 MB");
+        }
         let bytes = std::fs::read(path).context("Could not read aircraft type catalog")?;
         Self::from_bytes(&bytes)
     }

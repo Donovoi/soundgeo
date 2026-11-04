@@ -73,6 +73,24 @@ cargo run --release -- catalog --output cache/aircraft-types.json
 
 Configuration paths are relative to the JSON file. `start_utc: null` means unknown time; `bounds: null` uses the retained flight-data extent. `demo/job.json` is a complete example. Analysis writes only the requested report; decoded audio is temporary. Closing the GUI requests cancellation.
 
+### Automation
+
+The package includes **`soundgeo-cli.exe`**, a dedicated console executable for scripts, terminals and schedulers. Every processing command runs without a GUI or interactive prompts. With no arguments it prints help; only `view` opens a window. The desktop executable also accepts the same commands. Use `soundgeo-cli --help` or `soundgeo-cli analyze --help` for options. Build both executables with `cargo build --release --locked`, or run the console entry point with `cargo run --release --bin soundgeo-cli -- ...`.
+
+```powershell
+# Direct inputs, with unknown recording time and automatic search by default
+soundgeo-cli.exe analyze --input "recording.mp4" --tracks "flight-data" --output "report.json"
+
+# Saved settings, replacing the recording per batch item; JSON only on stdout
+soundgeo-cli.exe analyze --config "job.json" --input "next.mp4" --output - --quiet --require-match
+```
+
+`--input` and `--tracks` override the configuration and resolve relative to the caller's working directory. Other configuration paths resolve relative to the JSON file. Without `--config`, both input paths are required and all other settings use their documented defaults. Use a job JSON to control terrain, search bounds/budgets, aircraft filtering and silence constraints.
+
+`--output -` emits the complete report as JSON to stdout; progress goes to stderr. `--quiet` suppresses progress/success text, but preserves JSON and errors. Report fields include `status`, `candidates`, `events`, `warnings`, the effective `job`, and `version`. Each candidate includes coordinates, inferred UTC start and per-event evidence. Exit codes: **0** completed (including no candidates); **1** input, processing or I/O failure; **2** invalid CLI arguments; **3** completed without candidates when `--require-match` is set. Code 3 still writes the report. Candidate presence is not a confidence guarantee.
+
+On Windows, use `soundgeo-cli.exe` for automation so the shell waits normally and exposes `$LASTEXITCODE`. For example: `$report = & .\soundgeo-cli.exe analyze --config .\Demo\job.json --output - --quiet | ConvertFrom-Json`. Python can use `subprocess.run([...], capture_output=True, text=True)` and parse stdout with `json.loads`.
+
 ```powershell
 cargo fmt --all -- --check
 cargo clippy --all-targets --locked -- -D warnings

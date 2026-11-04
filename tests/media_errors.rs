@@ -1,5 +1,23 @@
 use soundgeo::{Control, Job, audio};
 #[test]
+fn cli_does_not_overwrite_the_input_configuration() {
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("job.json");
+    let original = b"{}";
+    std::fs::write(&path, original).unwrap();
+    let result = std::process::Command::new(env!("CARGO_BIN_EXE_soundgeo"))
+        .arg("analyze")
+        .arg("--config")
+        .arg(&path)
+        .arg("--output")
+        .arg(&path)
+        .output()
+        .unwrap();
+    assert!(!result.status.success());
+    assert_eq!(std::fs::read(path).unwrap(), original);
+    assert!(String::from_utf8_lossy(&result.stderr).contains("cannot overwrite"));
+}
+#[test]
 fn missing_decoder_short_recording_and_silent_video_fail_clearly() {
     let dir = tempfile::tempdir().unwrap();
     let wav = dir.path().join("short.wav");
