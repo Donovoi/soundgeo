@@ -353,4 +353,72 @@ anchor's received CPA. It uses 16 samples spread across each curve to bound
 proposal-search cost; final ranking, refinement and all acceptance thresholds
 still use every observed sample. The independent long-recording integration
 regression remains in place. All 39 local software tests, formatting, strict
-Clippy and release compilation pass. Two targeted real reruns are in progress.
+Clippy and release compilation pass. The completed ten-case evaluation is below.
+
+## Additional free archive and reporting fixes
+
+The automatic CLI downloader retrieved and integrity-checked the complete
+November 1 ADSB.lol `prod-0` archive: **3,118,588,416 bytes**, two parts. Its
+original Lake Hood regional export contains 1,046 segments / 178,704 points,
+compared with 1,040 segments / 156,362 points from the free ADS-B Exchange sample.
+Across that entire regional day, 456 ADSB.lol positions have no Exchange position
+for the same aircraft within 30 seconds. This comparison does not establish
+complete coverage or identify which aircraft produced the sounds.
+
+Both Lake Hood November 1 clips were rerun against the alternate archive, still
+with their original bounds and no recording clock. Both failed: the earlier
+clip's top candidate was **10,782.065 m** away, and the later clip's top was
+**4,948.460 m** away (nearest returned candidate: 3,637.415 m). Every result was
+ambiguous. [free-reference-variants.json](free-reference-variants.json) records
+these separate experiments, source-part hashes, media/report hashes and revision.
+They do not replace failures in the fixed ten-case benchmark.
+
+Two independent reporting bugs were then reproduced with failing regressions
+and fixed in `1e8b23168837430617da79ecb0db72fab427d8cf`. Incomplete temporal
+coverage was counted after an early return that made its warning unreachable.
+Pressure-altitude warnings counted positions outside the selected region and
+positions removed by input sampling. Both warnings now describe the applicable
+input. These changes do not alter coordinates, detection, ranking or acceptance.
+All **41** local software tests, formatting, strict Clippy and release compilation
+pass. [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41840226683)
+both passed the same checks on that revision.
+
+An audio-only diagnostic also inspected the creator's linked raw challenge.
+It has no independently established precise camera coordinate in this benchmark
+and is not counted as a location-validation case. Adding 180-second slow-detection
+windows did not improve the useful curves or the Lake Hood detections; that
+experiment was reverted. A mandatory harmonic filter would also remove one
+useful original-challenge event, so it was not adopted. No thresholds were
+relaxed to turn these failures into apparent successes.
+
+## Completed ten-case evaluation
+
+All ten original jobs completed with the same executable from
+`38f7713c5c82db78876cc18c8b25f8a8e062916b` (SHA-256
+`902716cae1f1b207ab21bfb24b78954093907158d83c2045789433aab742e4cf`).
+Every input retained its original broad region, full reference day, media hash,
+and `start_utc: null`. No known aircraft identities or recording-clock hints
+were supplied. The subsequent reporting-only revision above leaves this
+matching behavior unchanged.
+
+| Case | Top candidate error | Result |
+| --- | ---: | --- |
+| midway | No candidate | Insufficient evidence |
+| southampton | No candidate | Insufficient evidence |
+| midway-arrivals | 27,442.985 m | Wrong, ambiguous |
+| midway-holdout | No candidate | Insufficient evidence |
+| midway-nov1 | 92.250 m | Coordinate hit, ambiguous, four flights |
+| midway-nov1-holdout | 26.670 m | Coordinate hit, ambiguous, three flights |
+| southampton-nov1 | No candidate | Insufficient evidence |
+| lake-hood | 8,788.903 m | Wrong, ambiguous |
+| lake-hood-nov1 | No candidate | Insufficient evidence |
+| lake-hood-nov1-later | 10,607.842 m | Wrong, ambiguous |
+
+The second Midway clip now survives the original broad search using all regional
+flights. Profiling the same shared clock model before beam pruning fixed that
+miss; the improvement was not obtained by supplying the correct aircraft or a
+smaller search area. Nevertheless, the overall result is **2/10 coordinate
+hits, 0/10 accepted unambiguous locations**. Both hits are from the same camera.
+The other locations and the two additional free-provider Lake Hood experiments
+remain unsuccessful. Real-world reliability is not established; acceptance and
+release readiness remain unmet.
