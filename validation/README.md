@@ -422,3 +422,39 @@ hits, 0/10 accepted unambiguous locations**. Both hits are from the same camera.
 The other locations and the two additional free-provider Lake Hood experiments
 remain unsuccessful. Real-world reliability is not established; acceptance and
 release readiness remain unmet.
+
+## Later Lake Hood development result
+
+Revision `5df0e544801be1a46556d11d8fc9d4474bfbe12b` removes persistent background tones.
+It also searches the same distance range that its feature comparison permits.
+Separate synthetic regressions reproduced both failures before the fixes.
+All 51 software tests passed locally. [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41925244279) also passed.
+
+The original broad `lake-hood-nov1-later` job then returned seven ambiguous candidates.
+The first candidate was **270.461 m** from the published camera position.
+The second was **188.920 m** away. Both matched the same three flight segments.
+The first inferred start time was `2026-11-01T21:30:01.360Z`.
+The job supplied no recording clock, camera coordinates, or aircraft identities.
+It searched 7,900,065 hypotheses using the full regional reference day.
+The executable SHA-256 was `9a3ce13e3f6d965828ed7a82c4d55c0f1f03a93301c3573e6a2572e78fdc8777`.
+
+This remains a failed acceptance case. The first candidate exceeds the unchanged 250 m limit.
+A nearby second candidate does not count as a first-choice success.
+The remaining sounds and alternative locations also leave the answer ambiguous.
+
+Separate diagnostics used the known camera area to inspect missed sound curves.
+One spectral diagnostic also used the known recording clock.
+These diagnostics are excluded from acceptance results.
+The full-day known-area tests recovered three matched flights with two free providers.
+They helped identify detector and search failures; they do not establish automatic location accuracy.
+
+The latest revisions have not completed another full ten-case benchmark.
+`results.json` records each evaluated revision and marks the current mixed development results.
+Historical failures remain in that file.
+
+The next detector change adds overlapping 40-second windows for brief propeller sounds.
+A separate synthesized waveform reproduces interference from temporary background tones.
+The old detector fails that regression. The revised detector passes it.
+All 52 software tests pass locally, including the longer-curve and quiet-gap regressions.
+The known-area Lake Hood diagnostic now finds four consistent flights with no recording clock supplied.
+This is still a diagnostic. The original broad jobs must be evaluated separately.

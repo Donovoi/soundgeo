@@ -25,7 +25,7 @@ References: [ADSB.lol historical archive](https://www.adsb.lol/docs/open-data/hi
 ## Method
 
 - FFmpeg decodes the first audio stream to 8 kHz mono. Input files are unchanged.
-- A Hann-window STFT (16384 samples, 0.5-second hop) exposes low-frequency tones. A second scale (1024 samples, 0.025-second hop, 500–3900 Hz) handles fast jet sweeps. The original 500–1900 Hz band and the 1400–3900 Hz extension have separate tracing budgets. Extended-band detections additionally need a corresponding harmonic across the moving frequency pattern. Local spectral-median subtraction reduces interference from bass/wind. Viterbi tracing searches overlapping 90-second windows for slow curves and 10/20-second windows for short passes. Sustained signal contrast, sweep shape and a propagation-aware flyover fit reject weak/noisy traces and stationary tones. A detected curve and each reported flight match must reduce squared error by at least half compared with a freely fitted straight frequency drift on the same samples; a descending line alone is insufficient timing evidence.
+- A Hann-window STFT (16384 samples, 0.5-second hop) exposes low-frequency tones. A second scale (1024 samples, 0.025-second hop, 500–3900 Hz) handles fast jet sweeps. The original 500–1900 Hz band and the 1400–3900 Hz extension have separate tracing budgets. Extended-band detections additionally need a corresponding harmonic across the moving frequency pattern. Local spectral-median subtraction reduces interference from bass/wind. Viterbi tracing searches overlapping 40/90-second windows for slow curves and 10/20-second windows for short passes. Sustained signal contrast, sweep shape and a propagation-aware flyover fit reject weak/noisy traces and stationary tones. A detected curve and each reported flight match must reduce squared error by at least half compared with a freely fitted straight frequency drift on the same samples; a descending line alone is insufficient timing evidence.
 - Overlapping ridges/harmonics count as one event. Up to 24 independent events are retained; the strongest eight seed the bounded search, and all retained events can corroborate them.
 - Regional searches use a spatial grid. Large-area searches index flight positions in time/ECEF buckets and generate observer hypotheses on both sides of aircraft corridors at a fixed spatial spacing, across several slant-distance estimates. Country extent does not force a coarser grid. Candidate flights for later events are retrieved from this index using both arrival-time and distance constraints. Unknown time comes from received closest approach, not the file's creation timestamp.
 - For three or more detections, at least three distinct flight segments must fit; smaller recordings require every event. Coarse ranking and exact refinement use the same minimum consensus, so numerous weak associations do not automatically outrank three precise ones. Additional associations must preserve the joint error threshold, so weaker fits cannot invalidate a passing three-flight core. Unmatched detections remain explicit outliers. Partial consensus is reported as ambiguous, and no per-event clock shifts are allowed.
@@ -75,7 +75,8 @@ The wider proposal range can increase computation and consume the hypothesis bud
 
 ## Long sound curves
 
-The first scan uses overlapping 90-second windows for slow flyovers.
+The first scan uses overlapping 40-second and 90-second windows for slow flyovers.
+The shorter window limits interference from sounds before and after a brief propeller pass.
 Each slow window subtracts the positive time median at each frequency before tracing.
 This prevents persistent tones from consuming the tracing budget or attracting a crossing curve.
 The short-jet scan is unchanged.

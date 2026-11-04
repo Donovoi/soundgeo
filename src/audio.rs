@@ -280,9 +280,15 @@ fn detect_scale(
         }
         spectrum.push(contrast);
     }
-    // Short jets need both 10- and 20-second windows. Slow propeller curves
-    // need 90 seconds. Half-window overlap retains passes near boundaries.
-    let lengths = if fast { vec![800usize, 400] } else { vec![180] };
+    // Short jets need both 10- and 20-second windows. Propeller sounds can
+    // last only 40 seconds, or continue beyond 90 seconds. A single long
+    // window lets unrelated sounds before/after a brief pass divert its ridge.
+    // Half-window overlap retains passes near boundaries.
+    let lengths = if fast {
+        vec![800usize, 400]
+    } else {
+        vec![180, 80]
+    };
     let mut windows = vec![];
     for length in lengths {
         let window = length.min(frames);

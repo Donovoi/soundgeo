@@ -221,3 +221,49 @@ fn persistent_tones_do_not_exhaust_the_slow_curve_tracing_budget() {
         event.slant_m
     );
 }
+
+#[test]
+fn a_brief_propeller_pass_survives_temporary_background_tones() {
+    let (speed, slant, tone, center, c) = (60_f64, 900_f64, 160_f64, 58_f64, 340.39_f64);
+    let rate = audio::SAMPLE_RATE;
+    let mut random = 9013_u64;
+    let samples: Vec<f32> = (0..160 * rate)
+        .map(|i| {
+            let receive = i as f64 / rate as f64;
+            let (mut lo, mut hi) = (receive - 90., receive);
+            // Solve propagation independently of the detector's Doppler model.
+            for _ in 0..32 {
+                let emit = (lo + hi) * 0.5;
+                if emit + f64::hypot(speed * (emit - center), slant) / c < receive {
+                    lo = emit;
+                } else {
+                    hi = emit;
+                }
+            }
+            let emit = (lo + hi) * 0.5;
+            let audible =
+                ((receive - 38.) / 2.).clamp(0., 1.) * ((82. - receive) / 2.).clamp(0., 1.);
+            let background: f64 = [92., 120., 150., 175., 210.]
+                .iter()
+                .map(|hz| 0.15 * (std::f64::consts::TAU * hz * receive).sin())
+                .sum();
+            random = random.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let noise = (random >> 32) as u32 as f64 / u32::MAX as f64 - 0.5;
+            (0.001 * noise
+                + audible * (background + 0.025 * (std::f64::consts::TAU * tone * emit).sin()))
+                as f32
+        })
+        .collect();
+    let job = Job {
+        fast_flyovers: false,
+        ..Default::default()
+    };
+    let events = audio::detect(&samples, &job, &Control::default(), &|_, _| {}).unwrap();
+    let received_cpa = center + slant / c;
+    let event = events
+        .iter()
+        .find(|event| (event.cpa_s - received_cpa).abs() < 3.)
+        .expect("A short propeller pass must survive temporary stationary background tones");
+    assert!((event.speed_mps / speed - 1.).abs() < 0.15);
+    assert!((event.slant_m / slant - 1.).abs() < 0.25);
+}
