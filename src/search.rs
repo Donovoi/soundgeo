@@ -367,11 +367,21 @@ pub fn locate(
                         }
                     }
                 }
+                // Regional grids need the same acoustic ranking as corridors.
+                // A biased straight-flight summary must not discard a curve
+                // match before the measured samples have been compared.
+                for seed in &mut here {
+                    if control.check().is_err() {
+                        return Vec::new();
+                    }
+                    profile_seed_clock(seed, job, events, tracks);
+                }
                 here.sort_by(|a, b| a.score.total_cmp(&b.score));
                 here.truncate(3);
                 here
             })
             .collect();
+        control.check()?;
         seeds.append(&mut batch_seeds);
     }
     progress(
@@ -950,6 +960,82 @@ mod tests {
         assert!(
             seeds[0].point.distance(demo::TRUTH) < 1.,
             "A cheap CPA summary must not evict the proposal whose full curve fits"
+        );
+    }
+
+    #[test]
+    fn regional_search_keeps_the_curve_match_despite_biased_summary_features() {
+        let real = demo::tracks().remove(0);
+        let c = Job::default().sound_speed();
+        let (arrival, range, speed) = real.cpa(demo::TRUTH.ecef(), c).unwrap();
+        let event = Event {
+            start_s: 10.,
+            end_s: 79.5,
+            cpa_s: arrival - demo::EPOCH,
+            base_hz: 100.,
+            speed_mps: speed * 1.3,
+            slant_m: range * 1.3,
+            fit_rmse_hz: 0.,
+            contrast_db: 20.,
+            ridge: (0..140)
+                .map(|i| {
+                    let time_s = 10. + i as f64 * 0.5;
+                    RidgePoint {
+                        time_s,
+                        hz: 100.
+                            * real
+                                .factor(demo::TRUTH.ecef(), demo::EPOCH + time_s, c)
+                                .unwrap(),
+                        contrast_db: 20.,
+                    }
+                })
+                .collect(),
+        };
+        let mut tracks = vec![real.clone()];
+        for n in 1..=5 {
+            let mut decoy = real.clone();
+            decoy.id = format!("DECOY{n}");
+            for sample in &mut decoy.samples {
+                let p = sample.point;
+                *sample = crate::model::Sample::new(
+                    sample.time + n as f64 * 600.,
+                    Point {
+                        lat: demo::TRUTH.lat + 1.3 * (p.lat - demo::TRUTH.lat),
+                        lon: demo::TRUTH.lon + 1.3 * (p.lon - demo::TRUTH.lon),
+                        alt: demo::TRUTH.alt + 1.3 * (p.alt - demo::TRUTH.alt),
+                    },
+                );
+            }
+            tracks.push(decoy);
+        }
+        let job = Job {
+            bounds: Some(Bounds {
+                south: demo::TRUTH.lat,
+                north: demo::TRUTH.lat + 1e-8,
+                west: demo::TRUTH.lon,
+                east: demo::TRUTH.lon + 1e-8,
+            }),
+            ground_m: demo::TRUTH.alt,
+            search_mode: SearchMode::RegionalGrid,
+            silence_mode: SilenceMode::Off,
+            ..Default::default()
+        };
+        let result = locate(
+            &job,
+            &[event],
+            &tracks,
+            &mut Terrain::new(None, job.ground_m),
+            &Control::default(),
+            &|_, _| {},
+        )
+        .unwrap();
+        assert_eq!(
+            result
+                .candidates
+                .first()
+                .map(|c| c.matches[0].aircraft.as_str()),
+            Some(real.id.as_str()),
+            "The measured curve must survive regional pruning even when CPA summary features favor several other flights"
         );
     }
     #[test]
