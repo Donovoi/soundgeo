@@ -1,3 +1,4 @@
+use crate::aircraft::{AircraftFilter, AircraftKind, Catalog};
 use crate::{
     Control, Job, Progress,
     geo::{Bounds, Point},
@@ -10,7 +11,7 @@ use serde_json::Value;
 use std::{
     collections::BTreeMap,
     fs::File,
-    io::{BufReader, Read, Write},
+    io::{BufReader, Read},
     path::{Path, PathBuf},
     time::Duration,
 };
@@ -27,6 +28,10 @@ struct CsvRow {
     lat: f64,
     lon: f64,
     altitude_m: f64,
+    #[serde(default)]
+    type_code: String,
+    #[serde(default)]
+    type_description: String,
 }
 pub fn parse_time(s: &str) -> Result<f64> {
     let v = if let Ok(v) = s.parse::<f64>() {
@@ -51,6 +56,8 @@ pub fn load(path: &Path, control: &Control) -> Result<Dataset> {
 struct Filter {
     bounds: Option<Bounds>,
     time: Option<(f64, f64)>,
+    aircraft: AircraftFilter,
+    catalog: Catalog,
 }
 impl Filter {
     fn accepts(&self, p: Point, time: f64) -> bool {
@@ -68,6 +75,13 @@ impl Filter {
 pub fn load_for_job(job: &Job, duration: f64, control: &Control) -> Result<Dataset> {
     let filter = Filter {
         bounds: job.bounds,
+        aircraft: job.aircraft_filter,
+        catalog: job
+            .type_catalog
+            .as_deref()
+            .map(Catalog::read)
+            .transpose()?
+            .unwrap_or_default(),
         time: job.start_utc.map(|t| {
             (
                 t - job.time_tolerance_s - 180.,
@@ -79,6 +93,7 @@ pub fn load_for_job(job: &Job, duration: f64, control: &Control) -> Result<Datas
 }
 fn load_filtered(path: &Path, control: &Control, filter: &Filter) -> Result<Dataset> {
     let mut raw: BTreeMap<String, Vec<Sample>> = BTreeMap::new();
+    let mut kinds = BTreeMap::new();
     let mut skipped = 0usize;
     let mut barometric = 0usize;
     let mut total = 0usize;
@@ -122,6 +137,16 @@ fn load_filtered(path: &Path, control: &Control, filter: &Filter) -> Result<Data
                     bail!("Invalid position or aircraft at CSV row {}", i + 2);
                 }
                 let time = parse_time(&row.time)?;
+                let provided = filter.catalog.kind(&row.type_code, &row.type_description);
+                let kind = if provided == AircraftKind::Unknown {
+                    kinds.get(&row.aircraft).copied().unwrap_or_default()
+                } else {
+                    provided
+                };
+                kinds.insert(row.aircraft.clone(), kind);
+                if !filter.aircraft.accepts(kind) {
+                    continue;
+                }
                 if !filter.accepts(point, time) {
                     continue;
                 }
@@ -167,6 +192,7 @@ fn load_filtered(path: &Path, control: &Control, filter: &Filter) -> Result<Data
                     &mut barometric,
                     &mut total,
                     filter,
+                    &mut kinds,
                 )?;
             }
         } else {
@@ -183,11 +209,16 @@ fn load_filtered(path: &Path, control: &Control, filter: &Filter) -> Result<Data
                 &mut barometric,
                 &mut total,
                 filter,
+                &mut kinds,
             )?;
         }
     }
     let mut tracks = vec![];
     for (id, mut samples) in raw {
+        let kind = kinds.get(&id).copied().unwrap_or_default();
+        if !filter.aircraft.accepts(kind) {
+            continue;
+        }
         control.check()?;
         samples.sort_by(|a, b| a.time.total_cmp(&b.time));
         samples.dedup_by(|a, b| (a.time - b.time).abs() < 0.01);
@@ -202,6 +233,7 @@ fn load_filtered(path: &Path, control: &Control, filter: &Filter) -> Result<Data
                     if segment.len() >= 8 {
                         tracks.push(Track {
                             id: format!("{id}/{index}"),
+                            kind,
                             samples: std::mem::take(&mut segment),
                         });
                     }
@@ -214,13 +246,14 @@ fn load_filtered(path: &Path, control: &Control, filter: &Filter) -> Result<Data
         if segment.len() >= 8 {
             tracks.push(Track {
                 id: format!("{id}/{index}"),
+                kind,
                 samples: segment,
             });
         }
     }
     if tracks.is_empty() {
         bail!(
-            "No usable flight segments. Each needs at least 8 valid airborne positions, at most 60 seconds apart."
+            "No usable flight segments after type/region/time filtering. Each needs at least 8 valid airborne positions, at most 60 seconds apart."
         );
     }
     let mut warnings = vec![];
@@ -232,7 +265,13 @@ fn load_filtered(path: &Path, control: &Control, filter: &Filter) -> Result<Data
     if barometric > 0 {
         warnings.push(format!("{barometric} positions use pressure altitude; weather-dependent height error affects location estimates."));
     }
-    warnings.push("Flight data is not filtered by aircraft type. A tonal match alone does not identify a propeller aircraft.".into());
+    let unknown = tracks
+        .iter()
+        .filter(|t| t.kind == AircraftKind::Unknown)
+        .count();
+    if unknown > 0 {
+        warnings.push(format!("{unknown} flight segments have unknown aircraft type. Load the type catalog or use propeller-only mode to exclude unclassified aircraft."));
+    }
     Ok(Dataset { tracks, warnings })
 }
 fn read_limited(reader: impl Read) -> Result<Vec<u8>> {
@@ -250,6 +289,7 @@ fn ingest_trace(
     barometric: &mut usize,
     total: &mut usize,
     filter: &Filter,
+    kinds: &mut BTreeMap<String, AircraftKind>,
 ) -> Result<()> {
     let value: Value = serde_json::from_slice(bytes).context("Invalid readsb JSON")?;
     let id = value["icao"]
@@ -259,6 +299,22 @@ fn ingest_trace(
     let base = value["timestamp"]
         .as_f64()
         .context("Trace is missing timestamp")?;
+    let kind = filter.catalog.kind(
+        value["t"]
+            .as_str()
+            .or_else(|| value["type"].as_str())
+            .unwrap_or(""),
+        value["desc"].as_str().unwrap_or(""),
+    );
+    let kind = if kind == AircraftKind::Unknown {
+        kinds.get(id).copied().unwrap_or_default()
+    } else {
+        kind
+    };
+    kinds.insert(id.to_owned(), kind);
+    if !filter.aircraft.accepts(kind) {
+        return Ok(());
+    }
     for row in value["trace"]
         .as_array()
         .context("Trace is missing trace array")?
@@ -367,9 +423,9 @@ pub fn download_day(
         .context("Use a date such as 2026-09-08")?;
     let year = day.format("%Y");
     let client = reqwest::blocking::Client::builder()
-        .user_agent("soundgeo/0.1 (historical flight research)")
+        .user_agent("soundgeo/0.2 (historical flight research)")
         .connect_timeout(Duration::from_secs(20))
-        .timeout(Duration::from_secs(120))
+        .timeout(Duration::from_secs(30))
         .build()?;
     progress("Looking up the daily archive", 0.01);
     let mut release = None;
@@ -414,50 +470,37 @@ pub fn download_day(
         if first.is_none() {
             first = Some(path.clone());
         }
-        if path.metadata().is_ok_and(|m| m.len() == size) {
-            completed += size;
-            continue;
-        }
         let url = asset["browser_download_url"]
             .as_str()
             .context("Missing download URL")?;
         if !url.starts_with("https://github.com/adsblol/") {
             bail!("Unexpected archive host");
         }
-        let mut response = client
-            .get(url)
-            .timeout(Duration::from_secs(7200))
-            .send()?
-            .error_for_status()?;
-        let mut temp = tempfile::NamedTempFile::new_in(&dir)?;
-        let mut buffer = [0u8; 262144];
-        let mut written = 0u64;
-        loop {
-            control.check()?;
-            let n = response.read(&mut buffer)?;
-            if n == 0 {
-                break;
-            }
-            temp.write_all(&buffer[..n])?;
-            written += n as u64;
-            progress(
-                &format!(
-                    "Downloading {:.2} / {:.2} GB",
-                    (completed + written) as f64 / 1e9,
-                    total as f64 / 1e9
-                ),
-                (completed + written) as f32 / total.max(1) as f32,
-            );
-        }
-        if written != size {
-            bail!(
-                "Incomplete archive part: received {written}, expected {size} bytes. Retry to reuse completed parts."
-            );
-        }
-        temp.persist(&path)?;
-        completed += written;
+        crate::network::fetch_file(
+            url,
+            &path,
+            size,
+            asset["digest"].as_str(),
+            control,
+            &|message, p| {
+                progress(
+                    message,
+                    (completed as f32 + p * size as f32) / total.max(1) as f32,
+                )
+            },
+        )?;
+        completed += size;
     }
     let license = "Source: https://www.adsb.lol/docs/open-data/historical\nDaily archive: Open Database License 1.0 https://opendatacommons.org/licenses/odbl/1-0/\nKeep attribution and check share-alike requirements when redistributing derived databases.\n";
     std::fs::write(dir.join("DATA-LICENSE.txt"), license)?;
+    std::fs::write(
+        dir.join("archive-manifest.json"),
+        serde_json::to_vec_pretty(&release)?,
+    )?;
+    control.check()?;
+    let catalog = dir.join("aircraft-types.json");
+    if !catalog.is_file() {
+        crate::aircraft::download(&catalog).context("Flight archive is saved, but aircraft catalog download failed; retry or import the archive directly")?;
+    }
     first.context("No archive parts")
 }

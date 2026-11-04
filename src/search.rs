@@ -8,6 +8,29 @@ use anyhow::{Result, bail};
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SearchMode {
+    #[default]
+    Auto,
+    RegionalGrid,
+    FlightCorridors,
+}
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SilenceMode {
+    Off,
+    #[default]
+    SupportingEvidence,
+    Strict,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct SilenceConflict {
+    pub aircraft: String,
+    pub time_in_recording_s: f64,
+    pub slant_m: f64,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Match {
     pub aircraft: String,
@@ -25,18 +48,22 @@ pub struct Candidate {
     pub recording_start_unix: f64,
     pub relative_error_percent: f64,
     pub matches: Vec<Match>,
+    #[serde(default)]
+    pub silence_conflicts: Vec<SilenceConflict>,
 }
 pub struct SearchResult {
     pub candidates: Vec<Candidate>,
     pub warnings: Vec<String>,
     pub coarse_grid_m: f64,
+    pub hypotheses: usize,
+    pub method: String,
 }
 #[derive(Clone)]
-struct Seed {
-    point: Point,
-    start: f64,
-    indices: Vec<usize>,
-    score: f64,
+pub(crate) struct Seed {
+    pub point: Point,
+    pub start: f64,
+    pub indices: Vec<usize>,
+    pub score: f64,
 }
 
 fn inferred_bounds(tracks: &[Track]) -> Result<Bounds> {
@@ -54,17 +81,18 @@ fn inferred_bounds(tracks: &[Track]) -> Result<Bounds> {
             b.east = b.east.max(s.point.lon);
         }
     }
-    b.south = (b.south - 0.04).max(-85.);
-    b.north = (b.north + 0.04).min(85.);
-    b.west = (b.west - 0.04).max(-180.);
-    b.east = (b.east + 0.04).min(180.);
+    b.south = (b.south - 0.6).max(-85.);
+    b.north = (b.north + 0.6).min(85.);
+    let lon_margin = 0.6 / ((b.south + b.north) * 0.5).to_radians().cos().max(0.05);
+    b.west = (b.west - lon_margin).max(-180.);
+    b.east = (b.east + lon_margin).min(180.);
     b.validate()?;
     Ok(b)
 }
-fn feature_error(e: &Event, range: f64, speed: f64) -> f64 {
+pub(crate) fn feature_error(e: &Event, range: f64, speed: f64) -> f64 {
     ((range / e.slant_m.max(100.)).ln() / 0.7).powi(2) + ((speed / e.speed_mps).ln() / 0.5).powi(2)
 }
-fn within_time(job: &Job, start: f64) -> bool {
+pub(crate) fn within_time(job: &Job, start: f64) -> bool {
     job.start_utc
         .is_none_or(|t| (start - t).abs() <= job.time_tolerance_s)
 }
@@ -81,15 +109,25 @@ pub fn locate(
         bail!("No flyover events to match");
     }
     let bounds = job.bounds.unwrap_or(inferred_bounds(tracks)?);
-    let (mut grid, spacing) = bounds.grid(job.grid_m, job.max_grid_points);
-    for p in &mut grid {
+    let (mut grid, grid_spacing) = bounds.grid(job.grid_m, job.max_grid_points);
+    let indexed = job.search_mode == SearchMode::FlightCorridors
+        || (job.search_mode == SearchMode::Auto && grid_spacing > job.grid_m * 1.1);
+    let spacing = if indexed { job.grid_m } else { grid_spacing };
+    for p in grid.iter_mut().filter(|_| !indexed) {
         control.check()?;
         p.alt = terrain.elevation(*p);
     }
     let c = job.sound_speed();
     let first = &events[0];
-    let mut seeds = vec![];
+    let (mut seeds, hypotheses) = if indexed {
+        crate::index::corridor_seeds(job, events, tracks, bounds, terrain, control, progress)?
+    } else {
+        (vec![], grid.len())
+    };
     for (batch_index, batch) in grid.chunks(64).enumerate() {
+        if indexed {
+            break;
+        }
         control.check()?;
         progress(
             &format!(
@@ -236,6 +274,14 @@ pub fn locate(
         else {
             continue;
         };
+        let conflicts = if job.silence_mode != SilenceMode::Off {
+            silence_conflicts(events, tracks, seed.point, seed.start, c)
+        } else {
+            vec![]
+        };
+        if job.silence_mode == SilenceMode::Strict && !conflicts.is_empty() {
+            continue;
+        }
         candidates.push(Candidate {
             latitude: seed.point.lat,
             longitude: seed.point.lon,
@@ -244,11 +290,12 @@ pub fn locate(
             recording_start_unix: seed.start,
             relative_error_percent: score,
             matches,
+            silence_conflicts: conflicts,
         });
     }
     candidates.sort_by(|a, b| {
-        a.relative_error_percent
-            .total_cmp(&b.relative_error_percent)
+        (a.relative_error_percent + 0.25 * a.silence_conflicts.len() as f64)
+            .total_cmp(&(b.relative_error_percent + 0.25 * b.silence_conflicts.len() as f64))
     });
     let mut distinct: Vec<Candidate> = vec![];
     for candidate in candidates {
@@ -273,6 +320,9 @@ pub fn locate(
         }
     }
     let mut warnings = vec![];
+    if job.silence_mode != SilenceMode::Off {
+        warnings.push("Quiet-gap constraints compare known propeller aircraft passing closer than 80% of the detected flyovers' minimum slant range. Audibility is an assumption: strict mode can reject the true location. Unknown aircraft are not negative evidence.".into());
+    }
     if spacing > job.grid_m * 1.1 {
         warnings.push(format!("Search budget enlarged the initial grid to {spacing:.0} m. Local refinement does not make this an exhaustive search; narrow the region to avoid missing locations."));
     }
@@ -291,7 +341,55 @@ pub fn locate(
         candidates: distinct,
         warnings,
         coarse_grid_m: spacing,
+        hypotheses,
+        method: if indexed {
+            "indexed_flight_corridors"
+        } else {
+            "regional_grid"
+        }
+        .into(),
     })
+}
+
+/// A silence constraint is conditional negative evidence, not a claim that every
+/// airplane must be audible. Only known propellers appreciably closer than the
+/// observed aircraft count, and event edges have a ten-second guard.
+pub fn silence_conflicts(
+    events: &[Event],
+    tracks: &[Track],
+    point: Point,
+    start: f64,
+    c: f64,
+) -> Vec<SilenceConflict> {
+    let radius = events
+        .iter()
+        .map(|e| e.slant_m)
+        .fold(f64::INFINITY, f64::min)
+        * 0.8;
+    let mut conflicts = vec![];
+    for gap in events.windows(2) {
+        let from = start + gap[0].end_s + 10.;
+        let to = start + gap[1].start_s - 10.;
+        if to - from < 10. {
+            continue;
+        }
+        for track in tracks
+            .iter()
+            .filter(|t| t.kind == crate::aircraft::AircraftKind::Propeller)
+        {
+            if let Some((arrival, range, speed)) = track.cpa_near(point.ecef(), c, Some((from, to)))
+                && range < radius
+                && speed > 25.
+            {
+                conflicts.push(SilenceConflict {
+                    aircraft: track.id.clone(),
+                    time_in_recording_s: arrival - start,
+                    slant_m: range,
+                });
+            }
+        }
+    }
+    conflicts
 }
 
 fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64, Vec<Match>) {

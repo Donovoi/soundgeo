@@ -41,6 +41,7 @@ pub fn tracks() -> Vec<Track> {
                 .collect();
             Track {
                 id: format!("SYNTH{}", plane + 1),
+                kind: crate::aircraft::AircraftKind::Propeller,
                 samples,
             }
         })
@@ -51,7 +52,14 @@ pub fn create(dir: &Path) -> Result<Job> {
     let tracks = tracks();
     let csv = dir.join("flights.csv");
     let mut writer = csv::Writer::from_path(&csv)?;
-    writer.write_record(["aircraft", "time", "lat", "lon", "altitude_m"])?;
+    writer.write_record([
+        "aircraft",
+        "time",
+        "lat",
+        "lon",
+        "altitude_m",
+        "type_description",
+    ])?;
     for track in &tracks {
         for s in &track.samples {
             writer.write_record([
@@ -60,6 +68,7 @@ pub fn create(dir: &Path) -> Result<Job> {
                 s.point.lat.to_string(),
                 s.point.lon.to_string(),
                 s.point.alt.to_string(),
+                "L1P".into(),
             ])?;
         }
     }

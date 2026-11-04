@@ -21,6 +21,7 @@ impl Sample {
 pub struct Track {
     pub id: String,
     pub samples: Vec<Sample>,
+    pub kind: crate::aircraft::AircraftKind,
 }
 
 impl Track {
@@ -66,9 +67,32 @@ impl Track {
         Some(c / (c + radial))
     }
     pub fn cpa(&self, observer: Vec3, c: f64) -> Option<(f64, f64, f64)> {
+        self.cpa_near(observer, c, None)
+    }
+    pub fn cpa_near(
+        &self,
+        observer: Vec3,
+        c: f64,
+        window: Option<(f64, f64)>,
+    ) -> Option<(f64, f64, f64)> {
         let mut best = None;
         let mut min = f64::INFINITY;
-        for pair in self.samples.windows(2) {
+        // Acoustic candidates are limited to 40 km (<150 s travel time).
+        // Index the emission window before examining segments, including neighbors.
+        let (from, to) = if let Some((a, b)) = window {
+            (
+                self.samples
+                    .partition_point(|s| s.time < a - 150.)
+                    .saturating_sub(1),
+                (self.samples.partition_point(|s| s.time <= b) + 1).min(self.samples.len()),
+            )
+        } else {
+            (0, self.samples.len())
+        };
+        if from >= to {
+            return None;
+        }
+        for pair in self.samples[from..to].windows(2) {
             let dt = pair[1].time - pair[0].time;
             if dt <= 0. || dt > 60. {
                 continue;
@@ -77,6 +101,10 @@ impl Track {
             let f =
                 ((observer - pair[0].xyz).dot(delta) / delta.dot(delta).max(1e-9)).clamp(0., 1.);
             let range = (pair[0].xyz + delta * f - observer).norm();
+            let arrival = pair[0].time + dt * f + range / c;
+            if window.is_some_and(|(a, b)| arrival < a || arrival > b) {
+                continue;
+            }
             if range < min {
                 min = range;
                 best = Some((pair[0].time + dt * f + range / c, range, delta.norm() / dt));

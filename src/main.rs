@@ -16,6 +16,11 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Commands {
+    /// Download the small ICAO aircraft type catalog for propeller filtering.
+    Catalog {
+        #[arg(long, default_value = "aircraft-types.json")]
+        output: PathBuf,
+    },
     /// Analyze a video/audio file using a saved job configuration.
     Analyze {
         #[arg(long)]
@@ -50,6 +55,10 @@ fn main() -> Result<()> {
         }
     }
     match Args::parse().command {
+        Some(Commands::Catalog { output }) => {
+            soundgeo::aircraft::download(&output)?;
+            println!("Aircraft catalog: {}", output.display());
+        }
         Some(Commands::Analyze { config, output }) => {
             let mut job: Job = serde_json::from_reader(std::fs::File::open(&config)?)?;
             let parent = config.parent().unwrap_or_else(|| std::path::Path::new("."));
@@ -59,6 +68,11 @@ fn main() -> Result<()> {
                 }
             }
             if let Some(path) = &mut job.terrain
+                && path.is_relative()
+            {
+                *path = parent.join(&*path);
+            }
+            if let Some(path) = &mut job.type_catalog
                 && path.is_relative()
             {
                 *path = parent.join(&*path);

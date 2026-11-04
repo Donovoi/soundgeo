@@ -14,6 +14,7 @@ enum Message {
     Done(Box<Report>),
     Demo(Box<Job>),
     Downloaded(PathBuf),
+    Catalog(PathBuf),
     Error(String),
 }
 pub struct App {
@@ -166,6 +167,10 @@ impl App {
                     self.receiver = None;
                 }
                 Message::Downloaded(path) => {
+                    let catalog = path.parent().map(|p| p.join("aircraft-types.json"));
+                    if catalog.as_ref().is_some_and(|p| p.is_file()) {
+                        self.job.type_catalog = catalog;
+                    }
                     self.job.tracks = path;
                     self.status = "Flight archive ready".into();
                     self.receiver = None;
@@ -178,6 +183,11 @@ impl App {
                     }
                     .into();
                     self.error = Some(error);
+                    self.receiver = None;
+                }
+                Message::Catalog(path) => {
+                    self.job.type_catalog = Some(path);
+                    self.status = "Aircraft type catalog ready".into();
                     self.receiver = None;
                 }
             }
@@ -221,6 +231,7 @@ impl App {
             if !self.clock.trim().is_empty(){ui.horizontal(|ui|{ui.label("Allow ± seconds");ui.add(egui::DragValue::new(&mut self.job.time_tolerance_s).range(0. ..=86400.));});}
             ui.add_space(6.);
             egui::CollapsingHeader::new("Search area & terrain").show(ui,|ui|{
+                self.aircraft_controls(ui,ctx);
                 ui.checkbox(&mut self.use_bounds,"Limit the search area");
                 if self.use_bounds {egui::Grid::new("bounds").num_columns(2).show(ui,|ui|{
                     for (label,value) in [("South",&mut self.bounds.south),("North",&mut self.bounds.north),("West",&mut self.bounds.west),("East",&mut self.bounds.east)]{ui.label(label);ui.add(egui::DragValue::new(value).speed(0.001).max_decimals(5));ui.end_row();}
@@ -230,9 +241,14 @@ impl App {
                 if let Some(p)=&self.job.terrain{ui.label(RichText::new(p.display().to_string()).small());if ui.small_button("Clear terrain").clicked(){self.job.terrain=None;}}
             });
             egui::CollapsingHeader::new("Advanced audio & search").show(ui,|ui|{
+                use soundgeo::search::SearchMode;
+                egui::ComboBox::from_id_salt("search-mode").selected_text(match self.job.search_mode{SearchMode::Auto=>"Automatic search method",SearchMode::RegionalGrid=>"Regional grid",SearchMode::FlightCorridors=>"Indexed flight corridors"}).show_ui(ui,|ui|{
+                    ui.selectable_value(&mut self.job.search_mode,SearchMode::Auto,"Automatic search method");ui.selectable_value(&mut self.job.search_mode,SearchMode::FlightCorridors,"Indexed flight corridors");ui.selectable_value(&mut self.job.search_mode,SearchMode::RegionalGrid,"Regional grid");
+                });
                 egui::Grid::new("advanced").num_columns(2).show(ui,|ui|{
                     for (label,value) in [("Low frequency (Hz)",&mut self.job.min_hz),("High frequency (Hz)",&mut self.job.max_hz),("Min contrast (dB)",&mut self.job.min_snr_db),("Temperature (°C)",&mut self.job.temperature_c),("Grid target (m)",&mut self.job.grid_m)]{ui.label(label);ui.add(egui::DragValue::new(value).speed(1.));ui.end_row();}
                     ui.label("Grid point budget");ui.add(egui::DragValue::new(&mut self.job.max_grid_points).range(100..=50000));ui.end_row();
+                    ui.label("Indexed hypothesis limit");ui.add(egui::DragValue::new(&mut self.job.max_hypotheses).range(100..=100_000_000));ui.end_row();
                 });
                 if ui.button("Choose FFmpeg executable…").clicked(){self.job.ffmpeg=rfd::FileDialog::new().pick_file();}
             });
@@ -253,6 +269,82 @@ impl App {
             ui.add_space(10.);
             ui.colored_label(Color32::from_rgb(255, 181, 134), error);
         }
+    }
+    fn aircraft_controls(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        use soundgeo::{aircraft::AircraftFilter, search::SilenceMode};
+        ui.label("Aircraft types");
+        egui::ComboBox::from_id_salt("aircraft-filter")
+            .selected_text(match self.job.aircraft_filter {
+                AircraftFilter::All => "All aircraft",
+                AircraftFilter::PropellerOrUnknown => "Propellers + unknown types",
+                AircraftFilter::PropellerOnly => "Known propellers only",
+            })
+            .show_ui(ui, |ui| {
+                ui.selectable_value(
+                    &mut self.job.aircraft_filter,
+                    AircraftFilter::PropellerOrUnknown,
+                    "Propellers + unknown types",
+                );
+                ui.selectable_value(
+                    &mut self.job.aircraft_filter,
+                    AircraftFilter::PropellerOnly,
+                    "Known propellers only",
+                );
+                ui.selectable_value(
+                    &mut self.job.aircraft_filter,
+                    AircraftFilter::All,
+                    "All aircraft",
+                );
+            });
+        if ui.button("Choose aircraft type catalog…").clicked() {
+            self.job.type_catalog = rfd::FileDialog::new()
+                .add_filter("Type catalog", &["json"])
+                .pick_file();
+        }
+        if ui.button("Download type catalog…").clicked()
+            && let Some(path) = rfd::FileDialog::new()
+                .set_file_name("aircraft-types.json")
+                .save_file()
+        {
+            self.worker(ctx, move |tx, control| {
+                let result = control
+                    .check()
+                    .and_then(|_| soundgeo::aircraft::download(&path));
+                let _ = tx.send(match result {
+                    Ok(()) => Message::Catalog(path),
+                    Err(e) => Message::Error(e.to_string()),
+                });
+            });
+        }
+        if let Some(path) = &self.job.type_catalog {
+            ui.label(RichText::new(path.file_name().unwrap_or_default().to_string_lossy()).small());
+        }
+        ui.label("Quiet intervals between flyovers");
+        egui::ComboBox::from_id_salt("silence")
+            .selected_text(match self.job.silence_mode {
+                SilenceMode::Off => "Ignore quiet gaps",
+                SilenceMode::SupportingEvidence => "Use as supporting evidence",
+                SilenceMode::Strict => "Reject conflicting flyovers",
+            })
+            .show_ui(ui, |ui| {
+                ui.selectable_value(
+                    &mut self.job.silence_mode,
+                    SilenceMode::SupportingEvidence,
+                    "Use as supporting evidence",
+                );
+                ui.selectable_value(
+                    &mut self.job.silence_mode,
+                    SilenceMode::Strict,
+                    "Reject conflicting flyovers",
+                );
+                ui.selectable_value(
+                    &mut self.job.silence_mode,
+                    SilenceMode::Off,
+                    "Ignore quiet gaps",
+                );
+            });
+        ui.label(RichText::new("Strict mode assumes closer known propellers would be audible. It can reject the true location.").small().color(MUTED));
+        ui.separator();
     }
     fn results(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         let Some(report) = &self.report else {
@@ -333,7 +425,29 @@ impl App {
                 }
             });
         });
-        ui.label(RichText::new(format!("{} flyovers   /   {} flight segments   /   {:.0} s audio   /   {:.0} m initial grid",report.events.len(),report.track_count,report.duration_s,report.search_grid_m)).color(MUTED));
+        ui.label(
+            RichText::new(format!(
+                "{} · {} flyovers · {} flight segments · {} hypotheses",
+                report
+                    .media
+                    .file_name()
+                    .unwrap_or_default()
+                    .to_string_lossy(),
+                report.events.len(),
+                report.track_count,
+                report.hypotheses
+            ))
+            .color(MUTED),
+        );
+        ui.label(
+            RichText::new(format!(
+                "{} · {:.0} m seed spacing",
+                report.search_method.replace('_', " "),
+                report.search_grid_m
+            ))
+            .small()
+            .color(MUTED),
+        );
         ui.add_space(12.);
         ui.horizontal(|ui| {
             ui.selectable_value(&mut self.tab, 0, "Locations");
@@ -347,6 +461,15 @@ impl App {
                 ui.label("No location passed the matching threshold. See the evidence and limitations for what was found.");
             } else {
                 let current = &report.candidates[self.selected.min(report.candidates.len() - 1)];
+                if !current.silence_conflicts.is_empty() {
+                    ui.colored_label(
+                        Color32::from_rgb(255, 190, 100),
+                        format!(
+                            "{} predicted flyover(s) conflict with quiet gaps",
+                            current.silence_conflicts.len()
+                        ),
+                    );
+                }
                 egui::Frame::new()
                     .fill(PANEL)
                     .corner_radius(10.)
@@ -491,7 +614,11 @@ impl eframe::App for App {
                     ui.label(RichText::new("SoundGeo").size(24.).strong());
                     ui.label(RichText::new(" /  acoustic location workbench").color(MUTED));
                     ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                        ui.label(RichText::new("EXPERIMENTAL  ·  v0.1").small().color(ACCENT));
+                        ui.label(
+                            RichText::new(concat!("RESEARCH  ·  v", env!("CARGO_PKG_VERSION")))
+                                .small()
+                                .color(ACCENT),
+                        );
                     });
                 });
             });
@@ -581,11 +708,11 @@ fn location_plot(ui: &mut egui::Ui, report: &Report, selected: usize) {
         let y = rect.top() + rect.height() * i as f32 / 5.;
         painter.line_segment(
             [egui::pos2(x, rect.top()), egui::pos2(x, rect.bottom())],
-            Stroke::new(1., Color32::from_rgb(37, 50, 69)),
+            Stroke::new(1.0_f32, Color32::from_rgb(37, 50, 69)),
         );
         painter.line_segment(
             [egui::pos2(rect.left(), y), egui::pos2(rect.right(), y)],
-            Stroke::new(1., Color32::from_rgb(37, 50, 69)),
+            Stroke::new(1.0_f32, Color32::from_rgb(37, 50, 69)),
         );
     }
     for (i, p) in pts.iter().enumerate() {
@@ -650,7 +777,7 @@ fn curve_plot(ui: &mut egui::Ui, event: &soundgeo::audio::Event, modeled: Option
                 xy(pair[0].time_s, pair[0].hz),
                 xy(pair[1].time_s, pair[1].hz),
             ],
-            Stroke::new(2., ACCENT),
+            Stroke::new(2.0_f32, ACCENT),
         );
     }
     if let Some(modeled) = modeled {
@@ -661,7 +788,7 @@ fn curve_plot(ui: &mut egui::Ui, event: &soundgeo::audio::Event, modeled: Option
                         xy(event.ridge[i].time_s, pair[0]),
                         xy(event.ridge[i + 1].time_s, pair[1]),
                     ],
-                    Stroke::new(1.5, Color32::from_rgb(255, 190, 100)),
+                    Stroke::new(1.5_f32, Color32::from_rgb(255, 190, 100)),
                 );
             }
         }

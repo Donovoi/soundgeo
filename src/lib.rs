@@ -1,8 +1,11 @@
+pub mod aircraft;
 pub mod audio;
 pub mod data;
 pub mod demo;
 pub mod geo;
+pub mod index;
 pub mod model;
+mod network;
 pub mod search;
 
 use anyhow::{Context, Result, bail};
@@ -32,6 +35,11 @@ pub struct Job {
     pub grid_m: f64,
     pub max_grid_points: usize,
     pub ffmpeg: Option<PathBuf>,
+    pub aircraft_filter: aircraft::AircraftFilter,
+    pub type_catalog: Option<PathBuf>,
+    pub search_mode: search::SearchMode,
+    pub max_hypotheses: usize,
+    pub silence_mode: search::SilenceMode,
 }
 impl Default for Job {
     fn default() -> Self {
@@ -50,6 +58,11 @@ impl Default for Job {
             grid_m: 200.,
             max_grid_points: 6000,
             ffmpeg: None,
+            aircraft_filter: Default::default(),
+            type_catalog: None,
+            search_mode: Default::default(),
+            max_hypotheses: 5_000_000,
+            silence_mode: Default::default(),
         }
     }
 }
@@ -74,6 +87,14 @@ impl Job {
         }
         if !(100..=50000).contains(&self.max_grid_points) {
             bail!("Grid budget must be 100–50000 points.");
+        }
+        if !(100..=100_000_000).contains(&self.max_hypotheses) {
+            bail!("Hypothesis budget must be 100–100,000,000");
+        }
+        if let Some(path) = &self.type_catalog
+            && !path.is_file()
+        {
+            bail!("Aircraft type catalog not found");
         }
         if !self.temperature_c.is_finite() || !(-50. ..=60.).contains(&self.temperature_c) {
             bail!("Temperature must be -50 to 60 °C.");
@@ -137,10 +158,28 @@ pub struct Report {
     pub candidates: Vec<search::Candidate>,
     pub warnings: Vec<String>,
     pub search_grid_m: f64,
+    #[serde(default)]
+    pub search_method: String,
+    #[serde(default)]
+    pub hypotheses: usize,
     pub created_utc: String,
 }
 
 pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<Report> {
+    let mut effective = job.clone();
+    if effective.type_catalog.is_none() {
+        let parent = if effective.tracks.is_dir() {
+            Some(effective.tracks.as_path())
+        } else {
+            effective.tracks.parent()
+        };
+        if let Some(path) = parent.map(|p| p.join("aircraft-types.json"))
+            && path.is_file()
+        {
+            effective.type_catalog = Some(path);
+        }
+    }
+    let job = &effective;
     job.validate()?;
     control.check()?;
     progress("Extracting audio locally", 0.02);
@@ -151,7 +190,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     let mut report = Report { version: env!("CARGO_PKG_VERSION").into(), status: "insufficient_evidence".into(),
         media: job.media.clone(), job: job.clone(), duration_s, track_count: 0, events,
         candidates: vec![], warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
-        search_grid_m: job.grid_m, created_utc: chrono::Utc::now().to_rfc3339() };
+        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339() };
     if report.events.is_empty() {
         report.warnings.push("No sufficiently strong, curved descending tone was detected. Try a longer outdoor recording or adjust the frequency band.".into());
         return Ok(report);
@@ -174,10 +213,16 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         progress,
     )?;
     report.search_grid_m = result.coarse_grid_m;
+    report.search_method = result.method;
+    report.hypotheses = result.hypotheses;
     report.candidates = result.candidates;
     report.warnings.extend(result.warnings);
     if !report.candidates.is_empty() {
-        report.status = if report.events.len() >= 2 {
+        let ambiguous = report.events.len() < 2
+            || (report.candidates.len() > 1
+                && report.candidates[1].relative_error_percent
+                    < report.candidates[0].relative_error_percent * 1.5 + 0.05);
+        report.status = if !ambiguous {
             "candidates_found"
         } else {
             "ambiguous"
@@ -187,12 +232,26 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     if terrain.missing > 0 {
         report.warnings.push(format!("{} candidate elevations used the fallback of {} m because terrain tiles were missing or void.", terrain.missing, job.ground_m));
     }
-    report.warnings.push("Wind, variable engine pitch, moving microphones, edited audio, sparse flight coverage, and altitude error can invalidate matches. Silence is not treated as proof of aircraft absence.".into());
+    report.warnings.push("Wind, variable engine pitch, moving microphones, edited audio, sparse flight coverage, and altitude error can invalidate matches. Quiet-gap constraints depend on an explicit audibility assumption.".into());
     progress("Analysis complete", 1.0);
     Ok(report)
 }
 
 pub fn save_report(report: &Report, path: &std::path::Path) -> Result<()> {
+    if let Ok(target) = path.canonicalize() {
+        for input in [&report.media, &report.job.tracks]
+            .into_iter()
+            .chain(report.job.type_catalog.iter())
+        {
+            if let Ok(source) = input.canonicalize()
+                && (target == source || (source.is_dir() && target.starts_with(&source)))
+            {
+                bail!(
+                    "A report cannot overwrite an input recording, flight-data file, or catalog. Choose a separate output path."
+                );
+            }
+        }
+    }
     let parent = path
         .parent()
         .filter(|p| !p.as_os_str().is_empty())

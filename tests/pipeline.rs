@@ -13,6 +13,7 @@ fn propagation_delay_and_doppler_have_correct_sign() {
     };
     let track = Track {
         id: "test".into(),
+        kind: Default::default(),
         samples: (-20..=20)
             .map(|i| {
                 Sample::new(
@@ -44,6 +45,7 @@ fn missing_track_gaps_are_not_interpolated() {
     };
     let track = Track {
         id: "gap".into(),
+        kind: Default::default(),
         samples: vec![Sample::new(1000., p), Sample::new(1100., p)],
     };
     assert!(
@@ -230,6 +232,9 @@ fn synthetic_video_unknown_clock_recovers_location() {
         "must infer the shared recording clock"
     );
     let path = dir.path().join("report.json");
+    let input_size = std::fs::metadata(&job.media).unwrap().len();
+    assert!(soundgeo::save_report(&report, &job.media).is_err());
+    assert_eq!(std::fs::metadata(&job.media).unwrap().len(), input_size);
     soundgeo::save_report(&report, &path).unwrap();
     let parsed: soundgeo::Report =
         serde_json::from_reader(std::fs::File::open(path).unwrap()).unwrap();
