@@ -182,7 +182,15 @@ fn quiet_gap_constraint_uses_only_known_closer_propellers() {
         soundgeo::demo::EPOCH,
         job.sound_speed(),
     );
-    assert_eq!(conflicts.len(), 1);
+    assert_eq!(
+        conflicts.len(),
+        1,
+        "Detected intervals (start, end, CPA, slant): {:?}",
+        events
+            .iter()
+            .map(|e| (e.start_s, e.end_s, e.cpa_s, e.slant_m))
+            .collect::<Vec<_>>()
+    );
     assert_eq!(conflicts[0].aircraft, "unexpected");
     tracks[2].kind = AircraftKind::Unknown;
     assert!(

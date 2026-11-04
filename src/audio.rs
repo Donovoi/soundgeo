@@ -157,7 +157,16 @@ pub fn detect(
 }
 
 fn event_quality(e: &Event) -> f64 {
-    e.contrast_db * (e.end_s - e.start_s).min(20.).sqrt() / (1. + 100. * e.fit_rmse_hz / e.base_hz)
+    let duration = e.end_s - e.start_s;
+    // A long one-sided fragment can fit very well with an incorrect CPA and
+    // slant range. Prefer evidence on both sides when choosing overlapping
+    // slow curves; brief jet detections retain their original ranking.
+    let balance = if duration >= 20. {
+        (2. * (e.cpa_s - e.start_s).min(e.end_s - e.cpa_s) / duration).clamp(0.05, 1.)
+    } else {
+        1.
+    };
+    balance * e.contrast_db * duration.min(20.).sqrt() / (1. + 100. * e.fit_rmse_hz / e.base_hz)
 }
 
 /// Bound the expensive initial search without throwing away quieter evidence.
@@ -279,6 +288,12 @@ fn detect_scale(
                     && (!require_harmonic
                         || harmonic_support(&event, &spectrum, low, fft_size, hop))
                 {
+                    let event = if fast {
+                        event
+                    } else {
+                        extend_slow_event(&event, &spectrum, low, fft_size, hop, job)
+                            .unwrap_or(event)
+                    };
                     found.push(event);
                 }
                 for (frame, p) in patch.iter_mut().zip(&ridge) {
@@ -294,6 +309,65 @@ fn detect_scale(
         }
     }
     Ok(found)
+}
+
+fn extend_slow_event(
+    event: &Event,
+    spectrum: &[Vec<f32>],
+    low: usize,
+    fft_size: usize,
+    hop: usize,
+    job: &Job,
+) -> Option<Event> {
+    if event.end_s - event.start_s < 45. {
+        return None;
+    }
+    // Use the initial curve to follow a tone through a longer unmasked patch.
+    // A second unconstrained wide-band scan can select a louder stationary tone.
+    let center =
+        ((event.cpa_s * SAMPLE_RATE as f64 - fft_size as f64 * 0.5) / hop as f64).round() as usize;
+    let half = 90 * SAMPLE_RATE / hop;
+    let start = center.saturating_sub(half);
+    let end = (center + half).min(spectrum.len());
+    if end <= start || end - start < 180 {
+        return None;
+    }
+    let width = (event.base_hz * 0.04).max(4.);
+    let patch: Vec<Vec<f32>> = spectrum[start..end]
+        .iter()
+        .enumerate()
+        .map(|(i, row)| {
+            let t = ((start + i) * hop + fft_size / 2) as f64 / SAMPLE_RATE as f64;
+            let predicted = event.base_hz
+                * straight_factor(
+                    t,
+                    event.cpa_s,
+                    event.speed_mps,
+                    event.slant_m,
+                    job.sound_speed(),
+                );
+            row.iter()
+                .enumerate()
+                .map(|(bin, &value)| {
+                    let hz = (low + bin) as f64 * SAMPLE_RATE as f64 / fft_size as f64;
+                    if (hz - predicted).abs() <= width {
+                        value
+                    } else {
+                        -50.
+                    }
+                })
+                .collect()
+        })
+        .collect();
+    let ridge = trace(&patch, low, start, fft_size, hop);
+    let refined = fit(&ridge, job, false)?;
+    if refined.end_s - refined.start_s < event.end_s - event.start_s + 20.
+        || refined.fit_rmse_hz / refined.base_hz > 1.25 * event.fit_rmse_hz / event.base_hz + 0.001
+        || refined.contrast_db < event.contrast_db - 6.
+    {
+        return None;
+    }
+    Some(refined)
 }
 
 fn harmonic_support(
@@ -475,11 +549,17 @@ fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
     } else {
         vec![300., 700., 1500., 3000., 6000., 12000.]
     };
+    let edge = if fast { 0.5 } else { 3. };
     for v in [35., 55., 80., 110., 150., 200., 250.] {
         for &d in &distances {
             for offset in [-2., -1., 0., 1., 2.] {
                 let offset = offset * if fast { 2. } else { 10. };
                 let t = middle + offset;
+                // Initial proposals must obey the same bounds as refinement.
+                // Otherwise an already optimal out-of-bounds fit never moves.
+                if t < time_start + edge || t > time_end - edge {
+                    continue;
+                }
                 let (s, b) = score(t, v, d);
                 if s < best.0 {
                     best = (s, t, v, d, b);
@@ -498,7 +578,6 @@ fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
             for sign in [-1., 1.] {
                 let mut p = [best.1, best.2, best.3];
                 p[axis] += sign * steps[axis];
-                let edge = if fast { 0.5 } else { 3. };
                 if p[0] < time_start + edge
                     || p[0] > time_end - edge
                     || !(25. ..=260.).contains(&p[1])
@@ -548,6 +627,29 @@ fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn a_partial_curve_cannot_report_closest_approach_outside_its_samples() {
+        let job = Job::default();
+        let points: Vec<_> = (0..57)
+            .map(|i| {
+                let time_s = i as f64 * 0.5;
+                RidgePoint {
+                    time_s,
+                    hz: 482. * straight_factor(time_s, -6., 150., 700., job.sound_speed()),
+                    contrast_db: 25.,
+                }
+            })
+            .collect();
+        if let Some(event) = fit(&points, &job, false) {
+            assert!(
+                event.cpa_s >= event.start_s + 3. && event.cpa_s <= event.end_s - 3.,
+                "Closest approach {} lies outside the supported interval {}..{}",
+                event.cpa_s,
+                event.start_s,
+                event.end_s
+            );
+        }
+    }
     #[test]
     fn a_linear_frequency_drift_is_not_a_resolved_flyover() {
         let points: Vec<_> = (0..161)

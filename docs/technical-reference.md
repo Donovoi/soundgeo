@@ -65,3 +65,12 @@ The model compares these alternatives with one shared recording clock.
 A flight segment cannot support two detections in the same proposal.
 Final refinement and acceptance use every retained sample in each sound curve.
 These bounded choices do not make the search exhaustive.
+
+## Long sound curves
+
+The first scan uses overlapping 90-second windows for slow flyovers.
+A detected curve can guide a second trace through up to 180 seconds of audio.
+The second trace uses the original spectrum. It must retain sufficient signal strength and fit quality.
+When slow curves overlap, selection favors evidence before and after the closest approach.
+The closest approach must lie inside the supported sound interval during both initial fitting and refinement.
+These checks reduce errors from short fragments. They do not prove that a detected tone came from an aircraft.

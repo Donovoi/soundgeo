@@ -108,3 +108,64 @@ fn longer_recording_retains_evidence_beyond_the_eight_search_anchors() {
         );
     }
 }
+
+#[test]
+fn long_propeller_pass_retains_both_sides_of_its_frequency_curve() {
+    let (speed, slant, tone, center, c) = (110_f64, 4000_f64, 120_f64, 110_f64, 340.39_f64);
+    let rate = audio::SAMPLE_RATE;
+    let mut random = 971_u64;
+    let samples: Vec<f32> = (0..240 * rate)
+        .map(|i| {
+            let receive = i as f64 / rate as f64;
+            let (mut lo, mut hi) = (receive - 120., receive);
+            for _ in 0..32 {
+                let emit = (lo + hi) * 0.5;
+                if emit + f64::hypot(speed * (emit - center), slant) / c < receive {
+                    lo = emit;
+                } else {
+                    hi = emit;
+                }
+            }
+            let emit = (lo + hi) * 0.5;
+            let distance = f64::hypot(speed * (emit - center), slant);
+            let envelope = (1. - ((emit - center) / 100.).powi(2)).max(0.);
+            random = random.wrapping_mul(6364136223846793005).wrapping_add(1);
+            let noise = (random >> 32) as u32 as f64 / u32::MAX as f64 - 0.5;
+            (0.03 * noise
+                + (std::f64::consts::TAU * 65. * receive).sin()
+                + 0.2 * (std::f64::consts::TAU * 180. * receive).sin()
+                + envelope * slant / distance * (std::f64::consts::TAU * tone * emit).sin())
+                as f32
+        })
+        .collect();
+    let job = Job {
+        fast_flyovers: false,
+        ..Default::default()
+    };
+    let events = audio::detect(&samples, &job, &Control::default(), &|_, _| {}).unwrap();
+    let received_cpa = center + slant / c;
+    let event = events
+        .iter()
+        .min_by(|a, b| {
+            (a.cpa_s - received_cpa)
+                .abs()
+                .total_cmp(&(b.cpa_s - received_cpa).abs())
+        })
+        .expect("A clear long flyover must be detected");
+    assert!(
+        (event.cpa_s - received_cpa).abs() < 3.,
+        "CPA {} vs {}; interval {}..{}",
+        event.cpa_s,
+        received_cpa,
+        event.start_s,
+        event.end_s
+    );
+    assert!(
+        event.end_s - event.start_s > 120.,
+        "The 90-second scan must not truncate a longer supported curve: {}..{}",
+        event.start_s,
+        event.end_s
+    );
+    assert!((event.speed_mps / speed - 1.).abs() < 0.15);
+    assert!((event.slant_m / slant - 1.).abs() < 0.2);
+}
