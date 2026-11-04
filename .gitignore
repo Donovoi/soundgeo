@@ -1,0 +1,5 @@
+/target/
+/demo/
+/reports/
+/cache/
+*.part
