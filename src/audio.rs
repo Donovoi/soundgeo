@@ -28,6 +28,27 @@ pub struct Event {
     pub ridge: Vec<RidgePoint>,
 }
 
+/// Residual of a freely fitted straight frequency drift, evaluated on the same
+/// samples as a physical model. Centered online sums avoid cancellation for
+/// short events late in a long recording.
+pub(crate) fn linear_baseline_rmse(points: impl Iterator<Item = (f64, f64)>) -> f64 {
+    let (mut n, mut mx, mut my, mut xx, mut xy, mut yy) = (0., 0., 0., 0., 0., 0.);
+    for (x, y) in points {
+        n += 1.;
+        let dx = x - mx;
+        let dy = y - my;
+        mx += dx / n;
+        my += dy / n;
+        xx += dx * (x - mx);
+        xy += dx * (y - my);
+        yy += dy * (y - my);
+    }
+    if n < 3. || xx <= 0. {
+        return 0.;
+    }
+    ((yy - xy * xy / xx).max(0.) / n).sqrt()
+}
+
 pub fn ffmpeg_path(job: &Job) -> PathBuf {
     if let Some(path) = &job.ffmpeg {
         return path.clone();
@@ -502,8 +523,11 @@ fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
     let mean = ridge.iter().map(|p| p.hz).sum::<f64>() / ridge.len() as f64;
     let variance = ridge.iter().map(|p| (p.hz - mean).powi(2)).sum::<f64>() / ridge.len() as f64;
     let contrast = ridge.iter().map(|p| p.contrast_db).sum::<f64>() / ridge.len() as f64;
+    let linear_rmse = linear_baseline_rmse(ridge.iter().map(|p| (p.time_s, p.hz)));
     if rmse > 1.5_f64.max(mean * if fast { 0.015 } else { 0.008 })
         || best.0 / variance > 0.12
+        || linear_rmse <= f64::EPSILON
+        || best.0 > 0.5 * linear_rmse.powi(2)
         || contrast < minimum_contrast
     {
         return None;
@@ -519,4 +543,26 @@ fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
         contrast_db: contrast,
         ridge,
     })
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn a_linear_frequency_drift_is_not_a_resolved_flyover() {
+        let points: Vec<_> = (0..161)
+            .map(|i| {
+                let time_s = i as f64 * 0.5;
+                RidgePoint {
+                    time_s,
+                    hz: 160. - 0.3 * time_s + 0.05 * (i as f64 * 1.7).sin(),
+                    contrast_db: 20.,
+                }
+            })
+            .collect();
+        assert!(
+            fit(&points, &Job::default(), false).is_none(),
+            "A descending line alone cannot constrain a Doppler closest approach"
+        );
+    }
 }

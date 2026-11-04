@@ -40,6 +40,9 @@ pub struct Match {
     pub rmse_hz: f64,
     pub fitted_tone_hz: f64,
     pub coverage: f64,
+    /// Freely fitted linear drift on exactly the covered observations.
+    #[serde(default)]
+    pub linear_baseline_rmse_hz: Option<f64>,
     pub modeled_hz: Vec<f64>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -302,6 +305,9 @@ pub fn locate(
             }
         }
         let (objective, matches) = exact_score(&seed, events, tracks, c);
+        if matches.len() < events.len().min(3) {
+            continue;
+        }
         if !objective.is_finite() {
             incomplete_references += 1;
         }
@@ -470,6 +476,7 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
         let track = &tracks[index];
         let mut predicted = vec![];
         let mut used = vec![];
+        let mut used_times = vec![];
         let mut ff = 0.;
         let mut yf = 0.;
         for p in &event.ridge {
@@ -478,6 +485,7 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
                 yf += p.hz * f;
                 predicted.push(f);
                 used.push(p.hz);
+                used_times.push(p.time_s);
             } else {
                 predicted.push(f64::NAN);
             }
@@ -499,12 +507,15 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
             }
         }
         let rmse = (sum / used.len() as f64).sqrt();
+        let linear_rmse =
+            crate::audio::linear_baseline_rmse(used_times.into_iter().zip(used.iter().copied()));
         matches.push(Match {
             event_index: Some(event_index),
             aircraft: track.id.clone(),
             rmse_hz: rmse,
             fitted_tone_hz: base,
             coverage,
+            linear_baseline_rmse_hz: Some(linear_rmse),
             modeled_hz: predicted,
         });
     }
@@ -519,6 +530,17 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
     matches
         .sort_by(|a, b| (a.rmse_hz / a.fitted_tone_hz).total_cmp(&(b.rmse_hz / b.fitted_tone_hz)));
     let objective = match_error(&matches[..required]);
+    // Keep a finite optimization objective outside the acceptance boundary.
+    // Only models that explain curvature better than a free linear drift can
+    // count toward the final independent-flight consensus.
+    matches.retain(|m| {
+        m.linear_baseline_rmse_hz.is_some_and(|linear| {
+            linear > f64::EPSILON && m.rmse_hz.powi(2) <= 0.5 * linear.powi(2)
+        })
+    });
+    if matches.len() < required {
+        return (objective, vec![]);
+    }
     let mut passing = required;
     while passing < matches.len()
         && matches[passing].rmse_hz / matches[passing].fitted_tone_hz <= 0.015
@@ -535,6 +557,51 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
 mod tests {
     use super::*;
     use crate::{audio::RidgePoint, demo};
+
+    #[test]
+    fn a_linear_drift_does_not_corroborate_an_unrelated_flight() {
+        let tracks = demo::tracks();
+        let point = Point {
+            lat: demo::TRUTH.lat + 0.05,
+            lon: demo::TRUTH.lon + 0.05,
+            alt: demo::TRUTH.alt,
+        };
+        let first = tracks[0]
+            .factor(point.ecef(), demo::EPOCH + 10., 340.39)
+            .unwrap();
+        let last = tracks[0]
+            .factor(point.ecef(), demo::EPOCH + 70., 340.39)
+            .unwrap();
+        let ridge = (0..121)
+            .map(|i| RidgePoint {
+                time_s: 10. + i as f64 * 0.5,
+                hz: 100. * (first + (last - first) * i as f64 / 120.),
+                contrast_db: 20.,
+            })
+            .collect();
+        let event = Event {
+            start_s: 10.,
+            end_s: 70.,
+            cpa_s: 40.,
+            base_hz: 100.,
+            speed_mps: 72.,
+            slant_m: 7000.,
+            fit_rmse_hz: 0.,
+            contrast_db: 20.,
+            ridge,
+        };
+        let seed = Seed {
+            point,
+            start: demo::EPOCH,
+            indices: vec![0],
+            score: 0.,
+        };
+        let (_, matches) = exact_score(&seed, &[event], &tracks, 340.39);
+        assert!(
+            matches.is_empty(),
+            "Small relative tone error is not evidence when a straight line explains the observations better"
+        );
+    }
 
     #[test]
     fn weak_extra_match_preserves_a_passing_three_flight_consensus() {

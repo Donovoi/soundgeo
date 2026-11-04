@@ -272,7 +272,7 @@ impl App {
                 if let Some(p)=&self.job.terrain{ui.label(RichText::new(p.display().to_string()).small());if ui.small_button("Clear terrain").clicked(){self.job.terrain=None;}}
             });
             egui::CollapsingHeader::new("Advanced audio & search").show(ui,|ui|{
-                ui.checkbox(&mut self.job.fast_flyovers,"Also detect short flyovers (500–1900 Hz)");
+                ui.checkbox(&mut self.job.fast_flyovers,"Also detect short flyovers (500–3900 Hz)");
                 if self.job.fast_flyovers {ui.horizontal(|ui|{ui.label("Short-pass contrast (dB)");ui.add(egui::DragValue::new(&mut self.job.fast_min_snr_db).range(6. ..=60.));});}
                 use soundgeo::search::SearchMode;
                 egui::ComboBox::from_id_salt("search-mode").selected_text(match self.job.search_mode{SearchMode::Auto=>"Automatic search method",SearchMode::RegionalGrid=>"Regional grid",SearchMode::FlightCorridors=>"Indexed flight corridors"}).show_ui(ui,|ui|{

@@ -26,6 +26,8 @@ def main():
     parser.add_argument('--cache', type=Path, required=True)
     parser.add_argument('--sample-cache', type=Path,
                         help='Full-day free ADS-B Exchange sample cache for November 1 cases')
+    parser.add_argument('--type-catalog', type=Path,
+                        help='Aircraft type catalog used by the November 1 reference runs')
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--case', help='One case ID; omit to run every case')
     args = parser.parse_args()
@@ -56,6 +58,8 @@ def main():
         if case.get('reference_provider') == 'adsb_exchange_free_sample':
             job.pop('archive')
             job['tracks'] = str(args.sample_cache.resolve())
+            if args.type_catalog:
+                job['type_catalog'] = str(args.type_catalog.resolve())
         config = args.output / f"{case['id']}-job.json"
         report_path = args.output / f"{case['id']}-report.json"
         config.write_text(json.dumps(job, indent=2))

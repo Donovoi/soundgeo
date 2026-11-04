@@ -1,13 +1,15 @@
 {
   "software_version": "0.3.0-dev.1",
-  "latest_stage": "parallel",
-  "cli_sha256": "8c4c2f7daf3f3fe4982385f7e319884f338d4429e299b16e91ea23afefe26ba9",
+  "latest_stage": "harmonic",
+  "evaluated_code_commit": "8dbe92fe76fa7187abb2e97adefdfe41cc8401fb",
+  "cli_sha256": "a3bfcbf4e33e8521be74559c704336a5406fae40283397f99fa2eac38a057be2",
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
   "date_and_broad_region_supplied": true,
   "real_accuracy_established": false,
+  "coordinate_hits": 1,
   "accepted_cases": 0,
-  "case_count": 7,
+  "case_count": 8,
   "cases": [
     {
       "case": "midway",
@@ -24,6 +26,7 @@
           "hypotheses": 0,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "70b035dc1960569cf078eb4cf783bbc41d9d00f4ae33a4175f10eec94b05ee17"
         },
@@ -36,6 +39,7 @@
           "hypotheses": 941371,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "f01afc46eb667440537e92de1ed9d875fb83e0e7e9e1e6f7129186052232640b"
         },
@@ -48,6 +52,7 @@
           "hypotheses": 1780948,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "224b658264fa1bc065bb18de7c8793ca0b5310e22a1cb9fb5beacec26812b348"
         },
@@ -60,6 +65,7 @@
           "hypotheses": 1329717,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "aa6f7a52b764cb1cb1fe8481a20a4f9ba791c65970c23ac4c925c4bd94f00b02",
           "cli_sha256": "ecd49c5cd9768756bfba3318c6c00e100ec473e1054ab4d7fc23ab51a333ffec"
@@ -73,6 +79,7 @@
           "hypotheses": 1329717,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "21d2b4cbbcce33451afeeb67146e656595c0cef394bcda538ed5cf6b8990dd6b",
           "cli_sha256": "797fbb30eb9ce34e19673004e5389c679e40137bc894da65119ffb8124c7159f"
@@ -86,9 +93,24 @@
           "hypotheses": 1329717,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "0311c85bb790ee4dbc78f774cc01d043513d366548bce304e4372013356d1115",
           "cli_sha256": "8c4c2f7daf3f3fe4982385f7e319884f338d4429e299b16e91ea23afefe26ba9"
+        },
+        "harmonic": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 4,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 1209623,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "466b3fb217c10036b9bc887129a835f2d7c361dee3487aa1c10070192dfc018d",
+          "cli_sha256": "a3bfcbf4e33e8521be74559c704336a5406fae40283397f99fa2eac38a057be2"
         }
       }
     },
@@ -107,6 +129,7 @@
           "hypotheses": 38034,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "729ef596cf15538d93bcd4a6078e8292f44f5a3052585f1e6ee0e5b4d32cb1a6"
         },
@@ -119,6 +142,7 @@
           "hypotheses": 626727,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "be6ad33d44bd32004d066a1399d2ef4af4839ae312261cb97b9725b5f32ef020"
         },
@@ -131,6 +155,7 @@
           "hypotheses": 794649,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "09c3c5451f0cc3aae8ff2d65ddd0fa58e2d9edc9369cf1b797afa0a4fd8b1a27"
         },
@@ -143,6 +168,7 @@
           "hypotheses": 814840,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "ae708833e9bbcc011d1a4ef56bedc3a61f2dad7476b4868a24394d0e0d1bfe76",
           "cli_sha256": "ecd49c5cd9768756bfba3318c6c00e100ec473e1054ab4d7fc23ab51a333ffec"
@@ -156,6 +182,7 @@
           "hypotheses": 814840,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "41618d3c5ddb01e62262d54e0b310b312f997b8d0b833007f9509787f5acd29c",
           "cli_sha256": "797fbb30eb9ce34e19673004e5389c679e40137bc894da65119ffb8124c7159f"
@@ -169,9 +196,24 @@
           "hypotheses": 814840,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "0ebe0288494d108861cf13edfb9a095f4f8b7f1518d0beec3a94458fcb17ec5f",
           "cli_sha256": "8c4c2f7daf3f3fe4982385f7e319884f338d4429e299b16e91ea23afefe26ba9"
+        },
+        "harmonic": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 3,
+          "candidates": 0,
+          "flight_segments": 4336,
+          "hypotheses": 702289,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "ea7f0137f4a372d6d77e2e6636b23d499bebc3715a8f55b6ddfba1ecf11d5d55",
+          "cli_sha256": "a3bfcbf4e33e8521be74559c704336a5406fae40283397f99fa2eac38a057be2"
         }
       }
     },
@@ -190,6 +232,7 @@
           "hypotheses": 9984,
           "recording_clock": null,
           "duration_s": 1199.984,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "b2e105084f36f642aacb89f4298ebcbc6ed02bbae7f74c1f6a49b6c225fb5ecc"
         },
@@ -202,6 +245,7 @@
           "hypotheses": 480374,
           "recording_clock": null,
           "duration_s": 1199.984,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "24178b9f49274e5f600aa5fc625a85711b0e093a617b8dcfe63a262584ad5648"
         },
@@ -214,6 +258,7 @@
           "hypotheses": 2281111,
           "recording_clock": null,
           "duration_s": 1199.984,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "cda33527ac225392b8c4b5a8502cb1979463be66ae70a7f1c7617d495391ea55"
         },
@@ -226,6 +271,7 @@
           "hypotheses": 1792967,
           "recording_clock": null,
           "duration_s": 1199.984,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "18cd37e9501333abd5dbd04ff665c62be304dae961463a3aa4b240680819906e",
           "cli_sha256": "ecd49c5cd9768756bfba3318c6c00e100ec473e1054ab4d7fc23ab51a333ffec"
@@ -239,6 +285,7 @@
           "hypotheses": 1792967,
           "recording_clock": null,
           "duration_s": 1199.984,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "0167d7138a75d247c6820141118285d169440a44fa42c25953cbf9e9809b0bd6",
           "cli_sha256": "797fbb30eb9ce34e19673004e5389c679e40137bc894da65119ffb8124c7159f"
@@ -252,9 +299,24 @@
           "hypotheses": 1792967,
           "recording_clock": null,
           "duration_s": 1199.984,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "8f509bd6a13e8d34f8a0cd20b1ea06455d74fc8133e43a736753b575682edb2c",
           "cli_sha256": "8c4c2f7daf3f3fe4982385f7e319884f338d4429e299b16e91ea23afefe26ba9"
+        },
+        "harmonic": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 6,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 1925357,
+          "recording_clock": null,
+          "duration_s": 1199.984125,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "21ae9f3d108036b59c0569a89fd41ceaed24fc3dcb462c46a5c2d71249e4259d",
+          "cli_sha256": "a3bfcbf4e33e8521be74559c704336a5406fae40283397f99fa2eac38a057be2"
         }
       }
     },
@@ -273,6 +335,7 @@
           "hypotheses": 383165,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "3ba6e34e2f66add466d78bcd85ea87477d4417924821d516a4b57ff193a16d8d"
         },
@@ -285,6 +348,7 @@
           "hypotheses": 1344934,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "97d2bedfe1322fae8fb921487c89bffe9ef091707ffeb7396c58940a492b9c49"
         },
@@ -297,6 +361,7 @@
           "hypotheses": 963091,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "4ab90953a34b805ef310b06e0380069a14c6b3f88c69e7c4122b06e7bddafdd4",
           "cli_sha256": "ecd49c5cd9768756bfba3318c6c00e100ec473e1054ab4d7fc23ab51a333ffec"
@@ -310,6 +375,7 @@
           "hypotheses": 963091,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "6dd743cbf8a06e5a8c0270439da8c897d75a9e9711b010c04b38d8314331805a",
           "cli_sha256": "797fbb30eb9ce34e19673004e5389c679e40137bc894da65119ffb8124c7159f"
@@ -323,9 +389,24 @@
           "hypotheses": 963091,
           "recording_clock": null,
           "duration_s": 1800.011,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "969fad9fd368d257ae336cbc6fa479cc4a6bd74308ef74c4f4f23693d212ec28",
           "cli_sha256": "8c4c2f7daf3f3fe4982385f7e319884f338d4429e299b16e91ea23afefe26ba9"
+        },
+        "harmonic": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 1,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 488250,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "478270849a35a98f9c08d58e935872a4cd97b20043d6444f2a88cd1e4e13c793",
+          "cli_sha256": "a3bfcbf4e33e8521be74559c704336a5406fae40283397f99fa2eac38a057be2"
         }
       }
     },
@@ -344,6 +425,7 @@
           "hypotheses": 7674932,
           "recording_clock": null,
           "duration_s": 3598.1875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "de6153a7a480356451fc842d6483afcf9dcd6f9644699dbd2f86d2f74ad44667",
           "cli_sha256": "db5b2376069335ff6a4ff147547c933540a8461b568cdf60155e6651059f5a28"
@@ -357,6 +439,7 @@
           "hypotheses": 7214462,
           "recording_clock": null,
           "duration_s": 3598.1875,
+          "coordinate_hit": true,
           "passed": false,
           "report_sha256": "9e6f34112f4d494c946e2228d2e991a6b3505005d020184b913f3c5a9d8aacfa",
           "cli_sha256": "ecd49c5cd9768756bfba3318c6c00e100ec473e1054ab4d7fc23ab51a333ffec",
@@ -375,6 +458,7 @@
           "hypotheses": 7214462,
           "recording_clock": null,
           "duration_s": 3598.1875,
+          "coordinate_hit": true,
           "passed": false,
           "report_sha256": "8afd634a69f1d63be66ca251a8d8e690940cdc0482fb00dc2b84acc369bfa1dc",
           "cli_sha256": "797fbb30eb9ce34e19673004e5389c679e40137bc894da65119ffb8124c7159f",
@@ -393,6 +477,7 @@
           "hypotheses": 7214462,
           "recording_clock": null,
           "duration_s": 3598.1875,
+          "coordinate_hit": true,
           "passed": false,
           "report_sha256": "acbb1fa450813b7fa12b42e14c0a6c17354b1969483828c75f928031775b8971",
           "cli_sha256": "8c4c2f7daf3f3fe4982385f7e319884f338d4429e299b16e91ea23afefe26ba9",
@@ -401,6 +486,26 @@
           ],
           "top_error_m": 88.184,
           "top_matches": 3
+        },
+        "harmonic": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 19,
+          "candidates": 2,
+          "flight_segments": 5381,
+          "hypotheses": 6773575,
+          "recording_clock": null,
+          "duration_s": 3598.187375,
+          "coordinate_hit": true,
+          "passed": false,
+          "report_sha256": "355d9616671b04d76ac73009e2f490a0d8420b9d02bc80ecc9ac2702d6788906",
+          "cli_sha256": "a3bfcbf4e33e8521be74559c704336a5406fae40283397f99fa2eac38a057be2",
+          "candidate_errors_m": [
+            74.706,
+            385.129
+          ],
+          "top_error_m": 74.706,
+          "top_matches": 4
         }
       }
     },
@@ -419,6 +524,7 @@
           "hypotheses": 4944072,
           "recording_clock": null,
           "duration_s": 3596.6085,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "15b652184fa82be6fe8fb87e42baf4703e30c209b07d372f14241cc5f40bc024",
           "cli_sha256": "db5b2376069335ff6a4ff147547c933540a8461b568cdf60155e6651059f5a28"
@@ -432,6 +538,7 @@
           "hypotheses": 4088117,
           "recording_clock": null,
           "duration_s": 3596.6085,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "95a68da81c34cc6460e2e9b8d5df7259ad3b7098a1709a04367aebff1d283982",
           "cli_sha256": "ecd49c5cd9768756bfba3318c6c00e100ec473e1054ab4d7fc23ab51a333ffec"
@@ -445,6 +552,7 @@
           "hypotheses": 4088117,
           "recording_clock": null,
           "duration_s": 3596.6085,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "b4e1f9c0be9461c7f071fd03836af2198b7928ab5bc22eb37ddd435ca465c6e3",
           "cli_sha256": "797fbb30eb9ce34e19673004e5389c679e40137bc894da65119ffb8124c7159f"
@@ -458,9 +566,24 @@
           "hypotheses": 4088117,
           "recording_clock": null,
           "duration_s": 3596.6085,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "c054ab55658bd126345e5554f0b15c54470dc1058ce4572132d62cd4080b1cd4",
           "cli_sha256": "8c4c2f7daf3f3fe4982385f7e319884f338d4429e299b16e91ea23afefe26ba9"
+        },
+        "harmonic": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 11,
+          "candidates": 0,
+          "flight_segments": 5381,
+          "hypotheses": 5040888,
+          "recording_clock": null,
+          "duration_s": 3596.6085,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "11db18cb59feb96840f90d1563aaed4ddecc5d42e7466f002f9b308e66b5d270",
+          "cli_sha256": "a3bfcbf4e33e8521be74559c704336a5406fae40283397f99fa2eac38a057be2"
         }
       }
     },
@@ -479,6 +602,7 @@
           "hypotheses": 146292,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "3cc7af4d31f33217520eab8116427a423c4e6e5d9775c8039bb40855d4eeb8fb",
           "cli_sha256": "db5b2376069335ff6a4ff147547c933540a8461b568cdf60155e6651059f5a28"
@@ -492,6 +616,7 @@
           "hypotheses": 162775,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "3f4995692eb04cc482968e822cc76572b3993f0327ed3655b9de6452b0bae588",
           "cli_sha256": "ecd49c5cd9768756bfba3318c6c00e100ec473e1054ab4d7fc23ab51a333ffec"
@@ -505,6 +630,7 @@
           "hypotheses": 162775,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "0b55c2a56c0576688869fee680f4d7468dbb1d56e849148ef3a28d079eb35d35",
           "cli_sha256": "797fbb30eb9ce34e19673004e5389c679e40137bc894da65119ffb8124c7159f"
@@ -518,9 +644,56 @@
           "hypotheses": 162775,
           "recording_clock": null,
           "duration_s": 3599.99875,
+          "coordinate_hit": false,
           "passed": false,
           "report_sha256": "be91b1ecb7f5fc96c795dad38f3d947b06b5a45ff4dd5161556c0790d522dbf8",
           "cli_sha256": "8c4c2f7daf3f3fe4982385f7e319884f338d4429e299b16e91ea23afefe26ba9"
+        },
+        "harmonic": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 11,
+          "candidates": 0,
+          "flight_segments": 4134,
+          "hypotheses": 162775,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "2ee2dc882855d226cd6622bfbe55649e4f6664957cb8affa680965ec2b270c29",
+          "cli_sha256": "a3bfcbf4e33e8521be74559c704336a5406fae40283397f99fa2eac38a057be2"
+        }
+      }
+    },
+    {
+      "case": "lake-hood",
+      "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+      "clock_supplied": false,
+      "reference_day": "2026-11-03",
+      "stages": {
+        "harmonic": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 24,
+          "candidates": 6,
+          "flight_segments": 1430,
+          "hypotheses": 4825799,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "d4e165e738b5051fb3a080e1ff5c1383552d7d3b9ca9b9baeeaaed9dc816a884",
+          "cli_sha256": "a3bfcbf4e33e8521be74559c704336a5406fae40283397f99fa2eac38a057be2",
+          "candidate_errors_m": [
+            3133.306,
+            8246.739,
+            9191.224,
+            9206.905,
+            9065.847,
+            8479.916
+          ],
+          "top_error_m": 3133.306,
+          "top_matches": 3
         }
       }
     }

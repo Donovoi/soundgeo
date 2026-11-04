@@ -1,7 +1,7 @@
 # Real-video validation
 
 This is a failing acceptance benchmark, not a claim of reliable geolocation.
-Seven recordings from two public cameras were captured locally on 2026-11-04.
+Eight recordings from three public cameras were captured locally on 2026-11-04.
 The known UTC reference day and an approximately 40 km regional search box are
 provided; the recording clock, camera coordinates, aircraft identities, tone
 bands and flyover intervals are not supplied to the application. Every solver
@@ -82,6 +82,8 @@ This threshold defines the evaluation; it is not an estimated accuracy radius.
 ```powershell
 python validation/run.py --cli target/release/soundgeo-cli.exe `
   --media-root ../real-validation --cache ../real-validation/flight-cache `
+  --sample-cache ../real-validation/free-exchange-2026-11-01 `
+  --type-catalog ../real-validation/flight-cache/2026-11-03/aircraft-types.json `
   --output ../real-validation/reproduction
 ```
 
@@ -200,3 +202,53 @@ individually plausible fourth fit could invalidate a passing three-flight core;
 additional matches now must also preserve the joint error limit. All original
 coverage and error thresholds remain unchanged. Real-video reruns of these
 changes are tracked separately from the preceding 4 kHz results.
+
+
+## Completed 8 kHz run, including Lake Hood
+
+All eight cases used their original broad region and `start_utc: null`.
+The first Midway November 1 result improved to **74.706 m**, four independently
+matched flights out of 19 detections, and 0.730% joint fit error. Its second
+candidate was 385.129 m away. Both remained ambiguous. Lake Hood was added from
+[the public camera](https://www.youtube.com/watch?v=61pi8UjLOlo) at the Alaska
+Aviation Museum, using [the owner's map pin](https://goo.gl/maps/cKpcc57ES22d2cwn6)
+(61.179633, -149.9719665, not a survey). A full hour from November 3 was evaluated;
+the complete daily ADSB.lol archive was verified and loaded automatically.
+
+Lake Hood's top candidate was **wrong by 3133.306 m**, with five other wrong
+candidates farther away. All six were marked ambiguous. This failure is retained
+and must not be described as location recovery. A St. Barts screening clip was
+digitally silent and was excluded as unsuitable for audio geolocation.
+
+| Case | Events | Flight segments | Hypotheses | Result | Top error (m) |
+|---|---:|---:|---:|---|---:|
+| midway | 4 | 4947 | 1209623 | insufficient_evidence | - |
+| southampton | 3 | 4336 | 702289 | insufficient_evidence | - |
+| midway-arrivals | 6 | 4947 | 1925357 | insufficient_evidence | - |
+| midway-holdout | 1 | 4947 | 488250 | insufficient_evidence | - |
+| midway-nov1 | 19 | 5381 | 6773575 | ambiguous | 74.706 |
+| midway-nov1-holdout | 11 | 5381 | 5040888 | insufficient_evidence | - |
+| southampton-nov1 | 11 | 4134 | 162775 | insufficient_evidence | - |
+| lake-hood | 24 | 1430 | 4825799 | ambiguous | 3133.306 |
+
+Coordinate hits within 250 m: **1/8**. Accepted unambiguous locations: **0/8**.
+The exact executable and report hashes are in `results.json`. Windows and Ubuntu
+passed all 32 software tests, formatting, strict Clippy and release builds at
+`8916066524c00611b44adfe5ef28b3febe24d4d7`. This later commit also fixes CSV type
+metadata appearing after an aircraft's initial positions; the real-run executable
+is recorded separately as commit `8dbe92fe76fa7187abb2e97adefdfe41cc8401fb`.
+
+## Curvature qualification fix under evaluation
+
+Some wrong Lake Hood matches explained the observed frequency change worse than
+a freely fitted straight line. Two regressions reproduced this: a linear chirp
+was accepted as a detected flyover, and an unrelated flight could corroborate a
+linear frequency drift merely through small relative tone error. Detected curves
+and final flight associations now must halve the straight-line squared residual
+on exactly the same observations. Optimization remains finite outside this
+acceptance boundary so nearby valid solutions can still be refined. The baseline
+RMSE is retained in each new JSON match; older reports remain readable.
+
+All 34 local software tests, strict Clippy and release compilation pass. A rerun
+of the eight cases is in progress; rejecting an incorrect candidate alone does
+not satisfy real-location acceptance. No acceptance threshold was relaxed.
