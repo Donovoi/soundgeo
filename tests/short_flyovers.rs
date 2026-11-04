@@ -1,18 +1,17 @@
 use soundgeo::{Control, Job, audio};
 
-#[test]
-fn short_jet_tones_survive_loud_bass_and_are_not_counted_twice() {
+fn signal(seconds: usize, passes: &[(f64, f64, f64, f64)]) -> Vec<f32> {
     let rate = audio::SAMPLE_RATE;
     let c = 340.39;
     let mut random = 83_u64;
-    let samples: Vec<f32> = (0..rate * 90)
+    (0..rate * seconds)
         .map(|i| {
             let receive = i as f64 / rate as f64;
             random = random.wrapping_mul(6364136223846793005).wrapping_add(1);
             let mut value = (random >> 32) as u32 as f64 / u32::MAX as f64 * 0.03
                 + 2.0 * (std::f64::consts::TAU * 65. * receive).sin()
                 + 0.2 * (std::f64::consts::TAU * 1700. * receive).sin();
-            for (center, speed, slant, tone) in [(22., 77., 130., 1180.), (65., 86., 250., 1250.)] {
+            for &(center, speed, slant, tone) in passes {
                 // Independently synthesize phase at emission, solving propagation
                 // delay by bisection instead of the detector's straight_factor.
                 let mut lo = receive - 20.;
@@ -33,7 +32,13 @@ fn short_jet_tones_survive_loud_bass_and_are_not_counted_twice() {
             }
             value as f32
         })
-        .collect();
+        .collect()
+}
+
+#[test]
+fn short_jet_tones_survive_loud_bass_and_are_not_counted_twice() {
+    let c = 340.39;
+    let samples = signal(90, &[(22., 77., 130., 1180.), (65., 86., 250., 1250.)]);
     let events = audio::detect(&samples, &Job::default(), &Control::default(), &|_, _| {}).unwrap();
     assert_eq!(events.len(), 2, "{events:?}");
     for (event, center) in events.iter().zip([22. + 130. / c, 65. + 250. / c]) {
@@ -53,4 +58,21 @@ fn short_jet_tones_survive_loud_bass_and_are_not_counted_twice() {
             .unwrap()
             .is_empty()
     );
+}
+
+#[test]
+fn longer_recording_retains_evidence_beyond_the_eight_search_anchors() {
+    let passes: Vec<_> = (0..10)
+        .map(|i| (22. + i as f64 * 40., 77., 130., 1180.))
+        .collect();
+    let samples = signal(410, &passes);
+    let events = audio::detect(&samples, &Job::default(), &Control::default(), &|_, _| {}).unwrap();
+    assert_eq!(events.len(), 10);
+    for &(center, _, slant, _) in &passes {
+        assert!(
+            events
+                .iter()
+                .any(|e| (e.cpa_s - center - slant / 340.39).abs() < 1.)
+        );
+    }
 }

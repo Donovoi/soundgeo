@@ -51,6 +51,7 @@ impl App {
         cc.egui_ctx.set_style(style);
         Self {
             job: Job {
+                ground_datum: soundgeo::geo::ElevationDatum::Egm96,
                 archive: Some(soundgeo::archive::ArchiveRequest {
                     date_from: String::new(),
                     date_to: None,
@@ -260,6 +261,13 @@ impl App {
                     for (label,value) in [("South",&mut self.bounds.south),("North",&mut self.bounds.north),("West",&mut self.bounds.west),("East",&mut self.bounds.east)]{ui.label(label);ui.add(egui::DragValue::new(value).speed(0.001).max_decimals(5));ui.end_row();}
                 });}else{ui.label("Uses the flight-data extent. Narrow a large archive for a finer search.");}
                 ui.horizontal(|ui|{ui.label("Fallback elevation (m)");ui.add(egui::DragValue::new(&mut self.job.ground_m).range(-500. ..=9000.));});
+                ui.label("Fallback height datum");
+                ui.horizontal(|ui| {
+                    ui.selectable_value(&mut self.job.ground_datum, soundgeo::geo::ElevationDatum::Egm96, "Sea level (EGM96)");
+                    ui.selectable_value(&mut self.job.ground_datum, soundgeo::geo::ElevationDatum::Wgs84Ellipsoid, "WGS84 ellipsoid");
+                });
+                ui.checkbox(&mut self.job.smooth_tracks, "Reduce flight-position noise")
+                    .on_hover_text("Centered 10-second local linear fit. Keeps track endpoints and timestamps; can blur rapid maneuvers.");
                 if ui.button("Choose SRTM terrain folder…").clicked(){self.job.terrain=rfd::FileDialog::new().pick_folder();}
                 if let Some(p)=&self.job.terrain{ui.label(RichText::new(p.display().to_string()).small());if ui.small_button("Clear terrain").clicked(){self.job.terrain=None;}}
             });

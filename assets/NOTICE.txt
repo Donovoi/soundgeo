@@ -1,0 +1,8 @@
+egm96_15.gtx is the public-domain NGA EGM96 15-minute geoid grid,
+distributed by OSGeo PROJ-DATUMGRID.
+Source: https://github.com/OSGeo/proj-datumgrid/blob/master/egm96_15.gtx
+License: https://github.com/OSGeo/proj-datumgrid/blob/master/README.DATUMGRID
+SHA-256: c02a6eb70a7a78efebe5adf3ade626eb75390e170bb8b3f36136a2c28f5326a0
+Downloaded 2026-11-04. Bundled without modification for offline conversion
+from EGM96 orthometric height to WGS84 ellipsoid height: h = H + N.
+It does not convert pressure altitude or arbitrary national height datums.

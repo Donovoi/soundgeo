@@ -97,7 +97,15 @@ pub fn load_for_job_sources(
             )
         }),
     };
-    load_filtered(sources, control, &filter)
+    let mut dataset = load_filtered(sources, control, &filter)?;
+    if job.smooth_tracks {
+        for track in &mut dataset.tracks {
+            control.check()?;
+            track.smooth_positions();
+        }
+        dataset.warnings.push("Flight positions use a centered 10-second local linear fit to reduce quantization noise. Track endpoints, gaps and timestamps are preserved; curved/accelerating motion may still incur model error.".into());
+    }
+    Ok(dataset)
 }
 fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Result<Dataset> {
     let mut raw: BTreeMap<String, Vec<Sample>> = BTreeMap::new();

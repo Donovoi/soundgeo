@@ -2,6 +2,33 @@ use anyhow::{Result, bail};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::PathBuf};
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ElevationDatum {
+    /// Backward-compatible interpretation of a manually supplied height.
+    #[default]
+    Wgs84Ellipsoid,
+    Egm96,
+}
+
+/// NGA/OSGeo public-domain EGM96 15-minute grid. Bilinear interpolation,
+/// including the periodic longitude seam. Returns N in h = H + N.
+pub fn geoid_undulation(lat: f64, lon: f64) -> f64 {
+    const GRID: &[u8] = include_bytes!("../assets/egm96_15.gtx");
+    let y = ((lat.clamp(-90., 90.) + 90.) * 4.).min(720.);
+    let x = (lon + 180.).rem_euclid(360.) * 4.;
+    let row = (y.floor() as usize).min(719);
+    let col = x.floor() as usize % 1440;
+    let fy = y - row as f64;
+    let fx = x - x.floor();
+    let at = |r: usize, c: usize| {
+        let offset = 40 + 4 * (r * 1440 + c % 1440);
+        f32::from_be_bytes(GRID[offset..offset + 4].try_into().unwrap()) as f64
+    };
+    (1. - fy) * ((1. - fx) * at(row, col) + fx * at(row, col + 1))
+        + fy * ((1. - fx) * at(row + 1, col) + fx * at(row + 1, col + 1))
+}
+
 #[derive(Clone, Copy, Debug, Serialize, Deserialize)]
 pub struct Point {
     pub lat: f64,
@@ -123,14 +150,19 @@ impl Bounds {
 pub struct Terrain {
     root: Option<PathBuf>,
     fallback: f64,
+    datum: ElevationDatum,
     tiles: HashMap<String, Option<Vec<i16>>>,
     pub missing: usize,
 }
 impl Terrain {
     pub fn new(root: Option<PathBuf>, fallback: f64) -> Self {
+        Self::with_datum(root, fallback, ElevationDatum::Wgs84Ellipsoid)
+    }
+    pub fn with_datum(root: Option<PathBuf>, fallback: f64, datum: ElevationDatum) -> Self {
         Self {
             root,
             fallback,
+            datum,
             tiles: HashMap::new(),
             missing: 0,
         }
@@ -172,11 +204,18 @@ impl Terrain {
                 let y = ((1. - (p.lat - lat as f64)) * (n - 1) as f64).round() as usize;
                 let h = data[y.min(n - 1) * n + x.min(n - 1)];
                 if h != i16::MIN {
-                    return h as f64;
+                    // SRTM .hgt heights always reference EGM96, independently
+                    // of the selected datum for the manual fallback height.
+                    return h as f64 + geoid_undulation(p.lat, p.lon);
                 }
             }
         }
         self.missing += 1;
         self.fallback
+            + if self.datum == ElevationDatum::Egm96 {
+                geoid_undulation(p.lat, p.lon)
+            } else {
+                0.
+            }
     }
 }

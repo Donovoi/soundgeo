@@ -117,13 +117,7 @@ pub fn detect(
     if job.fast_flyovers {
         found.extend(detect_scale(samples, job, control, progress, true)?);
     }
-    found.sort_by(|a, b| {
-        let quality = |e: &Event| {
-            e.contrast_db * (e.end_s - e.start_s).min(20.).sqrt()
-                / (1. + 100. * e.fit_rmse_hz / e.base_hz)
-        };
-        quality(b).total_cmp(&quality(a))
-    });
+    found.sort_by(|a, b| event_quality(b).total_cmp(&event_quality(a)));
     let mut events: Vec<Event> = vec![];
     for e in found {
         if events
@@ -133,12 +127,26 @@ pub fn detect(
             continue;
         }
         events.push(e);
-        if events.len() == 8 {
+        if events.len() == 24 {
             break;
         }
     }
     events.sort_by(|a, b| a.cpa_s.total_cmp(&b.cpa_s));
     Ok(events)
+}
+
+fn event_quality(e: &Event) -> f64 {
+    e.contrast_db * (e.end_s - e.start_s).min(20.).sqrt() / (1. + 100. * e.fit_rmse_hz / e.base_hz)
+}
+
+/// Bound the expensive initial search without throwing away quieter evidence.
+/// Every retained event may corroborate a seed from these strongest eight.
+pub(crate) fn anchor_indices(events: &[Event]) -> Vec<usize> {
+    let mut indices: Vec<_> = (0..events.len()).collect();
+    indices.sort_by(|&a, &b| event_quality(&events[b]).total_cmp(&event_quality(&events[a])));
+    indices.truncate(8);
+    indices.sort_unstable();
+    indices
 }
 
 fn detect_scale(

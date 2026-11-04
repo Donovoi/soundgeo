@@ -30,6 +30,8 @@ pub struct Job {
     pub time_tolerance_s: f64,
     pub bounds: Option<geo::Bounds>,
     pub ground_m: f64,
+    pub ground_datum: geo::ElevationDatum,
+    pub smooth_tracks: bool,
     pub temperature_c: f64,
     pub min_hz: f64,
     pub max_hz: f64,
@@ -56,6 +58,8 @@ impl Default for Job {
             time_tolerance_s: 60.,
             bounds: None,
             ground_m: 0.,
+            ground_datum: Default::default(),
+            smooth_tracks: true,
             temperature_c: 15.,
             min_hz: 40.,
             max_hz: 400.,
@@ -232,7 +236,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     let dataset = data::load_for_job_sources(job, &sources, duration_s, control)?;
     report.track_count = dataset.tracks.len();
     report.warnings.extend(dataset.warnings);
-    let mut terrain = geo::Terrain::new(job.terrain.clone(), job.ground_m);
+    let mut terrain = geo::Terrain::with_datum(job.terrain.clone(), job.ground_m, job.ground_datum);
     progress("Matching flyovers with a shared recording time", 0.42);
     let result = search::locate(
         job,
@@ -261,7 +265,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         .into();
     }
     if terrain.missing > 0 {
-        report.warnings.push(format!("{} candidate elevations used the fallback of {} m because terrain tiles were missing or void.", terrain.missing, job.ground_m));
+        report.warnings.push(format!("Missing/void terrain used the configured fallback height of {} m ({:?}). Candidate heights are WGS84 ellipsoid heights.", job.ground_m, job.ground_datum));
     }
     report.warnings.push("Wind, variable engine pitch, moving microphones, edited audio, sparse flight coverage, and altitude error can invalidate matches. Quiet-gap constraints depend on an explicit audibility assumption.".into());
     progress("Analysis complete", 1.0);

@@ -8,9 +8,13 @@ use crate::{
     search::{Seed, complete_seed, feature_error, within_time},
 };
 use anyhow::{Result, bail};
-use std::collections::{BTreeSet, HashMap};
+use std::{
+    collections::{BTreeSet, HashMap},
+    sync::Mutex,
+};
 const CELL: f64 = 20000.;
 type Key = (i64, i32, i32, i32);
+type QueryKey = (i64, i64, i32, i32, i32, i32);
 fn key(xyz: Vec3, time: f64) -> Key {
     (
         (time / 60.).floor() as i64,
@@ -21,6 +25,7 @@ fn key(xyz: Vec3, time: f64) -> Key {
 }
 pub struct FlightIndex {
     buckets: HashMap<Key, Vec<usize>>,
+    queries: Mutex<HashMap<QueryKey, Vec<usize>>>,
 }
 impl FlightIndex {
     pub fn new(tracks: &[Track], control: &Control) -> Result<Self> {
@@ -34,7 +39,10 @@ impl FlightIndex {
                 }
             }
         }
-        Ok(Self { buckets })
+        Ok(Self {
+            buckets,
+            queries: Mutex::new(HashMap::new()),
+        })
     }
     pub fn nearby(&self, p: Point, arrival: f64, radius: f64, c: f64) -> Vec<usize> {
         let (_, x, y, z) = key(p.ecef(), arrival);
@@ -44,6 +52,15 @@ impl FlightIndex {
         // Pad for track interpolation, acoustic delay and approximate CPA measurement.
         let from = ((arrival - radius / c - 65.) / 60.).floor() as i64;
         let to = ((arrival + 65.) / 60.).floor() as i64;
+        let query = (from, to, x, y, z, reach);
+        if let Some(cached) = self
+            .queries
+            .lock()
+            .ok()
+            .and_then(|cache| cache.get(&query).cloned())
+        {
+            return cached;
+        }
         let mut found = BTreeSet::new();
         for t in from..=to {
             for dx in -reach..=reach {
@@ -56,7 +73,16 @@ impl FlightIndex {
                 }
             }
         }
-        found.into_iter().copied().collect()
+        let found: Vec<_> = found.into_iter().copied().collect();
+        if let Ok(mut cache) = self.queries.lock() {
+            // Neighboring metre-scale hypotheses share the same coarse buckets.
+            // Cache the exact query result, with bounded memory; no pruning changes.
+            if cache.len() >= 8192 {
+                cache.clear();
+            }
+            cache.insert(query, found.clone());
+        }
+        found
     }
 }
 
@@ -73,19 +99,21 @@ pub(crate) fn corridor_seeds(
     let c = job.sound_speed();
     let mut seeds = vec![];
     let mut examined = 0usize;
-    for (anchor, first) in events.iter().enumerate() {
+    let anchors = crate::audio::anchor_indices(events);
+    for (ordinal, &anchor) in anchors.iter().enumerate() {
+        let first = &events[anchor];
         for (id, track) in tracks.iter().enumerate() {
             control.check()?;
             progress(
                 &format!(
                     "Indexed flight corridors: anchor {}/{}, track {}/{}, {examined} hypotheses",
-                    anchor + 1,
-                    events.len(),
+                    ordinal + 1,
+                    anchors.len(),
                     id + 1,
                     tracks.len()
                 ),
-                0.42 + 0.30 * (anchor * tracks.len() + id) as f32
-                    / (events.len() * tracks.len()) as f32,
+                0.42 + 0.30 * (ordinal * tracks.len() + id) as f32
+                    / (anchors.len() * tracks.len()) as f32,
             );
             for pair in track.samples.windows(2) {
                 let dt = pair[1].time - pair[0].time;
@@ -122,14 +150,15 @@ pub(crate) fn corridor_seeds(
                     {
                         continue;
                     }
+                    let anchor_ground = terrain.elevation(plane);
                     for scale in [0.5, 0.75, 1., 1.5, 2.] {
                         let slant = (first.slant_m * scale).min(40000.);
-                        let height = plane.alt - job.ground_m;
+                        let height = plane.alt - anchor_ground;
                         if slant < height.abs() {
                             continue;
                         }
                         for side in [-1., 1.] {
-                            let mut ground = job.ground_m;
+                            let mut ground = anchor_ground;
                             let mut point = plane;
                             for _ in 0..2 {
                                 let cross = (slant * slant - (plane.alt - ground).powi(2))

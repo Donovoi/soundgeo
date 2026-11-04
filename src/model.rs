@@ -25,6 +25,51 @@ pub struct Track {
 }
 
 impl Track {
+    /// Centered local linear regression suppresses quantized position noise
+    /// before differentiating. Never adds points, extends a track or joins gaps.
+    pub fn smooth_positions(&mut self) {
+        let original = &self.samples;
+        let mut smoothed = original.clone();
+        for (i, sample) in original.iter().enumerate() {
+            let from = original.partition_point(|s| s.time < sample.time - 5.);
+            let to = original.partition_point(|s| s.time <= sample.time + 5.);
+            if from == i || to <= i + 1 || to - from < 3 {
+                continue;
+            }
+            let mut sx = 0.;
+            let mut sxx = 0.;
+            let mut sy = Vec3::default();
+            let mut sxy = Vec3::default();
+            for neighbor in &original[from..to] {
+                let x = neighbor.time - sample.time;
+                // Fit in local geodetic coordinates; unwrap longitude at the seam.
+                let y = Vec3(
+                    neighbor.point.lat - sample.point.lat,
+                    (neighbor.point.lon - sample.point.lon + 180.).rem_euclid(360.) - 180.,
+                    neighbor.point.alt - sample.point.alt,
+                );
+                sx += x;
+                sxx += x * x;
+                sy = sy + y;
+                sxy = sxy + y * x;
+            }
+            let n = (to - from) as f64;
+            let denominator = n * sxx - sx * sx;
+            if denominator <= 1e-9 {
+                continue;
+            }
+            let adjustment = (sy * sxx - sxy * sx) * (1. / denominator);
+            smoothed[i] = Sample::new(
+                sample.time,
+                Point {
+                    lat: sample.point.lat + adjustment.0,
+                    lon: (sample.point.lon + adjustment.1 + 180.).rem_euclid(360.) - 180.,
+                    alt: sample.point.alt + adjustment.2,
+                },
+            );
+        }
+        self.samples = smoothed;
+    }
     /// Solve arrival(t_emit)=t_emit+range(t_emit)/c, then use velocity at emission.
     /// No extrapolation across track boundaries or missing-data gaps.
     pub fn factor(&self, observer: Vec3, arrival: f64, c: f64) -> Option<f64> {

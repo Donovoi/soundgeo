@@ -82,7 +82,7 @@ pub(crate) fn complete_seed(
 ) -> Option<Seed> {
     let mut indices = vec![usize::MAX; events.len()];
     indices[anchor] = track;
-    let mut score = initial_error;
+    let mut errors = vec![initial_error];
     let mut matched = 1;
     for (i, event) in events.iter().enumerate().filter(|(i, _)| *i != anchor) {
         let wanted = start + event.cpa_s;
@@ -104,7 +104,7 @@ pub(crate) fn complete_seed(
             .min_by(|a, b| a.1.total_cmp(&b.1));
         if let Some((j, error)) = best {
             indices[i] = j;
-            score += error;
+            errors.push(error);
             matched += 1;
         }
     }
@@ -115,7 +115,14 @@ pub(crate) fn complete_seed(
         point,
         start,
         indices,
-        score: (events.len() - matched) as f64 * 100. + score / matched as f64,
+        // Coarse selection must use the same consensus size as exact fitting.
+        // Rewarding every loose association first lets unrelated sounds crowd
+        // out three precise matches before they ever reach refinement.
+        score: {
+            errors.sort_by(f64::total_cmp);
+            let required = events.len().min(3);
+            errors[..required].iter().sum::<f64>() / required as f64
+        },
     })
 }
 
@@ -171,6 +178,7 @@ pub fn locate(
         p.alt = terrain.elevation(*p);
     }
     let c = job.sound_speed();
+    let anchors = crate::audio::anchor_indices(events);
     let (mut seeds, hypotheses) = if indexed {
         crate::index::corridor_seeds(job, events, tracks, bounds, terrain, control, progress)?
     } else {
@@ -194,7 +202,8 @@ pub fn locate(
             .flat_map_iter(|&point| {
                 let cpas: Vec<_> = tracks.iter().map(|t| t.cpa(point.ecef(), c)).collect();
                 let mut here = vec![];
-                for (anchor, first) in events.iter().enumerate() {
+                for &anchor in &anchors {
+                    let first = &events[anchor];
                     for (i, cpa) in cpas.iter().enumerate() {
                         let Some((arrival, range, speed)) = *cpa else {
                             continue;
@@ -360,6 +369,9 @@ pub fn locate(
         }
     }
     let mut warnings = vec![];
+    if events.len() > anchors.len() {
+        warnings.push(format!("The strongest {} of {} detections seed the bounded search; all retained detections are available as corroborating evidence. Weak anchors can therefore be missed.", anchors.len(), events.len()));
+    }
     if job.silence_mode != SilenceMode::Off {
         warnings.push("Quiet-gap constraints compare known propeller aircraft passing closer than 80% of the detected flyovers' minimum slant range. Audibility is an assumption: strict mode can reject the true location. Unknown aircraft are not negative evidence.".into());
     }

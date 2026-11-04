@@ -315,7 +315,8 @@ fn srtm_big_endian_and_missing_tiles_use_explicit_fallback() {
             lon: -109.75,
             alt: 0.
         }),
-        123.
+        // Independently evaluated with PROJ vgridshift and the bundled grid.
+        123. - 23.394_083_023_071_29
     );
     assert_eq!(
         terrain.elevation(Point {
