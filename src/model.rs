@@ -96,18 +96,17 @@ impl Track {
         if vel.norm() >= c * 0.9 {
             return None;
         }
-        let mut a = 0.;
-        let mut b = dt;
-        for _ in 0..22 {
-            let m = (a + b) * 0.5;
-            let t = s[lo].time + m + (s[lo].xyz + vel * m - observer).norm() / c;
-            if t < arrival {
-                a = m;
-            } else {
-                b = m;
-            }
-        }
-        let r = s[lo].xyz + vel * ((a + b) * 0.5) - observer;
+        // Exact retarded time on this constant-velocity segment. The earlier
+        // quadratic root is the causal solution (emission precedes arrival).
+        // This replaces 22 square-root bisection steps per ridge sample.
+        let r0 = s[lo].xyz - observer;
+        let q = arrival - s[lo].time;
+        let c2 = c * c;
+        let a = 1. - vel.dot(vel) / c2;
+        let k = q + r0.dot(vel) / c2;
+        let discriminant = (k * k - a * (q * q - r0.dot(r0) / c2)).max(0.);
+        let emission = ((k - discriminant.sqrt()) / a).clamp(0., dt);
+        let r = r0 + vel * emission;
         let radial = vel.dot(r) / r.norm().max(1.);
         Some(c / (c + radial))
     }

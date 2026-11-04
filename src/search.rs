@@ -250,7 +250,9 @@ pub fn locate(
             continue;
         }
         diverse.push(seed);
-        if diverse.len() == 48 {
+        // Real long recordings admit many accidental coarse associations.
+        // Preserve more basins before applying the full observed-curve model.
+        if diverse.len() == 512 {
             break;
         }
     }

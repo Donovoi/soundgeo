@@ -3,3 +3,4 @@
 /reports/
 /cache/
 *.part
+__pycache__/

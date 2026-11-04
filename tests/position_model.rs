@@ -4,6 +4,53 @@ use soundgeo::{
 };
 
 #[test]
+fn analytic_propagation_matches_independent_bisection_for_asymmetric_segments() {
+    let observer = Point {
+        lat: 40.,
+        lon: -75.,
+        alt: 100.,
+    }
+    .ecef();
+    for (east, north, height) in [(80., 0., 150.), (-130., 40., 800.), (200., -90., 3000.)] {
+        let start = Point {
+            lat: 40.001,
+            lon: -75.004,
+            alt: height,
+        };
+        let end = Point {
+            lat: start.lat + north * 30. / 111320.,
+            lon: start.lon + east * 30. / (111320. * 40_f64.to_radians().cos()),
+            alt: height + 90.,
+        };
+        let track = Track {
+            id: "analytic".into(),
+            kind: Default::default(),
+            samples: vec![Sample::new(1000., start), Sample::new(1030., end)],
+        };
+        let velocity = (end.ecef() - start.ecef()) * (1. / 30.);
+        for step in 1..60 {
+            let emit = step as f64 / 2.;
+            let arrival = 1000. + emit + (start.ecef() + velocity * emit - observer).norm() / 340.;
+            let mut low = 0.;
+            let mut high = 30.;
+            for _ in 0..60 {
+                let middle = (low + high) / 2.;
+                let received =
+                    1000. + middle + (start.ecef() + velocity * middle - observer).norm() / 340.;
+                if received < arrival {
+                    low = middle;
+                } else {
+                    high = middle;
+                }
+            }
+            let r = start.ecef() + velocity * ((low + high) / 2.) - observer;
+            let expected = 340. / (340. + velocity.dot(r) / r.norm());
+            assert!((track.factor(observer, arrival, 340.).unwrap() - expected).abs() < 1e-9);
+        }
+    }
+}
+
+#[test]
 fn geoid_conversion_matches_independent_proj_values_and_wraps_longitude() {
     // Reference values from PROJ's vgridshift (+multiplier=1), not this parser.
     for (lat, lon, expected) in [
