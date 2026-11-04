@@ -80,6 +80,29 @@ fn unit_clock_rate() -> f64 {
     1.
 }
 
+/// Bound the coarse beam before expensive curve fitting.
+pub(crate) fn prune_coarse_seeds(seeds: &mut Vec<Seed>, limit: usize, spacing: f64) {
+    seeds.sort_by(|a, b| a.score.total_cmp(&b.score));
+    // Repeated segment/anchor proposals for the same basin must not consume
+    // the entire beam before full curves are considered. ECEF cells avoid
+    // latitude-dependent sizes; flight identities and clock bins stay distinct.
+    let cell = spacing * 0.8;
+    let mut seen = std::collections::HashSet::new();
+    seeds.retain(|seed| {
+        if seen.len() == limit {
+            return false;
+        }
+        let xyz = seed.point.ecef();
+        seen.insert((
+            seed.indices.clone(),
+            (seed.start / 20.).floor() as i64,
+            (xyz.0 / cell).floor() as i64,
+            (xyz.1 / cell).floor() as i64,
+            (xyz.2 / cell).floor() as i64,
+        ))
+    });
+}
+
 /// An unmatched detection is retained as an outlier, never counted as evidence.
 /// Three or more detections require at least three independent flight matches.
 pub(crate) fn complete_seed(
@@ -250,6 +273,16 @@ pub fn locate(
             .collect();
         seeds.append(&mut batch_seeds);
     }
+    progress(
+        "Ranking complete Doppler curves before local refinement",
+        0.72,
+    );
+    // CPA/range/speed summaries are only a proposal mechanism. Rank surviving
+    // proposals using all observed curve samples before applying the final cap.
+    for seed in &mut seeds {
+        control.check()?;
+        seed.score = exact_score(seed, events, tracks, c).0;
+    }
     seeds.sort_by(|a, b| a.score.total_cmp(&b.score));
     // Keep multiple basins/flight identities so the refinement is not all one grid cell.
     let mut diverse: Vec<Seed> = vec![];
@@ -287,7 +320,11 @@ pub fn locate(
     for (i, mut seed) in diverse.into_iter().enumerate() {
         control.check()?;
         progress(
-            "Refining location and the shared recording clock",
+            &format!(
+                "Refining location and shared clock: hypothesis {}/{}",
+                i + 1,
+                count
+            ),
             0.73 + 0.25 * i as f32 / count.max(1) as f32,
         );
         seed.score = exact_score(&seed, events, tracks, c).0;
@@ -722,5 +759,41 @@ mod tests {
             matches.iter().map(|m| m.event_index).collect::<Vec<_>>(),
             vec![Some(0), Some(1), Some(2)]
         );
+    }
+    #[test]
+    fn coarse_beam_preserves_distinct_basins_before_refinement() {
+        let base = Seed {
+            point: demo::TRUTH,
+            start: demo::EPOCH,
+            clock_rate: 1.,
+            indices: vec![0, 1, 2],
+            score: 0.,
+        };
+        let mut seeds: Vec<_> = (0..9000)
+            .map(|i| {
+                let mut s = base.clone();
+                s.score = i as f64 * 0.0001;
+                s
+            })
+            .collect();
+        let mut other_flights = base.clone();
+        other_flights.indices = vec![3, 4, 5];
+        other_flights.score = 2.;
+        let mut other_time = base.clone();
+        other_time.start += 120.;
+        other_time.score = 3.;
+        let mut other_place = base.clone();
+        other_place.point.lat += 0.02;
+        other_place.score = 4.;
+        seeds.extend([other_flights, other_time, other_place]);
+        prune_coarse_seeds(&mut seeds, 4, 200.);
+        assert_eq!(seeds.len(), 4);
+        assert!(
+            seeds.iter().any(|s| s.indices == [3, 4, 5]),
+            "Repeated cheap hypotheses must not evict a different flight association"
+        );
+        assert!(seeds.iter().any(|s| (s.start - base.start).abs() > 100.));
+        assert!(seeds.iter().any(|s| s.point.distance(base.point) > 1000.));
+        assert_eq!(seeds[0].score, 0.);
     }
 }

@@ -281,5 +281,23 @@ time and preserving fixed-rate operation when disabled. Real runs of this
 change are recorded separately; software regression success is not accuracy
 validation.
 
-The affine-clock change passes all 36 local software tests, formatting, strict
-Clippy and release compilation. Its nine real-video reruns are in progress.
+The affine-clock change passed all 36 software tests, formatting, strict Clippy
+and release compilation on Windows and Ubuntu at
+`15edcdfb74550820af1e0d714b9cd9e72e618077`. Its broader Midway holdout run still
+returned no candidate, despite a separate known-area diagnostic recovering a
+nearby solution. That diagnostic is excluded from acceptance. The arrivals clip
+also produced a wrong ambiguous candidate about 27 km away, retained as a
+failure. The remaining runs are being completed.
+
+A coarse-search regression reproduced how thousands of repeated proposals could
+evict every alternative before detailed fitting. Intermediate beams now retain
+distinct position/time/flight groups; surviving proposals are ranked by full
+curve error before the refinement cap. All 37 local software tests, formatting,
+strict Clippy and release compilation pass. Another nine-case real rerun is in
+progress; this change has not yet established real-world accuracy.
+
+Additional free-source checks found that ADSBiq's published archive ends on
+2026-10-10, before these cases. Direct historical requests to ADSB.fi and
+Airplanes.live did not yield usable public traces (403); TheAirTraffic returned
+non-JSON content. These probes do not establish that those services lack data,
+and no access restrictions were bypassed.
