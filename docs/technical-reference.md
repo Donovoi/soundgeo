@@ -56,3 +56,12 @@ solver can fit one shared clock rate, bounded by `max_clock_drift_ppm` (default
 reports `recording_clock_rate`: UTC elapsed seconds equal media elapsed seconds
 multiplied by this rate. This handles uniform clock drift; it does not grant
 individual flyovers independent timing offsets or repair discontinuous edits.
+
+## Candidate selection
+
+Both search modes compare sampled sound curves before they remove proposals.
+A proposal keeps up to three plausible flights for each detected sound.
+The model compares these alternatives with one shared recording clock.
+A flight segment cannot support two detections in the same proposal.
+Final refinement and acceptance use every retained sample in each sound curve.
+These bounded choices do not make the search exhaustive.

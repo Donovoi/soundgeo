@@ -7,6 +7,7 @@ use crate::{
 use anyhow::{Result, bail};
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
+use std::sync::Arc;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -74,6 +75,7 @@ pub(crate) struct Seed {
     pub clock_rate: f64,
     pub anchor: usize,
     pub indices: Vec<usize>,
+    pub alternatives: Arc<Vec<[usize; 3]>>,
     pub score: f64,
 }
 
@@ -132,45 +134,82 @@ fn allowed_clock_drift(job: &Job, events: &[Event]) -> f64 {
 
 /// Proposal ranking only: sample the curve across its full extent. Final
 /// optimization and acceptance still evaluate every observed ridge sample.
-fn sampled_curve_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> f64 {
+fn sampled_curve_fit(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64, Vec<usize>) {
     let observer = seed.point.ecef();
-    let mut errors = Vec::new();
-    for (event, &index) in events.iter().zip(&seed.indices) {
+    let mut current_errors = Vec::new();
+    let mut current_used = std::collections::HashSet::new();
+    let mut edges = Vec::new();
+    for (event_index, (event, &current)) in events.iter().zip(&seed.indices).enumerate() {
         let n = event.ridge.len().min(16);
-        if index == usize::MAX || n < 2 {
+        if n < 2 {
             continue;
         }
-        let (mut ff, mut yf, mut yy, mut used) = (0., 0., 0., 0);
-        for i in 0..n {
-            let p = &event.ridge[i * (event.ridge.len() - 1) / (n - 1)];
-            if let Some(f) =
-                tracks[index].factor(observer, seed.start + seed.clock_rate * p.time_s, c)
-            {
-                ff += f * f;
-                yf += p.hz * f;
-                yy += p.hz * p.hz;
-                used += 1;
+        let options = seed.alternatives.get(event_index).copied().unwrap_or([
+            current,
+            usize::MAX,
+            usize::MAX,
+        ]);
+        for index in options.into_iter().filter(|&index| index != usize::MAX) {
+            let (mut ff, mut yf, mut yy, mut used) = (0., 0., 0., 0);
+            for i in 0..n {
+                let p = &event.ridge[i * (event.ridge.len() - 1) / (n - 1)];
+                if let Some(f) =
+                    tracks[index].factor(observer, seed.start + seed.clock_rate * p.time_s, c)
+                {
+                    ff += f * f;
+                    yf += p.hz * f;
+                    yy += p.hz * p.hz;
+                    used += 1;
+                }
             }
-        }
-        let coverage = used as f64 / n as f64;
-        if coverage >= 0.9 && ff > 0. && yf > 0. {
-            let base = yf / ff;
-            let mse = (yy - yf * yf / ff).max(0.) / used as f64;
-            errors.push(10000. * mse / base.powi(2) + (1. - coverage).powi(2));
+            let coverage = used as f64 / n as f64;
+            if coverage >= 0.9 && ff > 0. && yf > 0. {
+                let base = yf / ff;
+                let mse = (yy - yf * yf / ff).max(0.) / used as f64;
+                let error = 10000. * mse / base.powi(2) + (1. - coverage).powi(2);
+                edges.push((error, event_index, index));
+                if index == current && current_used.insert(index) {
+                    current_errors.push(error);
+                }
+            }
         }
     }
     let required = events.len().min(3);
-    if required == 0 || errors.len() < required {
-        return f64::INFINITY;
+    let core_score = |errors: &mut Vec<f64>| {
+        if required == 0 || errors.len() < required {
+            return f64::INFINITY;
+        }
+        errors.sort_by(f64::total_cmp);
+        (errors[..required].iter().sum::<f64>() / required as f64).sqrt()
+    };
+    let current_score = core_score(&mut current_errors);
+    if seed.alternatives.is_empty() {
+        return (current_score, seed.indices.clone());
     }
-    errors.sort_by(f64::total_cmp);
-    (errors[..required].iter().sum::<f64>() / required as f64).sqrt()
+    // Compare plausible associations with the measured curves at one shared
+    // clock. One flight segment cannot corroborate two separate detections.
+    edges.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.1.cmp(&b.1)).then(a.2.cmp(&b.2)));
+    let mut selected = vec![usize::MAX; events.len()];
+    let mut used = std::collections::HashSet::new();
+    let mut errors = Vec::new();
+    for (error, event, track) in edges {
+        if selected[event] == usize::MAX && used.insert(track) {
+            selected[event] = track;
+            errors.push(error);
+        }
+    }
+    let score = core_score(&mut errors);
+    if score < current_score {
+        (score, selected)
+    } else {
+        (current_score, seed.indices.clone())
+    }
 }
 
 fn profile_seed_clock(seed: &mut Seed, job: &Job, events: &[Event], tracks: &[Track]) {
     let c = job.sound_speed();
     let drift = allowed_clock_drift(job, events);
-    seed.score = sampled_curve_score(seed, events, tracks, c);
+    (seed.score, seed.indices) = sampled_curve_fit(seed, events, tracks, c);
     if drift == 0. {
         return;
     }
@@ -186,7 +225,7 @@ fn profile_seed_clock(seed: &mut Seed, job: &Job, events: &[Event], tracks: &[Tr
         let mut trial = seed.clone();
         trial.clock_rate = rate;
         trial.start = start;
-        trial.score = sampled_curve_score(&trial, events, tracks, c);
+        (trial.score, trial.indices) = sampled_curve_fit(&trial, events, tracks, c);
         if trial.score < seed.score {
             *seed = trial;
         }
@@ -215,12 +254,14 @@ pub(crate) fn complete_seed(
     mut nearby: impl FnMut(f64, &Event) -> Vec<(usize, f64, f64, f64)>,
 ) -> Option<Seed> {
     let mut indices = vec![usize::MAX; events.len()];
+    let mut alternatives = vec![[usize::MAX; 3]; events.len()];
     indices[anchor] = track;
+    alternatives[anchor][0] = track;
     let mut errors = vec![initial_error];
     let mut matched = 1;
     for (i, event) in events.iter().enumerate().filter(|(i, _)| *i != anchor) {
         let wanted = start + event.cpa_s;
-        let best = nearby(wanted, event)
+        let mut choices: Vec<_> = nearby(wanted, event)
             .into_iter()
             .filter(|(j, time, range, speed)| {
                 !indices.contains(j)
@@ -235,8 +276,13 @@ pub(crate) fn complete_seed(
                 )
             })
             .filter(|(_, error)| *error <= 12.)
-            .min_by(|a, b| a.1.total_cmp(&b.1));
-        if let Some((j, error)) = best {
+            .collect();
+        choices.sort_by(|a, b| a.1.total_cmp(&b.1).then(a.0.cmp(&b.0)));
+        choices.truncate(3);
+        for (slot, &(j, _)) in choices.iter().enumerate() {
+            alternatives[i][slot] = j;
+        }
+        if let Some(&(j, error)) = choices.first() {
             indices[i] = j;
             errors.push(error);
             matched += 1;
@@ -251,6 +297,7 @@ pub(crate) fn complete_seed(
         clock_rate: 1.,
         anchor,
         indices,
+        alternatives: Arc::new(alternatives),
         // Coarse selection must use the same consensus size as exact fitting.
         // Rewarding every loose association first lets unrelated sounds crowd
         // out three precise matches before they ever reach refinement.
@@ -806,6 +853,7 @@ mod tests {
             clock_rate: 1.,
             anchor: 0,
             indices: vec![0],
+            alternatives: Default::default(),
             score: 0.,
         };
         let (_, matches) = exact_score(&seed, &[event], &tracks, 340.39);
@@ -859,6 +907,7 @@ mod tests {
             clock_rate: 1.,
             anchor: 0,
             indices: vec![0, 1, 2, 3],
+            alternatives: Default::default(),
             score: 0.,
         };
         let (core_error, matches) = exact_score(&seed, &events, &tracks, 340.39);
@@ -880,6 +929,7 @@ mod tests {
             clock_rate: 1.,
             anchor: 0,
             indices: vec![0, 1, 2],
+            alternatives: Default::default(),
             score: 0.,
         };
         let mut seeds: Vec<_> = (0..9000)
@@ -942,6 +992,7 @@ mod tests {
             clock_rate: 1.,
             anchor: 0,
             indices: vec![0],
+            alternatives: Default::default(),
             score: 1.,
         };
         let mut wrong = correct.clone();
@@ -1038,6 +1089,101 @@ mod tests {
             "The measured curve must survive regional pruning even when CPA summary features favor several other flights"
         );
     }
+
+    #[test]
+    fn curve_scoring_can_replace_a_misleading_flight_association() {
+        let template = demo::tracks().remove(0);
+        let job = Job {
+            max_clock_drift_ppm: 0.,
+            ..Default::default()
+        };
+        let c = job.sound_speed();
+        let mut tracks = Vec::new();
+        for n in 0..3 {
+            let mut track = template.clone();
+            track.id = format!("REAL{n}");
+            for p in &mut track.samples {
+                p.time += n as f64 * 600.;
+            }
+            tracks.push(track);
+        }
+        let events: Vec<_> = tracks
+            .iter()
+            .enumerate()
+            .map(|(n, track)| {
+                let (arrival, range, speed) = track.cpa(demo::TRUTH.ecef(), c).unwrap();
+                Event {
+                    start_s: 10. + n as f64 * 600.,
+                    end_s: 79.5 + n as f64 * 600.,
+                    cpa_s: arrival - demo::EPOCH,
+                    base_hz: 100.,
+                    speed_mps: speed * 1.3,
+                    slant_m: range * 1.3,
+                    fit_rmse_hz: 0.,
+                    contrast_db: 20.,
+                    ridge: (0..140)
+                        .map(|i| {
+                            let time_s = 10. + n as f64 * 600. + i as f64 * 0.5;
+                            RidgePoint {
+                                time_s,
+                                hz: 100.
+                                    * track
+                                        .factor(demo::TRUTH.ecef(), demo::EPOCH + time_s, c)
+                                        .unwrap(),
+                                contrast_db: 20.,
+                            }
+                        })
+                        .collect(),
+                }
+            })
+            .collect();
+        for n in 0..3 {
+            let mut decoy = tracks[n].clone();
+            decoy.id = format!("WRONG{n}");
+            for sample in &mut decoy.samples {
+                let p = sample.point;
+                *sample = crate::model::Sample::new(
+                    sample.time,
+                    Point {
+                        lat: demo::TRUTH.lat + 1.3 * (p.lat - demo::TRUTH.lat),
+                        lon: demo::TRUTH.lon + 1.3 * (p.lon - demo::TRUTH.lon),
+                        alt: demo::TRUTH.alt + 1.3 * (p.alt - demo::TRUTH.alt),
+                    },
+                );
+            }
+            tracks.push(decoy);
+        }
+        let mut seed = complete_seed(demo::TRUTH, demo::EPOCH, 0, 0, 0., &events, |_, _| {
+            tracks
+                .iter()
+                .enumerate()
+                .filter_map(|(i, t)| t.cpa(demo::TRUTH.ecef(), c).map(|(a, r, v)| (i, a, r, v)))
+                .collect()
+        })
+        .unwrap();
+        assert_ne!(
+            seed.indices,
+            vec![0, 1, 2],
+            "The fixture must initially prefer misleading CPA summaries"
+        );
+        profile_seed_clock(&mut seed, &job, &events, &tracks);
+        assert_eq!(
+            seed.indices,
+            vec![0, 1, 2],
+            "Measured curves must select the actual flights among similar summaries"
+        );
+        assert!(exact_score(&seed, &events, &tracks, c).0 < 0.001);
+        // Alternative associations must not count one flight three times.
+        seed.indices = vec![0, usize::MAX, usize::MAX];
+        seed.alternatives = Arc::new(vec![[0, usize::MAX, usize::MAX]; 3]);
+        profile_seed_clock(&mut seed, &job, &vec![events[0].clone(); 3], &tracks);
+        assert!(!seed.score.is_finite());
+        assert!(
+            exact_score(&seed, &vec![events[0].clone(); 3], &tracks, c)
+                .1
+                .is_empty()
+        );
+    }
     #[test]
     fn coarse_scoring_profiles_the_same_shared_clock_as_refinement() {
         let rate = 1.004;
@@ -1080,6 +1226,7 @@ mod tests {
             clock_rate: 1.,
             anchor: 2,
             indices: vec![0, 1, 2],
+            alternatives: Default::default(),
             score: 0.,
         };
         assert!(exact_score(&seed, &events, &tracks, 340.39).0 > 1.);
