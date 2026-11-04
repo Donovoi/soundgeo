@@ -26,6 +26,18 @@ pub struct Event {
     pub fit_rmse_hz: f64,
     pub contrast_db: f64,
     pub ridge: Vec<RidgePoint>,
+    /// Full activity interval when adjacent fragments were counted as one sound.
+    /// Matching still uses only the representative fitted ridge above.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub activity_span_s: Option<[f64; 2]>,
+}
+impl Event {
+    pub fn activity_start_s(&self) -> f64 {
+        self.activity_span_s.map_or(self.start_s, |span| span[0])
+    }
+    pub fn activity_end_s(&self) -> f64 {
+        self.activity_span_s.map_or(self.end_s, |span| span[1])
+    }
 }
 
 /// Residual of a freely fitted straight frequency drift, evaluated on the same
@@ -148,12 +160,43 @@ pub fn detect(
             continue;
         }
         events.push(e);
-        if events.len() == 24 {
-            break;
-        }
     }
+    let mut events = collapse_continuations(events);
+    events.sort_by(|a, b| event_quality(b).total_cmp(&event_quality(a)));
+    events.truncate(24);
     events.sort_by(|a, b| a.cpa_s.total_cmp(&b.cpa_s));
     Ok(events)
+}
+
+fn collapse_continuations(mut events: Vec<Event>) -> Vec<Event> {
+    events.sort_by(|a, b| a.start_s.total_cmp(&b.start_s));
+    let mut groups: Vec<Event> = Vec::new();
+    let mut previous: Option<(f64, f64, bool)> = None;
+    for event in events {
+        let slow = event.end_s - event.start_s >= 20.;
+        let continues =
+            previous
+                .zip(event.ridge.first())
+                .is_some_and(|((end, hz, was_slow), first)| {
+                    slow && was_slow
+                        && (0. ..=5.).contains(&(event.start_s - end))
+                        && (first.hz - hz).abs() <= 2_f64.max(hz * 0.01)
+                });
+        // Compare the next fragment with this fragment, not the representative.
+        // A quiet middle fragment can connect two stronger outer fragments.
+        previous = event.ridge.last().map(|p| (event.end_s, p.hz, slow));
+        if continues {
+            let representative = groups.last_mut().unwrap();
+            let span = [representative.activity_start_s(), event.activity_end_s()];
+            if event_quality(&event) > event_quality(representative) {
+                *representative = event;
+            }
+            representative.activity_span_s = Some(span);
+        } else {
+            groups.push(event);
+        }
+    }
+    groups
 }
 
 fn event_quality(e: &Event) -> f64 {
@@ -621,12 +664,77 @@ fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
         fit_rmse_hz: rmse,
         contrast_db: contrast,
         ridge,
+        activity_span_s: None,
     })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn connected_slow_fragments_count_once_and_preserve_the_activity_interval() {
+        let fragment = |start: f64, contrast: f64| Event {
+            start_s: start,
+            end_s: start + 40.,
+            cpa_s: start + 20.,
+            base_hz: 190.,
+            speed_mps: 80.,
+            slant_m: 1200.,
+            fit_rmse_hz: 0.5,
+            contrast_db: contrast,
+            ridge: (0..=80)
+                .map(|i| {
+                    let t = start + i as f64 * 0.5;
+                    RidgePoint {
+                        time_s: t,
+                        hz: 200. - 0.2 * t,
+                        contrast_db: contrast,
+                    }
+                })
+                .collect(),
+            activity_span_s: None,
+        };
+        // The strongest first fragment does not touch the last fragment.
+        // Continuity must be transitive through the quieter middle fragment.
+        let fragments = vec![fragment(0., 30.), fragment(43., 20.), fragment(86., 25.)];
+        let grouped = collapse_continuations(fragments.clone());
+        assert_eq!(
+            grouped.len(),
+            1,
+            "A continuous tone is not three independent flyovers"
+        );
+        assert_eq!(grouped[0].activity_span_s, Some([0., 126.]));
+        assert_eq!(grouped[0].start_s, 0.);
+        assert_eq!(grouped[0].end_s, 40.);
+        assert_eq!(grouped[0].ridge.len(), fragments[0].ridge.len());
+
+        let mut separate = fragments;
+        for p in &mut separate[1].ridge {
+            p.hz += 40.;
+        }
+        assert_eq!(
+            collapse_continuations(separate).len(),
+            3,
+            "A frequency reset starts another sound"
+        );
+        assert_eq!(
+            collapse_continuations(vec![fragment(0., 30.), fragment(50., 30.)]).len(),
+            2
+        );
+    }
+
+    #[test]
+    fn old_event_json_uses_its_observed_curve_interval() {
+        let event: Event = serde_json::from_value(serde_json::json!({
+            "start_s": 10., "end_s": 40., "cpa_s": 25., "base_hz": 130.,
+            "speed_mps": 80., "slant_m": 1000., "fit_rmse_hz": 0.5,
+            "contrast_db": 20., "ridge": []
+        }))
+        .unwrap();
+        assert_eq!(event.activity_start_s(), 10.);
+        assert_eq!(event.activity_end_s(), 40.);
+        assert!(event.activity_span_s.is_none());
+    }
     #[test]
     fn a_partial_curve_cannot_report_closest_approach_outside_its_samples() {
         let job = Job::default();

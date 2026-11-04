@@ -77,3 +77,9 @@ The second trace uses the original spectrum. It must retain sufficient signal st
 When slow curves overlap, selection favors evidence before and after the closest approach.
 The closest approach must lie inside the supported sound interval during both initial fitting and refinement.
 These checks reduce errors from short fragments. They do not prove that a detected tone came from an aircraft.
+
+Adjacent slow fragments count as one sound when their frequency is continuous across a gap of at most five seconds.
+The frequency difference must be within 2 Hz or 1%, whichever is larger.
+The strongest fragment provides the fitted ridge. The report also preserves the full interval in `activity_span_s`.
+Quiet-gap checks exclude that full interval. Grouping occurs before the 24-event limit, so repeated fragments do not fill the list.
+Short jet detections retain their separate timing rules.

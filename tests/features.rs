@@ -192,6 +192,19 @@ fn quiet_gap_constraint_uses_only_known_closer_propellers() {
             .collect::<Vec<_>>()
     );
     assert_eq!(conflicts[0].aircraft, "unexpected");
+    let mut extended_activity = events.clone();
+    extended_activity[0].activity_span_s = Some([events[0].start_s, 120.]);
+    assert!(
+        soundgeo::search::silence_conflicts(
+            &extended_activity,
+            &tracks,
+            soundgeo::demo::TRUTH,
+            soundgeo::demo::EPOCH,
+            job.sound_speed()
+        )
+        .is_empty(),
+        "An unmodeled continuation of a tone must not be treated as a quiet gap"
+    );
     tracks[2].kind = AircraftKind::Unknown;
     assert!(
         soundgeo::search::silence_conflicts(

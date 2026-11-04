@@ -698,6 +698,9 @@ pub fn locate(
         }
     }
     let mut warnings = vec![];
+    if events.iter().any(|e| e.activity_span_s.is_some()) {
+        warnings.push("Connected slow-curve fragments were counted as one sound. The strongest fragment supports matching; the full activity interval is excluded from quiet-gap evidence.".into());
+    }
     if events.len() > anchors.len() {
         warnings.push(format!("The strongest {} of {} detections seed the bounded search; all retained detections are available as corroborating evidence. Weak anchors can therefore be missed.", anchors.len(), events.len()));
     }
@@ -766,8 +769,8 @@ fn silence_conflicts_with_rate(
         * 0.8;
     let mut conflicts = vec![];
     for gap in events.windows(2) {
-        let from = start + rate * (gap[0].end_s + 10.);
-        let to = start + rate * (gap[1].start_s - 10.);
+        let from = start + rate * (gap[0].activity_end_s() + 10.);
+        let to = start + rate * (gap[1].activity_start_s() - 10.);
         if to - from < 10. {
             continue;
         }
@@ -995,6 +998,7 @@ mod tests {
             })
             .collect();
         let event = Event {
+            activity_span_s: None,
             start_s: 10.,
             end_s: 70.,
             cpa_s: 40.,
@@ -1047,6 +1051,7 @@ mod tests {
                 })
                 .collect();
             events.push(Event {
+                activity_span_s: None,
                 start_s: 10. + shift,
                 end_s: 69.5 + shift,
                 cpa_s: 39. + shift,
@@ -1134,6 +1139,7 @@ mod tests {
             })
             .collect();
         let event = Event {
+            activity_span_s: None,
             start_s: 10.,
             end_s: 69.5,
             cpa_s: 39.,
@@ -1178,6 +1184,7 @@ mod tests {
         let c = Job::default().sound_speed();
         let (arrival, range, speed) = real.cpa(demo::TRUTH.ecef(), c).unwrap();
         let event = Event {
+            activity_span_s: None,
             start_s: 10.,
             end_s: 79.5,
             cpa_s: arrival - demo::EPOCH,
@@ -1271,6 +1278,7 @@ mod tests {
             .map(|(n, track)| {
                 let (arrival, range, speed) = track.cpa(demo::TRUTH.ecef(), c).unwrap();
                 Event {
+                    activity_span_s: None,
                     start_s: 10. + n as f64 * 600.,
                     end_s: 79.5 + n as f64 * 600.,
                     cpa_s: arrival - demo::EPOCH,
@@ -1366,6 +1374,7 @@ mod tests {
                 })
                 .collect();
             events.push(Event {
+                activity_span_s: None,
                 start_s: (10. + shift) / rate,
                 end_s: (69.5 + shift) / rate,
                 cpa_s: (39. + shift) / rate,
