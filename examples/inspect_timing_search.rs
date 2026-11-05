@@ -46,7 +46,7 @@ fn main() -> Result<()> {
         &peaks,
         duration,
         &data.tracks,
-        &soundgeo::timing::Options::default(),
+        &job.timing_options,
         &control,
         &|m, _| eprintln!("{m}"),
     )?;
