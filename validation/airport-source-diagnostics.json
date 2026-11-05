@@ -279,5 +279,37 @@
       }
     ],
     "broad_original_bounds_run": "in_progress"
+  },
+  "parallel_corridor_equivalence": {
+    "not_location_acceptance": true,
+    "known_area_diagnostic_only": true,
+    "recording_clock_supplied": false,
+    "compared_fields": [
+      "events",
+      "candidates",
+      "status",
+      "hypotheses",
+      "track_count",
+      "search_method",
+      "job"
+    ],
+    "all_fields_equal": true,
+    "hypotheses": 319745,
+    "old_revision": "3807f702245a4822236049855be781abc1bdfcc9",
+    "new_revision": "163c76f223daf48cc1dca5963a97f67033662cad",
+    "elapsed_s": [
+      163.1,
+      94.41
+    ],
+    "speedup": 1.7275712318610317,
+    "timing_note": "One run per build on the same host with other searches active; not a controlled benchmark.",
+    "executable_sha256": [
+      "b9e9c5b491e0315194ee10c43d2e4b2df7112e36eea86dda79dd1ff816b1811e",
+      "bd7d087d4dbcb8e56ba2f089e56e4d80013c5c26888caaf2b739b3ad48a6c4a9"
+    ],
+    "report_sha256": [
+      "b3a0723e31df149fb9133054f3c971d1d8f3fde9ef0b31d2925b01846926aa47",
+      "900f04fb608f2df6afaafe729b3b5cc5c606772206bda301a3d16e7be380a46c"
+    ]
   }
 }

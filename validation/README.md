@@ -553,8 +553,12 @@ confirms that a forbidden response is not retried.
 
 The search now scores independent proposals on its existing four-worker pool.
 Serial and parallel scoring produce bit-for-bit equal values in the regression
-test. A separate real-recording comparison is running. All 63 software tests,
-formatting, strict Clippy, and both release builds pass locally.
+test. A separate real-recording comparison also preserves every event,
+candidate, score, clock, match, and hypothesis count. It examines 319,745
+hypotheses in a known-area corridor search. Runtime fell from 163.1 s to 94.4 s.
+This is one timing sample with other searches active, not a controlled benchmark.
+All 63 software tests, formatting, strict Clippy, and both release builds pass
+locally and in [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41952966274).
 
 The [Southampton Airport noise page](https://www.southamptonairport.com/about-us/aircraft-noise/)
 links its public Volans tracker. Its November 1 and November 3 data produced no

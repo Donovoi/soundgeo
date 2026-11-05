@@ -29,8 +29,8 @@ The Lake Hood and Southampton tests failed.
 
 The latest changes have not completed this full benchmark.
 
-All 63 software tests pass locally. The previous 62-test revision passes
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41949614611).
+All 63 software tests pass locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41952966274).
 The Chicago download and data checks pass. Its broad-area location test is still running.
 Software test success does not establish location accuracy.
 See the [validation record](validation/README.md) for results, data sources, and failures.
