@@ -47,8 +47,8 @@ An experimental Lake Hood search found one first choice within 83 m, but failed 
 An earlier Southampton test returned a wrong location with a positive model status.
 A positive model status is not proof that the location is correct.
 
-Revision `f8f1735` passed all 91 software tests locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42118493834).
+The search-cache revision `38ff00e` passed all 92 software tests locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42124161220).
 Formatting, strict Clippy, documentation tests, and both release builds also passed.
 Software checks do not establish location accuracy.
 See the [validation record](validation/README.md) for builds, results, data sources, and failures.
@@ -84,6 +84,7 @@ The program checks downloaded files and uses valid files again.
 
 Select **Worldwide: ADSB.lol** for the worldwide archive.
 For a recording near Chicago, you can select **Chicago: public airport replay**.
+For a recording near Los Angeles, select **LAX: public airport replay**.
 The Chicago source contains local airport radar data. It keeps about 90 days of history.
 It can contain positions that are missing from the worldwide archive.
 It supplied the six locations within 1 km in the passage-timing tests above.
@@ -142,6 +143,9 @@ soundgeo-cli.exe download --date 2026-11-03 --provider webtrak-chicago --output 
 ```
 
 The [Chicago Department of Aviation](https://www.flychicago.com/community/ordnoise/flighttracker/pages/default.aspx) provides the public flight tracker.
+For Los Angeles, use `--provider webtrak-lax` instead.
+[Los Angeles World Airports](https://www.lawa.org/lawa-environment/noise-management/lawa-noise-management-lax/lax-internet-flight-tracking-system) provides that tracker.
+These sources cover their local radar areas and keep about 90 days of data.
 The program checks every 30-second part of the selected UTC day.
 If a part is missing or invalid, the download fails and keeps the valid parts for the next attempt.
 An archive can still have gaps in flight observations.

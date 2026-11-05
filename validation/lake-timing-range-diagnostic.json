@@ -1,0 +1,133 @@
+{
+  "plan_sha256": "bf20ba744bab21538b3e7422b2133b5c3f4ebe2d822d28346856d9caba27207d",
+  "cases": [
+    {
+      "case": "lake-hood-nov1-later",
+      "range_m": 1000,
+      "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov1-later-1000",
+      "job_sha256": "447281ab0246a4babffbe7946c23ea81dcb735a7ea4abc92b0ff809399016cf4",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "exit_code": 3,
+      "elapsed_s": 334.6972660999745,
+      "not_acceptance": true,
+      "status": "insufficient_evidence",
+      "report_sha256": "00707f4d8de695107f73d8553d6db0eb0ff41ef42cee98860dd9f083702c29c9",
+      "controls": 19,
+      "null_max": 13.894785504021664,
+      "spread_m": null,
+      "error_m": 6718.143346143718,
+      "score": 11.238386485541696,
+      "matches": 7
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "range_m": 2000,
+      "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov1-later-2000",
+      "job_sha256": "1c54089cdafa48edd6692f8bb1343e3a50d01c2664fc46073319733e732020e0",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "exit_code": 3,
+      "elapsed_s": 841.3901598000666,
+      "not_acceptance": true,
+      "status": "insufficient_evidence",
+      "report_sha256": "8cc91abded62e368be08cf2502fa62b3b1b72a71057cb602c300280bce24e2d8",
+      "controls": 19,
+      "null_max": 17.856929207820997,
+      "spread_m": null,
+      "error_m": 3221.6800818995184,
+      "score": 13.700367840358426,
+      "matches": 7
+    },
+    {
+      "case": "lake-hood-nov4-a",
+      "range_m": 1000,
+      "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov4-a-1000",
+      "job_sha256": "d11dc37b4e169590ee7b4a5a505ca6eca14a86391f694d1043e881977118e944",
+      "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "exit_code": 3,
+      "elapsed_s": 314.60347080009524,
+      "not_acceptance": true,
+      "status": "insufficient_evidence",
+      "report_sha256": "a4587640b04f83589c1e1a20179abd95d7d6539628ed1e4bb0b68174fb8557aa",
+      "controls": 0,
+      "null_max": null,
+      "spread_m": null,
+      "error_m": 8796.028535534742,
+      "score": 14.152695819154156,
+      "matches": 5
+    },
+    {
+      "case": "lake-hood-nov4-a",
+      "range_m": 2000,
+      "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov4-a-2000",
+      "job_sha256": "ddd07bd83f8b883bf1ddb021e948bcec3b0650e2f71519f6a0674ad0c19277dd",
+      "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "exit_code": 3,
+      "elapsed_s": 1164.6146241000388,
+      "not_acceptance": true,
+      "status": "insufficient_evidence",
+      "report_sha256": "6456722bf0d60da3a10f86fcf538e3450b18b7272f6cc31eab8973d721b3db4e",
+      "controls": 19,
+      "null_max": 16.875390518772633,
+      "spread_m": null,
+      "error_m": 17581.89753076593,
+      "score": 12.380869949006701,
+      "matches": 6
+    }
+  ],
+  "plan": {
+    "not_acceptance": true,
+    "purpose": "Test whether a 500 m slant-distance cutoff excludes useful aircraft sounds. Keep all other search and screening rules fixed. All cases are development recordings.",
+    "build": {
+      "commit": "f8f17352fa98a4961fbeb1202b4bdaa413c2af39",
+      "required_local_checks_passed": true,
+      "tests": 91,
+      "ignored": 0,
+      "ci": "pending",
+      "created_utc": "2026-11-05T22:06:00.119215+00:00",
+      "not_qualified_location_release": true,
+      "cli": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-timing-f8f1735.exe",
+        "sha256": "faf943fa3860114d95e61e20d2887180aae27c1cefc32d7dd816b11884c282b7"
+      },
+      "gui": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-timing-f8f1735.exe",
+        "sha256": "b72ecc8820e78b767f1afdb64b15292880da590d2399271e8c1a22fff2bdd478"
+      }
+    },
+    "cases": [
+      {
+        "case": "lake-hood-nov1-later",
+        "range_m": 1000,
+        "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov1-later-1000",
+        "job_sha256": "447281ab0246a4babffbe7946c23ea81dcb735a7ea4abc92b0ff809399016cf4",
+        "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff"
+      },
+      {
+        "case": "lake-hood-nov1-later",
+        "range_m": 2000,
+        "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov1-later-2000",
+        "job_sha256": "1c54089cdafa48edd6692f8bb1343e3a50d01c2664fc46073319733e732020e0",
+        "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff"
+      },
+      {
+        "case": "lake-hood-nov4-a",
+        "range_m": 1000,
+        "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov4-a-1000",
+        "job_sha256": "d11dc37b4e169590ee7b4a5a505ca6eca14a86391f694d1043e881977118e944",
+        "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea"
+      },
+      {
+        "case": "lake-hood-nov4-a",
+        "range_m": 2000,
+        "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov4-a-2000",
+        "job_sha256": "ddd07bd83f8b883bf1ddb021e948bcec3b0650e2f71519f6a0674ad0c19277dd",
+        "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea"
+      }
+    ],
+    "supplied_recording_clock": false,
+    "supplied_camera_position": false,
+    "earlier_results_unchanged": true
+  },
+  "completed": true,
+  "interpretation": "Neither a 1 km nor 2 km passage range recovered a useful location in either preselected Lake Hood development clip. Three searches failed the shuffled-control comparison; the fourth had fewer than six matched peaks. No range setting was promoted. These are development diagnostics, not new accuracy qualification."
+}

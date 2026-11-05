@@ -2,69 +2,81 @@ use sha2::{Digest, Sha256};
 use std::process::Command;
 
 #[test]
-fn chicago_provider_uses_verified_cache_and_preserves_unknown_recording_time() {
-    let dir = tempfile::tempdir().unwrap();
-    let job = soundgeo::demo::create(dir.path()).unwrap();
-    let date = "2026-09-08";
-    let cache = dir.path().join("cache");
-    let folder = cache.join(format!("webtrak-cda-{date}"));
-    std::fs::create_dir_all(&folder).unwrap();
-    let bytes = std::fs::read(&job.tracks).unwrap();
-    std::fs::write(folder.join("flights.csv"), &bytes).unwrap();
-    let manifest = serde_json::json!({"format":1,"date":date,"provider":"webtrak_chicago","complete":true,
-        "chunks":2880,"rows":bytes.split(|b|*b==b'\n').count()-1,"offline_chunks":1,"csv_sha256":format!("{:x}",Sha256::digest(&bytes)),
-        "source":"offline synthetic provider fixture","altitude":"Synthetic WGS84"});
-    std::fs::write(
-        folder.join("provider-manifest.json"),
-        serde_json::to_vec(&manifest).unwrap(),
-    )
-    .unwrap();
-    std::fs::write(
-        folder.join("aircraft-types.json"),
-        r#"{"C172":["Cessna","L1P","L"]}"#,
-    )
-    .unwrap();
-    let result = Command::new(env!("CARGO_BIN_EXE_soundgeo-cli"))
-        .current_dir(dir.path())
-        .args([
-            "analyze",
-            "--config",
-            "job.json",
-            "--date",
-            date,
-            "--provider",
+fn airport_providers_use_verified_cache_and_preserve_unknown_recording_time() {
+    for (cli, provider, id, expected) in [
+        (
             "webtrak-chicago",
-            "--cache",
-            "cache",
-            "--output",
-            "-",
-            "--quiet",
-            "--require-match",
-        ])
-        .output()
+            "webtrak_chicago",
+            "cda",
+            soundgeo::archive::ArchiveProvider::WebtrakChicago,
+        ),
+        (
+            "webtrak-lax",
+            "webtrak_lax",
+            "lax4",
+            soundgeo::archive::ArchiveProvider::WebtrakLax,
+        ),
+    ] {
+        let dir = tempfile::tempdir().unwrap();
+        let job = soundgeo::demo::create(dir.path()).unwrap();
+        let date = "2026-09-08";
+        let cache = dir.path().join("cache");
+        let folder = cache.join(format!("webtrak-{id}-{date}"));
+        std::fs::create_dir_all(&folder).unwrap();
+        let bytes = std::fs::read(&job.tracks).unwrap();
+        std::fs::write(folder.join("flights.csv"), &bytes).unwrap();
+        let manifest = serde_json::json!({"format":1,"date":date,"provider":provider,"complete":true,
+        "chunks":2880,"rows":bytes.split(|b|*b==b'\n').count()-1,"offline_chunks":1,"csv_sha256":format!("{:x}",Sha256::digest(&bytes)),
+        "source":format!("https://webtrak-us02.emsbk.com/WebTrak/{id}/data/"),"altitude":"Synthetic WGS84"});
+        std::fs::write(
+            folder.join("provider-manifest.json"),
+            serde_json::to_vec(&manifest).unwrap(),
+        )
         .unwrap();
-    assert!(
-        result.status.success(),
-        "{}",
-        String::from_utf8_lossy(&result.stderr)
-    );
-    let report: soundgeo::Report = serde_json::from_slice(&result.stdout).unwrap();
-    assert!(report.job.start_utc.is_none());
-    assert_eq!(
-        report.job.archive.as_ref().unwrap().provider,
-        soundgeo::archive::ArchiveProvider::WebtrakChicago
-    );
-    assert!(!report.candidates.is_empty());
-    assert!(report.warnings.iter().any(|s| s.contains("1 of 2880")));
-    assert!(
-        report
-            .warnings
-            .iter()
-            .any(|s| s.contains("provenance is unknown"))
-    );
-    let mut protected = report;
-    protected.job.archive.as_mut().unwrap().cache = cache;
-    assert!(soundgeo::save_report(&protected, &folder.join("provider-manifest.json")).is_err());
+        std::fs::write(
+            folder.join("aircraft-types.json"),
+            r#"{"C172":["Cessna","L1P","L"]}"#,
+        )
+        .unwrap();
+        let result = Command::new(env!("CARGO_BIN_EXE_soundgeo-cli"))
+            .current_dir(dir.path())
+            .args([
+                "analyze",
+                "--config",
+                "job.json",
+                "--date",
+                date,
+                "--provider",
+                cli,
+                "--cache",
+                "cache",
+                "--output",
+                "-",
+                "--quiet",
+                "--require-match",
+            ])
+            .output()
+            .unwrap();
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stderr)
+        );
+        let report: soundgeo::Report = serde_json::from_slice(&result.stdout).unwrap();
+        assert!(report.job.start_utc.is_none());
+        assert_eq!(report.job.archive.as_ref().unwrap().provider, expected);
+        assert!(!report.candidates.is_empty());
+        assert!(report.warnings.iter().any(|s| s.contains("1 of 2880")));
+        assert!(
+            report
+                .warnings
+                .iter()
+                .any(|s| s.contains("provenance is unknown"))
+        );
+        let mut protected = report;
+        protected.job.archive.as_mut().unwrap().cache = cache;
+        assert!(soundgeo::save_report(&protected, &folder.join("provider-manifest.json")).is_err());
+    }
 }
 
 #[test]

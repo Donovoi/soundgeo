@@ -229,9 +229,11 @@ impl App {
                 egui::ComboBox::from_id_salt("flight_provider").selected_text(match request.provider {
                     ArchiveProvider::AdsbLol => "Worldwide: ADSB.lol",
                     ArchiveProvider::WebtrakChicago => "Chicago: public airport replay",
+                    ArchiveProvider::WebtrakLax => "LAX: public airport replay",
                 }).show_ui(ui,|ui|{
                     ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbLol,"Worldwide: ADSB.lol");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakChicago,"Chicago: public airport replay");
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakLax,"LAX: public airport replay");
                 });
                 ui.label(RichText::new("Possible UTC date; exact recording time stays unknown. Worldwide archives can require several GB per day.").small().color(MUTED));
                 ui.add(egui::TextEdit::singleline(&mut request.date_from).hint_text("YYYY-MM-DD").desired_width(f32::INFINITY));

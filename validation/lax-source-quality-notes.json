@@ -1,0 +1,79 @@
+{
+  "recorded_before_solver_evaluation": true,
+  "created_utc": "2026-11-05T22:46:46.983301+00:00",
+  "cases": [
+    {
+      "case": "a",
+      "visible_first": "11:09 AM PST",
+      "visible_last": "12:14 PM PST",
+      "audio_video_duration_s": 3600,
+      "source_caution": "Visible clock advances about 65 minutes across about 60 minutes of media. This may be a clock discontinuity or an edit; exact cause is unverified. Do not treat the source as proven continuous."
+    },
+    {
+      "case": "b",
+      "visible_first": "1:15 PM PST",
+      "visible_last": "2:14 PM PST",
+      "audio_video_duration_s": 3600,
+      "source_caution": "The last frame switches viewpoint and shows the AIRLINE VIDEOS LIVE+ 24 HOUR CAMERAS overlay. Microphone continuity and its position are not verified across this cutaway."
+    }
+  ],
+  "classification": "Retain planned clips as diagnostics. Do not count as clean stationary-microphone accuracy tests unless source continuity is established independently.",
+  "no_clips_discarded_or_substituted": true,
+  "date_basis": "Publisher title and release date identify Nov3; these visible clocks alone show only time of day.",
+  "cut_correction": {
+    "reason": "Stream-copy cuts contained 3610 s instead of 3600 s because of keyframe padding. Re-encode the same preselected intervals, with lossless audio, before the first solver run. Preserve initial media and preparation receipts.",
+    "solver_evaluated": false,
+    "cases": [
+      {
+        "case": "a",
+        "media_sha256": "e7ffaaf7663b4d8cd543acbc9b23b8538a9ef2f147b590ae3e91a3b6b1a8eaa5",
+        "job_sha256": "b9a250c94a60312730caf5dec9fdff93bfb0cd4b4b329dfbdcc55a597b66b17f",
+        "probe": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "h264",
+              "codec_type": "video",
+              "start_time": "0.000000"
+            },
+            {
+              "codec_name": "flac",
+              "codec_type": "audio",
+              "start_time": "0.000000"
+            }
+          ],
+          "format": {
+            "duration": "3600.000000"
+          }
+        },
+        "elapsed_s": 62.94591859995853
+      },
+      {
+        "case": "b",
+        "media_sha256": "f00ba7eeb9229d5f4404378f6d7ccb31034ea3190f96f013fbae53807d2a5701",
+        "job_sha256": "9eeef506b1889b1f0e5e980201af2d99eed7e76de9778944cb454f622b934538",
+        "probe": {
+          "programs": [],
+          "stream_groups": [],
+          "streams": [
+            {
+              "codec_name": "h264",
+              "codec_type": "video",
+              "start_time": "0.000000"
+            },
+            {
+              "codec_name": "flac",
+              "codec_type": "audio",
+              "start_time": "0.000000"
+            }
+          ],
+          "format": {
+            "duration": "3600.000000"
+          }
+        },
+        "elapsed_s": 56.02249300002586
+      }
+    ]
+  }
+}
