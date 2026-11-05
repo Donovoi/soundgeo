@@ -1,0 +1,32 @@
+{
+  "tests": 92,
+  "failed": 0,
+  "ignored": 0,
+  "required_local_checks_passed": true,
+  "new_test": "bounded_geometry_cache_preserves_results_across_sound_permutations",
+  "checks": {
+    "fmt": {
+      "path": "work\\timing-geometry-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "clippy": {
+      "path": "work\\timing-geometry-clippy.log",
+      "sha256": "7575b05ebda24b0896b6e5fd108abcbc8a7d10de809713092fc83f2aebd0e9de"
+    },
+    "tests": {
+      "path": "work\\timing-geometry-tests.log",
+      "sha256": "821a9d5a6756467199fdedfde7bbefe42fff2da5cd622d2a96a6ec7fe8639dd4"
+    },
+    "doc": {
+      "path": "work\\timing-geometry-doc.log",
+      "sha256": "24df5f28c3d34a6ba0d103924ecf68a55ec39fb2ab9fedb68909f5b287123306"
+    },
+    "build": {
+      "path": "work\\timing-geometry-build.log",
+      "sha256": "c3c4dcec1c268bd51ae27348f772a2c30aad02bbf936e5e36e8f3e11249d882e"
+    }
+  },
+  "ci": "pending",
+  "real_comparison": "pending",
+  "purpose": "Reuse immutable flight geometry across sound permutations with a bounded 64 MiB passage-entry cache. No score, candidate, grid, detector, or screen rule changed."
+}

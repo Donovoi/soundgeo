@@ -1,0 +1,772 @@
+{
+  "plan_sha256": "74e5a1cfaebdfd2194ad3c8156f2a269393355367170c5b218b0045373dc57a0",
+  "build": {
+    "commit": "f8f17352fa98a4961fbeb1202b4bdaa413c2af39",
+    "required_local_checks_passed": true,
+    "tests": 91,
+    "ignored": 0,
+    "ci": "pending",
+    "created_utc": "2026-11-05T22:06:00.119215+00:00",
+    "not_qualified_location_release": true,
+    "cli": {
+      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-timing-f8f1735.exe",
+      "sha256": "faf943fa3860114d95e61e20d2887180aae27c1cefc32d7dd816b11884c282b7"
+    },
+    "gui": {
+      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-timing-f8f1735.exe",
+      "sha256": "b72ecc8820e78b767f1afdb64b15292880da590d2399271e8c1a22fff2bdd478"
+    }
+  },
+  "cases": [
+    {
+      "case": "midway-nov4-e",
+      "kind": "prospective",
+      "exit_code": 0,
+      "elapsed_s": 103.3026383999968,
+      "completed_report": true,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "screen": "timing_candidate",
+      "peaks": 97,
+      "controls": 19,
+      "score_gap_beyond_1km": 9.169280801162444,
+      "competitive_location_spread_m": 846.3387258073675,
+      "report_sha256": "cab706ed2feea1fa01fb8c6ae35927e703a3611f947d946a841b1445be0c2b5a",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-04\\flights.csv"
+      ],
+      "hypotheses": 143669,
+      "explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 lie within 1 km of the first candidate. This is a model screen, not a verified accuracy radius.",
+      "first_error_m": 98.83265186868603,
+      "coordinate_hit_within_1km": true,
+      "first_score": 44.08553361353242,
+      "matches": 24
+    },
+    {
+      "case": "midway-nov4-f",
+      "kind": "prospective",
+      "exit_code": 4,
+      "elapsed_s": 98.18396940000821,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "screen": "ambiguous",
+      "peaks": 72,
+      "controls": 19,
+      "score_gap_beyond_1km": 2.0364486549063567,
+      "competitive_location_spread_m": 24944.372784992258,
+      "report_sha256": "5a916ff37c09313430e72d636ad330bc736ba7b2e81db130db0989bda8929aa3",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-04\\flights.csv"
+      ],
+      "hypotheses": 145453,
+      "explanation": "The timing signal has competing locations more than 1 km apart. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.",
+      "first_error_m": 384.2472669123515,
+      "coordinate_hit_within_1km": true,
+      "first_score": 17.79429325169915,
+      "matches": 10
+    },
+    {
+      "case": "midway-nov4-a",
+      "kind": "development",
+      "exit_code": 0,
+      "elapsed_s": 96.10923109995201,
+      "completed_report": true,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "screen": "timing_candidate",
+      "peaks": 69,
+      "controls": 19,
+      "score_gap_beyond_1km": 8.071306166797442,
+      "competitive_location_spread_m": 670.2141338399667,
+      "report_sha256": "026e898313c46f9d46c580b38630d2a54106d057d152d75b803148c973a1071f",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-04\\flights.csv"
+      ],
+      "hypotheses": 144568,
+      "explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 lie within 1 km of the first candidate. This is a model screen, not a verified accuracy radius.",
+      "first_error_m": 546.4508786068188,
+      "coordinate_hit_within_1km": true,
+      "first_score": 35.14347574287635,
+      "matches": 17
+    },
+    {
+      "case": "midway-nov4-b",
+      "kind": "development",
+      "exit_code": 0,
+      "elapsed_s": 102.45085490006022,
+      "completed_report": true,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "screen": "timing_candidate",
+      "peaks": 96,
+      "controls": 19,
+      "score_gap_beyond_1km": 17.41234198816467,
+      "competitive_location_spread_m": 423.16497321115145,
+      "report_sha256": "d77e2f9751589d2b84c4a702d3be89c15b056553f3e6c8ae6a8db00749655d6b",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-04\\flights.csv"
+      ],
+      "hypotheses": 143717,
+      "explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 lie within 1 km of the first candidate. This is a model screen, not a verified accuracy radius.",
+      "first_error_m": 254.84660469493025,
+      "coordinate_hit_within_1km": true,
+      "first_score": 42.35212978648033,
+      "matches": 27
+    },
+    {
+      "case": "midway-nov4-c",
+      "kind": "development",
+      "exit_code": 0,
+      "elapsed_s": 97.83700729999691,
+      "completed_report": true,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "screen": "timing_candidate",
+      "peaks": 91,
+      "controls": 19,
+      "score_gap_beyond_1km": 7.976880866291907,
+      "competitive_location_spread_m": 895.1827198363367,
+      "report_sha256": "a67f9f50994f4e543cfb7a77873d987bd9105faf3256c6670f156e9c49ea6912",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-04\\flights.csv"
+      ],
+      "hypotheses": 143683,
+      "explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 lie within 1 km of the first candidate. This is a model screen, not a verified accuracy radius.",
+      "first_error_m": 546.4508786068188,
+      "coordinate_hit_within_1km": true,
+      "first_score": 49.07396265350707,
+      "matches": 26
+    },
+    {
+      "case": "midway-nov4-d",
+      "kind": "development",
+      "exit_code": 0,
+      "elapsed_s": 97.67566670000087,
+      "completed_report": true,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "screen": "timing_candidate",
+      "peaks": 87,
+      "controls": 19,
+      "score_gap_beyond_1km": 9.711113677801006,
+      "competitive_location_spread_m": 670.2141338399667,
+      "report_sha256": "aa9941fa089b2602965dbb72fa42a8b49d966a47a3dc957f1cae36355cd4a2d0",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-04\\flights.csv"
+      ],
+      "hypotheses": 143373,
+      "explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 lie within 1 km of the first candidate. This is a model screen, not a verified accuracy radius.",
+      "first_error_m": 546.4508786068188,
+      "coordinate_hit_within_1km": true,
+      "first_score": 40.215357111484366,
+      "matches": 22
+    },
+    {
+      "case": "midway",
+      "kind": "development",
+      "exit_code": 3,
+      "elapsed_s": 81.43758210004307,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "peaks": 65,
+      "controls": 19,
+      "score_gap_beyond_1km": null,
+      "competitive_location_spread_m": null,
+      "report_sha256": "0aecbce3e4f958d29b472ca525f25711279d604dd3da1f864dd507f9039e6d0e",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-03\\flights.csv"
+      ],
+      "hypotheses": 123805,
+      "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established.",
+      "first_error_m": 23950.293981678096,
+      "coordinate_hit_within_1km": false,
+      "first_score": 9.349472720894365,
+      "matches": 23
+    },
+    {
+      "case": "southampton",
+      "kind": "development",
+      "exit_code": 3,
+      "elapsed_s": 5.663660199963488,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "peaks": 13,
+      "controls": 0,
+      "score_gap_beyond_1km": null,
+      "competitive_location_spread_m": null,
+      "report_sha256": "045d9ccad0126abfac3c51fbd7b1feffa9d37e71bedcce749324b5eb512de58f",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton-flights-full-day.csv"
+      ],
+      "hypotheses": 1815,
+      "explanation": "No leading location has six sound peaks matched to separate flight passages. More recording time or better flight coverage is needed.",
+      "first_error_m": 16501.651769219665,
+      "coordinate_hit_within_1km": false,
+      "first_score": 10.614769893682038,
+      "matches": 3
+    },
+    {
+      "case": "midway-arrivals",
+      "kind": "development",
+      "exit_code": 4,
+      "elapsed_s": 70.46383530006278,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "screen": "ambiguous",
+      "peaks": 27,
+      "controls": 19,
+      "score_gap_beyond_1km": 1.302602355227421,
+      "competitive_location_spread_m": 1747.0228578881322,
+      "report_sha256": "9b8d6c6aca148d70d46a1d5de84526fd3595aadfe6d2207ed232c07b11db8f42",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-03\\flights.csv"
+      ],
+      "hypotheses": 109622,
+      "explanation": "The timing signal has competing locations more than 1 km apart. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.",
+      "first_error_m": 868.0550641271241,
+      "coordinate_hit_within_1km": true,
+      "first_score": 28.94719376656073,
+      "matches": 15
+    },
+    {
+      "case": "midway-holdout",
+      "kind": "development",
+      "exit_code": 3,
+      "elapsed_s": 79.71355210000183,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "peaks": 52,
+      "controls": 19,
+      "score_gap_beyond_1km": null,
+      "competitive_location_spread_m": null,
+      "report_sha256": "4fce2437c2bc8f28ffdc1f19691b888b039bf65c17c4b18f6ccabac225308080",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-03\\flights.csv"
+      ],
+      "hypotheses": 122900,
+      "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established.",
+      "first_error_m": 24096.114636521026,
+      "coordinate_hit_within_1km": false,
+      "first_score": 11.117420666662532,
+      "matches": 19
+    },
+    {
+      "case": "midway-nov1",
+      "kind": "development",
+      "exit_code": 0,
+      "elapsed_s": 84.25872219994199,
+      "completed_report": true,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "screen": "timing_candidate",
+      "peaks": 30,
+      "controls": 19,
+      "score_gap_beyond_1km": 10.460542906412947,
+      "competitive_location_spread_m": 670.2141338402089,
+      "report_sha256": "e30ff41bf7df32715a3b76838795e51255a495632b1386ce2b506dadec2bec2e",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-01\\flights.csv"
+      ],
+      "hypotheses": 133975,
+      "explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 lie within 1 km of the first candidate. This is a model screen, not a verified accuracy radius.",
+      "first_error_m": 254.84660469493025,
+      "coordinate_hit_within_1km": true,
+      "first_score": 32.915351271070186,
+      "matches": 13
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "kind": "development",
+      "exit_code": 4,
+      "elapsed_s": 83.9528805000009,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "screen": "ambiguous",
+      "peaks": 30,
+      "controls": 19,
+      "score_gap_beyond_1km": 2.4714026629625323,
+      "competitive_location_spread_m": 2415.682019699322,
+      "report_sha256": "e8f28b4f4b38f5c9d271f14028cfd33193a1107d1dd1d2b2c4627fda186662a6",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-01\\flights.csv"
+      ],
+      "hypotheses": 133618,
+      "explanation": "The timing signal has competing locations more than 1 km apart. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.",
+      "first_error_m": 720.9984525742753,
+      "coordinate_hit_within_1km": true,
+      "first_score": 19.26221772390089,
+      "matches": 10
+    },
+    {
+      "case": "southampton-nov1",
+      "kind": "development",
+      "exit_code": 3,
+      "elapsed_s": 43.3833622999955,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "peaks": 11,
+      "controls": 0,
+      "score_gap_beyond_1km": null,
+      "competitive_location_spread_m": null,
+      "report_sha256": "0e2b8d2c5b5278864c336230ca06bb1251cd15115906af05784faa5cbcf53548",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\free-exchange-2026-11-01"
+      ],
+      "hypotheses": 589,
+      "explanation": "No leading location has six sound peaks matched to separate flight passages. More recording time or better flight coverage is needed.",
+      "first_error_m": 2053.4892391272415,
+      "coordinate_hit_within_1km": false,
+      "first_score": 7.142669709840426,
+      "matches": 2
+    },
+    {
+      "case": "lake-hood",
+      "kind": "development",
+      "exit_code": 3,
+      "elapsed_s": 436.908735300065,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "peaks": 48,
+      "controls": 19,
+      "score_gap_beyond_1km": null,
+      "competitive_location_spread_m": null,
+      "report_sha256": "583e268b04d462a79244e7033497b9b18f74026cfe201621a9804ed702129121",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-03\\v2026.11.03-planes-readsb-prod-0.tar.aa"
+      ],
+      "hypotheses": 158316,
+      "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established.",
+      "first_error_m": 8089.300605675662,
+      "coordinate_hit_within_1km": false,
+      "first_score": 10.286796649814466,
+      "matches": 7
+    },
+    {
+      "case": "lake-hood-nov1",
+      "kind": "development",
+      "exit_code": 3,
+      "elapsed_s": 77.02707800001372,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "peaks": 56,
+      "controls": 19,
+      "score_gap_beyond_1km": null,
+      "competitive_location_spread_m": null,
+      "report_sha256": "db4a2d8130dde152a4fec1bb04dca08446c30c024d47fdd45c10d4a15082774f",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\free-exchange-alaska-2026-11-01"
+      ],
+      "hypotheses": 98715,
+      "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established.",
+      "first_error_m": 6888.614368766376,
+      "coordinate_hit_within_1km": false,
+      "first_score": 10.713717487314337,
+      "matches": 7
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "kind": "development",
+      "exit_code": 3,
+      "elapsed_s": 74.76616560004186,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "peaks": 40,
+      "controls": 19,
+      "score_gap_beyond_1km": null,
+      "competitive_location_spread_m": null,
+      "report_sha256": "48ef1c7b0a161e1b22284dce57cb5122887bb46ef8ab58205f8180e908238616",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\free-exchange-alaska-2026-11-01"
+      ],
+      "hypotheses": 97112,
+      "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established.",
+      "first_error_m": 6646.246556662788,
+      "coordinate_hit_within_1km": false,
+      "first_score": 10.8800400254014,
+      "matches": 7
+    },
+    {
+      "case": "lake-hood-nov4-a",
+      "kind": "development",
+      "exit_code": 3,
+      "elapsed_s": 466.0965001999866,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "peaks": 22,
+      "controls": 19,
+      "score_gap_beyond_1km": null,
+      "competitive_location_spread_m": null,
+      "report_sha256": "5411e2f952cf666f443b67fec9ef9736fdb534f9ff90a79c6cd84fbb1e9caf53",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-04"
+      ],
+      "hypotheses": 181390,
+      "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established.",
+      "first_error_m": 2328.014200206221,
+      "coordinate_hit_within_1km": false,
+      "first_score": 12.361644237707663,
+      "matches": 6
+    },
+    {
+      "case": "lake-hood-nov4-b",
+      "kind": "development",
+      "exit_code": 3,
+      "elapsed_s": 353.42349660000764,
+      "completed_report": true,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "peaks": 26,
+      "controls": 0,
+      "score_gap_beyond_1km": null,
+      "competitive_location_spread_m": null,
+      "report_sha256": "753f546a8cff513b186a590de74a5d3ebe0620bb1082e329ce5c70807a8fb150",
+      "reference_sources": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-04"
+      ],
+      "hypotheses": 9192,
+      "explanation": "No leading location has six sound peaks matched to separate flight passages. More recording time or better flight coverage is needed.",
+      "first_error_m": 10225.817197127142,
+      "coordinate_hit_within_1km": false,
+      "first_score": 10.476358420883928,
+      "matches": 4
+    }
+  ],
+  "completed_cases": 18,
+  "planned_cases": 18,
+  "screened_locations": 6,
+  "accepted_locations": 6,
+  "wrong_screened_locations": 0,
+  "not_location_confidence_calibration": true,
+  "terminal": true,
+  "counts_by_status": {
+    "candidates_found": 6,
+    "ambiguous": 3,
+    "insufficient_evidence": 9
+  },
+  "coverage_fraction": 0.3333333333333333,
+  "ci_evidence": "passage-timing-integrated-ci.json",
+  "plan": {
+    "build": {
+      "commit": "f8f17352fa98a4961fbeb1202b4bdaa413c2af39",
+      "required_local_checks_passed": true,
+      "tests": 91,
+      "ignored": 0,
+      "ci": "pending",
+      "created_utc": "2026-11-05T22:06:00.119215+00:00",
+      "not_qualified_location_release": true,
+      "cli": {
+        "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-timing-f8f1735.exe",
+        "sha256": "faf943fa3860114d95e61e20d2887180aae27c1cefc32d7dd816b11884c282b7"
+      },
+      "gui": {
+        "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-timing-f8f1735.exe",
+        "sha256": "b72ecc8820e78b767f1afdb64b15292880da590d2399271e8c1a22fff2bdd478"
+      }
+    },
+    "cases": [
+      {
+        "case": "midway-nov4-e",
+        "kind": "prospective",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-heldout\\midway-nov4-e\\job.json",
+        "date": "2026-11-04",
+        "job_sha256": "ca15721b3c7d3a892bb568f567c727bd04f686caf85e178d0b77256bfc3b22b7",
+        "media_sha256": "58077f7254407a6bbe1afd8f36e09dc1b5ca93de70b928485d469c1a9503a69d",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        }
+      },
+      {
+        "case": "midway-nov4-f",
+        "kind": "prospective",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-heldout\\midway-nov4-f\\job.json",
+        "date": "2026-11-04",
+        "job_sha256": "79214deadd5f87e0cc8e85688cc9b5b9bf7d6394d62361536c18188c0cb2dd30",
+        "media_sha256": "17bfd9100c38ecc14d0dd1988eccabf2c7fa7eb250b69345ba1a72da6a0b3471",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        }
+      },
+      {
+        "case": "midway-nov4-a",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\fresh-validation\\midway-nov4-a\\job.json",
+        "date": "2026-11-04",
+        "job_sha256": "2c939c7587703c2ebde2bad337169bdb2eb62b14cfd8f8650d885521dd740446",
+        "media_sha256": "5ef6d2dacfa386ee62644d594994842c2d3863b40d40a047a2a66d3f1f23c8df",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        }
+      },
+      {
+        "case": "midway-nov4-b",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\fresh-validation\\midway-nov4-b\\job.json",
+        "date": "2026-11-04",
+        "job_sha256": "21a51f159554adc501d666022d80592f10d49daa8d9e750fc881afc9ce1a36de",
+        "media_sha256": "4be21eaaa6a3569efdc2b486037b6871b2c72d4f514ea9bf510db89ffd166eb4",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        }
+      },
+      {
+        "case": "midway-nov4-c",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-heldout\\midway-nov4-c\\job.json",
+        "date": "2026-11-04",
+        "job_sha256": "3139111c506b31531ae1cceee41d0fc0ef006e8ba862baccf354ae85818addde",
+        "media_sha256": "3b1c10792a8269ca98affd32288be89b2d5ae27a6ffb4f14488cb575abd11a1a",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        }
+      },
+      {
+        "case": "midway-nov4-d",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-heldout\\midway-nov4-d\\job.json",
+        "date": "2026-11-04",
+        "job_sha256": "f43ad08907b7f8608fcb5a0986c027deadc31c92c05d5fc6e48aa6d3fe3f8725",
+        "media_sha256": "9a459488df4fa077f9ab1147730d4d2607a340ac67c7a385032bc3d714085dc3",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        }
+      },
+      {
+        "case": "midway",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\midway\\job.json",
+        "date": "2026-11-03",
+        "job_sha256": "4eb76d8e2031797fb296b356385c56c7f1fffde484f5973ac415b8d41a00e653",
+        "media_sha256": "38e22e7253db6eb19c1fb90d2d852ad6807467d3705f8d28e5635a2d6766b276",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        }
+      },
+      {
+        "case": "southampton",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\southampton\\job.json",
+        "date": "2026-11-03",
+        "job_sha256": "847a41ab7d23d53c83f8d003c176173391e476fe2c4ea6eef3737f056cf824ba",
+        "media_sha256": "88fadc80a7209432e01350aec3adc901e296e3174ee1f469022d6ec47c1d7e30",
+        "bounds": {
+          "east": -1.05,
+          "north": 51.16,
+          "south": 50.8,
+          "west": -1.63
+        }
+      },
+      {
+        "case": "midway-arrivals",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\midway-arrivals\\job.json",
+        "date": "2026-11-03",
+        "job_sha256": "43e11c650a3dc516a18170b619cfd41a88b7553893ccd8771391c0104fccf0b3",
+        "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+        "bounds": {
+          "south": 41.65,
+          "east": -87.5,
+          "west": -87.98,
+          "north": 42.01
+        }
+      },
+      {
+        "case": "midway-holdout",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\midway-holdout\\job.json",
+        "date": "2026-11-03",
+        "job_sha256": "5d0b889d550cce66f4758afdb92e56b2ca6d61be7204abe33422dadc77be4751",
+        "media_sha256": "985b9035059956f43f989d8c14049d00d08679902e8b3d421fa7f1c9f63d6f04",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        }
+      },
+      {
+        "case": "midway-nov1",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\midway-nov1\\job.json",
+        "date": "2026-11-01",
+        "job_sha256": "babc4d1e05b5273e831282525430a5e8782c3a0be265c0881446208c0570e956",
+        "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810",
+        "bounds": {
+          "south": 41.65,
+          "east": -87.5,
+          "west": -87.98,
+          "north": 42.01
+        }
+      },
+      {
+        "case": "midway-nov1-holdout",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\midway-nov1-holdout\\job.json",
+        "date": "2026-11-01",
+        "job_sha256": "0364130aba4b01dfd13ad28799af09fde93c4ac84ffdca4deedee8d9b7e81f28",
+        "media_sha256": "915c8ccfe6e7af52920567c602b5dbacfaedc2973ce14b540b7d3367dacdb62f",
+        "bounds": {
+          "south": 41.65,
+          "east": -87.5,
+          "west": -87.98,
+          "north": 42.01
+        }
+      },
+      {
+        "case": "southampton-nov1",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\southampton-nov1\\job.json",
+        "date": "2026-11-01",
+        "job_sha256": "70899f9459ea8388ab18cd1b2c3e856644510955a8eec47169dd4ef04f40f330",
+        "media_sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f",
+        "bounds": {
+          "south": 50.8,
+          "north": 51.16,
+          "west": -1.63,
+          "east": -1.05
+        }
+      },
+      {
+        "case": "lake-hood",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\lake-hood\\job.json",
+        "date": "2026-11-03",
+        "job_sha256": "4aa8da6fc4d843a1ccba373c874f04f930c1045ddbd875fd544e997b9cca197c",
+        "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        }
+      },
+      {
+        "case": "lake-hood-nov1",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\lake-hood-nov1\\job.json",
+        "date": "2026-11-01",
+        "job_sha256": "672e615b1b0381e6a627bfc90aba5bb487e244a76a55db924ba7601d173a1462",
+        "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        }
+      },
+      {
+        "case": "lake-hood-nov1-later",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\lake-hood-nov1-later\\job.json",
+        "date": "2026-11-01",
+        "job_sha256": "707e2575d9daef46fcff220afac6dfe37764aadd61188ff8d264e888c1651578",
+        "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        }
+      },
+      {
+        "case": "lake-hood-nov4-a",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\lake-hood-nov4-a\\job.json",
+        "date": "2026-11-04",
+        "job_sha256": "53bc1df78f9fd41d35348ccc153a6ddfbb5332b8cf94d046b218d8df2091fe0e",
+        "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        }
+      },
+      {
+        "case": "lake-hood-nov4-b",
+        "kind": "development",
+        "source_job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\lake-hood-nov4-b\\job.json",
+        "date": "2026-11-04",
+        "job_sha256": "8b49e53c7fd607843e6989434f94224733cb11d4d1a041bc568c955cd74c5d7c",
+        "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        }
+      }
+    ],
+    "accuracy_target_m": 1000,
+    "workers": 2,
+    "no_recording_clock_or_camera_position_supplied": true,
+    "earlier_results_unchanged": true,
+    "provider_rule": "Use full-day free native Chicago data for Midway. Keep the original full-day free data for Lake Hood and Southampton.",
+    "metrics": [
+      "Report coordinate hits separately from screened locations.",
+      "A screened location must be within 1 km. A wrong screened location is a failure.",
+      "Retain refusals and ambiguous outcomes; report their counts and coverage.",
+      "Prospective E/F clips are separate from all development cases."
+    ],
+    "not_calibrated_accuracy_radius": true
+  },
+  "interpretation": "Six screened locations were within 1 km, all from the same Midway camera. Three recordings remained ambiguous and nine had insufficient evidence. No wrong screened location occurred in this batch. Only E/F were prospective for the new screens: E passed at 98.83 m; F was ambiguous despite a 384.25 m first coordinate. This is not accuracy calibration or evidence of reliable performance at new locations. A known possible date and broad region were supplied; the recording clock and camera position were not."
+}

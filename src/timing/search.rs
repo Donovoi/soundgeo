@@ -10,6 +10,7 @@ use crate::{
 };
 use anyhow::{Context, Result, ensure};
 use serde::{Deserialize, Serialize};
+use std::borrow::Cow;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
@@ -70,6 +71,23 @@ pub struct LocationScore {
     pub log_likelihood_ratio: f64,
 }
 
+// Geometry depends on the job and flight data, not on the sound permutation.
+// Keep the inputs borrowed and immutable for the entire assessment. The cache
+// holds at most 64 MiB of passage entries, plus one slot per grid point.
+const CACHE_PASSAGES: usize = 64 * 1024 * 1024 / std::mem::size_of::<Passage>();
+pub(super) struct PreparedSearch<'a> {
+    job: &'a Job,
+    tracks: &'a [Track],
+    options: &'a Options,
+    points: Vec<Point>,
+    reference: Reference,
+    passages: Vec<Option<Box<[Passage]>>>,
+    remaining_cache_passages: usize,
+    terrain_fallback_points: usize,
+    #[cfg(test)]
+    geometry_evaluations: usize,
+}
+
 /// Search the configured region and reference days with one shared unknown clock.
 /// This score ranks hypotheses; it is not a location confidence or error radius.
 #[allow(clippy::too_many_arguments)]
@@ -82,9 +100,11 @@ pub fn locate(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<SearchResult> {
-    control.check()?;
-    let bounds = job.bounds.context("Passage timing needs search bounds")?;
-    bounds.validate()?;
+    validate_peaks(peaks, duration)?;
+    PreparedSearch::new(job, tracks, options, control)?.locate(peaks, duration, control, progress)
+}
+
+fn validate_peaks(peaks: &[f64], duration: f64) -> Result<()> {
     ensure!(
         duration.is_finite() && duration > 0. && duration <= 86400.,
         "Timing recordings must be between zero and 24 hours long"
@@ -97,108 +117,171 @@ pub fn locate(
             && peaks.windows(2).all(|p| p[0] < p[1]),
         "Timing peaks must be finite, ordered, unique and inside the recording"
     );
-    ensure!(
-        options.grid_m.is_finite()
-            && (50. ..=1000.).contains(&options.grid_m)
-            && (100..=50000).contains(&options.maximum_grid_points)
-            && (1..=1024).contains(&options.retained_candidates)
-            && options.maximum_passage_distance_m.is_finite()
-            && (100. ..=5000.).contains(&options.maximum_passage_distance_m),
-        "Invalid passage-timing search options"
-    );
-    let (points, spacing) = bounds.grid(options.grid_m, options.maximum_grid_points);
-    ensure!(
-        spacing <= options.grid_m * (1. + 1e-12),
-        "Timing grid exceeds its point budget; use a smaller region or raise the point limit. The grid was not silently coarsened."
-    );
-    let mut result = SearchResult {
-        options: options.clone(),
-        points: points.len(),
-        eligible_points: 0,
-        likelihood_evaluations: 0,
-        candidates: vec![],
-        location_scores: vec![],
-        terrain_fallback_points: 0,
-    };
-    if peaks.len() < 3 {
-        return Ok(result);
-    }
-    let reference = Reference::new(
-        tracks,
-        options.maximum_passage_distance_m,
-        job.sound_speed(),
-        control,
-    )?;
-    ensure!(
-        reference.end_day - reference.start_day <= 32. * 86400.,
-        "Timing search supports at most 32 reference days per run"
-    );
-    let mut terrain = Terrain::with_datum(job.terrain.clone(), job.ground_m, job.ground_datum);
-    for (index, mut point) in points.into_iter().enumerate() {
+    Ok(())
+}
+
+impl<'a> PreparedSearch<'a> {
+    pub(super) fn new(
+        job: &'a Job,
+        tracks: &'a [Track],
+        options: &'a Options,
+        control: &Control,
+    ) -> Result<Self> {
         control.check()?;
-        point.alt = terrain.elevation(point);
-        let passages = reference.passages(point.ecef());
-        if passages.len() >= 10 {
-            result.eligible_points += 1;
-            let proposals = propose(
-                peaks,
-                &passages,
-                duration,
-                reference.start_day,
-                reference.end_day,
-                job,
-                control,
-            )?;
-            let mut location_best: Option<f64> = None;
-            for offset in proposals {
-                control.check()?;
-                if let Some(candidate) = evaluate(
-                    point,
+        let bounds = job.bounds.context("Passage timing needs search bounds")?;
+        bounds.validate()?;
+        ensure!(
+            options.grid_m.is_finite()
+                && (50. ..=1000.).contains(&options.grid_m)
+                && (100..=50000).contains(&options.maximum_grid_points)
+                && (1..=1024).contains(&options.retained_candidates)
+                && options.maximum_passage_distance_m.is_finite()
+                && (100. ..=5000.).contains(&options.maximum_passage_distance_m),
+            "Invalid passage-timing search options"
+        );
+        let (mut points, spacing) = bounds.grid(options.grid_m, options.maximum_grid_points);
+        ensure!(
+            spacing <= options.grid_m * (1. + 1e-12),
+            "Timing grid exceeds its point budget; use a smaller region or raise the point limit. The grid was not silently coarsened."
+        );
+        let reference = Reference::new(
+            tracks,
+            options.maximum_passage_distance_m,
+            job.sound_speed(),
+            control,
+        )?;
+        ensure!(
+            reference.end_day - reference.start_day <= 32. * 86400.,
+            "Timing search supports at most 32 reference days per run"
+        );
+        let mut terrain = Terrain::with_datum(job.terrain.clone(), job.ground_m, job.ground_datum);
+        for point in &mut points {
+            control.check()?;
+            point.alt = terrain.elevation(*point);
+        }
+        Ok(Self {
+            job,
+            tracks,
+            options,
+            passages: vec![None; points.len()],
+            points,
+            reference,
+            remaining_cache_passages: CACHE_PASSAGES,
+            terrain_fallback_points: terrain.missing,
+            #[cfg(test)]
+            geometry_evaluations: 0,
+        })
+    }
+
+    fn passages(&mut self, index: usize) -> Cow<'_, [Passage]> {
+        if self.passages[index].is_none() {
+            #[cfg(test)]
+            {
+                self.geometry_evaluations += 1;
+            }
+            let computed = self.reference.passages(self.points[index].ecef());
+            if computed.len() > self.remaining_cache_passages {
+                return Cow::Owned(computed);
+            }
+            self.remaining_cache_passages -= computed.len();
+            self.passages[index] = Some(computed.into_boxed_slice());
+        }
+        Cow::Borrowed(
+            self.passages[index]
+                .as_deref()
+                .expect("Cached passage geometry"),
+        )
+    }
+
+    pub(super) fn locate(
+        &mut self,
+        peaks: &[f64],
+        duration: f64,
+        control: &Control,
+        progress: &Progress<'_>,
+    ) -> Result<SearchResult> {
+        control.check()?;
+        validate_peaks(peaks, duration)?;
+        let (job, tracks, options) = (self.job, self.tracks, self.options);
+        let reference_days = (self.reference.start_day, self.reference.end_day);
+        let mut result = SearchResult {
+            options: options.clone(),
+            points: self.points.len(),
+            eligible_points: 0,
+            likelihood_evaluations: 0,
+            candidates: vec![],
+            location_scores: vec![],
+            terrain_fallback_points: 0,
+        };
+        if peaks.len() < 3 {
+            return Ok(result);
+        }
+        for index in 0..self.points.len() {
+            control.check()?;
+            let point = self.points[index];
+            let passages = self.passages(index);
+            if passages.len() >= 10 {
+                result.eligible_points += 1;
+                let proposals = propose(
                     peaks,
                     &passages,
-                    tracks,
-                    offset,
                     duration,
-                    (reference.start_day, reference.end_day),
+                    reference_days.0,
+                    reference_days.1,
                     job,
-                ) {
-                    result.likelihood_evaluations += 1;
-                    location_best = Some(
-                        location_best.map_or(candidate.log_likelihood_ratio, |best| {
-                            best.max(candidate.log_likelihood_ratio)
-                        }),
-                    );
-                    result.candidates.push(candidate);
+                    control,
+                )?;
+                let mut location_best: Option<f64> = None;
+                for offset in proposals {
+                    control.check()?;
+                    if let Some(candidate) = evaluate(
+                        point,
+                        peaks,
+                        &passages,
+                        tracks,
+                        offset,
+                        duration,
+                        reference_days,
+                        job,
+                    ) {
+                        result.likelihood_evaluations += 1;
+                        location_best = Some(
+                            location_best.map_or(candidate.log_likelihood_ratio, |best| {
+                                best.max(candidate.log_likelihood_ratio)
+                            }),
+                        );
+                        result.candidates.push(candidate);
+                    }
+                }
+                if let Some(score) = location_best {
+                    result.location_scores.push(LocationScore {
+                        latitude: point.lat,
+                        longitude: point.lon,
+                        log_likelihood_ratio: score,
+                    });
+                }
+                if result.candidates.len() > options.retained_candidates {
+                    sort(&mut result.candidates);
+                    result.candidates.truncate(options.retained_candidates);
                 }
             }
-            if let Some(score) = location_best {
-                result.location_scores.push(LocationScore {
-                    latitude: point.lat,
-                    longitude: point.lon,
-                    log_likelihood_ratio: score,
-                });
-            }
-            if result.candidates.len() > options.retained_candidates {
-                sort(&mut result.candidates);
-                result.candidates.truncate(options.retained_candidates);
+            if index.is_multiple_of(256) || index + 1 == result.points {
+                progress(
+                    &format!(
+                        "Passage timing: {}/{} points, {} eligible, {} likelihood evaluations",
+                        index + 1,
+                        result.points,
+                        result.eligible_points,
+                        result.likelihood_evaluations
+                    ),
+                    index as f32 / result.points as f32,
+                );
             }
         }
-        if index.is_multiple_of(256) || index + 1 == result.points {
-            progress(
-                &format!(
-                    "Passage timing: {}/{} points, {} eligible, {} likelihood evaluations",
-                    index + 1,
-                    result.points,
-                    result.eligible_points,
-                    result.likelihood_evaluations
-                ),
-                index as f32 / result.points as f32,
-            );
-        }
+        result.terrain_fallback_points = self.terrain_fallback_points;
+        sort(&mut result.candidates);
+        Ok(result)
     }
-    result.terrain_fallback_points = terrain.missing;
-    sort(&mut result.candidates);
-    Ok(result)
 }
 fn sort(candidates: &mut [Candidate]) {
     candidates.sort_by(|a, b| {
@@ -392,8 +475,7 @@ fn normal_cdf(x: f64) -> f64 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn broad_search_recovers_generated_location_and_unknown_clock() {
+    fn generated_case() -> (Job, Vec<Track>, Vec<f64>, Point, f64) {
         use crate::{
             aircraft::AircraftKind,
             geo::{Bounds, Vec3},
@@ -455,6 +537,12 @@ mod tests {
                 }
             })
             .collect();
+        (job, tracks, peaks, truth, offset)
+    }
+
+    #[test]
+    fn broad_search_recovers_generated_location_and_unknown_clock() {
+        let (job, tracks, peaks, truth, offset) = generated_case();
         let result = locate(
             &job,
             &peaks,
@@ -479,11 +567,46 @@ mod tests {
         assert!((best.latitude - truth.lat).abs() < 1e-10);
         assert!((best.longitude - truth.lon).abs() < 1e-10);
         assert!((best.offset_utc - offset).abs() < 1e-6);
-        assert_eq!(best.pairs.len(), emissions.len());
+        assert_eq!(best.pairs.len(), peaks.len());
         // Twelve isolated, exactly aligned Gaussian peaks have p=1 and zero
         // background. Compare with the closed-form likelihood, not a cutoff.
         let expected = 12. * (1200. / (12. * (2. * std::f64::consts::PI).sqrt())).ln();
         assert!((best.log_likelihood_ratio - expected).abs() < 1e-6);
+    }
+    #[test]
+    fn bounded_geometry_cache_preserves_results_across_sound_permutations() {
+        let (job, tracks, peaks, _, _) = generated_case();
+        let options = Options::default();
+        let control = Control::default();
+        let mut cached = PreparedSearch::new(&job, &tracks, &options, &control).unwrap();
+        let mut bounded = PreparedSearch::new(&job, &tracks, &options, &control).unwrap();
+        // A tiny budget must exercise the exact uncached fallback, not prune
+        // flights or locations when a cached vector will not fit.
+        bounded.remaining_cache_passages = 20;
+        let mut shuffled: Vec<_> = peaks.iter().map(|t| (t + 375.) % 1200.).collect();
+        shuffled.sort_by(f64::total_cmp);
+        for times in [&peaks, &shuffled, &peaks] {
+            let fresh =
+                locate(&job, times, 1200., &tracks, &options, &control, &|_, _| {}).unwrap();
+            let reused = cached.locate(times, 1200., &control, &|_, _| {}).unwrap();
+            let fallback = bounded.locate(times, 1200., &control, &|_, _| {}).unwrap();
+            let expected = serde_json::to_value(fresh).unwrap();
+            assert_eq!(serde_json::to_value(reused).unwrap(), expected);
+            assert_eq!(serde_json::to_value(fallback).unwrap(), expected);
+        }
+        assert_eq!(cached.geometry_evaluations, cached.points.len());
+        assert!(bounded.geometry_evaluations > bounded.points.len());
+        let held: usize = bounded.passages.iter().flatten().map(|p| p.len()).sum();
+        assert!(held <= 20);
+        assert_eq!(held + bounded.remaining_cache_passages, 20);
+        // A warm cache must still honor cancellation and validate new peaks.
+        assert!(
+            cached
+                .locate(&[2., 1., 3.], 1200., &control, &|_, _| {})
+                .is_err()
+        );
+        control.stop();
+        assert!(cached.locate(&peaks, 1200., &control, &|_, _| {}).is_err());
     }
     #[test]
     fn truncated_gaussian_exposure_matches_reference_values() {
