@@ -142,6 +142,8 @@ It checks each point against its owning interval. Downloaded parts have SHA-256
 checksums. The final CSV and manifest are written only after all parts pass.
 The downloader uses two workers, at most two requests per second, bounded
 responses, and bounded retries. A later attempt can reuse valid parts.
+Cancellation is checked while waiting for response headers and body chunks,
+including a stalled connection. Small catalog requests retain a 30-second timeout.
 
 Radar field 18 is altitude in metres. Field 10 is the client's height field and
 is not used as aircraft altitude. The importer adds EGM96 geoid undulation to

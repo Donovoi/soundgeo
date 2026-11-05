@@ -22,7 +22,7 @@ fn hash_file(path: &Path, control: &Control) -> Result<String> {
     }
     Ok(format!("{:x}", hasher.finalize()))
 }
-async fn cancelable<F: Future>(future: F, control: &Control) -> Result<F::Output> {
+pub(crate) async fn cancelable<F: Future>(future: F, control: &Control) -> Result<F::Output> {
     let mut pending = std::pin::pin!(future);
     loop {
         control.check()?;

@@ -532,7 +532,7 @@ The new native Rust provider checks every half-minute part, UTC/local time
 agreement, point coordinates, and cache checksums. Tests cover the repeated
 daylight-saving hour, the altitude field, missing parts, cancellation, cache
 corruption, and command-line analysis with no recording clock.
-All 61 software tests pass locally, with formatting and strict Clippy checks.
+All 62 software tests pass locally, with formatting and strict Clippy checks.
 The detector and location matcher are unchanged from `e1aa6bc`.
 
 The [Southampton Airport noise page](https://www.southamptonairport.com/about-us/aircraft-noise/)

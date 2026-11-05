@@ -268,16 +268,59 @@ fn ensure_day(
     Ok(path)
 }
 
+enum Reply {
+    Data(Vec<u8>),
+    RetryAfter(String),
+}
+
+fn request_chunk(
+    client: &reqwest::Client,
+    runtime: &tokio::runtime::Runtime,
+    url: &str,
+    control: &Control,
+) -> Result<Reply> {
+    runtime.block_on(async {
+        let mut response = crate::network::cancelable(client.get(url).send(), control).await??;
+        if matches!(response.status().as_u16(), 429 | 503) {
+            return Ok(Reply::RetryAfter(
+                response
+                    .headers()
+                    .get(reqwest::header::RETRY_AFTER)
+                    .map(|v| v.to_str())
+                    .transpose()?
+                    .unwrap_or("10")
+                    .to_owned(),
+            ));
+        }
+        response.error_for_status_ref()?;
+        if response.content_length().is_some_and(|n| n > LIMIT as u64) {
+            bail!("Chicago response exceeds 2 MB");
+        }
+        let mut bytes = vec![];
+        while let Some(chunk) = crate::network::cancelable(response.chunk(), control).await?? {
+            if bytes.len() + chunk.len() > LIMIT {
+                bail!("Chicago response exceeds 2 MB");
+            }
+            bytes.extend_from_slice(&chunk);
+        }
+        Ok(Reply::Data(bytes))
+    })
+}
+
 pub fn download_day(
     date: &str,
     cache: &Path,
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<PathBuf> {
-    let client = reqwest::blocking::Client::builder()
+    let client = reqwest::Client::builder()
         .timeout(Duration::from_secs(60))
         .connect_timeout(Duration::from_secs(15))
         .user_agent("SoundGeo/0.3 public-airport-replay")
+        .build()?;
+    let runtime = tokio::runtime::Builder::new_multi_thread()
+        .worker_threads(2)
+        .enable_all()
         .build()?;
     let next = Mutex::new(Instant::now());
     let path = ensure_day(date, cache, control, progress, &|handle| {
@@ -308,18 +351,22 @@ pub fn download_day(
                     Some(delay) => std::thread::sleep(delay.min(Duration::from_millis(50))),
                 }
             }
-            let response = client.get(format!("{BASE}{handle}.mobile")).send()?;
-            if matches!(response.status().as_u16(), 429 | 503) && attempt < 2 {
-                let pause = response
-                    .headers()
-                    .get(reqwest::header::RETRY_AFTER)
-                    .map(|v| v.to_str())
-                    .transpose()?
-                    .unwrap_or("10");
+            if let Reply::RetryAfter(pause) = match request_chunk(
+                &client,
+                &runtime,
+                &format!("{BASE}{handle}.mobile"),
+                control,
+            )? {
+                Reply::Data(bytes) => return Ok(bytes),
+                retry => retry,
+            } {
+                if attempt == 2 {
+                    bail!("Chicago replay retry limit reached");
+                }
                 let seconds = if let Ok(seconds) = pause.parse::<u64>() {
                     seconds
                 } else {
-                    (DateTime::parse_from_rfc2822(pause)
+                    (DateTime::parse_from_rfc2822(&pause)
                         .context("Unrecognized server retry delay; download stopped")?
                         .timestamp()
                         - Utc::now().timestamp())
@@ -336,15 +383,6 @@ pub fn download_day(
                 *n = (*n).max(Instant::now() + Duration::from_secs(seconds.max(1)));
                 continue;
             }
-            let mut bytes = vec![];
-            response
-                .error_for_status()?
-                .take(LIMIT as u64 + 1)
-                .read_to_end(&mut bytes)?;
-            if bytes.len() > LIMIT {
-                bail!("Chicago response exceeds 2 MB");
-            }
-            return Ok(bytes);
         }
         bail!("Chicago replay retry limit reached")
     })?;
@@ -371,6 +409,63 @@ pub fn coverage_warning(path: &Path) -> Result<Option<String>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn cancellation_interrupts_stalled_replay_and_oversized_headers_are_rejected() {
+        for oversized in [false, true] {
+            let server = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = server.local_addr().unwrap();
+            let thread = std::thread::spawn(move || {
+                let (mut socket, _) = server.accept().unwrap();
+                let mut request = [0; 2048];
+                let _ = socket.read(&mut request);
+                let count = if oversized { LIMIT + 1 } else { 4 };
+                let _ = write!(
+                    socket,
+                    "HTTP/1.1 200 OK\r\nContent-Length: {count}\r\nConnection: close\r\n\r\n"
+                );
+                std::thread::sleep(Duration::from_millis(700));
+                let _ = socket.write_all(b"data");
+            });
+            let runtime = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(2)
+                .enable_all()
+                .build()
+                .unwrap();
+            let client = reqwest::Client::builder()
+                .timeout(Duration::from_secs(10))
+                .build()
+                .unwrap();
+            let control = Control::default();
+            let other = control.clone();
+            let cancellation = std::thread::spawn(move || {
+                std::thread::sleep(Duration::from_millis(200));
+                if !oversized {
+                    other.stop();
+                }
+            });
+            let begin = Instant::now();
+            let error = match request_chunk(
+                &client,
+                &runtime,
+                &format!("http://{address}/chunk"),
+                &control,
+            ) {
+                Err(e) => e,
+                Ok(_) => panic!("Invalid request succeeded"),
+            };
+            assert!(
+                error.to_string().contains(if oversized {
+                    "exceeds 2 MB"
+                } else {
+                    "Cancelled"
+                }),
+                "{error:#}"
+            );
+            assert!(begin.elapsed() < Duration::from_secs(2));
+            cancellation.join().unwrap();
+            thread.join().unwrap();
+        }
+    }
     fn xml(handle: i64, body: &str) -> Vec<u8> {
         let local = DateTime::<Utc>::from_timestamp(handle * 30, 0)
             .unwrap()
