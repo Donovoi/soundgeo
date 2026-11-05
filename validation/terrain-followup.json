@@ -1,0 +1,276 @@
+{
+  "plan_sha256": "24079c134c35cf3fcbfe4d27378c619804fecab665990ea8aed2f1444a79f6fd",
+  "plan": {
+    "diagnostic_only": true,
+    "counts_as_acceptance": false,
+    "clock_and_region_computed_from_previous_solver_output": true,
+    "external_clock_or_camera_point_supplied": false,
+    "only_comparison_change": "terrain directory",
+    "original_and_fresh_test_inputs_unchanged": true,
+    "terrain_manifest_sha256": "5928e90757af5b187f4d02e80e2af21a9bc060646f35572886e523106eab0baa",
+    "cases": [
+      {
+        "case": "lake-hood-nov1-later",
+        "build": {
+          "commit": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+          "cli_sha256": "c37bb556329863b59c0ad6ebd0ecc28aa112828b5afb94d45ef87a4ca29b6319",
+          "binary": "soundgeo-cli-segment-cache.exe"
+        },
+        "baseline_reused": true,
+        "origin_report_sha256": "2fe2bb0da7edf24dc90a26d59c880f110e8fa009905b5960e5433f9aae223462",
+        "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+        "baseline_job_sha256": "e112380382baa5b8d25694065c1feaf91adba2af87726912859fd38881c389e2",
+        "terrain_job_sha256": "8e17bac0d257f9645d6cec41e8819bd70db79f8b7a2992b6cf20f7c6f4055f4b"
+      },
+      {
+        "case": "midway-arrivals",
+        "build": {
+          "commit": "0c2565cc666c9bb6ca6820ec2ac43c7492c1ae4e",
+          "binary": "soundgeo-cli-main-segment-cache.exe",
+          "cli_sha256": "2260e49f5e242684b403c136cdb604b89240fe8a1d0f81b8bf938de8171bba8b"
+        },
+        "baseline_reused": false,
+        "origin_report_sha256": "d9d2578c1b67ad29cdbfd9db080b2b8a97df0bd66e6aeb54359f7343e6550448",
+        "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+        "baseline_job_sha256": "174487d53158feea940740e74da5ea6eca50e8294c2be6801706167cc16d0fc2",
+        "terrain_job_sha256": "342352ea4f30792d9187d813f3dd064565fb627fc87d866c6a930317b01edbdf"
+      }
+    ]
+  },
+  "all_planned_runs_terminal": true,
+  "counts_as_acceptance": false,
+  "computed_candidate_region_and_time": true,
+  "accuracy_target_m": 250,
+  "interpretation": "Terrain improves the local Chicago first choice but does not resolve either case. Bare-earth height is not microphone height. Original broad-area and fresh tests are unchanged.",
+  "cases": [
+    {
+      "case": "lake-hood-nov1-later",
+      "build": {
+        "commit": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+        "cli_sha256": "c37bb556329863b59c0ad6ebd0ecc28aa112828b5afb94d45ef87a4ca29b6319",
+        "binary": "soundgeo-cli-segment-cache.exe"
+      },
+      "runs": [
+        {
+          "variant": "baseline",
+          "status": "ambiguous",
+          "report_sha256": "2fe2bb0da7edf24dc90a26d59c880f110e8fa009905b5960e5433f9aae223462",
+          "hypotheses": 240,
+          "events": 16,
+          "run": {
+            "exit_code": 0,
+            "elapsed_s": 85.38344949996099,
+            "counts_as_acceptance": false,
+            "commit": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+            "cli_sha256": "c37bb556329863b59c0ad6ebd0ecc28aa112828b5afb94d45ef87a4ca29b6319"
+          },
+          "candidates": [
+            {
+              "error_m": 108.563,
+              "matches": 5,
+              "relative_error_percent": 0.7932088655357039
+            },
+            {
+              "error_m": 473.175,
+              "matches": 5,
+              "relative_error_percent": 0.8184303441430666
+            },
+            {
+              "error_m": 308.858,
+              "matches": 5,
+              "relative_error_percent": 0.8271785528846259
+            },
+            {
+              "error_m": 232.663,
+              "matches": 5,
+              "relative_error_percent": 0.8559548241650833
+            },
+            {
+              "error_m": 158.285,
+              "matches": 5,
+              "relative_error_percent": 0.8729715008542667
+            },
+            {
+              "error_m": 569.897,
+              "matches": 5,
+              "relative_error_percent": 0.8775339848443836
+            },
+            {
+              "error_m": 474.929,
+              "matches": 5,
+              "relative_error_percent": 0.896221063623997
+            },
+            {
+              "error_m": 466.814,
+              "matches": 4,
+              "relative_error_percent": 0.6107467062910491
+            },
+            {
+              "error_m": 551.536,
+              "matches": 4,
+              "relative_error_percent": 0.6178886247464599
+            },
+            {
+              "error_m": 373.787,
+              "matches": 4,
+              "relative_error_percent": 0.6257058021904998
+            }
+          ]
+        },
+        {
+          "variant": "terrain",
+          "status": "ambiguous",
+          "report_sha256": "e2546a81e4266e8e9d4115a878acad0c6d8c7052f920ad24fd0ee42995f54941",
+          "hypotheses": 240,
+          "events": 16,
+          "run": {
+            "case": "lake-hood-nov1-later",
+            "variant": "terrain",
+            "exit_code": 0,
+            "elapsed_s": 67.20364350010641,
+            "counts_as_acceptance": false
+          },
+          "candidates": [
+            {
+              "error_m": 108.563,
+              "matches": 5,
+              "relative_error_percent": 0.7930973653200919
+            },
+            {
+              "error_m": 346.097,
+              "matches": 5,
+              "relative_error_percent": 0.8110163103591154
+            },
+            {
+              "error_m": 198.647,
+              "matches": 5,
+              "relative_error_percent": 0.8245397417801149
+            },
+            {
+              "error_m": 484.653,
+              "matches": 5,
+              "relative_error_percent": 0.8380266461534285
+            },
+            {
+              "error_m": 630.615,
+              "matches": 5,
+              "relative_error_percent": 0.8855450638179202
+            },
+            {
+              "error_m": 466.814,
+              "matches": 4,
+              "relative_error_percent": 0.6106099262155728
+            },
+            {
+              "error_m": 517.144,
+              "matches": 4,
+              "relative_error_percent": 0.618030221406955
+            },
+            {
+              "error_m": 339.509,
+              "matches": 4,
+              "relative_error_percent": 0.6201359058273878
+            },
+            {
+              "error_m": 411.33,
+              "matches": 4,
+              "relative_error_percent": 0.6580696391445578
+            },
+            {
+              "error_m": 778.412,
+              "matches": 4,
+              "relative_error_percent": 0.7308637774403347
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "midway-arrivals",
+      "build": {
+        "commit": "0c2565cc666c9bb6ca6820ec2ac43c7492c1ae4e",
+        "binary": "soundgeo-cli-main-segment-cache.exe",
+        "cli_sha256": "2260e49f5e242684b403c136cdb604b89240fe8a1d0f81b8bf938de8171bba8b"
+      },
+      "runs": [
+        {
+          "variant": "baseline",
+          "status": "ambiguous",
+          "report_sha256": "b5e3aeb994fc6ec53f2b10b441ab09a4040610d4b365cccb8c77bdb84e52b8b5",
+          "hypotheses": 180,
+          "events": 6,
+          "run": {
+            "case": "midway-arrivals",
+            "variant": "baseline",
+            "exit_code": 0,
+            "elapsed_s": 28.545667900005355,
+            "counts_as_acceptance": false
+          },
+          "candidates": [
+            {
+              "error_m": 248.298,
+              "matches": 5,
+              "relative_error_percent": 0.7877171666981082
+            },
+            {
+              "error_m": 13.076,
+              "matches": 5,
+              "relative_error_percent": 0.8704539722635496
+            },
+            {
+              "error_m": 389.844,
+              "matches": 5,
+              "relative_error_percent": 0.9332354511193867
+            },
+            {
+              "error_m": 524.983,
+              "matches": 5,
+              "relative_error_percent": 0.995273169385135
+            },
+            {
+              "error_m": 649.839,
+              "matches": 3,
+              "relative_error_percent": 0.8974803523601218
+            }
+          ]
+        },
+        {
+          "variant": "terrain",
+          "status": "ambiguous",
+          "report_sha256": "4bb32a9de9038f77aa1dd24376788c30fdd63de5da9eeb67e5534bb3abde41d8",
+          "hypotheses": 180,
+          "events": 6,
+          "run": {
+            "case": "midway-arrivals",
+            "variant": "terrain",
+            "exit_code": 0,
+            "elapsed_s": 29.20028850005474,
+            "counts_as_acceptance": false
+          },
+          "candidates": [
+            {
+              "error_m": 70.411,
+              "matches": 5,
+              "relative_error_percent": 0.7844665758596788
+            },
+            {
+              "error_m": 322.803,
+              "matches": 5,
+              "relative_error_percent": 0.833831162664961
+            },
+            {
+              "error_m": 466.74,
+              "matches": 4,
+              "relative_error_percent": 0.8038068501367387
+            },
+            {
+              "error_m": 604.666,
+              "matches": 4,
+              "relative_error_percent": 0.8906985956147734
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

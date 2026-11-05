@@ -1,0 +1,154 @@
+{
+  "plan": {
+    "code_commit": "0c2565cc666c9bb6ca6820ec2ac43c7492c1ae4e",
+    "cli_sha256": "2260e49f5e242684b403c136cdb604b89240fe8a1d0f81b8bf938de8171bba8b",
+    "recording_clock_supplied": false,
+    "camera_position_supplied": false,
+    "source": "Free Chicago public WebTrak replay",
+    "provider": "webtrak-chicago",
+    "native_automatic_archive": true,
+    "hypothesis_budget": 50000000,
+    "acceptance_target_m": 250,
+    "original_coherent_benchmark_unchanged": true,
+    "workers": 2,
+    "cases": [
+      {
+        "case": "midway-arrivals",
+        "utc_day": "2026-11-03",
+        "source": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-03\\flights.csv",
+        "reference_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+        "original_job_sha256": "e122d2f1ea7252092bc485feb2fa59bb00d8cce8f98c8b6ec7288820099c6fb2",
+        "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+        "bounds": {
+          "south": 41.65,
+          "east": -87.5,
+          "west": -87.98,
+          "north": 42.01
+        }
+      },
+      {
+        "case": "midway-nov1",
+        "utc_day": "2026-11-01",
+        "source": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-01\\flights.csv",
+        "reference_sha256": "1fc128b441c6a5bbfc1cd875d0002196767ba85bcd5901ea07d5aa89bb9a2aef",
+        "original_job_sha256": "8bcf2f3309ef2d7df9503aa94a1113937d7f8a7d75398acdda0229ce5a005352",
+        "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810",
+        "bounds": {
+          "south": 41.65,
+          "east": -87.5,
+          "west": -87.98,
+          "north": 42.01
+        }
+      }
+    ]
+  },
+  "plan_sha256": "fe98f9f024b71c5c18564945662f948460f244ffa766c0fdc3ba3b8564987b52",
+  "cases": [
+    {
+      "case": "midway-arrivals",
+      "state": "terminal",
+      "accepted": false,
+      "summary": {
+        "case": "midway-arrivals",
+        "source": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-03\\flights.csv",
+        "reference_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+        "cli_sha256": "2260e49f5e242684b403c136cdb604b89240fe8a1d0f81b8bf938de8171bba8b",
+        "code_commit": "0c2565cc666c9bb6ca6820ec2ac43c7492c1ae4e",
+        "known_area_diagnostic_only": false,
+        "recording_clock_supplied": false,
+        "full_reference_day_requested": "2026-11-03",
+        "source_manifest": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-03\\provider-manifest.json",
+        "started_utc": 1793881670.2297146,
+        "native_automatic_archive": true,
+        "baseline_max_hypotheses": 20000000,
+        "effective_max_hypotheses": 50000000,
+        "job_sha256": "042e350215abf997afea5557c98c8379ee9d3819e09dc23ea1d7775e137f93c1",
+        "exit_code": 0,
+        "elapsed_s": 4813.58,
+        "status": "ambiguous",
+        "events": 6,
+        "candidates": 10,
+        "tracks": 4547,
+        "matches": [
+          5,
+          5,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "first_candidate_error_m": 235.57123021731798
+      },
+      "summary_sha256": "a9bb80b622d4c9c32c67dbdb82b766958ecf399d5f81ca587903ecc33e69ffc6",
+      "report_sha256": "d9d2578c1b67ad29cdbfd9db080b2b8a97df0bd66e6aeb54359f7343e6550448",
+      "status": "ambiguous",
+      "hypotheses": 34535596,
+      "candidates": [
+        {
+          "error_m": 235.572,
+          "matches": 5,
+          "relative_error_percent": 0.8301138075608314
+        },
+        {
+          "error_m": 488.292,
+          "matches": 5,
+          "relative_error_percent": 0.9382316209767005
+        },
+        {
+          "error_m": 2891.397,
+          "matches": 3,
+          "relative_error_percent": 0.8057092070048167
+        },
+        {
+          "error_m": 26877.774,
+          "matches": 3,
+          "relative_error_percent": 0.8337165669183094
+        },
+        {
+          "error_m": 25878.549,
+          "matches": 3,
+          "relative_error_percent": 0.8399793221807931
+        },
+        {
+          "error_m": 25495.466,
+          "matches": 3,
+          "relative_error_percent": 0.8672701365084379
+        },
+        {
+          "error_m": 25668.057,
+          "matches": 3,
+          "relative_error_percent": 0.8830812825201673
+        },
+        {
+          "error_m": 23803.071,
+          "matches": 3,
+          "relative_error_percent": 0.8929552370187749
+        },
+        {
+          "error_m": 25544.184,
+          "matches": 3,
+          "relative_error_percent": 0.9136720109194065
+        },
+        {
+          "error_m": 27480.562,
+          "matches": 3,
+          "relative_error_percent": 0.9350061957301639
+        }
+      ],
+      "coordinate_hit": true
+    },
+    {
+      "case": "midway-nov1",
+      "state": "pending",
+      "accepted": false
+    }
+  ],
+  "terminal_cases": 1,
+  "accepted_cases": 0,
+  "original_coherent_benchmark_unchanged": true,
+  "interpretation": "Separate fixed provider comparison. Pending cases are not successes. Coordinate hits with ambiguity are not acceptance passes."
+}
