@@ -960,3 +960,33 @@ this revision. The latest mixed-revision record has four coordinate hits and
 zero accepted results. The remaining consolidated runs continue unchanged.
 See [results.json](results.json) for the executable hash, report hash and
 preserved earlier failures.
+
+## Further checks on the November 4 recordings
+
+The two Midway audio channels are almost identical. Mixing them to mono does
+not cancel the sound. Checks also found no source-offline flags during either
+recording. These checks do not establish complete coverage of each aircraft.
+
+A separate experiment used the times of loud broadband sounds. It searched
+the full regional area and reference day without the camera position or
+recording clock. After local refinement, its first choices were 317 m and
+312 m from the camera. Both missed the 250 m target. Similar scores also
+occurred at other positions, including a distant alternative for the first
+recording. This method was not added to the app. See
+[fresh-midway-audio-diagnostics.json](fresh-midway-audio-diagnostics.json).
+
+## New Lake Hood recordings are queued
+
+Two further one-hour Lake Hood recordings from November 4 were selected and
+captured before evaluation. Their source dates were checked from visible
+camera clocks. Those clocks are kept in the local capture record and are not
+supplied to the app. The app downloaded and verified the free full-day ADSB.lol
+archive through its command line.
+
+The executable, original broad area, 50-million-hypothesis limit and 250 m
+target are fixed in [fresh-lake-cases-plan.json](fresh-lake-cases-plan.json).
+The experimental executable is `a5e0a99`; it preserves additional proposals
+supported by at least four complete curves. Its 72 local software tests pass.
+It has not completed real-video qualification. The two new recordings are
+queued after its existing Lake Hood run, with no recording clock supplied.
+See [fresh-lake-cases-prepared.json](fresh-lake-cases-prepared.json).

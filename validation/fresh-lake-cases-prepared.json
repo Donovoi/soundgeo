@@ -1,0 +1,53 @@
+{
+  "plan_sha256": "51d182145667a8bc40a99c7336a814677b54adacdd2d99e405399d00ec821e8d",
+  "accuracy_target_m": 250,
+  "separate_from_original_ten_development_cases": true,
+  "same_camera_new_day": true,
+  "archive_manifest_sha256": "20384da7ac3f73cdf6c0adbaeef0b29fc99057e3d8fa4667c96dac773caab72a",
+  "cases": [
+    {
+      "case": "lake-hood-nov4-a",
+      "sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "duration_s": 3600.0,
+      "utc_day": "2026-11-04",
+      "clock_supplied": false,
+      "bounds": {
+        "south": 61.0,
+        "north": 61.36,
+        "west": -150.36,
+        "east": -149.62
+      },
+      "ground_truth": {
+        "latitude": 61.179633,
+        "longitude": -149.9719665,
+        "basis": "Previously verified owner map pin; not a survey"
+      },
+      "job_sha256": "b206f208299fbf4c1e348957f9e492c81ff35a507a6941fa2a3ab2af24f9078c",
+      "status": "pending",
+      "date_verified": true,
+      "preselected_before_capture": true
+    },
+    {
+      "case": "lake-hood-nov4-b",
+      "sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+      "duration_s": 3600.021769,
+      "utc_day": "2026-11-04",
+      "clock_supplied": false,
+      "bounds": {
+        "south": 61.0,
+        "north": 61.36,
+        "west": -150.36,
+        "east": -149.62
+      },
+      "ground_truth": {
+        "latitude": 61.179633,
+        "longitude": -149.9719665,
+        "basis": "Previously verified owner map pin; not a survey"
+      },
+      "job_sha256": "09fbe56db35398023b8d8b2086c8884195d81d4c5f10aa692c547d099ae7866b",
+      "status": "pending",
+      "date_verified": true,
+      "preselected_before_capture": true
+    }
+  ]
+}
