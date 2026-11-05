@@ -495,6 +495,47 @@ fn unknown_media_clock_rate_is_recovered_across_three_flights() {
     );
     assert!((best.recording_start_unix - soundgeo::demo::EPOCH).abs() < 3.);
     assert!((best.recording_clock_rate - rate).abs() < 0.0004);
+    assert!(
+        best.clock_fit_is_provisional(),
+        "Recovering a rate from the minimum three sounds is not independent corroboration"
+    );
+    // A fourth independently timed pass supplies evidence beyond that minimum.
+    // Keep this separate from the three-flight fixed-rate/discontinuity controls.
+    let mut four_events = detected.clone();
+    let mut fourth = four_events[0].clone();
+    fn shift_event(event: &mut soundgeo::audio::Event, seconds: f64) {
+        event.start_s += seconds;
+        event.end_s += seconds;
+        event.cpa_s += seconds;
+        for point in &mut event.ridge {
+            point.time_s += seconds;
+        }
+        for alternate in &mut event.alternatives {
+            shift_event(alternate, seconds);
+        }
+    }
+    shift_event(&mut fourth, 2500. / rate);
+    four_events.push(fourth);
+    let mut four_tracks = tracks.clone();
+    let mut fourth_flight = four_tracks[0].clone();
+    fourth_flight.id = "fourth-independent-flight".into();
+    for sample in &mut fourth_flight.samples {
+        sample.time += 2500.;
+    }
+    four_tracks.push(fourth_flight);
+    let corroborated = soundgeo::search::locate(
+        &job,
+        &four_events,
+        &four_tracks,
+        &mut Terrain::new(None, job.ground_m),
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    let corroborated = corroborated.candidates.first().unwrap();
+    assert_eq!(corroborated.matches.len(), 4);
+    assert!(!corroborated.clock_fit_is_provisional());
+    assert!((corroborated.recording_clock_rate - rate).abs() < 0.0004);
     job.max_clock_drift_ppm = 0.;
     let fixed = soundgeo::search::locate(
         &job,

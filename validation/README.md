@@ -581,3 +581,22 @@ The completed Midway November 1 regional diagnostic has a first candidate
 42.4 m from the camera with five matches. It remains ambiguous, uses the known
 camera area, and is excluded from acceptance. Its summary is recorded in
 [observation-controls.json](observation-controls.json).
+
+## False support from a clock-rate fit
+
+Four broad-area runs on `163c76f` are complete. None passes acceptance.
+The November 1 Southampton run returned one candidate with three matched
+sounds and a fitted clock rate of 1.004296875. Its first location was 7,576 m
+from the camera. The report status was `candidates_found`.
+
+With the clock rate fixed to 1, the same recording, full-day references, and
+original broad area produce no candidate. The recording start time remains
+unknown in both runs. This is evidence of a false match; it does not prove
+that every false match requires clock drift.
+
+A fitted rate supported by only three sounds now keeps an ambiguity flag.
+Three sounds are the minimum fitting consensus. Additional independent support
+is required before that flag can be removed. This guard does not change the
+location estimate and does not establish the accuracy of four-sound results.
+The three- and four-flight synthetic controls preserve clock-rate recovery.
+Evidence is in [clock-support-diagnostic.json](clock-support-diagnostic.json).

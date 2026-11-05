@@ -275,7 +275,12 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     report.candidates = result.candidates;
     report.warnings.extend(result.warnings);
     if !report.candidates.is_empty() {
+        let provisional_clock = report.candidates[0].clock_fit_is_provisional();
+        if provisional_clock {
+            report.warnings.push("The fitted recording clock rate has only the minimum three supporting sounds. The location and time remain provisional; more independent evidence is required.".into());
+        }
         let ambiguous = report.events.len() < 2
+            || provisional_clock
             || report.candidates[0].matches.len() < report.events.len()
             || (report.candidates.len() > 1
                 && report.candidates[1].relative_error_percent

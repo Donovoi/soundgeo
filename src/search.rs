@@ -64,6 +64,14 @@ pub struct Candidate {
     #[serde(default)]
     pub silence_conflicts: Vec<SilenceConflict>,
 }
+impl Candidate {
+    /// Three sounds can fit the extra clock-rate parameter without providing
+    /// further corroboration. A real negative control passed that minimum.
+    /// This conservative guard is not a calibrated probability of correctness.
+    pub fn clock_fit_is_provisional(&self) -> bool {
+        (self.recording_clock_rate - 1.).abs() > 1e-12 && self.matches.len() < 4
+    }
+}
 pub struct SearchResult {
     pub candidates: Vec<Candidate>,
     pub warnings: Vec<String>,

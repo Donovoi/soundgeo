@@ -28,8 +28,10 @@ Both recordings came from Midway. Both results still had insufficient support fo
 The Lake Hood and Southampton tests failed.
 
 The latest changes have not completed this full benchmark.
+A newer Southampton run returned one model match 7.6 km from the camera.
+The current model checks can therefore accept a wrong location.
 
-All 63 software tests pass locally and in
+All 63 software tests pass locally. The preceding revision passes
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41952966274).
 The Chicago download and data checks pass. Its broad-area location test is still running.
 Software test success does not establish location accuracy.
@@ -165,6 +167,8 @@ Each possible location includes an estimated recording start time and the eviden
 The program writes the report before it returns code `3`.
 The `--require-match` option checks for candidates. It does not check their accuracy or reject an ambiguous result.
 Check the report status and supporting evidence in automation.
+Do not treat `candidates_found` as a verified location.
+A clock-rate fit with only three matched sounds remains provisional.
 
 ## Flight data
 
