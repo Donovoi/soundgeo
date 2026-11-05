@@ -2,6 +2,10 @@
 
 This is a failing acceptance benchmark, not a claim of reliable geolocation.
 
+The user changed the current target to 1 km on November 6, 2026.
+The original 250 m plans and results below remain unchanged.
+New results must state which target they use.
+
 The completed fixed-build benchmark has nine reports and one search-limit error.
 Two first choices are within 250 m. Both remain ambiguous. Acceptance is **0/10**.
 The failure does not inherit an older successful coordinate result. See
@@ -9,9 +13,11 @@ The failure does not inherit an older successful coordinate result. See
 
 A separate experimental search improved the later Lake Hood first choice to
 82.787 m. It also found a five-match alternative 479.261 m away. It remains
-ambiguous. Two preselected Lake Hood recordings are testing that fixed build.
-The current main app passes 71 software tests locally and in Windows and Ubuntu
-CI. This does not pass the real-video benchmark.
+ambiguous. That fixed build failed on both preselected Lake Hood recordings.
+Their first choices were 8.56 km and 9.38 km from the camera.
+Both also fail the revised 1 km target. The preceding main revision passed 76
+software tests locally and in Windows and Ubuntu CI. This does not pass the
+real-video benchmark.
 
 Ten recordings from three public cameras were captured locally on 2026-11-04.
 The known UTC reference day and an approximately 40 km regional search box are
@@ -1294,9 +1300,11 @@ Both logs were checked for the expected test count and regression names.
 A separate November 1 Midway run uses the same recording, full free Chicago
 reference day, original broad area, and unknown recording clock. Its only job
 change is a limit of 100 million hypotheses. It uses the qualified `c29f646`
-executable. The early check counted 63,003,202 hypotheses. The run is still
-matching curves; it is not an accuracy pass. The original failed 50-million
-attempt remains unchanged. See [native-budget-followup.json](native-budget-followup.json).
+executable. The early check counted 63,003,202 hypotheses. The process stopped
+without a report. Its last log entry counted 61,820,420 hypotheses. The cause
+and exit code are unknown. A separate retry uses the same inputs and binary.
+Its files are kept separate. The original failed 50-million attempt remains
+unchanged. See [native-budget-followup.json](native-budget-followup.json).
 
 ## Acoustic loudness and timing diagnostics
 
@@ -1314,3 +1322,30 @@ recordings. The first choices were 503.580 m and 312.343 m from the camera.
 The first fit in the first recording did not converge. Neither result is an
 accuracy pass. These diagnostics changed no production code or acceptance
 limit. See [acoustic-envelope-diagnostics.json](acoustic-envelope-diagnostics.json).
+
+## Passage timing with a chance-match penalty
+
+A new method uses broadband sound peaks and nearby flight passages. It fits
+one recording start time for all peaks. It compares a flight-plus-background
+model with a constant background model. Busy flight routes therefore do not
+receive a high score only because they contain many possible matches.
+
+The complete original Midway area was searched at 300 m spacing. Each of two
+development recordings used 18,090 positions and the full free reference day.
+No camera position or recording time entered the search. The first locations
+were 546.45 m and 254.85 m from the camera. Other locations remain in the report.
+The likelihood scores do not establish a calibrated accuracy radius.
+
+Six fixed controls shuffled the sounds in 120-second blocks. Their strongest
+scores ranged from 10.565 to 13.077. The real recordings scored 35.143 and
+42.352. Six controls cannot establish a reliable false-positive rate.
+
+The Rust implementation reproduced all 2,048 saved candidate results at the
+recorded precision. It also reproduced all 165 detected audio peaks. The
+numerical likelihood fit was checked against an independent optimizer on 320
+cases. Ten focused tests cover detection, matching, geometry, numerical fits,
+input limits, and a generated search with an unknown clock. These checks do
+not qualify real location accuracy. Two further same-camera clips were reserved
+before the native search was tested. They will be evaluated after the native
+implementation is qualified and frozen. See
+[passage-timing-development.json](passage-timing-development.json).
