@@ -19,3 +19,6 @@ python validation/generate_noise_fixture.py --output tests/fixtures/colored-nois
 NumPy, SciPy and FFmpeg are needed only to recreate the fixture.
 The regression uses the checked-in file and the application's normal FFmpeg decoder.
 Encoder-version changes can change the file hash.
+
+Use `--seed NUMBER --full-control --output control.wav` to generate a full ten-minute float WAV control.
+This does not change the default 30-second regression fixture.

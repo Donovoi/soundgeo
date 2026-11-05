@@ -495,3 +495,22 @@ This decision uses no flight positions, recording clock, or camera coordinates.
 The failing quiet-gap test passes after that fix.
 All **56** software tests, formatting, strict Clippy, and release compilation pass locally.
 The new real-recording diagnostics and negative controls are recorded separately from location acceptance.
+
+
+The two Lake Hood known-area diagnostics now each match five flight segments.
+Their first candidates are 17.19 m and 209.31 m from the published camera pin.
+Both results remain ambiguous. The supplied camera area makes these diagnostics unsuitable as location-accuracy tests.
+The earlier Lake Hood report is exactly unchanged after the regional time-index optimization.
+
+Twelve independent ten-minute generated-noise controls produce no detections at the 8 dB default.
+This totals two hours of noise. It does not measure false alarms on real traffic or aircraft recordings.
+The control summaries, input hashes, and diagnostic limitations are in [observation-controls.json](observation-controls.json).
+To reproduce a full control, use `python validation/generate_noise_fixture.py --seed 731 --full-control --output control.wav`.
+The selected 30-second regression and the full seed-731 WAV both reproduce their recorded hashes.
+
+All 56 release software tests and required local checks pass on `e1aa6bc03295aca469aa35667e49393fa5c743fb`.
+[Windows and Ubuntu CI also pass](https://github.com/Donovoi/soundgeo/actions/runs/41940895711).
+The original ten broad-area cases are running on that executable.
+The older 52-test benchmark stopped after eight completed cases; two slow Midway runs were cancelled to free CPU time.
+The old, unindexed main-Midway known-area diagnostic was also cancelled and replaced by a run on the current executable.
+Cancelled runs are incomplete. Their logs and metadata remain available; they do not count as completed tests.
