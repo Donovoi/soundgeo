@@ -277,8 +277,15 @@ impl App {
                 });
                 ui.checkbox(&mut self.job.smooth_tracks, "Reduce flight-position noise")
                     .on_hover_text("Centered 10-second local linear fit. Keeps track endpoints and timestamps; can blur rapid maneuvers.");
-                if ui.button("Choose SRTM terrain folder…").clicked(){self.job.terrain=rfd::FileDialog::new().pick_folder();}
-                if let Some(p)=&self.job.terrain{ui.label(RichText::new(p.display().to_string()).small());if ui.small_button("Clear terrain").clicked(){self.job.terrain=None;}}
+                if ui.checkbox(&mut self.job.download_terrain,"Download missing terrain from free sources").changed() && self.job.download_terrain && self.job.terrain.is_none() {
+                    self.job.terrain=Some(PathBuf::from("terrain-cache"));
+                }
+                if self.job.download_terrain {
+                    ui.label("Set a search area. Terrain gives ground height, not microphone height above ground.");
+                    ui.hyperlink_to("Mapzen Terrain Tiles and provider credits", "https://github.com/tilezen/joerd/blob/master/docs/attribution.md");
+                }
+                if ui.button("Choose terrain folder…").clicked() && let Some(path)=rfd::FileDialog::new().pick_folder(){self.job.terrain=Some(path);}
+                if let Some(p)=&self.job.terrain{ui.label(RichText::new(p.display().to_string()).small());if ui.small_button("Clear terrain").clicked(){self.job.terrain=None;self.job.download_terrain=false;}}
             });
             egui::CollapsingHeader::new("Advanced audio & search").show(ui,|ui|{
                 ui.checkbox(&mut self.job.fast_flyovers,"Also detect short flyovers (500–3900 Hz)");

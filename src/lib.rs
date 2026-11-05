@@ -8,6 +8,7 @@ pub mod index;
 pub mod model;
 mod network;
 pub mod search;
+pub mod terrain_archive;
 pub mod webtrak;
 
 use anyhow::{Context, Result, bail};
@@ -27,6 +28,7 @@ pub struct Job {
     pub tracks: PathBuf,
     pub archive: Option<archive::ArchiveRequest>,
     pub terrain: Option<PathBuf>,
+    pub download_terrain: bool,
     pub start_utc: Option<f64>,
     pub time_tolerance_s: f64,
     /// Maximum shared media-clock rate error; zero fixes UTC/media seconds 1:1.
@@ -57,6 +59,7 @@ impl Default for Job {
             tracks: PathBuf::new(),
             archive: None,
             terrain: None,
+            download_terrain: false,
             start_utc: None,
             time_tolerance_s: 60.,
             max_clock_drift_ppm: 5000.,
@@ -142,7 +145,17 @@ impl Job {
         if let Some(b) = self.bounds {
             b.validate()?;
         }
-        if let Some(p) = &self.terrain
+        if self.download_terrain {
+            let bounds = self
+                .bounds
+                .context("Set a search area to download terrain")?;
+            terrain_archive::tiles(bounds)?;
+            if self.terrain.is_none() {
+                bail!("Choose a terrain cache folder for automatic downloads");
+            }
+        }
+        if !self.download_terrain
+            && let Some(p) = &self.terrain
             && !p.is_dir()
         {
             bail!("Terrain must be a folder containing SRTM .hgt files.");
@@ -190,6 +203,8 @@ pub struct Report {
     pub created_utc: String,
     #[serde(default)]
     pub reference_sources: Vec<PathBuf>,
+    #[serde(default)]
+    pub terrain_sources: Vec<terrain_archive::TileRecord>,
 }
 
 pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<Report> {
@@ -217,7 +232,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     let mut report = Report { version: env!("CARGO_PKG_VERSION").into(), status: "insufficient_evidence".into(),
         media: job.media.clone(), job: job.clone(), duration_s, track_count: 0, events,
         candidates: vec![], warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
-        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![] };
+        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![] };
     if report.events.is_empty() {
         report.warnings.push("No sufficiently strong, curved descending tone was detected. Try a longer outdoor recording or adjust the frequency band.".into());
         return Ok(report);
@@ -259,6 +274,17 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     let dataset = data::load_for_job_sources(job, &sources, duration_s, control)?;
     report.track_count = dataset.tracks.len();
     report.warnings.extend(dataset.warnings);
+    if job.download_terrain {
+        report.terrain_sources = terrain_archive::ensure(
+            job.bounds.context("Terrain download needs search bounds")?,
+            job.terrain
+                .as_deref()
+                .context("Terrain download needs a cache folder")?,
+            control,
+            &|m, p| progress(m, 0.40 + p * 0.02),
+        )?;
+        report.warnings.push("Terrain: Mapzen Terrain Tiles (https://registry.opendata.aws/terrain-tiles/). Provider credits are in TERRAIN-ATTRIBUTION.txt in the terrain cache. Bare-earth elevation does not include microphone height above the ground.".into());
+    }
     let mut terrain = geo::Terrain::with_datum(job.terrain.clone(), job.ground_m, job.ground_datum);
     progress("Matching flyovers with a shared recording time", 0.42);
     let result = search::locate(

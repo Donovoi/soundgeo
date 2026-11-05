@@ -174,6 +174,10 @@ impl Terrain {
         }
     }
     pub fn elevation(&mut self, p: Point) -> f64 {
+        let p = Point {
+            lon: if p.lon == 180. { -180. } else { p.lon },
+            ..p
+        };
         let lat = p.lat.floor() as i32;
         let lon = p.lon.floor() as i32;
         let name = format!(

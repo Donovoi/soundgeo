@@ -46,6 +46,9 @@ enum Commands {
         /// Free flight source. Chicago replay covers the local airport radar area.
         #[arg(long, requires = "date")]
         provider: Option<ArchiveProvider>,
+        /// Download/reuse free terrain for the configured search area in this folder.
+        #[arg(long)]
+        terrain_cache: Option<PathBuf>,
         /// Maximum search hypotheses; overrides the saved job. Larger limits take longer.
         #[arg(long, value_parser = clap::value_parser!(u64).range(100..=100_000_000))]
         max_hypotheses: Option<u64>,
@@ -74,6 +77,19 @@ enum Commands {
         #[arg(long, default_value = "adsb-lol")]
         provider: ArchiveProvider,
     },
+    /// Download free terrain for a region before analysis (at most 64 tiles).
+    Terrain {
+        #[arg(long, allow_hyphen_values = true)]
+        south: f64,
+        #[arg(long, allow_hyphen_values = true)]
+        north: f64,
+        #[arg(long, allow_hyphen_values = true)]
+        west: f64,
+        #[arg(long, allow_hyphen_values = true)]
+        east: f64,
+        #[arg(long, default_value = "terrain-cache")]
+        output: PathBuf,
+    },
     /// Open the desktop app with an existing report.
     View { report: PathBuf },
 }
@@ -101,6 +117,32 @@ fn run(args: Args) -> Result<u8> {
         }
     };
     match args.command {
+        Some(Commands::Terrain {
+            south,
+            north,
+            west,
+            east,
+            output,
+        }) => {
+            let records = soundgeo::terrain_archive::ensure(
+                soundgeo::geo::Bounds {
+                    south,
+                    north,
+                    west,
+                    east,
+                },
+                &output,
+                &Control::default(),
+                &progress,
+            )?;
+            if !args.quiet {
+                println!(
+                    "{} verified terrain tiles: {}",
+                    records.len(),
+                    output.display()
+                );
+            }
+        }
         Some(Commands::Catalog { output }) => {
             soundgeo::aircraft::download(&output)?;
             if !args.quiet {
@@ -115,6 +157,7 @@ fn run(args: Args) -> Result<u8> {
             date_to,
             cache,
             provider,
+            terrain_cache,
             max_hypotheses,
             output,
             require_match,
@@ -186,6 +229,10 @@ fn run(args: Args) -> Result<u8> {
             if let Some(limit) = max_hypotheses {
                 // Clap limits this to 100 million, which also fits 32-bit usize.
                 job.max_hypotheses = limit as usize;
+            }
+            if let Some(path) = terrain_cache {
+                job.terrain = Some(path);
+                job.download_terrain = true;
             }
             let report = soundgeo::analyze(&job, &Control::default(), &progress)?;
             if output == std::path::Path::new("-") {

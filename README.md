@@ -35,6 +35,9 @@ The November 3 Lake Hood recording returned a first choice 6.78 km away.
 Midway arrivals returned a first choice 26.66 km away with ADSB.lol data.
 An earlier run with Chicago airport data returned a first choice 236 m away.
 These runs used different builds and sources. Both results remain ambiguous.
+A fixed follow-up with the main matcher and automatic Chicago data returned
+the same 236 m first choice. Its second choice is 488 m away.
+The other planned Chicago comparison is still running.
 
 A separate search experiment improved the later Lake Hood result to 83 m.
 Its next candidate is 479 m away. The result remains ambiguous.
@@ -48,8 +51,9 @@ The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
-All 71 software tests pass locally after a clean build of the app's artifacts.
-They also pass in [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42035476858).
+All 76 software tests pass locally. Formatting, strict Clippy, documentation tests,
+and both release builds also pass. The terrain change still needs Windows and Ubuntu CI.
+The previous 71-test revision passed [both CI systems](https://github.com/Donovoi/soundgeo/actions/runs/42035476858).
 The Chicago download and data checks pass.
 Its first broad-area location test reached the search limit.
 A run with a larger search limit produced the 236 m Midway result.
@@ -77,7 +81,7 @@ The program cannot determine the recording date from every video.
 5. Select a folder for the downloaded data.
 6. Leave **Recording time** empty if you do not know the start time.
 7. Set a search area if you know the region.
-8. Enter an approximate ground elevation, or select SRTM terrain files in the advanced settings.
+8. Enter an approximate ground elevation, or select **Download missing terrain from free sources**.
 9. Select **Analyze recording**.
 10. Read the result and its warnings. Export the JSON report if necessary.
 
@@ -146,6 +150,41 @@ soundgeo-cli.exe analyze --config "job.json" --input "next.mp4" --output - --qui
 Progress messages go to standard error. The `--quiet` option removes progress messages but keeps errors.
 Use `soundgeo-cli.exe --help` or `soundgeo-cli.exe analyze --help` to see the available options.
 
+### Download terrain
+
+Set a search area in the job file. Add `--terrain-cache` to download its ground heights:
+
+```powershell
+soundgeo-cli.exe analyze --config "region.json" --date 2026-11-03 --cache "flight-cache" --terrain-cache "terrain-cache" --output "report.json"
+```
+
+To download terrain before analysis:
+
+```powershell
+soundgeo-cli.exe terrain --south 41.65 --north 42.01 --west -87.98 --east -87.5 --output "terrain-cache"
+```
+
+The program uses free [Mapzen Terrain Tiles](https://registry.opendata.aws/terrain-tiles/).
+No account or API key is needed. Each tile covers one degree of latitude and longitude.
+A request can contain up to 64 tiles. Each expanded tile uses about 3 MB or 26 MB.
+Use a smaller search area if the request exceeds this limit.
+
+The program checks the compressed data and tile size before it saves a tile.
+It calculates SHA-256 hashes and checks cached tiles before use.
+These hashes check local file integrity; they are not publisher-signed checksums.
+A failed download stops the analysis. Valid earlier tiles remain in the cache.
+The report records the source URL and file hash for each downloaded terrain tile.
+Provider credits are saved as `TERRAIN-ATTRIBUTION.txt` in the cache.
+
+Terrain gives ground height. It does not give the microphone height on a building or tower.
+Missing height samples use the configured fallback elevation and add a report warning.
+Terrain improved one local Chicago diagnostic. It did not remove competing locations.
+That diagnostic does not establish broad-area location accuracy.
+
+To use existing terrain without downloads, set `terrain` to its folder in the job file.
+To allow missing tiles to download, also set `download_terrain` to `true`.
+The desktop app has the same option under **Search area & terrain**.
+
 ### Settings and paths
 
 Use a job JSON file to set the search area, terrain, search limits, and aircraft filters.
@@ -189,7 +228,7 @@ search area, flight data, or recording time.
 The report records the limit used. A larger limit can take much longer and does not guarantee a result.
 
 Paths in a job file are relative to that file.
-Paths supplied with `--input`, `--tracks`, and `--cache` are relative to the current directory.
+Paths supplied with `--input`, `--tracks`, `--cache`, and `--terrain-cache` are relative to the current directory.
 These command-line options replace the related job settings.
 The `--date` option selects automatic downloads. It takes priority over `--tracks`.
 

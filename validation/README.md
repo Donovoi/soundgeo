@@ -1174,3 +1174,35 @@ over its 82.787 m candidate. The earlier recording's first choice stayed at
 45.749 m. This rule made one first choice worse, so it was not added to the
 app. No result was accepted. See
 [candidate-spectral-support.json](candidate-spectral-support.json).
+
+## Fixed main-matcher Chicago comparison
+
+The automatic Chicago archive run finished the Midway arrivals recording.
+It used revision `0c2565c`, the original broad area, the full free reference day,
+and no recording clock. It evaluated 34,535,596 hypotheses in about 80 minutes.
+Its first choice is 235.572 m from the camera, with five matching sounds.
+The second choice is 488.292 m away, also with five matches.
+The report remains ambiguous. The other planned case is still running.
+This comparison does not replace the ten-case benchmark. See
+[native-main-cache-results.json](native-main-cache-results.json).
+
+## Terrain sensitivity
+
+A fixed diagnostic compared the existing constant-height model with free
+Mapzen Skadi terrain. The test boxes and clock intervals came from all
+maximum-match candidates in the prior reports. They did not use the camera
+coordinates or an external recording clock. The checks are local diagnostics,
+not broad-area acceptance tests. Both versions used the same events and data.
+
+The Lake Hood first choice stayed 108.563 m away. Its second choice moved
+from 473.175 m to 346.097 m. The Chicago first choice moved from 248.298 m
+to 70.411 m, with a competing choice 322.803 m away. Both remain ambiguous.
+All planned comparisons finished. See [terrain-followup.json](terrain-followup.json).
+
+The app now has an optional free terrain downloader. This removes a manual
+data-preparation step. It does not change the location acceptance rules.
+All 76 local tests pass, with no failures or ignored tests. The five new tests
+cover tile selection, cache integrity and repair, invalid downloads, cancellation,
+the date-line boundary, and CLI use. Automatic and manual terrain input produce
+the same candidate evidence in the CLI test. Formatting, strict release Clippy,
+documentation tests and both release builds pass. CI is pending for this change.
