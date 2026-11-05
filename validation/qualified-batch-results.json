@@ -1,0 +1,407 @@
+{
+  "plan_sha256": "c74bf699f325c14b3bf40c0a45bf3c49c05eca1c01aae6c2e292c26a4a11f3ed",
+  "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+  "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+  "all_planned_attempts_finished": true,
+  "case_count": 10,
+  "reports_completed": 9,
+  "processing_errors": 1,
+  "coordinate_hits": 2,
+  "accepted_cases": 0,
+  "accuracy_target_m": 250,
+  "recording_clock_supplied": false,
+  "original_broad_bounds": true,
+  "historical_results_do_not_replace_failed_attempts": true,
+  "cases": [
+    {
+      "case": "midway",
+      "stage": "arrival-cache",
+      "run": {
+        "case": "midway",
+        "exit_code": 0,
+        "elapsed_s": 584.1,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 20000000,
+        "status": "insufficient_evidence",
+        "events": 4,
+        "candidates": 0,
+        "matches": []
+      },
+      "run_sha256": "2fe2f8ea24e439fa27fa41597dae01ca7f622315adfa56ae99f907302e52a586",
+      "coordinate_hit": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "report_sha256": "44e05ee40fcc58ed003f490d27c0a994d6128c50b14e4ab0f6c298520cfc9184",
+      "candidate_errors_m": [],
+      "events": 4,
+      "hypotheses": 10328968,
+      "references": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-flights-full-day.csv"
+      ]
+    },
+    {
+      "case": "southampton",
+      "stage": "arrival-cache-expanded",
+      "run": {
+        "case": "southampton",
+        "exit_code": 0,
+        "elapsed_s": 64.8,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 50000000,
+        "status": "ambiguous",
+        "events": 1,
+        "candidates": 10,
+        "matches": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
+      },
+      "run_sha256": "75d1d2ce3a1303db802468c5407e469d62e6556b9417838b26b2e7d512b95c0c",
+      "coordinate_hit": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "report_sha256": "01389ba47a223e6ead3edf1d01a3666111848300120c7a1395a50e7c71699065",
+      "candidate_errors_m": [
+        13621.587,
+        13246.103,
+        24638.872,
+        25678.316,
+        21839.606,
+        25843.859,
+        22229.014,
+        11974.001,
+        26168.878,
+        26072.82
+      ],
+      "events": 1,
+      "hypotheses": 962812,
+      "references": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton-flights-full-day.csv"
+      ]
+    },
+    {
+      "case": "midway-arrivals",
+      "stage": "arrival-cache-expanded",
+      "run": {
+        "case": "midway-arrivals",
+        "exit_code": 0,
+        "elapsed_s": 2948.8,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 50000000,
+        "status": "ambiguous",
+        "events": 6,
+        "candidates": 6,
+        "matches": [
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      "run_sha256": "8a10e4a27b264ce3b5f711466047a584aca41a23126ee72a62c69220aa1a9c29",
+      "coordinate_hit": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "report_sha256": "0b158a7bd4bd9201c9ab16b8abf3286cb3e850142c4e89d85b30752e298f4b66",
+      "candidate_errors_m": [
+        26658.142,
+        24375.374,
+        27592.414,
+        2868.858,
+        23582.615,
+        23339.475
+      ],
+      "events": 6,
+      "hypotheses": 24905621,
+      "references": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-flights-full-day.csv"
+      ]
+    },
+    {
+      "case": "midway-holdout",
+      "stage": "arrival-cache",
+      "run": {
+        "case": "midway-holdout",
+        "exit_code": 0,
+        "elapsed_s": 46.0,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 20000000,
+        "status": "insufficient_evidence",
+        "events": 2,
+        "candidates": 0,
+        "matches": []
+      },
+      "run_sha256": "f3de070e988c1a8c6ca18679f39440573472a3c90297137b91cd64a19d6cb82e",
+      "coordinate_hit": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "report_sha256": "666d2d9e51bd0c798316cab2ce960248db3f06272fd952c0a857f95cff13a3a5",
+      "candidate_errors_m": [],
+      "events": 2,
+      "hypotheses": 3924222,
+      "references": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-flights-full-day.csv"
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "stage": "arrival-cache-expanded",
+      "run": {
+        "case": "midway-nov1",
+        "exit_code": 1,
+        "elapsed_s": 21838.6,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 50000000
+      },
+      "run_sha256": "9c8b21d1fda2b357ada5db7eeaecc11ae68f3526182e849eb54c17c259fb3284",
+      "coordinate_hit": false,
+      "accepted": false,
+      "status": "processing_error",
+      "error_lines": [
+        "Error: Indexed search exceeded the 50000000 hypothesis budget; no partial location is reported. Narrow the region/date range, increase spacing, or raise the budget."
+      ]
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "stage": "arrival-cache-expanded",
+      "run": {
+        "case": "midway-nov1-holdout",
+        "exit_code": 0,
+        "elapsed_s": 6586.9,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 50000000,
+        "status": "ambiguous",
+        "events": 11,
+        "candidates": 5,
+        "matches": [
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      "run_sha256": "1ab6ebd420905c498efca1515297135d59dd61bb7cb20355db37e32c96d8bfc4",
+      "coordinate_hit": true,
+      "accepted": false,
+      "status": "ambiguous",
+      "report_sha256": "09bcd3da77ec2ec44fbaa4838c0a2aa82dea65782c18edf604176061885c68af",
+      "candidate_errors_m": [
+        28.393,
+        26897.139,
+        24606.237,
+        24556.293,
+        26590.235
+      ],
+      "events": 11,
+      "hypotheses": 23596939,
+      "references": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\free-exchange-2026-11-01"
+      ]
+    },
+    {
+      "case": "southampton-nov1",
+      "stage": "arrival-cache",
+      "run": {
+        "case": "southampton-nov1",
+        "exit_code": 0,
+        "elapsed_s": 131.3,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 20000000,
+        "status": "ambiguous",
+        "events": 3,
+        "candidates": 1,
+        "matches": [
+          3
+        ]
+      },
+      "run_sha256": "7634cea1cade36704fb992e6b4fb4b532c17e93710080a6d29f6683e18cef4d6",
+      "coordinate_hit": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "report_sha256": "7177ef517858999d636c67a6576dbf2f2bcf035ef41ce4c50b91485d6eb0f067",
+      "candidate_errors_m": [
+        7576.122
+      ],
+      "events": 3,
+      "hypotheses": 1821202,
+      "references": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\free-exchange-2026-11-01"
+      ]
+    },
+    {
+      "case": "lake-hood",
+      "stage": "arrival-cache-expanded",
+      "run": {
+        "case": "lake-hood",
+        "exit_code": 0,
+        "elapsed_s": 15698.9,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 50000000,
+        "status": "ambiguous",
+        "events": 23,
+        "candidates": 10,
+        "matches": [
+          4,
+          4,
+          4,
+          4,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      "run_sha256": "8b861fb57e761b19840ceadef4f8f24c24175cbdcf4f3e2101a7ce4c2dc936e7",
+      "coordinate_hit": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "report_sha256": "4b782a487ab43cdb503dc46237a91273aec7d1027fe1ebbd5a2adb08501723e6",
+      "candidate_errors_m": [
+        6783.075,
+        20770.7,
+        10550.653,
+        17511.428,
+        4936.211,
+        5927.23,
+        19067.909,
+        6004.797,
+        5459.844,
+        18342.029
+      ],
+      "events": 23,
+      "hypotheses": 25592263,
+      "references": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-03\\v2026.11.03-planes-readsb-prod-0.tar.aa"
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "stage": "arrival-cache-expanded",
+      "run": {
+        "case": "lake-hood-nov1",
+        "exit_code": 0,
+        "elapsed_s": 11186.3,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 50000000,
+        "status": "ambiguous",
+        "events": 24,
+        "candidates": 10,
+        "matches": [
+          5,
+          4,
+          4,
+          4,
+          4,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      "run_sha256": "c538ac6c9ceecebc5318d808cce3cd8a76842ef32daa83c8fb40a84e136e68e9",
+      "coordinate_hit": true,
+      "accepted": false,
+      "status": "ambiguous",
+      "report_sha256": "12318722e786235ab384d1767f46b79345f938bb6fffd120bb163f5d077d97cc",
+      "candidate_errors_m": [
+        45.749,
+        5838.974,
+        6756.566,
+        8056.15,
+        9785.049,
+        13104.684,
+        248.129,
+        307.186,
+        525.757,
+        19918.724
+      ],
+      "events": 24,
+      "hypotheses": 19814757,
+      "references": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\free-exchange-alaska-2026-11-01"
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "stage": "arrival-cache-expanded",
+      "run": {
+        "case": "lake-hood-nov1-later",
+        "exit_code": 0,
+        "elapsed_s": 15303.3,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 50000000,
+        "status": "ambiguous",
+        "events": 16,
+        "candidates": 10,
+        "matches": [
+          4,
+          4,
+          4,
+          4,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      "run_sha256": "c595035fae6dc16241dd59eebde1ee3283cbcf32ad426381a221f40e2aa9d008",
+      "coordinate_hit": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "report_sha256": "87f6eea46638a10a6a8c8de87377d6fa9888bdeb10d30dcb49ffb6c4d66f1fc0",
+      "candidate_errors_m": [
+        5215.866,
+        5384.709,
+        8146.757,
+        8105.573,
+        18314.471,
+        18385.668,
+        12197.031,
+        9160.792,
+        18097.846,
+        12819.482
+      ],
+      "events": 16,
+      "hypotheses": 21459186,
+      "references": [
+        "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\free-exchange-alaska-2026-11-01"
+      ]
+    }
+  ]
+}

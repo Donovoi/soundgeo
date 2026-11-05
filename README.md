@@ -23,12 +23,22 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 
 Ten public-camera recordings were tested without their recording start times.
 The tests used known dates and broad search areas.
-The latest completed runs for these recordings include four first-choice locations within 250 m.
-Three came from Midway: 28 m, 92 m and 236 m away. One came from Lake Hood: 46 m away.
-All four results remain ambiguous. The other recordings have not passed the location tests.
+The completed benchmark used one fixed build for all ten recordings.
+Nine runs returned reports. One Midway run reached its 50-million-hypothesis limit.
+Two first-choice locations were within 250 m.
+Midway was 28 m away. Lake Hood was 46 m away.
+Both results remain ambiguous. No recording passed the full location test.
+The failed Midway run previously returned a 92 m result on an older build.
 The Midway recording now 28 m away previously returned first choices 24.6 km and 26.9 km away.
 A later Lake Hood recording returned a first choice 5.22 km away after a larger search.
 The November 3 Lake Hood recording returned a first choice 6.78 km away.
+Midway arrivals returned a first choice 26.66 km away with ADSB.lol data.
+An earlier run with Chicago airport data returned a first choice 236 m away.
+These runs used different builds and sources. Both results remain ambiguous.
+
+A separate search experiment improved the later Lake Hood result to 83 m.
+Its next candidate is 479 m away. The result remains ambiguous.
+Two new Lake Hood recordings are testing the same fixed experimental build.
 
 Two further one-hour Midway recordings were selected before testing.
 Both returned no location on their planned test build.
@@ -38,8 +48,8 @@ The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
-All 70 software tests pass locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42017950114).
+All 71 software tests pass locally after a clean build of the app's artifacts.
+They also pass in [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42035476858).
 The Chicago download and data checks pass.
 Its first broad-area location test reached the search limit.
 A run with a larger search limit produced the 236 m Midway result.
@@ -188,6 +198,15 @@ The `--date` option selects automatic downloads. It takes priority over `--track
 The report contains possible locations, detected sounds, matched flights, warnings, and the settings used.
 Each possible location includes an estimated recording start time and the evidence for each match.
 
+To reject ambiguous results in a script, add `--require-unambiguous`:
+
+```powershell
+soundgeo-cli.exe analyze --config "job.json" --output "report.json" --require-unambiguous --quiet
+```
+
+The program saves the report before it returns a result code.
+This option checks the model status. It does not verify the real location.
+
 | Report status | Meaning |
 | --- | --- |
 | `insufficient_evidence` | No location passed the model checks. |
@@ -200,8 +219,10 @@ Each possible location includes an estimated recording start time and the eviden
 | `1` | An input, processing, or file error occurred. |
 | `2` | A command-line argument was invalid. |
 | `3` | Analysis found no candidate, and `--require-match` was set. |
+| `4` | A result remained ambiguous, and `--require-unambiguous` was set. |
 
-The program writes the report before it returns code `3`.
+The `--require-unambiguous` option also returns code `3` when there is no candidate.
+The program writes the report before it returns code `3` or `4`.
 The `--require-match` option checks for candidates. It does not check their accuracy or reject an ambiguous result.
 Check the report status and supporting evidence in automation.
 Do not treat `candidates_found` as a verified location.

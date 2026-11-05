@@ -2,13 +2,13 @@
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
   "latest_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
-  "latest_code_cases_tested": 8,
+  "latest_code_cases_tested": 9,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
   "date_and_broad_region_supplied": true,
   "real_accuracy_established": false,
-  "coordinate_hits": 4,
+  "coordinate_hits": 3,
   "accepted_cases": 0,
   "case_count": 10,
   "cases": [
@@ -876,6 +876,34 @@
           ],
           "top_error_m": 235.572,
           "top_matches": 5
+        },
+        "arrival_cache_expanded": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 6,
+          "candidates": 6,
+          "flight_segments": 4947,
+          "hypotheses": 24905621,
+          "recording_clock": null,
+          "duration_s": 1199.984125,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "0b158a7bd4bd9201c9ab16b8abf3286cb3e850142c4e89d85b30752e298f4b66",
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "grouped_sounds": 3,
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+          "candidate_errors_m": [
+            26658.142,
+            24375.374,
+            27592.414,
+            2868.858,
+            23582.615,
+            23339.475
+          ],
+          "top_error_m": 26658.142,
+          "top_matches": 3
         }
       },
       "incomplete_runs": [
@@ -899,7 +927,7 @@
           "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
         }
       ],
-      "latest_evaluated_stage": "native_webtrak_expanded"
+      "latest_evaluated_stage": "arrival_cache_expanded"
     },
     {
       "case": "midway-holdout",
@@ -1468,6 +1496,16 @@
           "elapsed_s": 15992.6,
           "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
           "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
+        },
+        {
+          "stage": "arrival_cache_expanded",
+          "case": "midway-nov1",
+          "exit_code": 1,
+          "elapsed_s": 21838.6,
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000
         }
       ],
       "latest_evaluated_stage": "continuity"
