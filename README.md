@@ -19,7 +19,10 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 
 ## Current status
 
-**The program is not complete. It does not yet find real locations reliably within 250 m.**
+**The program is not complete. It does not yet find real locations reliably.**
+
+The current location target is within 1 km. The user changed this target on November 6, 2026.
+The earlier 250 m test results remain in the validation record.
 
 The completed test set contains ten public-camera recordings.
 Each test used a known possible date, a broad search area, and no recording start time.
@@ -29,22 +32,32 @@ One run reached its search limit. No recording passed the full location test.
 Separate tests with free Chicago airport data returned one first choice 236 m from the camera.
 Its next choice was 488 m away. The other Chicago test reached its search limit.
 Both new one-hour Midway recordings returned no location.
-A separate Chicago follow-up with a larger search limit is still running.
-It uses the same inputs and no recording start time. The earlier failure remains recorded.
+A separate Chicago follow-up stopped before it saved a report. The cause is unknown.
+A new run uses the same inputs and larger search limit. The earlier attempts remain recorded.
 
 An experimental search found one Lake Hood location within 83 m, with a competing choice 479 m away.
 On a new Lake Hood recording, the same experimental build chose a location 8.56 km away.
-A second new recording is still running. The experiment is not part of the main app.
+The second new recording chose a location 9.38 km away.
+Both results also fail the new 1 km target. The experiment is not part of the main app.
 An earlier Southampton test also produced a wrong location with a positive model status.
 A positive model status is not proof that the location is correct.
 
-All 76 software tests pass locally and in
+The preceding release passed all 76 software tests locally and in
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42061528743).
-Formatting, strict Clippy, documentation tests, and both release builds also pass.
+Formatting, strict Clippy, documentation tests, and both release builds also passed for that revision.
 The latest budget check avoids hours of work when a search cannot fit its limit.
 It rejected an oversized real search in 88 seconds instead of six hours.
 Two completed real-recording comparisons produced unchanged results.
 Software tests and faster processing do not establish location accuracy.
+
+A new test method compares sound peaks with nearby flight passages.
+It accounts for chance matches where many aircraft pass.
+It placed the two development recordings within 547 m and 255 m of the camera.
+The Rust search reproduces the reference calculation on those recordings and six shuffled controls.
+These are development results from one camera. They do not prove reliable location accuracy.
+All 86 local software tests pass for the new module. Formatting, strict Clippy, documentation tests,
+and both release builds also pass. Windows and Ubuntu CI for this revision are pending.
+The method is not yet connected to the desktop application or the main analysis command.
 See the [validation record](validation/README.md) for builds, results, data sources, and failures.
 
 ## Requirements

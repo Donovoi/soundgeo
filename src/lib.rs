@@ -9,6 +9,7 @@ pub mod model;
 mod network;
 pub mod search;
 pub mod terrain_archive;
+pub mod timing;
 pub mod webtrak;
 
 use anyhow::{Context, Result, bail};

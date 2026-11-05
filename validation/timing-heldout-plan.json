@@ -1,0 +1,39 @@
+{
+  "purpose": "Preselected held-out recordings for the revised 1 km goal; no replacement of previous failures.",
+  "selected_before_capture_and_solver_results": true,
+  "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+  "utc_day": "2026-11-04",
+  "clips": [
+    {
+      "id": "midway-nov4-c",
+      "requested_utc": "2026-11-04T16:00:00+00:00",
+      "duration_s": 3600
+    },
+    {
+      "id": "midway-nov4-d",
+      "requested_utc": "2026-11-04T22:00:00+00:00",
+      "duration_s": 3600
+    }
+  ],
+  "reference_provider": "webtrak-chicago",
+  "bounds": {
+    "south": 41.65,
+    "north": 42.01,
+    "west": -87.98,
+    "east": -87.5
+  },
+  "ground_m": 180,
+  "ground_datum": "egm96",
+  "recording_clock_supplied_to_app": false,
+  "camera_position_supplied_to_app": false,
+  "accuracy_target_m": 1000,
+  "ground_truth": {
+    "latitude": 41.77844250226028,
+    "longitude": -87.74277810405209
+  },
+  "same_camera_new_recordings_not_new_location": true,
+  "planned_method": "density-corrected acoustic passage timing; freeze and qualify native implementation before evaluating these clips",
+  "development_algorithm_sha256": "cddff0a77fdaf7bf0ddabbc5e6c01dae995db285e849a4fff29887c1eaa792c3",
+  "acceptance": "First reported location within 1 km with honest competing-location handling. Retain every planned case and failure. Test against original broad bounds and full free reference day, with no supplied recording clock or selected aircraft.",
+  "redistribute_media": false
+}
