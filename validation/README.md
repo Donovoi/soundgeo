@@ -908,3 +908,20 @@ process also checks ten real-data proposals. All six paired rounds gave the
 same fits and a lower runtime for the prepared travel-time calculations.
 Other searches were active. The routine timing does not establish a general
 end-to-end speedup. See [arrival-cache-evidence.json](arrival-cache-evidence.json).
+
+Revision `a25bd0d` also passes all 69 tests in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41983866778).
+All three complete-area controls exactly preserve the preceding results.
+The two Midway controls return no candidates. Southampton still returns one
+ambiguous candidate 7.6 km away. See
+[arrival-cache-controls.json](arrival-cache-controls.json).
+
+Four obsolete development runs were stopped after those checks passed. Their
+logs, hashes, terminal exit codes and cancellation records are preserved.
+They are not counted as successful results. The remaining seven development
+cases are now running or queued on the same qualified build, with four workers.
+They keep their original recordings, full references, broad bounds and unknown
+clocks. The resource limit is explicitly 50 million hypotheses per case.
+See [qualified-batch-consolidation.json](qualified-batch-consolidation.json).
+The preselected November 4 recordings keep their original planned build and
+acceptance criteria.

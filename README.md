@@ -33,9 +33,8 @@ The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
-All 69 software tests pass locally. CI for the latest travel-time cache is pending.
-The previous revision passed all 68 tests in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41979243404).
+All 69 software tests pass locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41983866778).
 The Chicago download and data checks pass.
 Its first broad-area location test reached the search limit.
 A run with a larger search limit produced the 236 m Midway result.

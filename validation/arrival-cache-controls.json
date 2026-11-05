@@ -1,0 +1,64 @@
+{
+  "not_new_accuracy_cases": true,
+  "comparisons": [
+    {
+      "case": "midway",
+      "exactly_equal_fields": {
+        "job": true,
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true
+      },
+      "status": "insufficient_evidence",
+      "matches": [],
+      "elapsed_s": 584.1,
+      "report_sha256": [
+        "f9ac32d914f80fc02e5fe4114bf42a6e91ad4b5153c01e129ad9542a42bb7a49",
+        "44e05ee40fcc58ed003f490d27c0a994d6128c50b14e4ab0f6c298520cfc9184"
+      ]
+    },
+    {
+      "case": "midway-holdout",
+      "exactly_equal_fields": {
+        "job": true,
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true
+      },
+      "status": "insufficient_evidence",
+      "matches": [],
+      "elapsed_s": 46.0,
+      "report_sha256": [
+        "063926a4cc4a2b01edf59d49d5b41f555c76e82b4a97066feab23364fed0ec5d",
+        "666d2d9e51bd0c798316cab2ce960248db3f06272fd952c0a857f95cff13a3a5"
+      ]
+    },
+    {
+      "case": "southampton-nov1",
+      "exactly_equal_fields": {
+        "job": true,
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true
+      },
+      "status": "ambiguous",
+      "matches": [
+        3
+      ],
+      "elapsed_s": 131.3,
+      "report_sha256": [
+        "e43e52dab9f2b7fbc85b103c7c5841e34696f6356dc282b6055fabcc70fc5f96",
+        "7177ef517858999d636c67a6576dbf2f2bcf035ef41ce4c50b91485d6eb0f067"
+      ]
+    }
+  ]
+}

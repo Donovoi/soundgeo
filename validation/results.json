@@ -1,8 +1,8 @@
 {
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
-  "latest_code_commit": "e947120b862558720b70d78e3aa8abffdf58674e",
-  "latest_code_cases_tested": 0,
+  "latest_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+  "latest_code_cases_tested": 3,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
@@ -300,10 +300,26 @@
           "cli_sha256": "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308",
           "grouped_sounds": 1,
           "evaluated_code_commit": "2988d7703885b46dc4971a1c37e2a347af18e43f"
+        },
+        "arrival_cache": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 4,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 10328968,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "44e05ee40fcc58ed003f490d27c0a994d6128c50b14e4ab0f6c298520cfc9184",
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "grouped_sounds": 1,
+          "evaluated_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44"
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "clock_basins"
+      "latest_evaluated_stage": "arrival_cache"
     },
     {
       "case": "southampton",
@@ -1128,10 +1144,26 @@
           "cli_sha256": "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308",
           "grouped_sounds": 0,
           "evaluated_code_commit": "2988d7703885b46dc4971a1c37e2a347af18e43f"
+        },
+        "arrival_cache": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 2,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 3924222,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "666d2d9e51bd0c798316cab2ce960248db3f06272fd952c0a857f95cff13a3a5",
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "grouped_sounds": 0,
+          "evaluated_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44"
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "clock_basins"
+      "latest_evaluated_stage": "arrival_cache"
     },
     {
       "case": "midway-nov1",
@@ -1692,6 +1724,31 @@
           "elapsed_s": 8079.2,
           "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
           "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
+        },
+        {
+          "stage": "clock_basins_expanded",
+          "case": "midway-nov1-holdout",
+          "exit_code": 4294967295,
+          "elapsed_s": 5577.0,
+          "cli_sha256": "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308",
+          "code_commit": "2988d7703885b46dc4971a1c37e2a347af18e43f",
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "cancellation": {
+            "requested_utc": "2026-11-05T07:13:57.0532027Z",
+            "action": "cancellation_requested_for_supersession",
+            "case": "midway-nov1-holdout",
+            "stage": "clock-basins-expanded",
+            "reason": "Consolidate development acceptance on one qualified revision; superseded attempts are not passes.",
+            "superseding_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+            "superseding_stage": "arrival-cache-expanded",
+            "counts_as_pass": false,
+            "last_progress": [
+              " 53% Indexed flight corridors: anchor 3/8, track 4865/5381, 6642445 hypotheses",
+              " 53% Indexed flight corridors: anchor 3/8, track 4897/5381, 6662914 hypotheses",
+              " 53% Indexed flight corridors: anchor 3/8, track 4929/5381, 6683871 hypotheses"
+            ]
+          }
         }
       ],
       "latest_evaluated_stage": "retained_support_native"
@@ -2005,10 +2062,31 @@
           ],
           "top_error_m": 7576.122,
           "top_matches": 3
+        },
+        "arrival_cache": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 3,
+          "candidates": 1,
+          "flight_segments": 4134,
+          "hypotheses": 1821202,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "7177ef517858999d636c67a6576dbf2f2bcf035ef41ce4c50b91485d6eb0f067",
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "grouped_sounds": 2,
+          "evaluated_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+          "candidate_errors_m": [
+            7576.122
+          ],
+          "top_error_m": 7576.122,
+          "top_matches": 3
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "clock_basins"
+      "latest_evaluated_stage": "arrival_cache"
     },
     {
       "case": "lake-hood",
@@ -2168,7 +2246,31 @@
           "top_matches": 3
         }
       },
-      "incomplete_runs": [],
+      "incomplete_runs": [
+        {
+          "stage": "time_index",
+          "case": "lake-hood",
+          "exit_code": 4294967295,
+          "elapsed_s": 16246.2,
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb",
+          "cancellation": {
+            "requested_utc": "2026-11-05T07:13:56.7777228Z",
+            "action": "cancellation_requested_for_supersession",
+            "case": "lake-hood",
+            "stage": "time-index",
+            "reason": "Consolidate development acceptance on one qualified revision; superseded attempts are not passes.",
+            "superseding_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+            "superseding_stage": "arrival-cache-expanded",
+            "counts_as_pass": false,
+            "last_progress": [
+              " 60% Indexed flight corridors: anchor 5/8, track 993/1430, 16111047 hypotheses",
+              " 60% Indexed flight corridors: anchor 5/8, track 1025/1430, 16177871 hypotheses",
+              " 60% Indexed flight corridors: anchor 5/8, track 1057/1430, 16253428 hypotheses"
+            ]
+          }
+        }
+      ],
       "latest_evaluated_stage": "short_windows"
     },
     {
@@ -2406,6 +2508,31 @@
             "planned_process_id": 27632,
             "not_an_accuracy_result": true
           }
+        },
+        {
+          "stage": "clock_basins",
+          "case": "lake-hood-nov1",
+          "exit_code": 4294967295,
+          "elapsed_s": 3970.2,
+          "cli_sha256": "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308",
+          "code_commit": "2988d7703885b46dc4971a1c37e2a347af18e43f",
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 20000000,
+          "cancellation": {
+            "requested_utc": "2026-11-05T07:13:57.3021747Z",
+            "action": "cancellation_requested_for_supersession",
+            "case": "lake-hood-nov1",
+            "stage": "clock-basins",
+            "reason": "Consolidate development acceptance on one qualified revision; superseded attempts are not passes.",
+            "superseding_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+            "superseding_stage": "arrival-cache-expanded",
+            "counts_as_pass": false,
+            "last_progress": [
+              " 50% Indexed flight corridors: anchor 3/8, track 65/1040, 2985779 hypotheses",
+              " 50% Indexed flight corridors: anchor 3/8, track 97/1040, 3078149 hypotheses",
+              " 50% Indexed flight corridors: anchor 3/8, track 129/1040, 3162586 hypotheses"
+            ]
+          }
         }
       ],
       "latest_evaluated_stage": "retained_support"
@@ -2626,6 +2753,31 @@
           "elapsed_s": 12194.2,
           "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
           "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
+        },
+        {
+          "stage": "clock_cache_expanded",
+          "case": "lake-hood-nov1-later",
+          "exit_code": 4294967295,
+          "elapsed_s": 1908.0,
+          "cli_sha256": "585e0a73f777d1e269119b9cf529f658d547c6a9b44b4a35b1805a9d8e61eaa7",
+          "code_commit": "e947120b862558720b70d78e3aa8abffdf58674e",
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "cancellation": {
+            "requested_utc": "2026-11-05T07:13:57.5483543Z",
+            "action": "cancellation_requested_for_supersession",
+            "case": "lake-hood-nov1-later",
+            "stage": "clock-cache-expanded",
+            "reason": "Consolidate development acceptance on one qualified revision; superseded attempts are not passes.",
+            "superseding_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+            "superseding_stage": "arrival-cache-expanded",
+            "counts_as_pass": false,
+            "last_progress": [
+              " 48% Indexed flight corridors: anchor 2/8, track 513/1040, 2018686 hypotheses",
+              " 48% Indexed flight corridors: anchor 2/8, track 545/1040, 2147263 hypotheses",
+              " 48% Indexed flight corridors: anchor 2/8, track 577/1040, 2297269 hypotheses"
+            ]
+          }
         }
       ],
       "latest_evaluated_stage": "envelopes_expanded"
