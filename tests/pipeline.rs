@@ -100,6 +100,21 @@ fn noise_and_stationary_hum_do_not_generate_events() {
 }
 
 #[test]
+fn colored_noise_cannot_create_a_default_short_flyover() {
+    // Minimal reproduction from a longer independent Gaussian/wind-noise control.
+    // The fixture has no moving source or changing source frequency.
+    let job = Job {
+        media: std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/colored-noise.flac"),
+        ..Job::default()
+    };
+    let control = Control::default();
+    let samples = audio::decode(&job, &control).unwrap();
+    let events = audio::detect(&samples, &job, &control, &|_, _| {}).unwrap();
+    assert!(events.is_empty(), "Noise created {} events", events.len());
+}
+
+#[test]
 fn grid_budget_and_input_bounds_are_enforced() {
     let b = Bounds {
         south: 20.,

@@ -582,6 +582,17 @@ impl App {
                 ui.label("No coherent Doppler sweep detected in the selected frequency band.");
             }
             for (i, e) in report.events.iter().enumerate() {
+                let modeled = report.candidates.get(self.selected).and_then(|c| {
+                    c.matches
+                        .iter()
+                        .enumerate()
+                        .find(|(j, m)| m.event_index.unwrap_or(*j) == i)
+                        .map(|(_, m)| m)
+                });
+                let e = modeled
+                    .and_then(|m| e.variant(m.event_variant))
+                    .unwrap_or(e);
+
                 ui.label(
                     RichText::new(format!(
                         "Flyover {}  ·  {:.1}–{:.1} seconds",
@@ -599,13 +610,6 @@ impl App {
                     .small()
                     .color(MUTED),
                 );
-                let modeled = report.candidates.get(self.selected).and_then(|c| {
-                    c.matches
-                        .iter()
-                        .enumerate()
-                        .find(|(j, m)| m.event_index.unwrap_or(*j) == i)
-                        .map(|(_, m)| m)
-                });
                 curve_plot(ui, e, modeled.map(|m| m.modeled_hz.as_slice()));
                 if let Some(m) = modeled {
                     ui.label(format!(

@@ -37,6 +37,9 @@ pub struct Match {
     /// Original detection index. None keeps older reports readable in order.
     #[serde(default)]
     pub event_index: Option<usize>,
+    /// Zero is the primary trace; higher values select an alternative of that sound.
+    #[serde(default)]
+    pub event_variant: usize,
     pub aircraft: String,
     pub rmse_hz: f64,
     pub fitted_tone_hz: f64,
@@ -140,36 +143,41 @@ fn sampled_curve_fit(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) ->
     let mut current_used = std::collections::HashSet::new();
     let mut edges = Vec::new();
     for (event_index, (event, &current)) in events.iter().zip(&seed.indices).enumerate() {
-        let n = event.ridge.len().min(16);
-        if n < 2 {
-            continue;
-        }
         let options = seed.alternatives.get(event_index).copied().unwrap_or([
             current,
             usize::MAX,
             usize::MAX,
         ]);
         for index in options.into_iter().filter(|&index| index != usize::MAX) {
-            let (mut ff, mut yf, mut yy, mut used) = (0., 0., 0., 0);
-            for i in 0..n {
-                let p = &event.ridge[i * (event.ridge.len() - 1) / (n - 1)];
-                if let Some(f) =
-                    tracks[index].factor(observer, seed.start + seed.clock_rate * p.time_s, c)
-                {
-                    ff += f * f;
-                    yf += p.hz * f;
-                    yy += p.hz * p.hz;
-                    used += 1;
+            let mut best = f64::INFINITY;
+            for event in event.variants() {
+                let n = event.ridge.len().min(16);
+                if n < 2 {
+                    continue;
+                }
+                let (mut ff, mut yf, mut yy, mut used) = (0., 0., 0., 0);
+                for i in 0..n {
+                    let p = &event.ridge[i * (event.ridge.len() - 1) / (n - 1)];
+                    if let Some(f) =
+                        tracks[index].factor(observer, seed.start + seed.clock_rate * p.time_s, c)
+                    {
+                        ff += f * f;
+                        yf += p.hz * f;
+                        yy += p.hz * p.hz;
+                        used += 1;
+                    }
+                }
+                let coverage = used as f64 / n as f64;
+                if coverage >= 0.9 && ff > 0. && yf > 0. {
+                    let base = yf / ff;
+                    let mse = (yy - yf * yf / ff).max(0.) / used as f64;
+                    best = best.min(10000. * mse / base.powi(2) + (1. - coverage).powi(2));
                 }
             }
-            let coverage = used as f64 / n as f64;
-            if coverage >= 0.9 && ff > 0. && yf > 0. {
-                let base = yf / ff;
-                let mse = (yy - yf * yf / ff).max(0.) / used as f64;
-                let error = 10000. * mse / base.powi(2) + (1. - coverage).powi(2);
-                edges.push((error, event_index, index));
+            if best.is_finite() {
+                edges.push((best, event_index, index));
                 if index == current && current_used.insert(index) {
-                    current_errors.push(error);
+                    current_errors.push(best);
                 }
             }
         }
@@ -339,24 +347,30 @@ pub(crate) fn complete_seed(
     let mut errors = vec![initial_error];
     let mut matched = 1;
     for (i, event) in events.iter().enumerate().filter(|(i, _)| *i != anchor) {
-        let wanted = start + event.cpa_s;
-        let mut choices: Vec<_> = nearby(wanted, event)
-            .into_iter()
-            .filter(|(j, time, range, speed)| {
-                !indices.contains(j)
-                    && *speed >= 25.
-                    && *range <= 40000.
-                    && (time - wanted).abs() <= 45.
-            })
-            .map(|(j, time, range, speed)| {
-                (
-                    j,
-                    feature_error(event, range, speed) + ((time - wanted) / 10.).powi(2),
-                )
-            })
-            .filter(|(_, error)| *error <= FEATURE_ERROR_LIMIT)
-            .collect();
+        let mut choices = Vec::new();
+        for event in event.variants() {
+            let wanted = start + event.cpa_s;
+            choices.extend(
+                nearby(wanted, event)
+                    .into_iter()
+                    .filter(|(j, time, range, speed)| {
+                        !indices.contains(j)
+                            && *speed >= 25.
+                            && *range <= 40000.
+                            && (time - wanted).abs() <= 45.
+                    })
+                    .map(|(j, time, range, speed)| {
+                        (
+                            j,
+                            feature_error(event, range, speed) + ((time - wanted) / 10.).powi(2),
+                        )
+                    })
+                    .filter(|(_, error)| *error <= FEATURE_ERROR_LIMIT),
+            );
+        }
         choices.sort_by(|a, b| a.1.total_cmp(&b.1).then(a.0.cmp(&b.0)));
+        let mut seen = std::collections::HashSet::new();
+        choices.retain(|(id, _)| seen.insert(*id));
         choices.truncate(3);
         for (slot, &(j, _)) in choices.iter().enumerate() {
             alternatives[i][slot] = j;
@@ -471,31 +485,32 @@ pub fn locate(
                 let cpas: Vec<_> = tracks.iter().map(|t| t.cpa(point.ecef(), c)).collect();
                 let mut here = vec![];
                 for &anchor in &anchors {
-                    let first = &events[anchor];
-                    for (i, cpa) in cpas.iter().enumerate() {
-                        let Some((arrival, range, speed)) = *cpa else {
-                            continue;
-                        };
-                        if speed < 25. || range > 40000. {
-                            continue;
-                        }
-                        let start = arrival - first.cpa_s;
-                        if !within_time(job, start) {
-                            continue;
-                        }
-                        let score = feature_error(first, range, speed);
-                        if score > FEATURE_ERROR_LIMIT {
-                            continue;
-                        }
-                        if let Some(seed) =
-                            complete_seed(point, start, anchor, i, score, events, |_, _| {
-                                cpas.iter()
-                                    .enumerate()
-                                    .filter_map(|(j, cpa)| cpa.map(|(t, r, v)| (j, t, r, v)))
-                                    .collect()
-                            })
-                        {
-                            here.push(seed);
+                    for first in events[anchor].variants() {
+                        for (i, cpa) in cpas.iter().enumerate() {
+                            let Some((arrival, range, speed)) = *cpa else {
+                                continue;
+                            };
+                            if speed < 25. || range > 40000. {
+                                continue;
+                            }
+                            let start = arrival - first.cpa_s;
+                            if !within_time(job, start) {
+                                continue;
+                            }
+                            let score = feature_error(first, range, speed);
+                            if score > FEATURE_ERROR_LIMIT {
+                                continue;
+                            }
+                            if let Some(seed) =
+                                complete_seed(point, start, anchor, i, score, events, |_, _| {
+                                    cpas.iter()
+                                        .enumerate()
+                                        .filter_map(|(j, cpa)| cpa.map(|(t, r, v)| (j, t, r, v)))
+                                        .collect()
+                                })
+                            {
+                                here.push(seed);
+                            }
                         }
                     }
                 }
@@ -705,7 +720,7 @@ pub fn locate(
     }
     let mut warnings = vec![];
     if events.iter().any(|e| e.activity_span_s.is_some()) {
-        warnings.push("Connected slow-curve fragments were counted as one sound. The strongest fragment supports matching; the full activity interval is excluded from quiet-gap evidence.".into());
+        warnings.push("Overlapping curves and connected slow fragments were counted as one sound. Matching can select a retained alternative, but it cannot count alternatives as independent flights. The full activity interval is excluded from quiet-gap evidence.".into());
     }
     if events.len() > anchors.len() {
         warnings.push(format!("The strongest {} of {} detections seed the bounded search; all retained detections are available as corroborating evidence. Weak anchors can therefore be missed.", anchors.len(), events.len()));
@@ -808,64 +823,96 @@ fn match_error(matches: &[Match]) -> f64 {
         .sqrt()
 }
 
+fn fit_observation(
+    seed: &Seed,
+    event: &Event,
+    track: &Track,
+    c: f64,
+    event_index: usize,
+    event_variant: usize,
+) -> Option<Match> {
+    let mut predicted = vec![];
+    let mut used = vec![];
+    let mut used_times = vec![];
+    let mut ff = 0.;
+    let mut yf = 0.;
+    for p in &event.ridge {
+        if let Some(f) = track.factor(
+            seed.point.ecef(),
+            seed.start + seed.clock_rate * p.time_s,
+            c,
+        ) {
+            ff += f * f;
+            yf += p.hz * f;
+            predicted.push(f);
+            used.push(p.hz);
+            used_times.push(p.time_s);
+        } else {
+            predicted.push(f64::NAN);
+        }
+    }
+    let coverage = used.len() as f64 / event.ridge.len() as f64;
+    if coverage < 0.9 || ff == 0. {
+        return None;
+    }
+    let base = yf / ff;
+    let mut sum = 0.;
+    let mut i = 0;
+    for f in &mut predicted {
+        if f.is_finite() {
+            *f *= base;
+            sum += (used[i] - *f).powi(2);
+            i += 1;
+        } else {
+            *f = 0.;
+        }
+    }
+    let rmse = (sum / used.len() as f64).sqrt();
+    let linear_rmse =
+        crate::audio::linear_baseline_rmse(used_times.into_iter().zip(used.iter().copied()));
+    Some(Match {
+        event_index: Some(event_index),
+        event_variant,
+        aircraft: track.id.clone(),
+        rmse_hz: rmse,
+        fitted_tone_hz: base,
+        coverage,
+        linear_baseline_rmse_hz: Some(linear_rmse),
+        modeled_hz: predicted,
+    })
+}
+
+fn has_curvature(m: &Match) -> bool {
+    m.linear_baseline_rmse_hz
+        .is_some_and(|linear| linear > f64::EPSILON && m.rmse_hz.powi(2) <= 0.5 * linear.powi(2))
+}
+
 fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64, Vec<Match>) {
     let mut matches = vec![];
+    let mut objectives = vec![];
     for (event_index, (event, &index)) in events.iter().zip(&seed.indices).enumerate() {
         if index == usize::MAX {
             continue;
         }
-        let track = &tracks[index];
-        let mut predicted = vec![];
-        let mut used = vec![];
-        let mut used_times = vec![];
-        let mut ff = 0.;
-        let mut yf = 0.;
-        for p in &event.ridge {
-            if let Some(f) = track.factor(
-                seed.point.ecef(),
-                seed.start + seed.clock_rate * p.time_s,
-                c,
-            ) {
-                ff += f * f;
-                yf += p.hz * f;
-                predicted.push(f);
-                used.push(p.hz);
-                used_times.push(p.time_s);
-            } else {
-                predicted.push(f64::NAN);
-            }
-        }
-        let coverage = used.len() as f64 / event.ridge.len() as f64;
-        if coverage < 0.9 || ff == 0. {
-            continue;
-        }
-        let base = yf / ff;
-        let mut sum = 0.;
-        let mut i = 0;
-        for f in &mut predicted {
-            if f.is_finite() {
-                *f *= base;
-                sum += (used[i] - *f).powi(2);
-                i += 1;
-            } else {
-                *f = 0.;
-            }
-        }
-        let rmse = (sum / used.len() as f64).sqrt();
-        let linear_rmse =
-            crate::audio::linear_baseline_rmse(used_times.into_iter().zip(used.iter().copied()));
-        matches.push(Match {
-            event_index: Some(event_index),
-            aircraft: track.id.clone(),
-            rmse_hz: rmse,
-            fitted_tone_hz: base,
-            coverage,
-            linear_baseline_rmse_hz: Some(linear_rmse),
-            modeled_hz: predicted,
+        let mut fitted: Vec<_> = event
+            .variants()
+            .enumerate()
+            .filter_map(|(variant, observation)| {
+                fit_observation(seed, observation, &tracks[index], c, event_index, variant)
+            })
+            .collect();
+        fitted.sort_by(|a, b| {
+            (a.rmse_hz / a.fitted_tone_hz).total_cmp(&(b.rmse_hz / b.fitted_tone_hz))
         });
+        if let Some(best) = fitted.first() {
+            objectives.push(best.clone());
+        }
+        if let Some(best) = fitted.into_iter().find(has_curvature) {
+            matches.push(best);
+        }
     }
     let required = events.len().min(3);
-    if matches.len() < required {
+    if objectives.len() < required {
         return (f64::INFINITY, vec![]);
     }
     // Optimize a fixed-size independent consensus, so an unrelated detection
@@ -874,15 +921,12 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
     // invalidate a passing core merely because more sounds were detected.
     matches
         .sort_by(|a, b| (a.rmse_hz / a.fitted_tone_hz).total_cmp(&(b.rmse_hz / b.fitted_tone_hz)));
-    let objective = match_error(&matches[..required]);
+    objectives
+        .sort_by(|a, b| (a.rmse_hz / a.fitted_tone_hz).total_cmp(&(b.rmse_hz / b.fitted_tone_hz)));
+    let objective = match_error(&objectives[..required]);
     // Keep a finite optimization objective outside the acceptance boundary.
     // Only models that explain curvature better than a free linear drift can
     // count toward the final independent-flight consensus.
-    matches.retain(|m| {
-        m.linear_baseline_rmse_hz.is_some_and(|linear| {
-            linear > f64::EPSILON && m.rmse_hz.powi(2) <= 0.5 * linear.powi(2)
-        })
-    });
     if matches.len() < required {
         return (objective, vec![]);
     }
@@ -1005,6 +1049,7 @@ mod tests {
             .collect();
         let event = Event {
             activity_span_s: None,
+            alternatives: Vec::new(),
             start_s: 10.,
             end_s: 70.,
             cpa_s: 40.,
@@ -1058,6 +1103,7 @@ mod tests {
                 .collect();
             events.push(Event {
                 activity_span_s: None,
+                alternatives: Vec::new(),
                 start_s: 10. + shift,
                 end_s: 69.5 + shift,
                 cpa_s: 39. + shift,
@@ -1146,6 +1192,7 @@ mod tests {
             .collect();
         let event = Event {
             activity_span_s: None,
+            alternatives: Vec::new(),
             start_s: 10.,
             end_s: 69.5,
             cpa_s: 39.,
@@ -1191,6 +1238,7 @@ mod tests {
         let (arrival, range, speed) = real.cpa(demo::TRUTH.ecef(), c).unwrap();
         let event = Event {
             activity_span_s: None,
+            alternatives: Vec::new(),
             start_s: 10.,
             end_s: 79.5,
             cpa_s: arrival - demo::EPOCH,
@@ -1273,6 +1321,7 @@ mod tests {
                 let begin = if n == 0 { 10. } else { 135. };
                 let event = Event {
                     activity_span_s: None,
+                    alternatives: Vec::new(),
                     start_s: begin,
                     end_s: begin + 69.5,
                     cpa_s: arrival - demo::EPOCH,
@@ -1358,6 +1407,7 @@ mod tests {
                 let (arrival, range, speed) = track.cpa(demo::TRUTH.ecef(), c).unwrap();
                 Event {
                     activity_span_s: None,
+                    alternatives: Vec::new(),
                     start_s: 10. + n as f64 * 600.,
                     end_s: 79.5 + n as f64 * 600.,
                     cpa_s: arrival - demo::EPOCH,
@@ -1418,6 +1468,60 @@ mod tests {
             "Measured curves must select the actual flights among similar summaries"
         );
         assert!(exact_score(&seed, &events, &tracks, c).0 < 0.001);
+        // The best standalone summary can describe a different tone or short
+        // fragment. Retained observations must participate in proposal lookup,
+        // shared-clock scoring, and exact matching without adding extra votes.
+        let variants: Vec<_> = events
+            .iter()
+            .map(|correct| {
+                let mut misleading = correct.clone();
+                misleading.speed_mps = 250.;
+                misleading.slant_m = 20000.;
+                for p in &mut misleading.ridge {
+                    p.hz = 100.;
+                }
+                misleading.alternatives = vec![correct.clone()];
+                misleading
+            })
+            .collect();
+        let mut alternative_seed =
+            complete_seed(demo::TRUTH, demo::EPOCH, 0, 0, 0., &variants, |_, event| {
+                if event.slant_m >= 19000. {
+                    return vec![];
+                }
+                tracks
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(i, t)| t.cpa(demo::TRUTH.ecef(), c).map(|(a, r, v)| (i, a, r, v)))
+                    .collect()
+            })
+            .expect("Alternate observations must be considered before rejecting a proposal");
+        profile_seed_clock(&mut alternative_seed, &job, &variants, &tracks);
+        let (_, alternative_matches) = exact_score(&alternative_seed, &variants, &tracks, c);
+        assert_eq!(alternative_matches.len(), 3);
+        assert!(
+            alternative_matches
+                .iter()
+                .all(|m| m.event_variant == 1 && m.rmse_hz < 0.001)
+        );
+        for m in &alternative_matches {
+            assert_eq!(
+                m.modeled_hz.len(),
+                variants[m.event_index.unwrap()]
+                    .variant(m.event_variant)
+                    .unwrap()
+                    .ridge
+                    .len()
+            );
+        }
+        let mut incomplete = variants.clone();
+        incomplete[2].alternatives.clear();
+        assert!(
+            exact_score(&alternative_seed, &incomplete, &tracks, c)
+                .1
+                .is_empty(),
+            "Several observations of two sounds cannot supply a third flight"
+        );
         // Alternative associations must not count one flight three times.
         seed.indices = vec![0, usize::MAX, usize::MAX];
         seed.alternatives = Arc::new(vec![[0, usize::MAX, usize::MAX]; 3]);
@@ -1454,6 +1558,7 @@ mod tests {
                 .collect();
             events.push(Event {
                 activity_span_s: None,
+                alternatives: Vec::new(),
                 start_s: (10. + shift) / rate,
                 end_s: (69.5 + shift) / rate,
                 cpa_s: (39. + shift) / rate,

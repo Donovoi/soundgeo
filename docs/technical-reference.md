@@ -80,14 +80,46 @@ The shorter window limits interference from sounds before and after a brief prop
 Each slow window subtracts the positive time median at each frequency before tracing.
 This prevents persistent tones from consuming the tracing budget or attracting a crossing curve.
 The short-jet scan is unchanged.
-A detected curve can guide a second trace through up to 180 seconds of audio.
+A detected curve of at least 30 seconds can guide a second trace through up to 180 seconds of audio.
 The second trace uses the original spectrum. It must retain sufficient signal strength and fit quality.
-When slow curves overlap, selection favors evidence before and after the closest approach.
+When slow curves overlap, the primary trace favors evidence before and after the closest approach.
 The closest approach must lie inside the supported sound interval during both initial fitting and refinement.
 These checks reduce errors from short fragments. They do not prove that a detected tone came from an aircraft.
 
 Adjacent slow fragments count as one sound when their frequency is continuous across a gap of at most five seconds.
 The frequency difference must be within 2 Hz or 1%, whichever is larger.
-The strongest fragment provides the fitted ridge. The report also preserves the full interval in `activity_span_s`.
+The report preserves the full interval in `activity_span_s`.
 Quiet-gap checks exclude that full interval. Grouping occurs before the 24-event limit, so repeated fragments do not fill the list.
 Short jet detections retain their separate timing rules.
+
+Overlapping traces form one activity group, including traces connected through another overlapping trace.
+Each group keeps a primary trace and up to three alternatives selected from the audio.
+Longer supported traces can remain available when a short fragment has a better standalone fit.
+A short trace is removed when a trace at least 25% longer covers 90% of it and contains the same measured curve.
+This comparison allows integer harmonics and requires less than 0.5% relative curve error.
+It does not compare their fitted closest-approach times, which can be biased on a short fragment.
+The app compares these alternatives during flight lookup and curve matching.
+It counts at most one match per group. It does not trim curves to fit the available flight data.
+This conservative grouping can combine two real aircraft that overlap in time.
+
+Reports store the other traces in the event's `alternatives` array.
+Each match's `event_variant` selects its observation: 0 means the primary trace, and 1 means the first alternative.
+Older reports without these fields remain readable.
+The desktop plot displays the selected observation and its matching prediction.
+
+## Sound-curve fitting
+
+The fitter solves the same propagation-aware Doppler model with a different parameter form.
+It fits the center and width of the curve. At each trial, it solves the two frequency coefficients directly.
+It then recovers the source frequency, speed, distance, and received closest-approach time.
+The original speed, distance, and closest-approach bounds still apply.
+
+This avoids a failure in separate speed and distance updates.
+Those updates could stop at a fast, distant solution even when a nearby, slower solution fitted much better.
+A regression uses independently generated propagation delays to check both parameter recovery and fit error.
+The reference-coverage and final location-acceptance limits are unchanged.
+
+Short-flyover detection requires 8 dB of signal contrast by default.
+The former 6 dB default admitted occasional curves from generated wind and Gaussian noise.
+Explicit contrast settings in saved jobs are retained.
+Signal contrast is a detector setting, not a probability that the sound came from an aircraft.

@@ -68,7 +68,7 @@ impl Default for Job {
             max_hz: 400.,
             min_snr_db: 10.,
             fast_flyovers: true,
-            fast_min_snr_db: 6.,
+            fast_min_snr_db: 8.,
             grid_m: 200.,
             max_grid_points: 6000,
             ffmpeg: None,

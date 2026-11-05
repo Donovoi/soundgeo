@@ -458,3 +458,40 @@ The old detector fails that regression. The revised detector passes it.
 All 52 software tests pass locally, including the longer-curve and quiet-gap regressions.
 The known-area Lake Hood diagnostic now finds four consistent flights with no recording clock supplied.
 This is still a diagnostic. The original broad jobs must be evaluated separately.
+
+The broad run on `d55a80f4260d8603fc76145b1b1f117d34dcc192` then found four matches in the later Lake Hood recording.
+Its first candidate was **272.579 m** from the camera, so it still failed the 250 m criterion.
+The result remained ambiguous. The other jobs on that revision were still running when this record was updated.
+
+## Further detector checks
+
+Longer generated-noise controls exposed weak false flyovers at the 6 dB short-pass default.
+A selected 30-second excerpt now provides a regression input.
+It contains generated Gaussian noise, changing wind-noise levels, and a constant tone.
+It contains no recorded aircraft. Its generator and hash are in `tests/fixtures/README.md`.
+The default short-pass contrast is now 8 dB. Explicit settings in saved jobs are preserved.
+
+A separate fitting regression exposed incorrect speed and distance estimates for a clear short sound curve.
+The fitter now solves the frequency coefficients directly while searching the curve center and width.
+It uses the same physical model and parameter bounds.
+The new regression uses independent propagation-delay calculations.
+The longer-curve regression also caught a short-window selection problem; supported 40-second curves can now guide longer traces.
+
+All 54 software tests, formatting, strict Clippy, and release compilation pass locally with these changes.
+Real-location acceptance is still unmet. These checks do not replace the original broad, unknown-clock tests.
+
+
+## Alternative sound observations
+
+An improved fit recovered the earlier Lake Hood curves in a known-area diagnostic.
+It also exposed a selection problem in the later clip: a short fragment could displace a useful longer trace.
+The detector now retains up to four observations per activity group.
+The flight search can use any retained observation, but the group can support only one match.
+The original coverage, curvature, and location-acceptance checks remain in place.
+
+A software regression then caught a misleading location caused by a short subset of a complete sound curve.
+The detector now removes redundant short subsets by comparing their measured frequency curves, including harmonics.
+This decision uses no flight positions, recording clock, or camera coordinates.
+The failing quiet-gap test passes after that fix.
+All **56** software tests, formatting, strict Clippy, and release compilation pass locally.
+The new real-recording diagnostics and negative controls are recorded separately from location acceptance.

@@ -30,8 +30,22 @@ pub struct Event {
     /// Matching still uses only the representative fitted ridge above.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub activity_span_s: Option<[f64; 2]>,
+    /// Other audio-only traces of this same activity interval. These are never
+    /// independent votes. The detector stores at most three, without nesting.
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub alternatives: Vec<Event>,
 }
 impl Event {
+    pub fn variants(&self) -> impl Iterator<Item = &Event> {
+        std::iter::once(self).chain(self.alternatives.iter())
+    }
+    pub fn variant(&self, index: usize) -> Option<&Event> {
+        if index == 0 {
+            Some(self)
+        } else {
+            self.alternatives.get(index - 1)
+        }
+    }
     pub fn activity_start_s(&self) -> f64 {
         self.activity_span_s.map_or(self.start_s, |span| span[0])
     }
@@ -150,17 +164,7 @@ pub fn detect(
     if job.fast_flyovers {
         found.extend(detect_scale(samples, job, control, progress, true)?);
     }
-    found.sort_by(|a, b| event_quality(b).total_cmp(&event_quality(a)));
-    let mut events: Vec<Event> = vec![];
-    for e in found {
-        if events
-            .iter()
-            .any(|p| e.start_s < p.end_s && p.start_s < e.end_s)
-        {
-            continue;
-        }
-        events.push(e);
-    }
+    let events = group_overlapping_curves(found);
     let mut events = collapse_continuations(events);
     events.sort_by(|a, b| event_quality(b).total_cmp(&event_quality(a)));
     events.truncate(24);
@@ -168,8 +172,116 @@ pub fn detect(
     Ok(events)
 }
 
+fn group_overlapping_curves(mut found: Vec<Event>) -> Vec<Event> {
+    found.sort_by(|a, b| a.start_s.total_cmp(&b.start_s));
+    let mut groups: Vec<Vec<Event>> = Vec::new();
+    let mut end = f64::NEG_INFINITY;
+    for event in found {
+        if event.start_s >= end {
+            groups.push(Vec::new());
+            end = event.end_s;
+        } else {
+            end = end.max(event.end_s);
+        }
+        groups.last_mut().unwrap().push(event);
+    }
+    groups.into_iter().map(retain_alternative_curves).collect()
+}
+
+fn retain_alternative_curves(mut curves: Vec<Event>) -> Event {
+    let start = curves
+        .iter()
+        .map(Event::activity_start_s)
+        .fold(f64::INFINITY, f64::min);
+    let end = curves
+        .iter()
+        .map(Event::activity_end_s)
+        .fold(f64::NEG_INFINITY, f64::max);
+    // A short subset of an already observed curve must not become a separate
+    // low-information hypothesis. Compare measurements, not fitted CPA/base
+    // values: those can be badly biased on a one-sided fragment.
+    let retained: Vec<_> = curves
+        .iter()
+        .enumerate()
+        .map(|(i, short)| {
+            !curves
+                .iter()
+                .enumerate()
+                .any(|(j, long)| i != j && contains_same_curve(long, short))
+        })
+        .collect();
+    let mut i = 0;
+    curves.retain(|_| {
+        let keep = retained[i];
+        i += 1;
+        keep
+    });
+    curves.sort_by(|a, b| event_quality(b).total_cmp(&event_quality(a)));
+    let mut representative = curves.remove(0);
+    // Keep longer supported observations as well as the balanced primary.
+    // This decision uses audio only, before any flight data is consulted.
+    let support = |e: &Event| {
+        e.contrast_db * (e.end_s - e.start_s).sqrt() / (1. + 100. * e.fit_rmse_hz / e.base_hz)
+    };
+    curves.sort_by(|a, b| support(b).total_cmp(&support(a)));
+    for curve in curves {
+        let duplicate = representative.variants().any(|e| {
+            let overlap = (e.end_s.min(curve.end_s) - e.start_s.max(curve.start_s)).max(0.);
+            let union = e.end_s.max(curve.end_s) - e.start_s.min(curve.start_s);
+            overlap > 0.8 * union
+                && (e.base_hz / curve.base_hz - 1.).abs() < 0.02
+                && (e.cpa_s - curve.cpa_s).abs() < 3.
+        });
+        if !duplicate {
+            representative.alternatives.push(curve);
+            if representative.alternatives.len() == 3 {
+                break;
+            }
+        }
+    }
+    if start < representative.start_s || end > representative.end_s {
+        representative.activity_span_s = Some([start, end]);
+    }
+    representative
+}
+
+fn contains_same_curve(long: &Event, short: &Event) -> bool {
+    if long.ridge.len() < 3
+        || short.ridge.len() < 3
+        || long.end_s - long.start_s < 1.25 * (short.end_s - short.start_s)
+    {
+        return false;
+    }
+    let (mut xx, mut xy, mut yy, mut count) = (0., 0., 0., 0);
+    let mut j = 0;
+    for p in &short.ridge {
+        while j + 1 < long.ridge.len() && long.ridge[j + 1].time_s < p.time_s {
+            j += 1;
+        }
+        if p.time_s < long.ridge[j].time_s || j + 1 == long.ridge.len() {
+            continue;
+        }
+        let a = &long.ridge[j];
+        let b = &long.ridge[j + 1];
+        let f = (p.time_s - a.time_s) / (b.time_s - a.time_s);
+        let hz = a.hz + f * (b.hz - a.hz);
+        xx += hz * hz;
+        xy += hz * p.hz;
+        yy += p.hz * p.hz;
+        count += 1;
+    }
+    if count as f64 / (short.ridge.len() as f64) < 0.9 || xx <= 0. || yy <= 0. {
+        return false;
+    }
+    let ratio = xy / xx;
+    let harmonic = [0.25, 1. / 3., 0.5, 1., 2., 3., 4.]
+        .into_iter()
+        .any(|h| (ratio / h - 1.).abs() < 0.02);
+    harmonic && (yy - xy * xy / xx).max(0.) / yy < 0.005_f64.powi(2)
+}
+
 fn collapse_continuations(mut events: Vec<Event>) -> Vec<Event> {
-    events.sort_by(|a, b| a.start_s.total_cmp(&b.start_s));
+    events.sort_by(|a, b| a.activity_start_s().total_cmp(&b.activity_start_s()));
     let mut groups: Vec<Event> = Vec::new();
     let mut previous: Option<(f64, f64, bool)> = None;
     for event in events {
@@ -187,11 +299,12 @@ fn collapse_continuations(mut events: Vec<Event>) -> Vec<Event> {
         previous = event.ridge.last().map(|p| (event.end_s, p.hz, slow));
         if continues {
             let representative = groups.last_mut().unwrap();
-            let span = [representative.activity_start_s(), event.activity_end_s()];
-            if event_quality(&event) > event_quality(representative) {
-                *representative = event;
-            }
-            representative.activity_span_s = Some(span);
+            let mut curves = std::mem::take(&mut representative.alternatives);
+            let mut event = event;
+            curves.append(&mut event.alternatives);
+            curves.push(representative.clone());
+            curves.push(event);
+            *representative = retain_alternative_curves(curves);
         } else {
             groups.push(event);
         }
@@ -387,7 +500,8 @@ fn extend_slow_event(
     hop: usize,
     job: &Job,
 ) -> Option<Event> {
-    if event.end_s - event.start_s < 45. {
+    // A well-fitted 40-second window can also seed a longer supported trace.
+    if event.end_s - event.start_s < 30. {
         return None;
     }
     // Use the initial curve to follow a tone through a longer unmasked patch.
@@ -539,6 +653,125 @@ fn trace(
         .collect()
 }
 
+// MSE, received CPA, speed, slant distance, and emitted frequency.
+type MotionFit = (f64, f64, f64, f64, f64);
+
+fn fit_motion(ridge: &[RidgePoint], c: f64, fast: bool) -> Option<MotionFit> {
+    let time_start = ridge.first()?.time_s;
+    let time_end = ridge.last()?.time_s;
+    let edge = if fast { 0.5 } else { 3. };
+    let minimum_distance: f64 = if fast { 25. } else { 100. };
+    let n = ridge.len() as f64;
+    let sum_y = ridge.iter().map(|p| p.hz).sum::<f64>();
+    let sum_yy = ridge.iter().map(|p| p.hz * p.hz).sum::<f64>();
+
+    // The exact retarded Doppler curve can be written A + D*g, where
+    // g = -(t-center)/sqrt((t-center)^2 + width^2), beta=D/A=speed/c,
+    // center=received_CPA-distance/c, width=sqrt(1-beta^2)*distance/speed.
+    // Profile the two linear coefficients instead of walking one speed or
+    // distance step at a time through their strongly correlated objective.
+    let profile = |center: f64, log_width: f64| -> Option<MotionFit> {
+        let width = log_width.exp();
+        if !width.is_finite() || width <= 0. {
+            return None;
+        }
+        let lower_distance = minimum_distance.max(c * (time_start + edge - center));
+        let upper_distance = 20000_f64.min(c * (time_end - edge - center));
+        if upper_distance < lower_distance {
+            return None;
+        }
+        // At fixed center/width, all original speed, distance and CPA bounds
+        // reduce to one interval for beta. Boundary fits remain possible.
+        let lower_beta = (25. / c).max(lower_distance / lower_distance.hypot(width * c));
+        let upper_beta = (260. / c).min(upper_distance / upper_distance.hypot(width * c));
+        if lower_beta > upper_beta {
+            return None;
+        }
+        let (mut sum_g, mut sum_gg, mut sum_yg) = (0., 0., 0.);
+        for p in ridge {
+            let q = p.time_s - center;
+            let g = -q / q.hypot(width);
+            sum_g += g;
+            sum_gg += g * g;
+            sum_yg += p.hz * g;
+        }
+        let denominator = n * sum_gg - sum_g * sum_g;
+        let mut betas = vec![lower_beta, upper_beta];
+        if denominator > 1e-9 {
+            let intercept = (sum_y * sum_gg - sum_yg * sum_g) / denominator;
+            let amplitude = (n * sum_yg - sum_g * sum_y) / denominator;
+            if intercept > 0. {
+                betas.push((amplitude / intercept).clamp(lower_beta, upper_beta));
+            }
+        }
+        betas
+            .into_iter()
+            .map(|beta| {
+                let ff = n + 2. * beta * sum_g + beta * beta * sum_gg;
+                let yf = sum_y + beta * sum_yg;
+                let intercept = yf / ff;
+                let speed = c * beta;
+                let distance = width * speed / (1. - beta * beta).sqrt();
+                (
+                    ((sum_yy - yf * yf / ff) / n).max(0.),
+                    center + distance / c,
+                    speed,
+                    distance,
+                    intercept * (1. - beta * beta),
+                )
+            })
+            .min_by(|a, b| a.0.total_cmp(&b.0))
+    };
+
+    let distances = if fast {
+        vec![50., 100., 200., 400., 800., 1500., 3000.]
+    } else {
+        vec![300., 700., 1500., 3000., 6000., 12000.]
+    };
+    let mut best: Option<MotionFit> = None;
+    for speed in [35., 55., 80., 110., 150., 200., 250.] {
+        for &distance in &distances {
+            for offset in [-2., -1., 0., 1., 2.] {
+                let cpa = (time_start + time_end) * 0.5 + offset * if fast { 2. } else { 10. };
+                if cpa < time_start + edge || cpa > time_end - edge {
+                    continue;
+                }
+                let center = cpa - distance / c;
+                let width = (1. - (speed / c).powi(2)).sqrt() * distance / speed;
+                if let Some(trial) = profile(center, width.ln())
+                    && best.is_none_or(|current| trial.0 < current.0)
+                {
+                    best = Some(trial);
+                }
+            }
+        }
+    }
+    let mut best = best?;
+    let mut steps = [if fast { 2. } else { 10. }, 0.5];
+    for _ in 0..60 {
+        let mut improved = false;
+        for axis in 0..2 {
+            for sign in [-1., 1.] {
+                let width = (1. - (best.2 / c).powi(2)).sqrt() * best.3 / best.2;
+                let mut p = [best.1 - best.3 / c, width.ln()];
+                p[axis] += sign * steps[axis];
+                if let Some(trial) = profile(p[0], p[1])
+                    && trial.0 < best.0
+                {
+                    best = trial;
+                    improved = true;
+                }
+            }
+        }
+        if !improved {
+            for step in &mut steps {
+                *step *= 0.5;
+            }
+        }
+    }
+    Some(best)
+}
+
 fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
     let minimum_contrast = if fast {
         job.fast_min_snr_db
@@ -588,79 +821,7 @@ fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
     }
     let time_start = ridge[0].time_s;
     let time_end = ridge.last()?.time_s;
-    let middle = (time_start + time_end) * 0.5;
-    let c = job.sound_speed();
-    let score = |t: f64, v: f64, d: f64| -> (f64, f64) {
-        let mut ff = 0.;
-        let mut yf = 0.;
-        for p in &ridge {
-            let f = straight_factor(p.time_s, t, v, d, c);
-            ff += f * f;
-            yf += p.hz * f;
-        }
-        let base = yf / ff;
-        let mse = ridge
-            .iter()
-            .map(|p| (p.hz - base * straight_factor(p.time_s, t, v, d, c)).powi(2))
-            .sum::<f64>()
-            / ridge.len() as f64;
-        (mse, base)
-    };
-    let mut best = (f64::INFINITY, middle, 80., 1500., 0.);
-    let distances = if fast {
-        vec![50., 100., 200., 400., 800., 1500., 3000.]
-    } else {
-        vec![300., 700., 1500., 3000., 6000., 12000.]
-    };
-    let edge = if fast { 0.5 } else { 3. };
-    for v in [35., 55., 80., 110., 150., 200., 250.] {
-        for &d in &distances {
-            for offset in [-2., -1., 0., 1., 2.] {
-                let offset = offset * if fast { 2. } else { 10. };
-                let t = middle + offset;
-                // Initial proposals must obey the same bounds as refinement.
-                // Otherwise an already optimal out-of-bounds fit never moves.
-                if t < time_start + edge || t > time_end - edge {
-                    continue;
-                }
-                let (s, b) = score(t, v, d);
-                if s < best.0 {
-                    best = (s, t, v, d, b);
-                }
-            }
-        }
-    }
-    let mut steps = if fast {
-        [2., 25., 200.]
-    } else {
-        [10., 25., 1000.]
-    };
-    for _ in 0..60 {
-        let mut improved = false;
-        for axis in 0..3 {
-            for sign in [-1., 1.] {
-                let mut p = [best.1, best.2, best.3];
-                p[axis] += sign * steps[axis];
-                if p[0] < time_start + edge
-                    || p[0] > time_end - edge
-                    || !(25. ..=260.).contains(&p[1])
-                    || !(if fast { 25. } else { 100. }..=20000.).contains(&p[2])
-                {
-                    continue;
-                }
-                let (s, b) = score(p[0], p[1], p[2]);
-                if s < best.0 {
-                    best = (s, p[0], p[1], p[2], b);
-                    improved = true;
-                }
-            }
-        }
-        if !improved {
-            for s in &mut steps {
-                *s *= 0.5;
-            }
-        }
-    }
+    let best = fit_motion(&ridge, job.sound_speed(), fast)?;
     let rmse = best.0.sqrt();
     let mean = ridge.iter().map(|p| p.hz).sum::<f64>() / ridge.len() as f64;
     let variance = ridge.iter().map(|p| (p.hz - mean).powi(2)).sum::<f64>() / ridge.len() as f64;
@@ -685,12 +846,136 @@ fn fit(points: &[RidgePoint], job: &Job, fast: bool) -> Option<Event> {
         contrast_db: contrast,
         ridge,
         activity_span_s: None,
+        alternatives: Vec::new(),
     })
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn overlapping_observations_keep_alternatives_but_count_as_one_sound() {
+        let curve = |start: f64, hz: f64| Event {
+            start_s: start,
+            end_s: start + 40.,
+            cpa_s: start + 20.,
+            base_hz: hz,
+            speed_mps: 60.,
+            slant_m: 800.,
+            fit_rmse_hz: 0.3,
+            contrast_db: 20.,
+            ridge: Vec::new(),
+            activity_span_s: None,
+            alternatives: Vec::new(),
+        };
+        // A middle trace bridges two non-overlapping fragments. All three
+        // belong to one conservative activity group, even at different tones.
+        let events = group_overlapping_curves(vec![
+            curve(0., 100.),
+            curve(30., 200.),
+            curve(60., 300.),
+            curve(130., 120.),
+        ]);
+        assert_eq!(events.len(), 2);
+        assert_eq!(events[0].variants().count(), 3);
+        assert_eq!(events[0].activity_span_s, Some([0., 100.]));
+        assert!(events[0].activity_end_s() <= events[1].activity_start_s());
+        assert!(
+            events[0]
+                .alternatives
+                .iter()
+                .all(|e| e.alternatives.is_empty())
+        );
+        let many =
+            group_overlapping_curves((0..20).map(|i| curve(0., 80. + 20. * i as f64)).collect());
+        assert_eq!(many.len(), 1);
+        assert_eq!(many[0].variants().count(), 4);
+    }
+
+    #[test]
+    fn a_short_harmonic_subset_cannot_replace_its_complete_observation() {
+        let mut long: Event = serde_json::from_value(serde_json::json!({
+            "start_s": 0., "end_s": 80., "cpa_s": 40., "base_hz": 130.,
+            "speed_mps": 80., "slant_m": 1000., "fit_rmse_hz": 0.5,
+            "contrast_db": 20., "ridge": []
+        }))
+        .unwrap();
+        long.ridge = (0..=160)
+            .map(|i| {
+                let time_s = i as f64 * 0.5;
+                RidgePoint {
+                    time_s,
+                    hz: 130. * straight_factor(time_s, 40., 80., 1000., 340.39),
+                    contrast_db: 20.,
+                }
+            })
+            .collect();
+        let mut short = long.clone();
+        short.start_s = 45.;
+        short.end_s = 75.;
+        short.cpa_s = 60.;
+        short.ridge.retain(|p| p.time_s >= 45. && p.time_s <= 75.);
+        for p in &mut short.ridge {
+            p.hz *= 2.;
+        }
+        short.base_hz = 220.; // A biased fitted frequency is not the observation.
+        short.contrast_db = 40.;
+        short.fit_rmse_hz = 0.01;
+        assert!(event_quality(&short) > event_quality(&long));
+        let grouped = group_overlapping_curves(vec![short.clone(), long.clone()]);
+        assert_eq!(grouped[0].variants().count(), 1);
+        assert_eq!(grouped[0].start_s, 0.);
+        assert_eq!(grouped[0].end_s, 80.);
+        for p in &mut short.ridge {
+            p.hz += 20. * ((p.time_s - 45.) / 30.).powi(2);
+        }
+        assert!(
+            !contains_same_curve(&long, &short),
+            "An unrelated overlapping sweep remains available"
+        );
+    }
+
+    #[test]
+    fn brief_curves_resolve_correlated_speed_and_distance() {
+        let job = Job::default();
+        let c = job.sound_speed();
+        for (speed, distance, cpa) in [(70_f64, 1500_f64, 16_f64), (80., 2600., 18.)] {
+            let emission_cpa = cpa - distance / c;
+            let ridge: Vec<_> = (0..76)
+                .map(|i| {
+                    let receive = i as f64 * 0.5;
+                    let (mut lo, mut hi) = (receive - 100., receive);
+                    for _ in 0..40 {
+                        let emit = (lo + hi) * 0.5;
+                        let range = f64::hypot(speed * (emit - emission_cpa), distance);
+                        if emit + range / c < receive {
+                            lo = emit;
+                        } else {
+                            hi = emit;
+                        }
+                    }
+                    let x = speed * ((lo + hi) * 0.5 - emission_cpa);
+                    let radial = speed * x / f64::hypot(x, distance);
+                    RidgePoint {
+                        time_s: receive,
+                        hz: 120. * c / (c + radial) + 0.03 * (i as f64 * 0.7).sin(),
+                        contrast_db: 25.,
+                    }
+                })
+                .collect();
+            let event = fit(&ridge, &job, false).expect("The complete short curve is resolved");
+            assert!((event.cpa_s - cpa).abs() < 0.5);
+            assert!(
+                (event.speed_mps / speed - 1.).abs() < 0.15,
+                "speed {} vs {speed}; range {} vs {distance}",
+                event.speed_mps,
+                event.slant_m
+            );
+            assert!((event.slant_m / distance - 1.).abs() < 0.25);
+            assert!(event.fit_rmse_hz < 0.1);
+        }
+    }
+
     #[test]
     fn connected_slow_fragments_count_once_and_preserve_the_activity_interval() {
         let fragment = |start: f64, contrast: f64| Event {
@@ -713,6 +998,7 @@ mod tests {
                 })
                 .collect(),
             activity_span_s: None,
+            alternatives: Vec::new(),
         };
         // The strongest first fragment does not touch the last fragment.
         // Continuity must be transitive through the quieter middle fragment.

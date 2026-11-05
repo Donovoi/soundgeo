@@ -195,7 +195,7 @@
       "ground_truth": {
         "latitude": 61.179633,
         "longitude": -149.9719665,
-        "basis": "Public camera owner Google Maps pin at Alaska Aviation Museum: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
       },
       "clock_supplied": false,
       "role": "additional_site_validation",
@@ -220,7 +220,7 @@
       "ground_truth": {
         "latitude": 61.179633,
         "longitude": -149.9719665,
-        "basis": "Public camera owner Google Maps pin at Alaska Aviation Museum: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
       },
       "clock_supplied": false,
       "role": "additional_site_reference_validation",
@@ -246,7 +246,7 @@
       "ground_truth": {
         "latitude": 61.179633,
         "longitude": -149.9719665,
-        "basis": "Public camera owner Google Maps pin at Alaska Aviation Museum: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
       },
       "clock_supplied": false,
       "role": "later_capture_after_early_curve_scoring",

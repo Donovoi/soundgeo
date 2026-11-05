@@ -228,7 +228,30 @@ fn quiet_gap_constraint_uses_only_known_closer_propellers() {
     )
     .unwrap();
     assert!(!soft.candidates.is_empty());
-    assert!(!soft.candidates[0].silence_conflicts.is_empty());
+    assert!(
+        !soft.candidates[0].silence_conflicts.is_empty(),
+        "Candidates: {:?}; observations: {:?}",
+        soft.candidates
+            .iter()
+            .map(|c| (
+                c.latitude,
+                c.longitude,
+                c.recording_start_unix - soundgeo::demo::EPOCH,
+                c.relative_error_percent,
+                c.matches
+                    .iter()
+                    .map(|m| (m.event_index, m.event_variant, &m.aircraft))
+                    .collect::<Vec<_>>()
+            ))
+            .collect::<Vec<_>>(),
+        events
+            .iter()
+            .map(|e| e
+                .variants()
+                .map(|v| (v.start_s, v.end_s, v.cpa_s, v.base_hz, v.slant_m))
+                .collect::<Vec<_>>())
+            .collect::<Vec<_>>()
+    );
     job.silence_mode = SilenceMode::Strict;
     let strict = soundgeo::search::locate(
         &job,
