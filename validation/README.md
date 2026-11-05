@@ -877,3 +877,34 @@ the native Chicago holdout, with the same media, broad bounds, full reference
 day, and unknown recording clock. Its resource limit is explicitly 50 million.
 See [lake-later-search-diagnostics.json](lake-later-search-diagnostics.json).
 None of these hinted diagnostics counts as a location-accuracy pass.
+
+The full native Chicago holdout run on `22393e3` finished in 6,123.14 seconds.
+It used the original Midway November 1 holdout recording, broad bounds, complete
+reference day, and no recording start time. The resource limit was 50 million.
+It returned six ambiguous candidates with three matches each. The first was
+26.9 km from the camera. The denser source did not fix this recording.
+The latest mixed record still has three coordinate hits and zero accepted cases.
+
+The independent Python decoder also checked the complete November 4 Chicago
+archive. All 575,365 positions and all nine compared fields matched exactly.
+The check includes file hashes for all 2,880 source parts and confirms the 43
+parts that were not marked online. See
+[airport-source-diagnostics.json](airport-source-diagnostics.json). This checks
+the downloader and parser, not location accuracy.
+
+## Reuse of travel-time calculations
+
+Clock trials at one fixed observer now reuse each flight's sample arrival
+times. The cache is discarded before the observer or sound speed changes.
+A regression checks exact Doppler values and coverage decisions at sample
+boundaries, inside gaps, on empty and single-point tracks, and at different
+observer positions and sound speeds. All 69 local software tests, formatting,
+strict Clippy, documentation tests, and both release builds pass.
+
+The Chicago corridor diagnostic preserves every compared report field exactly,
+including all candidate values. It took 235.66 seconds, compared with 267.49
+seconds for the preceding cache build. An alternating comparison in one
+process also checks ten real-data proposals. All six paired rounds gave the
+same fits and a lower runtime for the prepared travel-time calculations.
+Other searches were active. The routine timing does not establish a general
+end-to-end speedup. See [arrival-cache-evidence.json](arrival-cache-evidence.json).

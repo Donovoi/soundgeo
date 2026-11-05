@@ -1,8 +1,8 @@
 {
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
-  "latest_code_commit": "2988d7703885b46dc4971a1c37e2a347af18e43f",
-  "latest_code_cases_tested": 3,
+  "latest_code_commit": "e947120b862558720b70d78e3aa8abffdf58674e",
+  "latest_code_cases_tested": 0,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
@@ -1653,6 +1653,35 @@
           ],
           "top_error_m": 24606.237,
           "top_matches": 3
+        },
+        "retained_support_native": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 11,
+          "candidates": 6,
+          "flight_segments": 4429,
+          "hypotheses": 28456648,
+          "recording_clock": null,
+          "duration_s": 3596.6085,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "5c4e7cbf48b2b82c29e73b26b3832db84808e454c7876b72b67b6ee2f1316b81",
+          "cli_sha256": "d6bf14b400b6cdf0f38d0f2bdca4c139f40270ce80bb79dbb03fc49831848f8c",
+          "reference_source": "webtrak-chicago",
+          "reference_sha256": "1fc128b441c6a5bbfc1cd875d0002196767ba85bcd5901ea07d5aa89bb9a2aef",
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "22393e3cfdb816b94bb1cd567f6e6bac562db73f",
+          "candidate_errors_m": [
+            26914.042,
+            26794.104,
+            26612.353,
+            27131.665,
+            26761.757,
+            24610.567
+          ],
+          "top_error_m": 26914.042,
+          "top_matches": 3
         }
       },
       "incomplete_runs": [
@@ -1665,7 +1694,7 @@
           "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
         }
       ],
-      "latest_evaluated_stage": "clock_support_expanded"
+      "latest_evaluated_stage": "retained_support_native"
     },
     {
       "case": "southampton-nov1",

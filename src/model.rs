@@ -24,7 +24,48 @@ pub struct Track {
     pub kind: crate::aircraft::AircraftKind,
 }
 
+/// Arrival times depend on the observer and sound speed, not the recording clock.
+/// Borrow the immutable track so cached geometry cannot outlive or mutate it.
+pub(crate) struct PreparedTrack<'a> {
+    track: &'a Track,
+    observer: Vec3,
+    sound_speed: f64,
+    arrivals: Vec<f64>,
+}
+impl PreparedTrack<'_> {
+    pub(crate) fn factor(&self, arrival: f64) -> Option<f64> {
+        let times = &self.arrivals;
+        if times.len() < 2 || arrival < times[0] || arrival > times[times.len() - 1] {
+            return None;
+        }
+        let mut lo = 0;
+        let mut hi = times.len() - 1;
+        while hi - lo > 1 {
+            let mid = (lo + hi) / 2;
+            if times[mid] < arrival {
+                lo = mid;
+            } else {
+                hi = mid;
+            }
+        }
+        self.track
+            .factor_in_segment(self.observer, arrival, self.sound_speed, lo, hi)
+    }
+}
+
 impl Track {
+    pub(crate) fn prepare(&self, observer: Vec3, sound_speed: f64) -> PreparedTrack<'_> {
+        PreparedTrack {
+            track: self,
+            observer,
+            sound_speed,
+            arrivals: self
+                .samples
+                .iter()
+                .map(|s| s.time + (s.xyz - observer).norm() / sound_speed)
+                .collect(),
+        }
+    }
     /// Centered local linear regression suppresses quantized position noise
     /// before differentiating. Never adds points, extends a track or joins gaps.
     pub fn smooth_positions(&mut self) {
@@ -88,6 +129,17 @@ impl Track {
                 hi = mid;
             }
         }
+        self.factor_in_segment(observer, arrival, c, lo, hi)
+    }
+    fn factor_in_segment(
+        &self,
+        observer: Vec3,
+        arrival: f64,
+        c: f64,
+        lo: usize,
+        hi: usize,
+    ) -> Option<f64> {
+        let s = &self.samples;
         let dt = s[hi].time - s[lo].time;
         if dt <= 0. || dt > 60. {
             return None;
@@ -165,4 +217,56 @@ pub fn straight_factor(t: f64, cpa: f64, speed: f64, distance: f64, c: f64) -> f
     let emission = (q - ((1. - a) * q * q + a * (distance / c).powi(2)).sqrt()) / a;
     let range = (distance * distance + (speed * emission).powi(2)).sqrt();
     c / (c + speed * speed * emission / range)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn prepared_arrivals_preserve_exact_factors_and_coverage() {
+        let mut tracks = crate::demo::tracks();
+        let mut gap = tracks[0].clone();
+        let middle = gap.samples.len() / 2;
+        for sample in &mut gap.samples[middle..] {
+            sample.time += 100.;
+        }
+        tracks.push(gap);
+        let mut short = tracks[0].clone();
+        short.samples.truncate(1);
+        tracks.push(short.clone());
+        short.samples.clear();
+        tracks.push(short);
+        for track in &tracks {
+            for c in [310., 340.39, 360.] {
+                for observer in [
+                    crate::demo::TRUTH.ecef(),
+                    Point {
+                        lat: crate::demo::TRUTH.lat + 0.02,
+                        lon: crate::demo::TRUTH.lon - 0.01,
+                        alt: 750.,
+                    }
+                    .ecef(),
+                ] {
+                    let prepared = track.prepare(observer, c);
+                    let mut arrivals = vec![crate::demo::EPOCH - 100., crate::demo::EPOCH + 2000.];
+                    for sample in &track.samples {
+                        let time = sample.time + (sample.xyz - observer).norm() / c;
+                        arrivals.extend([time - 0.01, time, time + 0.01]);
+                    }
+                    for pair in track.samples.windows(2) {
+                        let midpoint = (pair[0].time + pair[1].time) / 2.;
+                        arrivals.push(midpoint + (pair[0].xyz - observer).norm() / c);
+                    }
+                    for arrival in arrivals {
+                        assert_eq!(
+                            prepared.factor(arrival).map(f64::to_bits),
+                            track.factor(observer, arrival, c).map(f64::to_bits),
+                            "Prepared geometry changed a boundary, coverage gap or Doppler value"
+                        );
+                    }
+                }
+            }
+        }
+    }
 }

@@ -230,6 +230,16 @@ fn allowed_clock_drift(job: &Job, events: &[Event]) -> f64 {
 /// Proposal ranking only: sample the curve across its full extent. Final
 /// optimization and acceptance still evaluate every observed ridge sample.
 fn sampled_curve_fit(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64, Vec<usize>) {
+    sampled_curve_fit_prepared(seed, events, tracks, c, None)
+}
+
+fn sampled_curve_fit_prepared<'a>(
+    seed: &Seed,
+    events: &[Event],
+    tracks: &'a [Track],
+    c: f64,
+    mut prepared: Option<&mut std::collections::HashMap<usize, crate::model::PreparedTrack<'a>>>,
+) -> (f64, Vec<usize>) {
     let observer = seed.point.ecef();
     let mut current_errors = Vec::new();
     let mut current_used = std::collections::HashSet::new();
@@ -241,6 +251,11 @@ fn sampled_curve_fit(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) ->
             usize::MAX,
         ]);
         for index in options.into_iter().filter(|&index| index != usize::MAX) {
+            let track = prepared.as_mut().map(|cache| {
+                cache
+                    .entry(index)
+                    .or_insert_with(|| tracks[index].prepare(observer, c))
+            });
             let mut best = f64::INFINITY;
             for event in event.variants() {
                 let n = event.ridge.len().min(16);
@@ -250,9 +265,12 @@ fn sampled_curve_fit(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) ->
                 let (mut ff, mut yf, mut yy, mut used) = (0., 0., 0., 0);
                 for i in 0..n {
                     let p = &event.ridge[i * (event.ridge.len() - 1) / (n - 1)];
-                    if let Some(f) =
-                        tracks[index].factor(observer, seed.start + seed.clock_rate * p.time_s, c)
-                    {
+                    let arrival = seed.start + seed.clock_rate * p.time_s;
+                    let factor = match &track {
+                        Some(prepared) => prepared.factor(arrival),
+                        None => tracks[index].factor(observer, arrival, c),
+                    };
+                    if let Some(f) = factor {
                         ff += f * f;
                         yf += p.hz * f;
                         yy += p.hz * p.hz;
@@ -388,10 +406,15 @@ fn independent_curve_assignment(
 fn profile_seed_clock(seed: &mut Seed, job: &Job, events: &[Event], tracks: &[Track]) {
     let c = job.sound_speed();
     let drift = allowed_clock_drift(job, events);
-    (seed.score, seed.indices) = sampled_curve_fit(seed, events, tracks, c);
     if drift == 0. {
+        (seed.score, seed.indices) = sampled_curve_fit(seed, events, tracks, c);
         return;
     }
+    // Only the clock changes during this profile. Reuse arrival geometry for
+    // each competing track at this observer; discard it before the point moves.
+    let mut prepared = std::collections::HashMap::new();
+    (seed.score, seed.indices) =
+        sampled_curve_fit_prepared(seed, events, tracks, c, Some(&mut prepared));
     // The initial start was derived from this anchor's received CPA. Preserve
     // that observation while profiling one rate shared by all associations.
     let pivot = events[seed.anchor].cpa_s;
@@ -408,9 +431,9 @@ fn profile_seed_clock(seed: &mut Seed, job: &Job, events: &[Event], tracks: &[Tr
         let mut trial = template.clone();
         trial.clock_rate = rate;
         trial.start = start;
-        let fit = evaluated_rates
-            .entry(rate.to_bits())
-            .or_insert_with(|| sampled_curve_fit(&trial, events, tracks, c));
+        let fit = evaluated_rates.entry(rate.to_bits()).or_insert_with(|| {
+            sampled_curve_fit_prepared(&trial, events, tracks, c, Some(&mut prepared))
+        });
         trial.score = fit.0;
         trial.indices.clone_from(&fit.1);
         Some(trial)
