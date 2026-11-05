@@ -1455,7 +1455,7 @@ The first visible clock advances about 65 minutes in 60 minutes of video.
 The second clip includes a cutaway to another camera. Microphone continuity is
 not verified. Both clips remain planned diagnostics; neither can count as a
 clean accuracy test without further source evidence. The full free reference
-download is still pending. See
+day is now downloaded and verified. See
 [lax-timing-prospective-plan.json](lax-timing-prospective-plan.json) and
 [lax-source-quality-notes.json](lax-source-quality-notes.json).
 
@@ -1476,3 +1476,42 @@ control score, warning, and status. The observed times were 73 s and 792 s,
 compared with 96 s and 841 s in the earlier runs. Host load differed, so these
 are not controlled speed measurements. No accuracy rule changed.
 See [timing-geometry-verification.json](timing-geometry-verification.json).
+
+## LAX download and completed diagnostics
+
+Revision `4681a84` adds automatic free LAX downloads to the CLI and desktop app.
+All 93 tests pass locally, on Windows, and on Ubuntu. The first Ubuntu attempt
+was cancelled during slow system-package downloads. The retry passed on the
+same source revision. See [lax-provider-ci.json](lax-provider-ci.json).
+
+The live download check removed one planned part from a separate cache.
+The CLI downloaded that part and rebuilt the full UTC day. All 996,783 positions
+matched the independent reader exactly, including converted altitude. The next
+CLI call reused the verified files. The server changed its generation timestamp
+and row order between requests. Two overly strict comparison attempts were
+retained before the full field comparison passed. See
+[lax-provider-live-verification.json](lax-provider-live-verification.json).
+
+All four one-hour LAX runs are complete. Two were ambiguous and two returned
+insufficient evidence. Broadcast B ranked a point within 724 m of every garage
+vertex, but competing locations were over 23 km away. Neither fixed-camera clip
+found a useful location. These remain source diagnostics, not accepted locations.
+See [lax-timing-diagnostics.json](lax-timing-diagnostics.json).
+
+A separate two-hour fixed-camera clip used the native LAX provider with no
+recording clock. It also returned ambiguity. Its first point was about 1.90 km
+from the farthest hotel vertex. The visible source clock advanced about
+126 minutes during 120 minutes of video; the cause is unverified. See
+[lax-extended-timing-diagnostic.json](lax-extended-timing-diagnostic.json).
+
+A higher-frequency band was tested on all four LAX clips, one Midway clip, and
+one Lake Hood clip. It did not fix the wider failures. This was a raw-ranking
+diagnostic without shuffled controls. The production filter is unchanged.
+See [high-band-timing-diagnostic.json](high-band-timing-diagnostic.json).
+
+The Doppler detector found nine curves in broadcast B and 21 in fixed B.
+Those curves were compared with the retained timing proposals from both sound
+bands. Each test used one shared clock adjustment and separate flights and
+sounds. No tested proposal had three supporting curves. This finite diagnostic
+does not rule out other ways to combine the two methods. The app was not changed.
+See [lax-timing-curve-diagnostic.json](lax-timing-curve-diagnostic.json).

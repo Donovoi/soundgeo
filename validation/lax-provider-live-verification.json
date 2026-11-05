@@ -1,0 +1,45 @@
+{
+  "build": {
+    "commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
+    "tests": 93,
+    "failed": 0,
+    "ignored": 0,
+    "required_local_checks_passed": true,
+    "ci": "pending",
+    "not_qualified_location_release": true,
+    "created_utc": "2026-11-05T23:07:24.914084+00:00",
+    "cli": {
+      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-lax-4681a84.exe",
+      "sha256": "d792b2ed46b2d3cbdb717698a77f0ea23fad943f3dead13ed1bcd58eba7e1d24"
+    },
+    "gui": {
+      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-lax-4681a84.exe",
+      "sha256": "e5811420a63e1c06c978c58e19c7f67f80d6aadd0f8f3bacc4ece907794e3b4e"
+    }
+  },
+  "plan_sha256": "8532b6895a5b338c242d198278fc64a340247eef4c1bd6166da7037dac6cc2bd",
+  "initial_verifier_failure": "Raw bytes changed in the generated timestamp and row order. Flight/event/noise row multisets and all other attributes were identical. Both strict-byte and strict-order assertion failures are retained.",
+  "initial_failure_log_sha256": "789b4568950c4a80ab92b92f93832bd3314525a0efc31fd8e47c17b692fadc53",
+  "strict_order_failure_log_sha256": "fb5f19d0899aa3a5e15501e0af1b1e750d02c807221082cfc00238a4445ef674",
+  "all_source_chunk_hashes_verified": 2880,
+  "missing_chunk_fetched_live": 59788860,
+  "fetched_utc": "2026-11-05T23:16:19.337663+00:00",
+  "new_raw_chunk_sha256": "dc153ab8e15d72b393fd940158e0768f38e39b8c19285b116d798f18b7075078",
+  "original_raw_chunk_sha256": "189097286d74f6fafd97d348fc3a2b7a862e41bf6e73da7874edb78e671f7333",
+  "generated_attributes": [
+    "2026-11-05 14:33:07",
+    "2026-11-05 15:15:12"
+  ],
+  "source_row_order_changed": true,
+  "all_raw_row_multisets_and_other_attributes_identical": true,
+  "rows_compared": 996783,
+  "all_position_fields_match": true,
+  "maximum_converted_altitude_difference_m": 0,
+  "reuse_exit_code": 0,
+  "reuse_elapsed_s": 0.23934210010338575,
+  "cache_reuse_preserved_files": true,
+  "reference_manifest_sha256": "f29d8e08288d94d3a90bf4963e091e19f719fcf1fa9f9b217a9966f05ea3b686",
+  "native_manifest_sha256": "44b16a3f0062b17f45d98931401c1c82ed88db05b3809823717146dd59d0aa87",
+  "native_csv_sha256": "921df6ab5825e6079b689626f9b929b1fc61e02ef6a0bebf96c0d1f1b7d26a21",
+  "no_location_accuracy_claim": true
+}
