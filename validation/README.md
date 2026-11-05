@@ -1288,3 +1288,29 @@ Ubuntu. See [terrain-guard-evidence.json](terrain-guard-evidence.json).
 The budget-check revision passed all 76 tests in
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42061528743).
 Both logs were checked for the expected test count and regression names.
+
+## Fixed larger-budget Chicago follow-up
+
+A separate November 1 Midway run uses the same recording, full free Chicago
+reference day, original broad area, and unknown recording clock. Its only job
+change is a limit of 100 million hypotheses. It uses the qualified `c29f646`
+executable. The early check counted 63,003,202 hypotheses. The run is still
+matching curves; it is not an accuracy pass. The original failed 50-million
+attempt remains unchanged. See [native-budget-followup.json](native-budget-followup.json).
+
+## Acoustic loudness and timing diagnostics
+
+A further diagnostic compared measured sound power with the inverse-square
+distance model for all candidates in two fixed Lake Hood reports. It used no
+camera position or external recording clock. The evaluator first reproduced
+78 saved native frequency curves, with a maximum difference below 0.000000001 Hz.
+The loudness score moved the later recording's first choice from 82.787 m to
+479.261 m away. The earlier recording's first choice stayed 45.749 m away.
+The added score made one result worse, so it was not added to the app.
+
+Another diagnostic allowed clock-rate drift in the existing broadband timing
+fits. It preserved all 40 candidate associations in each of two new Midway
+recordings. The first choices were 503.580 m and 312.343 m from the camera.
+The first fit in the first recording did not converge. Neither result is an
+accuracy pass. These diagnostics changed no production code or acceptance
+limit. See [acoustic-envelope-diagnostics.json](acoustic-envelope-diagnostics.json).

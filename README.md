@@ -29,6 +29,8 @@ One run reached its search limit. No recording passed the full location test.
 Separate tests with free Chicago airport data returned one first choice 236 m from the camera.
 Its next choice was 488 m away. The other Chicago test reached its search limit.
 Both new one-hour Midway recordings returned no location.
+A separate Chicago follow-up with a larger search limit is still running.
+It uses the same inputs and no recording start time. The earlier failure remains recorded.
 
 An experimental search found one Lake Hood location within 83 m, with a competing choice 479 m away.
 On a new Lake Hood recording, the same experimental build chose a location 8.56 km away.
