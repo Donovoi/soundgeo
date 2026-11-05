@@ -2,7 +2,7 @@
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
   "latest_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
-  "latest_code_cases_tested": 4,
+  "latest_code_cases_tested": 7,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
@@ -589,10 +589,42 @@
           ],
           "top_error_m": 13621.587,
           "top_matches": 1
+        },
+        "arrival_cache_expanded": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 1,
+          "candidates": 10,
+          "flight_segments": 4336,
+          "hypotheses": 962812,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "01389ba47a223e6ead3edf1d01a3666111848300120c7a1395a50e7c71699065",
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "grouped_sounds": 1,
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+          "candidate_errors_m": [
+            13621.587,
+            13246.103,
+            24638.872,
+            25678.316,
+            21839.606,
+            25843.859,
+            22229.014,
+            11974.001,
+            26168.878,
+            26072.82
+          ],
+          "top_error_m": 13621.587,
+          "top_matches": 1
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "parallel_retry"
+      "latest_evaluated_stage": "arrival_cache_expanded"
     },
     {
       "case": "midway-arrivals",
@@ -2271,6 +2303,38 @@
           ],
           "top_error_m": 8021.213,
           "top_matches": 3
+        },
+        "arrival_cache_expanded": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 23,
+          "candidates": 10,
+          "flight_segments": 1430,
+          "hypotheses": 25592263,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "4b782a487ab43cdb503dc46237a91273aec7d1027fe1ebbd5a2adb08501723e6",
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "grouped_sounds": 8,
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+          "candidate_errors_m": [
+            6783.075,
+            20770.7,
+            10550.653,
+            17511.428,
+            4936.211,
+            5927.23,
+            19067.909,
+            6004.797,
+            5459.844,
+            18342.029
+          ],
+          "top_error_m": 6783.075,
+          "top_matches": 4
         }
       },
       "incomplete_runs": [
@@ -2298,7 +2362,7 @@
           }
         }
       ],
-      "latest_evaluated_stage": "short_windows"
+      "latest_evaluated_stage": "arrival_cache_expanded"
     },
     {
       "case": "lake-hood-nov1",
@@ -2770,6 +2834,38 @@
           ],
           "top_error_m": 5384.709,
           "top_matches": 4
+        },
+        "arrival_cache_expanded": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 16,
+          "candidates": 10,
+          "flight_segments": 1040,
+          "hypotheses": 21459186,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "87f6eea46638a10a6a8c8de87377d6fa9888bdeb10d30dcb49ffb6c4d66f1fc0",
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "grouped_sounds": 9,
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+          "candidate_errors_m": [
+            5215.866,
+            5384.709,
+            8146.757,
+            8105.573,
+            18314.471,
+            18385.668,
+            12197.031,
+            9160.792,
+            18097.846,
+            12819.482
+          ],
+          "top_error_m": 5215.866,
+          "top_matches": 4
         }
       },
       "incomplete_runs": [
@@ -2807,7 +2903,7 @@
           }
         }
       ],
-      "latest_evaluated_stage": "envelopes_expanded"
+      "latest_evaluated_stage": "arrival_cache_expanded"
     }
   ]
 }

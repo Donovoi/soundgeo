@@ -990,3 +990,55 @@ supported by at least four complete curves. Its 72 local software tests pass.
 It has not completed real-video qualification. The two new recordings are
 queued after its existing Lake Hood run, with no recording clock supplied.
 See [fresh-lake-cases-prepared.json](fresh-lake-cases-prepared.json).
+
+## Further results from the same benchmark build
+
+Seven of the ten original cases have now finished on `a25bd0d`. The later
+November 1 Lake Hood run returned a first candidate 5,215.866 m from the
+camera, with four matching sounds. The November 3 Lake Hood run returned
+a first candidate 6,783.075 m away. Both results are ambiguous and fail the
+250 m target. Southampton also remains ambiguous, with one matching sound
+and a first candidate 13,621.587 m away.
+
+The combined record still has four coordinate hits and zero accepted results.
+The remaining three runs continue with their original inputs and executable.
+See [results.json](results.json).
+
+## Sound timing as a search aid
+
+A separate experiment used broadband sound peaks to propose a location and
+clock for the existing Doppler search. The input was the original broad
+region, full reference day and audio. No camera position or recording clock
+was supplied. The follow-up searches used only proposals computed from those
+inputs. This Python experiment is not a feature of the Rust application.
+
+The first November 1 Midway recording produced two qualifying proposals.
+Their follow-up searches returned first candidates 19.741 m and 38.573 m from
+the camera, each with five matching curves. Both reports remain ambiguous.
+The second Midway recording and both older Lake Hood recordings produced no
+proposals that passed the fixed timing requirements.
+
+Timing checks at the final Midway candidates did not resolve the ambiguity.
+Some wrong nearby candidates had better timing scores than the correct ones.
+These results do not justify a new acceptance rule. The experiment did not
+replace the original benchmark results or change the fresh Lake Hood tests.
+See [timing-seed-results.json](timing-seed-results.json),
+[lake-timing-seed-results.json](lake-timing-seed-results.json), and
+[fixed-candidate-timing-support.json](fixed-candidate-timing-support.json).
+
+## Reuse of flight segment geometry
+
+Revision `0c2565c` reuses fixed geometry while it tries different recording
+clocks at one position. Each track keeps at most 64 cached segments. Replacing
+a cache entry repeats the original calculation. A regression checks exact
+floating-point results after cache collisions, missing intervals and invalid
+speeds, with different positions and sound speeds.
+
+All 70 local tests pass, with no ignored tests. Formatting, strict Clippy,
+documentation tests and both release builds also pass. The same code passes
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42017950114).
+The two complete-area controls preserve all compared report fields exactly.
+They still return no candidate for the Midway holdout and an ambiguous wrong
+candidate for Southampton. This change improves reuse of calculations; it
+does not establish location accuracy. The running benchmark keeps its original
+executable. See [segment-cache-evidence.json](segment-cache-evidence.json).

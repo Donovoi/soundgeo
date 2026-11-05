@@ -27,7 +27,8 @@ The latest completed runs for these recordings include four first-choice locatio
 Three came from Midway: 28 m, 92 m and 236 m away. One came from Lake Hood: 46 m away.
 All four results remain ambiguous. The other recordings have not passed the location tests.
 The Midway recording now 28 m away previously returned first choices 24.6 km and 26.9 km away.
-A later Lake Hood recording returned a first choice 5.38 km away after a larger search.
+A later Lake Hood recording returned a first choice 5.22 km away after a larger search.
+The November 3 Lake Hood recording returned a first choice 6.78 km away.
 
 Two further one-hour Midway recordings were selected before testing.
 Both returned no location on their planned test build.
@@ -37,8 +38,8 @@ The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
-All 69 software tests pass locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41983866778).
+All 70 software tests pass locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42017950114).
 The Chicago download and data checks pass.
 Its first broad-area location test reached the search limit.
 A run with a larger search limit produced the 236 m Midway result.

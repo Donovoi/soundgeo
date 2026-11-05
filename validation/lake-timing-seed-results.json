@@ -1,0 +1,30 @@
+{
+  "accuracy_target_m": 250,
+  "development_experiment": true,
+  "production_code_contains_timing_pipeline": false,
+  "externally_supplied_clock_or_camera": false,
+  "computed_proposals_supplied_to_child_doppler_searches": true,
+  "acceptance_limits_unchanged": true,
+  "followup_code_commit": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+  "followup_cli_sha256": "c37bb556329863b59c0ad6ebd0ecc28aa112828b5afb94d45ef87a4ca29b6319",
+  "script_sha256": {
+    "prepare_lake_timing_seed_diagnostic.py": "0b9fb583b1c344bb69e38b119ea58fa2e1549d07ce0a96a6f5a3f820667773be",
+    "probe_lake_timing_seed_region.py": "4b152536d6403c7317131bc970139b212215a4e4ee2f9618ab08985697f21a66",
+    "run_lake_timing_seed_followup.py": "2c38fc9748ec721c6ee9e63578546f628f481a499be887750847032a8359f04c",
+    "evaluate_lake_timing_seed_followup.py": "7dae2192921465fb3ad130a579f6914bc280a48402e8876b72f006e39c6c8733"
+  },
+  "cases": [
+    {
+      "case": "lake-hood-nov1",
+      "selected_proposals": 0,
+      "counts_as_production_acceptance": false,
+      "followups": []
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "selected_proposals": 0,
+      "counts_as_production_acceptance": false,
+      "followups": []
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "purpose": "Development feasibility: use broad sound-timing proposals as starts for unchanged Doppler validation",
+  "not_production_acceptance": true,
+  "cases": ["midway-nov1", "midway-nov1-holdout"],
+  "source": "Original full-day ADS-B Exchange free November 1 sample used by these development jobs",
+  "externally_supplied_recording_clock": false,
+  "externally_supplied_camera_position": false,
+  "broad_area": "Keep the original physics-job.json bounds",
+  "envelope_parameters": {"band_hz": [700, 3500], "median_baseline_s": 60, "height_db": 6, "prominence_db": 6, "minimum_spacing_s": 15, "width_s": [0.5, 20]},
+  "timing_proposal_parameters": {"grid_m": 300, "reference_slant_limit_m": 500, "sigma_s": 1, "maximum_timing_residual_s": 3, "beam_size": 256},
+  "followup_parameters": {"maximum_distinct_proposals": 5, "distinct_position_m": 1000, "distinct_clock_s": 60, "minimum_timing_matches": 10, "minimum_timing_score": 8, "regional_half_width_m": 1000, "regional_grid_m": 100, "inferred_clock_tolerance_s": 30},
+  "followup_executable_commit": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+  "followup_cli_sha256": "c37bb556329863b59c0ad6ebd0ecc28aa112828b5afb94d45ef87a4ca29b6319",
+  "interpretation": "The child diagnostic may receive a position region and clock inferred by the broad timing search. These are not ground-truth hints. This Python feasibility workflow is not the current Rust app and cannot replace its original failed results. Retain competing proposals and all failures; compare coordinates only after the run.",
+  "existing_fresh_lake_plan_and_runs_unchanged": true
+}
