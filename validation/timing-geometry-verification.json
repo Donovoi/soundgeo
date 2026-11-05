@@ -1,0 +1,69 @@
+{
+  "commit": "38ff00ee3ac055509478974ba08d57b3510546cc",
+  "ci_run": 42124161220,
+  "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42124161220",
+  "ci_log_sha256": "a9a77fcebc2cd53ebec6232b7dca6a556e9ea33f0e542257d8e7ed9d9e36c8c1",
+  "tests": {
+    "windows-latest": {
+      "passed": 92,
+      "failed": 0,
+      "ignored": 0
+    },
+    "ubuntu-latest": {
+      "passed": 92,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "real_report_comparison": {
+    "plan_sha256": "81f7d64b8408ab0510ccd2e17a5f78013c1d0fe385f315f2bb4324e6137cb5cb",
+    "cases": [
+      {
+        "case": "midway-nov4-a",
+        "exit_code": 0,
+        "elapsed_s": 73.06350619997829,
+        "passed": true,
+        "report_sha256": "d4c35cde87a42539aa561e934c3fe702b894eadcf4d2af0e966e4f0ed2afd362",
+        "equal_fields": [
+          "timing",
+          "status",
+          "job",
+          "reference_sources",
+          "events",
+          "candidates",
+          "warnings",
+          "hypotheses",
+          "search_method"
+        ],
+        "differing_fields": [],
+        "baseline_elapsed_s": 96.10923109995201,
+        "exit_code_matches": true,
+        "speedup_ratio": 1.31542046226055
+      },
+      {
+        "case": "lake-hood-nov1-later-2000",
+        "exit_code": 3,
+        "elapsed_s": 791.8022050000727,
+        "passed": true,
+        "report_sha256": "3cf37e598b46f9c996f9b74337103e2ab72c939a0598b8971bc974cdee913e5d",
+        "equal_fields": [
+          "timing",
+          "status",
+          "job",
+          "reference_sources",
+          "events",
+          "candidates",
+          "warnings",
+          "hypotheses",
+          "search_method"
+        ],
+        "differing_fields": [],
+        "baseline_elapsed_s": 841.3901598000666,
+        "exit_code_matches": true,
+        "speedup_ratio": 1.062626694503824
+      }
+    ]
+  },
+  "timings_are_observations_not_controlled_benchmarks": true,
+  "new_accuracy_claim": false
+}

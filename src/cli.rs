@@ -43,7 +43,7 @@ enum Commands {
         /// Cache directory for automatically fetched flight archives.
         #[arg(long, requires = "date")]
         cache: Option<PathBuf>,
-        /// Free flight source. Chicago replay covers the local airport radar area.
+        /// Free flight source. Airport replay covers the selected local radar area.
         #[arg(long, requires = "date")]
         provider: Option<ArchiveProvider>,
         /// Download/reuse free terrain for the configured search area in this folder.

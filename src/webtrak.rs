@@ -1,11 +1,14 @@
-//! Public Chicago airport replay. Every UTC day has 2880 validated 30s chunks.
+//! Public airport replay. Every UTC day has 2880 validated 30s chunks.
 use crate::{
     Control, Progress,
     geo::{Point, geoid_undulation},
 };
 use anyhow::{Context, Result, bail};
 use chrono::{DateTime, NaiveDate, NaiveDateTime, Utc};
-use chrono_tz::America::Chicago;
+use chrono_tz::{
+    America::{Chicago, Los_Angeles},
+    Tz,
+};
 use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
@@ -17,7 +20,44 @@ use std::{
     time::{Duration, Instant},
 };
 
-const BASE: &str = "https://webtrak-us02.emsbk.com/WebTrak/cda/data/";
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Site {
+    Chicago,
+    Lax,
+}
+
+impl Site {
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Chicago => "Chicago",
+            Self::Lax => "LAX",
+        }
+    }
+    fn id(self) -> &'static str {
+        match self {
+            Self::Chicago => "cda",
+            Self::Lax => "lax4",
+        }
+    }
+    fn provider(self) -> &'static str {
+        match self {
+            Self::Chicago => "webtrak_chicago",
+            Self::Lax => "webtrak_lax",
+        }
+    }
+    fn timezone(self) -> Tz {
+        match self {
+            Self::Chicago => Chicago,
+            Self::Lax => Los_Angeles,
+        }
+    }
+    fn base(self) -> &'static str {
+        match self {
+            Self::Chicago => "https://webtrak-us02.emsbk.com/WebTrak/cda/data/",
+            Self::Lax => "https://webtrak-us02.emsbk.com/WebTrak/lax4/data/",
+        }
+    }
+}
 const LIMIT: usize = 2_000_000;
 const CHUNKS: usize = 2880;
 
@@ -54,15 +94,15 @@ fn digest(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
 
-fn decode(bytes: &[u8], handle: i64) -> Result<Chunk> {
+fn decode(site: Site, bytes: &[u8], handle: i64) -> Result<Chunk> {
     if bytes.len() > LIMIT {
-        bail!("Chicago chunk exceeds 2 MB");
+        bail!("WebTrak chunk exceeds 2 MB");
     }
-    let text = std::str::from_utf8(bytes).context("Chicago replay is not UTF-8")?;
-    let envelope: Envelope = quick_xml::de::from_str(text).context("Invalid Chicago replay XML")?;
+    let text = std::str::from_utf8(bytes).context("WebTrak replay is not UTF-8")?;
+    let envelope: Envelope = quick_xml::de::from_str(text).context("Invalid WebTrak replay XML")?;
     let epoch = handle.checked_mul(30).context("Invalid replay handle")?;
     let utc = DateTime::<Utc>::from_timestamp(epoch, 0).context("Invalid replay timestamp")?;
-    let local = utc.with_timezone(&Chicago).naive_local();
+    let local = utc.with_timezone(&site.timezone()).naive_local();
     // The UTC handle resolves repeated local times on the autumn DST boundary.
     if envelope.handle != handle
         || envelope.start != local.format("%Y-%m-%d %H:%M:%S").to_string()
@@ -71,7 +111,7 @@ fn decode(bytes: &[u8], handle: i64) -> Result<Chunk> {
                 .format("%Y-%m-%d %H:%M:%S")
                 .to_string()
     {
-        bail!("Chicago replay handle/time mismatch");
+        bail!("WebTrak replay handle/time mismatch");
     }
     let mut positions = vec![];
     let mut reader = csv::ReaderBuilder::new()
@@ -79,17 +119,17 @@ fn decode(bytes: &[u8], handle: i64) -> Result<Chunk> {
         .flexible(true)
         .from_reader(envelope.body.as_bytes());
     for record in reader.records() {
-        let row = record.context("Invalid Chicago radar CSV")?;
+        let row = record.context("Invalid WebTrak radar CSV")?;
         if row.get(0) != Some("radar") {
             continue;
         }
         if row.len() < 19 || row[2].is_empty() {
-            bail!("Truncated Chicago radar position");
+            bail!("Truncated WebTrak radar position");
         }
         let when = NaiveDateTime::parse_from_str(&row[1], "%Y%m%d%H%M%S")?;
         let delta = (when - local).num_seconds();
         if !(0..30).contains(&delta) {
-            bail!("Chicago position is outside its 30-second chunk");
+            bail!("WebTrak position is outside its 30-second chunk");
         }
         let lat: f64 = row[9].parse()?;
         let lon: f64 = row[8].parse()?;
@@ -100,10 +140,10 @@ fn decode(bytes: &[u8], handle: i64) -> Result<Chunk> {
             alt: height,
         };
         if !point.valid() {
-            bail!("Invalid Chicago position coordinate or altitude");
+            bail!("Invalid WebTrak position coordinate or altitude");
         }
         positions.push(Position {
-            aircraft: format!("cda:{}", &row[2]),
+            aircraft: format!("{}:{}", site.id(), &row[2]),
             time: (utc + chrono::Duration::seconds(delta)).to_rfc3339(),
             lat,
             lon,
@@ -137,7 +177,7 @@ fn limited_read(path: &Path, limit: usize) -> Result<Vec<u8>> {
     }
     Ok(bytes)
 }
-fn cached_chunk(folder: &Path, handle: i64) -> Option<Chunk> {
+fn cached_chunk(site: Site, folder: &Path, handle: i64) -> Option<Chunk> {
     let bytes = limited_read(&folder.join(format!("{handle}.xml")), LIMIT).ok()?;
     // Accept the qualification downloader's sidecars too; both use SHA-256.
     let meta: serde_json::Value = serde_json::from_slice(
@@ -147,7 +187,10 @@ fn cached_chunk(folder: &Path, handle: i64) -> Option<Chunk> {
     if meta["sha256"].as_str() != Some(&digest(&bytes)) {
         return None;
     }
-    decode(&bytes, handle).ok()
+    if meta["url"].as_str() != Some(&format!("{}{handle}.mobile", site.base())) {
+        return None;
+    }
+    decode(site, &bytes, handle).ok()
 }
 
 #[derive(Serialize, Deserialize)]
@@ -163,13 +206,15 @@ struct Manifest {
     source: String,
     altitude: String,
 }
-fn cached_day(folder: &Path, date: &str) -> Option<PathBuf> {
+fn cached_day(site: Site, folder: &Path, date: &str) -> Option<PathBuf> {
     let manifest: Manifest =
         serde_json::from_slice(&limited_read(&folder.join("provider-manifest.json"), 65536).ok()?)
             .ok()?;
     if manifest.format != 1
         || manifest.date != date
-        || manifest.provider != "webtrak_chicago"
+        || manifest.provider != site.provider()
+        || manifest.source != site.base()
+        || manifest.offline_chunks > CHUNKS
         || !manifest.complete
         || manifest.chunks != CHUNKS
         || manifest.rows == 0
@@ -184,6 +229,7 @@ fn cached_day(folder: &Path, date: &str) -> Option<PathBuf> {
 }
 
 fn ensure_day(
+    site: Site,
     date: &str,
     cache: &Path,
     control: &Control,
@@ -192,14 +238,17 @@ fn ensure_day(
 ) -> Result<PathBuf> {
     control.check()?;
     let day = NaiveDate::parse_from_str(date, "%Y-%m-%d")
-        .context("Use a YYYY-MM-DD Chicago archive date")?;
+        .context("Use a YYYY-MM-DD airport archive date")?;
     if day >= Utc::now().date_naive() || day < NaiveDate::from_ymd_opt(2023, 1, 1).unwrap() {
-        bail!("Choose a Chicago archive date from 2023 through yesterday UTC");
+        bail!("Choose an airport archive date from 2023 through yesterday UTC");
     }
-    let folder = cache.join(format!("webtrak-cda-{date}"));
+    let folder = cache.join(format!("webtrak-{}-{date}", site.id()));
     fs::create_dir_all(&folder)?;
-    if let Some(path) = cached_day(&folder, date) {
-        progress("Reusing verified Chicago full-day data", 1.);
+    if let Some(path) = cached_day(site, &folder, date) {
+        progress(
+            &format!("Reusing verified {} full-day data", site.name()),
+            1.,
+        );
         return Ok(path);
     }
     let first = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() / 30;
@@ -213,16 +262,16 @@ fn ensure_day(
         for (batch_index, batch) in handles.chunks(60).enumerate() {
             control.check()?;
             progress(
-                &format!("Chicago replay: {}/2880 chunks", batch_index * 60),
+                &format!("{} replay: {}/2880 chunks", site.name(), batch_index * 60),
                 batch_index as f32 / 48.,
             );
             let chunks:Vec<Chunk>=pool.install(|| batch.par_iter().map(|&handle|->Result<Chunk>{
                 control.check()?;
-                if let Some(chunk)=cached_chunk(&folder,handle) {return Ok(chunk);}
-                let bytes=fetch(handle).with_context(||format!("Could not obtain Chicago chunk {handle}; full day is incomplete"))?;
-                let chunk=decode(&bytes,handle)?;
+                if let Some(chunk)=cached_chunk(site,&folder,handle) {return Ok(chunk);}
+                let bytes=fetch(handle).with_context(||format!("Could not obtain {} chunk {handle}; full day is incomplete",site.name()))?;
+                let chunk=decode(site,&bytes,handle)?;
                 atomic_write(&folder.join(format!("{handle}.xml")),&bytes)?;
-                atomic_write(&folder.join(format!("{handle}.meta.json")),&serde_json::to_vec(&serde_json::json!({"url":format!("{BASE}{handle}.mobile"),"sha256":digest(&bytes),"fetched_utc":Utc::now().to_rfc3339()}))?)?;
+                atomic_write(&folder.join(format!("{handle}.meta.json")),&serde_json::to_vec(&serde_json::json!({"url":format!("{}{handle}.mobile",site.base()),"sha256":digest(&bytes),"fetched_utc":Utc::now().to_rfc3339()}))?)?;
                 Ok(chunk)
             }).collect::<Result<Vec<_>>>())?;
             // Indexed parallel collection preserves chronological chunk order.
@@ -237,7 +286,7 @@ fn ensure_day(
         writer.flush()?;
     }
     if rows == 0 {
-        bail!("Chicago replay returned no positions; no completed archive was saved");
+        bail!("WebTrak replay returned no positions; no completed archive was saved");
     }
     temporary.as_file().sync_all()?;
     let mut hash = Sha256::new();
@@ -245,13 +294,13 @@ fn ensure_day(
     let manifest = Manifest {
         format: 1,
         date: date.into(),
-        provider: "webtrak_chicago".into(),
+        provider: site.provider().into(),
         complete: true,
         chunks: CHUNKS,
         rows,
         offline_chunks: offline,
         csv_sha256: format!("{:x}", hash.finalize()),
-        source: BASE.into(),
+        source: site.base().into(),
         altitude: "Field 18 MSL metres + EGM96 N; original sensor/pressure provenance unknown"
             .into(),
     };
@@ -262,7 +311,10 @@ fn ensure_day(
         &serde_json::to_vec_pretty(&manifest)?,
     )?;
     progress(
-        &format!("Chicago full day saved: {rows} positions, {offline} chunks not marked online"),
+        &format!(
+            "{} full day saved: {rows} positions, {offline} chunks not marked online",
+            site.name()
+        ),
         1.,
     );
     Ok(path)
@@ -294,12 +346,12 @@ fn request_chunk(
         }
         response.error_for_status_ref()?;
         if response.content_length().is_some_and(|n| n > LIMIT as u64) {
-            bail!("Chicago response exceeds 2 MB");
+            bail!("WebTrak response exceeds 2 MB");
         }
         let mut bytes = vec![];
         while let Some(chunk) = crate::network::cancelable(response.chunk(), control).await?? {
             if bytes.len() + chunk.len() > LIMIT {
-                bail!("Chicago response exceeds 2 MB");
+                bail!("WebTrak response exceeds 2 MB");
             }
             bytes.extend_from_slice(&chunk);
         }
@@ -355,7 +407,7 @@ fn fetch_with_retry(
         };
         {
             if attempt == 2 {
-                bail!("Chicago replay retry limit reached");
+                bail!("WebTrak replay retry limit reached");
             }
             let seconds = if let Ok(seconds) = pause.parse::<u64>() {
                 seconds
@@ -368,7 +420,7 @@ fn fetch_with_retry(
             };
             if seconds > 60 {
                 bail!(
-                    "Chicago server requests a longer pause; retry this resumable download later"
+                    "WebTrak server requests a longer pause; retry this resumable download later"
                 );
             }
             let mut n = next
@@ -378,10 +430,11 @@ fn fetch_with_retry(
             continue;
         }
     }
-    bail!("Chicago replay retry limit reached")
+    bail!("WebTrak replay retry limit reached")
 }
 
 pub fn download_day(
+    site: Site,
     date: &str,
     cache: &Path,
     control: &Control,
@@ -397,18 +450,18 @@ pub fn download_day(
         .enable_all()
         .build()?;
     let next = Mutex::new(Instant::now());
-    let path = ensure_day(date, cache, control, progress, &|handle| {
+    let path = ensure_day(site, date, cache, control, progress, &|handle| {
         let day = NaiveDate::parse_from_str(date, "%Y-%m-%d")?;
         if (Utc::now().date_naive() - day).num_days() > 90 {
             bail!(
-                "Chicago public replay keeps about 90 days. Use a complete local cache or another free source for older dates."
+                "WebTrak public replay keeps about 90 days. Use a complete local cache or another free source for older dates."
             );
         }
         fetch_with_retry(control, &next, || {
             request_chunk(
                 &client,
                 &runtime,
-                &format!("{BASE}{handle}.mobile"),
+                &format!("{}{handle}.mobile", site.base()),
                 control,
             )
         })
@@ -416,21 +469,21 @@ pub fn download_day(
     control.check()?;
     let catalog = path
         .parent()
-        .context("Missing Chicago cache folder")?
+        .context("Missing WebTrak cache folder")?
         .join("aircraft-types.json");
     if !catalog.is_file() {
-        crate::aircraft::download(&catalog).context("Chicago flight data is saved, but the free aircraft-type catalog could not be downloaded")?;
+        crate::aircraft::download(&catalog).context("WebTrak flight data is saved, but the free aircraft-type catalog could not be downloaded")?;
     }
     Ok(path)
 }
 
-pub fn coverage_warning(path: &Path) -> Result<Option<String>> {
+pub fn coverage_warning(site: Site, path: &Path) -> Result<Option<String>> {
     let file = path
         .parent()
-        .context("Missing Chicago cache folder")?
+        .context("Missing WebTrak cache folder")?
         .join("provider-manifest.json");
     let manifest: Manifest = serde_json::from_slice(&limited_read(&file, 65536)?)?;
-    Ok((manifest.offline_chunks>0).then(||format!("Chicago radar was not marked online for {} of 2880 intervals on {}. Those intervals can have missing flight observations.",manifest.offline_chunks,manifest.date)))
+    Ok((manifest.offline_chunks>0).then(||format!("{} radar was not marked online for {} of 2880 intervals on {}. Those intervals can have missing flight observations.",site.name(),manifest.offline_chunks,manifest.date)))
 }
 
 #[cfg(test)]
@@ -549,17 +602,17 @@ mod tests {
             thread.join().unwrap();
         }
     }
-    fn xml(handle: i64, body: &str) -> Vec<u8> {
+    fn xml(site: Site, handle: i64, body: &str) -> Vec<u8> {
         let local = DateTime::<Utc>::from_timestamp(handle * 30, 0)
             .unwrap()
-            .with_timezone(&Chicago)
+            .with_timezone(&site.timezone())
             .naive_local();
         format!("<data handle=\"{handle}\" startTime=\"{local}\" endTime=\"{}\" radarStatus=\"online\">{body}</data>",local+chrono::Duration::seconds(29)).into_bytes()
     }
-    fn row(handle: i64) -> String {
+    fn row(site: Site, handle: i64) -> String {
         let t = DateTime::<Utc>::from_timestamp(handle * 30, 0)
             .unwrap()
-            .with_timezone(&Chicago);
+            .with_timezone(&site.timezone());
         format!(
             "radar,{},track1,D,MDW,B738,CALL,J,-87.74,41.78,50,100,REG,1200,MDW,,,tag,280,op,route",
             t.format("%Y%m%d%H%M%S")
@@ -572,8 +625,18 @@ mod tests {
             .timestamp()
             / 30;
         let second = first + 120;
-        let a = decode(&xml(first, &row(first)), first).unwrap();
-        let b = decode(&xml(second, &row(second)), second).unwrap();
+        let a = decode(
+            Site::Chicago,
+            &xml(Site::Chicago, first, &row(Site::Chicago, first)),
+            first,
+        )
+        .unwrap();
+        let b = decode(
+            Site::Chicago,
+            &xml(Site::Chicago, second, &row(Site::Chicago, second)),
+            second,
+        )
+        .unwrap();
         assert_eq!(a.positions[0].time, "2026-11-01T06:30:00+00:00");
         assert_eq!(b.positions[0].time, "2026-11-01T07:30:00+00:00");
         assert!(
@@ -583,35 +646,93 @@ mod tests {
     #[test]
     fn rejects_wrong_handle_time_invalid_coordinates_and_truncated_rows() {
         let h = 59785200;
-        let valid = xml(h, &row(h));
-        assert!(decode(&valid, h + 1).is_err());
+        let valid = xml(Site::Chicago, h, &row(Site::Chicago, h));
+        assert!(decode(Site::Chicago, &valid, h + 1).is_err());
         for bad in [
-            row(h).replace("20261101120000", "20261101120100"),
-            row(h).replace("41.78", "91.78"),
+            row(Site::Chicago, h).replace("20261101120000", "20261101120100"),
+            row(Site::Chicago, h).replace("41.78", "91.78"),
             "radar,20261101120000,id".into(),
         ] {
-            assert!(decode(&xml(h, &bad), h).is_err());
+            assert!(decode(Site::Chicago, &xml(Site::Chicago, h, &bad), h).is_err());
         }
-        assert!(decode(&vec![b'x'; LIMIT + 1], h).is_err());
+        assert!(decode(Site::Chicago, &vec![b'x'; LIMIT + 1], h).is_err());
+    }
+    #[test]
+    fn lax_repeated_hour_and_cache_identity_cannot_use_chicago_data() {
+        let first = DateTime::parse_from_rfc3339("2026-11-01T08:30:00Z")
+            .unwrap()
+            .timestamp()
+            / 30;
+        for handle in [first, first + 120] {
+            let bytes = xml(Site::Lax, handle, &row(Site::Lax, handle));
+            let chunk = decode(Site::Lax, &bytes, handle).unwrap();
+            assert_eq!(
+                chunk.positions[0].time,
+                DateTime::<Utc>::from_timestamp(handle * 30, 0)
+                    .unwrap()
+                    .to_rfc3339()
+            );
+            assert_eq!(chunk.positions[0].aircraft, "lax4:track1");
+            assert!(decode(Site::Chicago, &bytes, handle).is_err());
+        }
+        let dir = tempfile::tempdir().unwrap();
+        let bytes = xml(Site::Lax, first, &row(Site::Lax, first));
+        fs::write(dir.path().join(format!("{first}.xml")), &bytes).unwrap();
+        for site in [Site::Chicago, Site::Lax] {
+            fs::write(dir.path().join(format!("{first}.meta.json")),serde_json::to_vec(&serde_json::json!({"sha256":digest(&bytes),"url":format!("{}{first}.mobile",site.base())})).unwrap()).unwrap();
+            assert_eq!(
+                cached_chunk(Site::Lax, dir.path(), first).is_some(),
+                site == Site::Lax
+            );
+        }
+        let csv = dir.path().join("flights.csv");
+        fs::write(&csv, b"fixture").unwrap();
+        let mut manifest = Manifest {
+            format: 1,
+            date: "2026-11-01".into(),
+            provider: Site::Lax.provider().into(),
+            complete: true,
+            chunks: CHUNKS,
+            rows: 1,
+            offline_chunks: 0,
+            csv_sha256: digest(b"fixture"),
+            source: Site::Lax.base().into(),
+            altitude: "fixture".into(),
+        };
+        let write = |m: &Manifest| {
+            fs::write(
+                dir.path().join("provider-manifest.json"),
+                serde_json::to_vec(m).unwrap(),
+            )
+            .unwrap()
+        };
+        write(&manifest);
+        assert_eq!(cached_day(Site::Lax, dir.path(), "2026-11-01"), Some(csv));
+        assert!(cached_day(Site::Chicago, dir.path(), "2026-11-01").is_none());
+        manifest.source = Site::Chicago.base().into();
+        write(&manifest);
+        assert!(cached_day(Site::Lax, dir.path(), "2026-11-01").is_none());
     }
     #[test]
     fn complete_day_cache_is_verified_and_corrupt_csv_is_rebuilt_without_network() {
-        let dir = tempfile::tempdir().unwrap();
-        let date = "2024-11-03";
-        let control = Control::default();
-        let path = ensure_day(date, dir.path(), &control, &|_, _| {}, &|h| {
-            Ok(xml(h, &row(h)))
-        })
-        .unwrap();
-        let original = fs::read(&path).unwrap();
-        let no_network = |_| -> Result<Vec<u8>> { bail!("Unexpected network request") };
-        assert_eq!(
-            path,
-            ensure_day(date, dir.path(), &control, &|_, _| {}, &no_network).unwrap()
-        );
-        fs::write(&path, b"corrupt").unwrap();
-        ensure_day(date, dir.path(), &control, &|_, _| {}, &no_network).unwrap();
-        assert_eq!(fs::read(path).unwrap(), original);
+        for site in [Site::Chicago, Site::Lax] {
+            let dir = tempfile::tempdir().unwrap();
+            let date = "2024-11-03";
+            let control = Control::default();
+            let path = ensure_day(site, date, dir.path(), &control, &|_, _| {}, &|h| {
+                Ok(xml(site, h, &row(site, h)))
+            })
+            .unwrap();
+            let original = fs::read(&path).unwrap();
+            let no_network = |_| -> Result<Vec<u8>> { bail!("Unexpected network request") };
+            assert_eq!(
+                path,
+                ensure_day(site, date, dir.path(), &control, &|_, _| {}, &no_network).unwrap()
+            );
+            fs::write(&path, b"corrupt").unwrap();
+            ensure_day(site, date, dir.path(), &control, &|_, _| {}, &no_network).unwrap();
+            assert_eq!(fs::read(path).unwrap(), original);
+        }
     }
     #[test]
     fn missing_chunk_and_cancellation_never_publish_a_complete_day() {
@@ -619,12 +740,19 @@ mod tests {
         let date = "2024-11-03";
         let first = 1730592000 / 30;
         assert!(
-            ensure_day(date, dir.path(), &Control::default(), &|_, _| {}, &|h| {
-                if h == first + 5 {
-                    bail!("Missing fixture chunk");
+            ensure_day(
+                Site::Chicago,
+                date,
+                dir.path(),
+                &Control::default(),
+                &|_, _| {},
+                &|h| {
+                    if h == first + 5 {
+                        bail!("Missing fixture chunk");
+                    }
+                    Ok(xml(Site::Chicago, h, &row(Site::Chicago, h)))
                 }
-                Ok(xml(h, &row(h)))
-            })
+            )
             .is_err()
         );
         assert!(
@@ -639,6 +767,16 @@ mod tests {
         );
         let control = Control::default();
         control.stop();
-        assert!(ensure_day(date, dir.path(), &control, &|_, _| {}, &|_| unreachable!()).is_err());
+        assert!(
+            ensure_day(
+                Site::Chicago,
+                date,
+                dir.path(),
+                &control,
+                &|_, _| {},
+                &|_| unreachable!()
+            )
+            .is_err()
+        );
     }
 }

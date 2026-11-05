@@ -11,6 +11,17 @@ pub enum ArchiveProvider {
     #[default]
     AdsbLol,
     WebtrakChicago,
+    WebtrakLax,
+}
+
+impl ArchiveProvider {
+    pub fn webtrak_site(self) -> Option<crate::webtrak::Site> {
+        match self {
+            Self::AdsbLol => None,
+            Self::WebtrakChicago => Some(crate::webtrak::Site::Chicago),
+            Self::WebtrakLax => Some(crate::webtrak::Site::Lax),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -73,9 +84,20 @@ impl ArchiveRequest {
                     ArchiveProvider::AdsbLol => {
                         crate::data::download_day(date, &self.cache, control, &day_progress)
                     }
-                    ArchiveProvider::WebtrakChicago => {
-                        crate::webtrak::download_day(date, &self.cache, control, &day_progress)
-                    }
+                    ArchiveProvider::WebtrakChicago => crate::webtrak::download_day(
+                        crate::webtrak::Site::Chicago,
+                        date,
+                        &self.cache,
+                        control,
+                        &day_progress,
+                    ),
+                    ArchiveProvider::WebtrakLax => crate::webtrak::download_day(
+                        crate::webtrak::Site::Lax,
+                        date,
+                        &self.cache,
+                        control,
+                        &day_progress,
+                    ),
                 }
                 .with_context(|| {
                     format!(

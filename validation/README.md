@@ -1435,6 +1435,11 @@ recordings. None of the four first choices was within 1 km. These were raw
 development searches without shuffled controls. The app's filter was not
 changed. See [lake-timing-band-diagnostic.json](lake-timing-band-diagnostic.json).
 
+Wider passage ranges of 1 km and 2 km were tested on two Lake Hood clips.
+All four runs returned insufficient evidence. Three failed the shuffled-control
+comparison. The fourth had fewer than six matched peaks. The default range was
+not changed. See [lake-timing-range-diagnostic.json](lake-timing-range-diagnostic.json).
+
 Two public O'Hare clips returned insufficient evidence with strict exit code 3.
 Their source includes air traffic control audio. The exact microphone location
 is not independently verified, so these are diagnostics rather than accuracy
@@ -1445,5 +1450,29 @@ free LAX radar day, broad bounds, and no recording clock. The publisher and
 airport sources identify the north-side parking garage at building level.
 The reference remains an inference, not a surveyed microphone position.
 The planned evaluator checks the distance to the whole building footprint.
-Media preparation and the free reference download are still pending. See
-[lax-timing-prospective-plan.json](lax-timing-prospective-plan.json).
+The two clips are now prepared, but their source has unresolved limitations.
+The first visible clock advances about 65 minutes in 60 minutes of video.
+The second clip includes a cutaway to another camera. Microphone continuity is
+not verified. Both clips remain planned diagnostics; neither can count as a
+clean accuracy test without further source evidence. The full free reference
+download is still pending. See
+[lax-timing-prospective-plan.json](lax-timing-prospective-plan.json) and
+[lax-source-quality-notes.json](lax-source-quality-notes.json).
+
+Two further LAX clips use the publisher's fixed cameras at the H Hotel.
+They were selected before capture and analysis. The hotel address and map
+identify a building footprint about 105 m across. The microphone position is
+not surveyed. The stream's transport clock differs from the clock shown in
+the picture. The source includes radio speech. These clips remain source
+diagnostics until the recording date and local microphone are verified.
+See [lax-fixed-camera-plan.json](lax-fixed-camera-plan.json).
+
+## Search-cache verification
+
+Revision `38ff00e` passed all 92 software tests on Windows and Ubuntu.
+The cached search reproduced both the Midway A report and the Lake Hood
+2 km range diagnostic exactly. It preserved every compared search result,
+control score, warning, and status. The observed times were 73 s and 792 s,
+compared with 96 s and 841 s in the earlier runs. Host load differed, so these
+are not controlled speed measurements. No accuracy rule changed.
+See [timing-geometry-verification.json](timing-geometry-verification.json).

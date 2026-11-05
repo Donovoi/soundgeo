@@ -287,20 +287,20 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         report.warnings.push("Only one flyover and no known clock: time and location can be ambiguous, especially on straight flight paths.".into());
     }
     let sources = if let Some(request) = &job.archive {
-        if request.provider == archive::ArchiveProvider::WebtrakChicago {
-            report.warnings.push("Chicago public airport data covers its local radar area. Altitudes are converted from MSL to WGS84 using EGM96; their original sensor/pressure provenance is unknown. Recorded coverage does not establish that every flight is present.".into());
+        if let Some(site) = request.provider.webtrak_site() {
+            report.warnings.push(format!("{} public airport data covers its local radar area. Altitudes are converted from MSL to WGS84 using EGM96; their original sensor/pressure provenance is unknown. Recorded coverage does not establish that every flight is present.",site.name()));
         }
         request.ensure(control, &|m, p| progress(m, 0.34 + p * 0.02))?
     } else {
         vec![job.tracks.clone()]
     };
-    if job
+    if let Some(site) = job
         .archive
         .as_ref()
-        .is_some_and(|request| request.provider == archive::ArchiveProvider::WebtrakChicago)
+        .and_then(|request| request.provider.webtrak_site())
     {
         for path in &sources {
-            if let Some(warning) = webtrak::coverage_warning(path)? {
+            if let Some(warning) = webtrak::coverage_warning(site, path)? {
                 report.warnings.push(warning);
             }
         }
