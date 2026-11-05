@@ -2,7 +2,7 @@
 
 SoundGeo uses aircraft sounds to search for the location of a recording.
 It accepts a video file or an audio file.
-It compares changes in sound frequency with recorded aircraft positions.
+It compares changes in sound frequency, or the timing of sound peaks, with recorded aircraft positions.
 It can search when the recording start time is unknown.
 
 The project uses Rust. It has a desktop application and a command-line application.
@@ -24,44 +24,33 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 The current location target is within 1 km. The user changed this target on November 6, 2026.
 The earlier 250 m test results remain in the validation record.
 
-The completed test set contains ten public-camera recordings.
+The latest CLI test used flight passage timing on 18 public-camera recordings.
 Each test used a known possible date, a broad search area, and no recording start time.
-Two first-choice locations were within 250 m, but both had competing locations.
-One run reached its search limit. No recording passed the full location test.
+The app used free Chicago airport data for Midway and free flight archives for the other sites.
 
-Separate tests with free Chicago airport data returned one first choice 236 m from the camera.
-Its next choice was 488 m away. The other Chicago test reached its search limit.
-Both new one-hour Midway recordings returned no location.
-A separate Chicago follow-up stopped before it saved a report. The cause is unknown.
-A new run uses the same inputs and larger search limit. The earlier attempts remain recorded.
+| Result | Recordings |
+| --- | ---: |
+| Returned a location within 1 km | 6 |
+| Reported competing locations | 3 |
+| Reported insufficient evidence | 9 |
+| Returned a location outside 1 km | 0 |
 
-An experimental search found one Lake Hood location within 83 m, with a competing choice 479 m away.
-On a new Lake Hood recording, the same experimental build chose a location 8.56 km away.
-The second new recording chose a location 9.38 km away.
-Both results also fail the new 1 km target. The experiment is not part of the main app.
-An earlier Southampton test also produced a wrong location with a positive model status.
+All six returned locations came from the same Midway camera. Their errors were 99 to 547 m.
+One of these clips was reserved before the new screening rules were tested.
+A second reserved clip ranked a point 384 m away first, but reported competing locations.
+The other clips are development tests. They do not measure performance on unseen locations.
+Lake Hood and Southampton still returned no useful location.
+Withholding a weak result does not prove that the app can find every location.
+
+The older Doppler tests and failed experiments remain in the validation record.
+An experimental Lake Hood search found one first choice within 83 m, but failed on two later clips.
+An earlier Southampton test returned a wrong location with a positive model status.
 A positive model status is not proof that the location is correct.
 
-The preceding release passed all 76 software tests locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42061528743).
-Formatting, strict Clippy, documentation tests, and both release builds also passed for that revision.
-The latest budget check avoids hours of work when a search cannot fit its limit.
-It rejected an oversized real search in 88 seconds instead of six hours.
-Two completed real-recording comparisons produced unchanged results.
-Software tests and faster processing do not establish location accuracy.
-
-A new test method compares sound peaks with nearby flight passages.
-It accounts for chance matches where many aircraft pass.
-It placed the two development recordings within 547 m and 255 m of the camera.
-The Rust search reproduces the reference calculation on those recordings and six shuffled controls.
-These are development results from one camera. They do not prove reliable location accuracy.
-The frozen module also placed two reserved recordings within 547 m.
-Both scores exceeded all 19 shuffled controls for each recording.
-All four recordings came from the same camera. Lake Hood still needs work.
-The frozen module passed all 86 software tests locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42112268393).
-The desktop and CLI integration passed all 91 local software tests.
-Its new real-video tests and Windows and Ubuntu CI are still pending.
+Revision `f8f1735` passed all 91 software tests locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42118493834).
+Formatting, strict Clippy, documentation tests, and both release builds also passed.
+Software checks do not establish location accuracy.
 See the [validation record](validation/README.md) for builds, results, data sources, and failures.
 
 ## Requirements
@@ -97,7 +86,7 @@ Select **Worldwide: ADSB.lol** for the worldwide archive.
 For a recording near Chicago, you can select **Chicago: public airport replay**.
 The Chicago source contains local airport radar data. It keeps about 90 days of history.
 It can contain positions that are missing from the worldwide archive.
-It has not yet passed the real-recording location tests.
+It supplied the six locations within 1 km in the passage-timing tests above.
 
 To use existing flight data, clear the automatic-download option. Then select the flight data file or folder.
 
@@ -234,7 +223,8 @@ soundgeo-cli.exe analyze --config demo/job.json --output reports/demo.json
 ```
 
 Set `start_utc` to `null` when the recording start time is unknown.
-Set `bounds` to `null` to search the area covered by the imported flight data.
+For Doppler searches, set `bounds` to `null` to search the area covered by the imported flight data.
+Flight passage timing requires a search area.
 Large searches can take much longer than small searches.
 
 Before it compares sound curves, the flight-corridor search checks its hypothesis budget.
@@ -322,13 +312,14 @@ See the [technical reference](docs/technical-reference.md) for format details, a
 ## How the search works
 
 1. Read the recording audio with FFmpeg.
-2. Find frequency changes that could come from passing aircraft.
-3. Compare those changes with historical flight positions.
+2. Find sound peaks or frequency changes that could come from passing aircraft.
+3. Compare those sounds with historical flight positions.
 4. Search for one location and one recording start time that explain the matched sounds.
 5. Report the possible locations and their supporting evidence.
 
 The model includes the time that sound takes to reach the microphone.
-It can correct a small, constant clock-rate error in a long recording.
+The Doppler method can correct a small, constant clock-rate error in a long recording.
+Flight passage timing fits a shared start time. It does not fit clock-rate error.
 It cannot repair edits that remove or repeat parts of the recording.
 
 Missing matches remain visible in the report. Error percentages describe model fit; they are not probabilities.

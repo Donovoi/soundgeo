@@ -1391,8 +1391,59 @@ radius. See [passage-timing-screen-spec.json](passage-timing-screen-spec.json).
 All 91 local software tests and required checks pass. Tests cover the unknown
 clock, one-to-one matching, numerical fits, distinct controls, retained spatial
 alternatives, CLI status, old job files, and avoiding flight downloads for silent
-audio. The integrated real-video tests and CI are pending. Two further clips,
-E and F, were reserved before capture. They remain unused until the main CLI is
-qualified and frozen. See
+audio. Revision `f8f1735` also passed all 91 tests in Windows and Ubuntu CI.
+The CI logs were checked for the expected test names, with no failed or ignored
+tests. Two further clips, E and F, were reserved before capture and evaluated
+after the main CLI was qualified and frozen. See
 [passage-timing-integrated-local-checks.json](passage-timing-integrated-local-checks.json)
-and [timing-integrated-heldout-plan.json](timing-integrated-heldout-plan.json).
+and [passage-timing-integrated-ci.json](passage-timing-integrated-ci.json).
+
+## Integrated CLI results within 1 km
+
+The fixed 18-case plan is complete. Every case used the same frozen main CLI,
+the original broad search area, and no recording clock. Midway used the full
+free Chicago airport reference day. Lake Hood and Southampton kept their
+original free references. The possible date was known. This does not test
+worldwide search or an unrestricted recording date.
+
+| Outcome | Cases |
+| --- | ---: |
+| Screened location within 1 km | 6 |
+| Ambiguous | 3 |
+| Insufficient evidence | 9 |
+| Wrong screened location | 0 |
+
+The six returned locations are all from Midway. Their errors range from 98.83 m
+to 546.45 m. Only E and F were prospective tests of the new screens. E returned
+a location 98.83 m from the camera. F ranked a point 384.25 m away first, but
+reported competing locations and returned strict exit code 4. It is not an
+accepted location. All other cases were already development recordings.
+
+All five Lake Hood recordings and both Southampton recordings returned
+insufficient evidence. Their diagnostic coordinates remain in the reports but
+do not count as location matches. Withholding those results prevents a false
+location claim; it does not establish useful coverage at those sites. The
+returned-location coverage is 6 of 18 recordings. No calibrated confidence or
+accuracy radius is claimed. See
+[passage-timing-integrated-results.json](passage-timing-integrated-results.json)
+for every case, its inputs, report hash, status, and error.
+
+## Further timing diagnostics
+
+Two lower-frequency sound bands were tested on both November 1 Lake Hood
+recordings. None of the four first choices was within 1 km. These were raw
+development searches without shuffled controls. The app's filter was not
+changed. See [lake-timing-band-diagnostic.json](lake-timing-band-diagnostic.json).
+
+Two public O'Hare clips returned insufficient evidence with strict exit code 3.
+Their source includes air traffic control audio. The exact microphone location
+is not independently verified, so these are diagnostics rather than accuracy
+tests. See [ohare-timing-diagnostic.json](ohare-timing-diagnostic.json).
+
+Two LAX clips were selected before solver evaluation. Their plan uses a full
+free LAX radar day, broad bounds, and no recording clock. The publisher and
+airport sources identify the north-side parking garage at building level.
+The reference remains an inference, not a surveyed microphone position.
+The planned evaluator checks the distance to the whole building footprint.
+Media preparation and the free reference download are still pending. See
+[lax-timing-prospective-plan.json](lax-timing-prospective-plan.json).

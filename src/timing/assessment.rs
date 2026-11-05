@@ -1,5 +1,5 @@
 //! Conservative development screens. None is a calibrated location probability.
-use super::{LocationScore, Options, Peak, SearchResult, locate};
+use super::{LocationScore, Options, Peak, SearchResult, search::PreparedSearch};
 use crate::{Control, Job, Progress, geo::Point, model::Track};
 use anyhow::Result;
 use serde::{Deserialize, Serialize};
@@ -61,7 +61,8 @@ pub fn assess(
         return Ok(result);
     }
     let times: Vec<_> = result.peaks.iter().map(|p| p.time_s).collect();
-    let search = locate(job, &times, duration, tracks, options, control, &|m, p| {
+    let mut prepared = PreparedSearch::new(job, tracks, options, control)?;
+    let search = prepared.locate(&times, duration, control, &|m, p| {
         progress(m, p / (CONTROLS + 1) as f32)
     })?;
     let sufficient = search.candidates.first().is_some_and(|c| {
@@ -78,20 +79,12 @@ pub fn assess(
     {
         control.check()?;
         let shuffled = apply_permutation(&times, duration, &mapping);
-        let null = locate(
-            job,
-            &shuffled,
-            duration,
-            tracks,
-            options,
-            control,
-            &|m, p| {
-                progress(
-                    &format!("Shuffled control {}/{}: {m}", index + 1, CONTROLS),
-                    (index as f32 + 1. + p) / (CONTROLS + 1) as f32,
-                );
-            },
-        )?;
+        let null = prepared.locate(&shuffled, duration, control, &|m, p| {
+            progress(
+                &format!("Shuffled control {}/{}: {m}", index + 1, CONTROLS),
+                (index as f32 + 1. + p) / (CONTROLS + 1) as f32,
+            );
+        })?;
         result.control_likelihood_evaluations += null.likelihood_evaluations;
         result.control_permutation_seeds.push(seed);
         result.control_maximum_scores.push(
