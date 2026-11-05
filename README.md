@@ -41,7 +41,9 @@ The other planned Chicago comparison is still running.
 
 A separate search experiment improved the later Lake Hood result to 83 m.
 Its next candidate is 479 m away. The result remains ambiguous.
-Two new Lake Hood recordings are testing the same fixed experimental build.
+Two new Lake Hood recordings test the same fixed experimental build.
+The first returned a location 8.56 km away, with three matches. It failed.
+The second is still running. The 83 m improvement has not generalized to the first new recording.
 
 Two further one-hour Midway recordings were selected before testing.
 Both returned no location on their planned test build.
@@ -51,9 +53,9 @@ The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
-All 76 software tests pass locally. Formatting, strict Clippy, documentation tests,
-and both release builds also pass. The terrain change still needs Windows and Ubuntu CI.
-The previous 71-test revision passed [both CI systems](https://github.com/Donovoi/soundgeo/actions/runs/42035476858).
+All 76 software tests pass locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42047220138).
+Formatting, strict Clippy, documentation tests, and both release builds also pass.
 The Chicago download and data checks pass.
 Its first broad-area location test reached the search limit.
 A run with a larger search limit produced the 236 m Midway result.
