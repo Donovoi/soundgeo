@@ -855,3 +855,25 @@ status, track count, and hypothesis count. It took 267.49 seconds. An adjacent
 baseline repeat took 334.50 seconds; an earlier baseline took 137.84 seconds.
 Other searches were active, so these times do not establish a general speedup.
 See [clock-cache-comparison.json](clock-cache-comparison.json).
+
+Revision `e947120` also passes
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41979243404).
+The November 4 Chicago download completed with 575,365 positions. All 2,880
+requested parts were saved and parsed; 43 parts were not marked online by the
+source. Complete file coverage does not establish complete flight observations.
+The two preselected recordings are running on the planned `2988d77` build.
+
+Further Lake Hood diagnostics use the prior known-area candidate as an explicit
+hint. With the current model, its five flights still fit the unchanged sounds
+at 0.8233% joint error. Actual corridor generation for three of those aircraft
+produced a proposal about 30 m from that prior app estimate. Profiling nearby
+proposals gave at most four valid matches. Passing those 363 nearby proposals
+to the unchanged final refinement step recovered three five-match candidates.
+
+This supports a proposal-selection problem. It does not prove which pruning
+stage caused the full-search failure. The latest build must complete the broad
+case before another selection change is justified. That retry is queued after
+the native Chicago holdout, with the same media, broad bounds, full reference
+day, and unknown recording clock. Its resource limit is explicitly 50 million.
+See [lake-later-search-diagnostics.json](lake-later-search-diagnostics.json).
+None of these hinted diagnostics counts as a location-accuracy pass.
