@@ -993,7 +993,9 @@ See [fresh-lake-cases-prepared.json](fresh-lake-cases-prepared.json).
 
 ## Further results from the same benchmark build
 
-Seven of the ten original cases have now finished on `a25bd0d`. The later
+Eight of the ten original cases have now finished on `a25bd0d`. The earlier
+November 1 Lake Hood run again returned a first candidate 45.749 m from the
+camera, with five matching sounds. It remains ambiguous. The later
 November 1 Lake Hood run returned a first candidate 5,215.866 m from the
 camera, with four matching sounds. The November 3 Lake Hood run returned
 a first candidate 6,783.075 m away. Both results are ambiguous and fail the
@@ -1001,7 +1003,7 @@ a first candidate 6,783.075 m away. Both results are ambiguous and fail the
 and a first candidate 13,621.587 m away.
 
 The combined record still has four coordinate hits and zero accepted results.
-The remaining three runs continue with their original inputs and executable.
+The remaining two runs continue with their original inputs and executable.
 See [results.json](results.json).
 
 ## Sound timing as a search aid
@@ -1042,3 +1044,26 @@ They still return no candidate for the Midway holdout and an ambiguous wrong
 candidate for Southampton. This change improves reuse of calculations; it
 does not establish location accuracy. The running benchmark keeps its original
 executable. See [segment-cache-evidence.json](segment-cache-evidence.json).
+
+## Fitting all accepted curves together
+
+A further experiment refined every accepted curve together, while keeping
+the original observations, flight assignments and acceptance checks. It kept
+the original candidates as alternatives. This code is on a separate branch
+at `6ce0753`; it is not part of the main application.
+
+Its 74 local software tests and Windows and Ubuntu CI checks pass. The two
+complete-area controls remain exactly unchanged. Three further diagnostics
+used regions and clocks computed by earlier searches, with the same inputs
+for both versions. These are not broad-area acceptance tests.
+
+| Diagnostic | Previous first error | New first error | Result |
+| --- | ---: | ---: | --- |
+| Midway | 19.741 m | 39.309 m | Ambiguous |
+| Earlier Lake Hood | 20.521 m | 28.933 m | Ambiguous |
+| Later Lake Hood | 5,347.023 m | 5,322.713 m | Ambiguous |
+
+The curve error fell, but the two nearby first candidates moved farther from
+the camera. The wrong Lake Hood result stayed more than 5 km away. This did
+not establish better location accuracy. See
+[full-consensus-experiment.json](full-consensus-experiment.json).

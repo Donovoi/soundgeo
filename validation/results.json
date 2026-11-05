@@ -2,7 +2,7 @@
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
   "latest_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
-  "latest_code_cases_tested": 7,
+  "latest_code_cases_tested": 8,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
@@ -2581,6 +2581,38 @@
           ],
           "top_error_m": 45.749,
           "top_matches": 5
+        },
+        "arrival_cache_expanded": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 24,
+          "candidates": 10,
+          "flight_segments": 1040,
+          "hypotheses": 19814757,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": true,
+          "passed": false,
+          "report_sha256": "12318722e786235ab384d1767f46b79345f938bb6fffd120bb163f5d077d97cc",
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "grouped_sounds": 13,
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+          "candidate_errors_m": [
+            45.749,
+            5838.974,
+            6756.566,
+            8056.15,
+            9785.049,
+            13104.684,
+            248.129,
+            307.186,
+            525.757,
+            19918.724
+          ],
+          "top_error_m": 45.749,
+          "top_matches": 5
         }
       },
       "incomplete_runs": [
@@ -2626,7 +2658,7 @@
           }
         }
       ],
-      "latest_evaluated_stage": "retained_support"
+      "latest_evaluated_stage": "arrival_cache_expanded"
     },
     {
       "case": "lake-hood-nov1-later",
