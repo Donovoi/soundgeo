@@ -1,8 +1,8 @@
 {
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
-  "latest_code_commit": "163c76f223daf48cc1dca5963a97f67033662cad",
-  "latest_code_cases_tested": 4,
+  "latest_code_commit": "35ba97d9157bb1b051a83b3af0b8d59e93985ab3",
+  "latest_code_cases_tested": 1,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
@@ -1421,7 +1421,16 @@
           "top_matches": 3
         }
       },
-      "incomplete_runs": [],
+      "incomplete_runs": [
+        {
+          "stage": "time_index",
+          "case": "midway-nov1-holdout",
+          "exit_code": 1,
+          "elapsed_s": 8079.2,
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
+        }
+      ],
       "latest_evaluated_stage": "short_windows"
     },
     {
@@ -1628,10 +1637,31 @@
           ],
           "top_error_m": 7576.122,
           "top_matches": 3
+        },
+        "clock_support": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 3,
+          "candidates": 1,
+          "flight_segments": 4134,
+          "hypotheses": 1821202,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "b7d58c9b335749a145b4b53bcb01553119c6e57edec977e3e09bcdc8f485ecdf",
+          "cli_sha256": "5d5286d8b60930bc2109ba1424967ea98bc3f2f7378924c19ca5f9b14081f499",
+          "grouped_sounds": 2,
+          "evaluated_code_commit": "35ba97d9157bb1b051a83b3af0b8d59e93985ab3",
+          "candidate_errors_m": [
+            7576.122
+          ],
+          "top_error_m": 7576.122,
+          "top_matches": 3
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "parallel_retry"
+      "latest_evaluated_stage": "clock_support"
     },
     {
       "case": "lake-hood",

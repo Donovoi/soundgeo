@@ -311,5 +311,97 @@
       "b3a0723e31df149fb9133054f3c971d1d8f3fde9ef0b31d2925b01846926aa47",
       "900f04fb608f2df6afaafe729b3b5cc5c606772206bda301a3d16e7be380a46c"
     ]
+  },
+  "native_chicago_november1": {
+    "not_location_acceptance": true,
+    "parser_equivalence": {
+      "not_location_acceptance": true,
+      "recording_clock_used": false,
+      "full_utc_day": "2026-11-01",
+      "code_commit": "163c76f223daf48cc1dca5963a97f67033662cad",
+      "cli_sha256": "bd7d087d4dbcb8e56ba2f089e56e4d80013c5c26888caaf2b739b3ad48a6c4a9",
+      "native_csv_sha256": "1fc128b441c6a5bbfc1cd875d0002196767ba85bcd5901ea07d5aa89bb9a2aef",
+      "chunks": 2880,
+      "points": 607245,
+      "offline_chunks": 34,
+      "maximum_numeric_difference": 0.0,
+      "matched_fields": [
+        "aircraft",
+        "UTC timestamp",
+        "latitude",
+        "longitude",
+        "WGS84 ellipsoid altitude",
+        "type code",
+        "callsign",
+        "registration",
+        "raw MSL altitude"
+      ]
+    },
+    "known_area_diagnostics": [
+      {
+        "case": "midway-nov1",
+        "reference_sha256": "1fc128b441c6a5bbfc1cd875d0002196767ba85bcd5901ea07d5aa89bb9a2aef",
+        "cli_sha256": "bd7d087d4dbcb8e56ba2f089e56e4d80013c5c26888caaf2b739b3ad48a6c4a9",
+        "code_commit": "163c76f223daf48cc1dca5963a97f67033662cad",
+        "known_area_diagnostic_only": true,
+        "recording_clock_supplied": false,
+        "full_reference_day_requested": "2026-11-01",
+        "native_automatic_archive": true,
+        "exit_code": 0,
+        "elapsed_s": 182.12,
+        "status": "ambiguous",
+        "events": 11,
+        "candidates": 10,
+        "tracks": 4429,
+        "matches": [
+          4,
+          4,
+          4,
+          4,
+          4,
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "first_candidate_error_m": 111.34895165704671,
+        "bounds": {
+          "south": 41.77395094638533,
+          "north": 41.78293405813524,
+          "west": -87.74880116276583,
+          "east": -87.73675504533836
+        },
+        "search_mode": "regional_grid"
+      },
+      {
+        "case": "midway-nov1-holdout",
+        "reference_sha256": "1fc128b441c6a5bbfc1cd875d0002196767ba85bcd5901ea07d5aa89bb9a2aef",
+        "cli_sha256": "bd7d087d4dbcb8e56ba2f089e56e4d80013c5c26888caaf2b739b3ad48a6c4a9",
+        "code_commit": "163c76f223daf48cc1dca5963a97f67033662cad",
+        "known_area_diagnostic_only": true,
+        "recording_clock_supplied": false,
+        "full_reference_day_requested": "2026-11-01",
+        "native_automatic_archive": true,
+        "exit_code": 0,
+        "elapsed_s": 99.0,
+        "status": "ambiguous",
+        "events": 11,
+        "candidates": 1,
+        "tracks": 4429,
+        "matches": [
+          3
+        ],
+        "first_candidate_error_m": 26.934831049465643,
+        "bounds": {
+          "south": 41.77395094638533,
+          "north": 41.78293405813524,
+          "west": -87.74880116276583,
+          "east": -87.73675504533836
+        },
+        "search_mode": "regional_grid"
+      }
+    ],
+    "resumed_after_transient_download_failure": true
   }
 }

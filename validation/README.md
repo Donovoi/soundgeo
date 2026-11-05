@@ -600,3 +600,23 @@ is required before that flag can be removed. This guard does not change the
 location estimate and does not establish the accuracy of four-sound results.
 The three- and four-flight synthetic controls preserve clock-rate recovery.
 Evidence is in [clock-support-diagnostic.json](clock-support-diagnostic.json).
+
+The completed replay on `35ba97d` keeps every candidate and score unchanged,
+but marks the wrong Southampton result `ambiguous`. The location error remains.
+All 63 software tests and the required local checks pass on this revision.
+
+## Completed November 1 airport download
+
+The resumed native Chicago download saved all 2,880 parts and 607,245 positions.
+Every compared field matches the independent Python decoder exactly, including
+times across the daylight-saving transition. The radar was not marked online
+in 34 intervals. The archive can still omit flights.
+
+The main Midway known-area diagnostic returns a first candidate 111.3 m from
+the camera with four matches. The other recording returns one candidate
+26.9 m away with three matches. Each recording has eleven detected sound
+groups. Both results remain ambiguous and are excluded from acceptance.
+
+The older broad Midway holdout run on `e1aa6bc` reached its 20-million-hypothesis
+budget before finishing. It returned an error and no partial result. Its failed
+run and logs are retained. A larger search budget must be recorded as a new run.

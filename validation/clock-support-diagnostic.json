@@ -30,5 +30,13 @@
       "hypotheses": 1821202
     }
   ],
-  "limitation": "A shared clock-rate fit and three independent matches did not establish the correct location. The fixed-rate control has no candidate. This control does not establish that all false matches need clock drift."
+  "limitation": "A shared clock-rate fit and three independent matches did not establish the correct location. The fixed-rate control has no candidate. This control does not establish that all false matches need clock drift.",
+  "guard_replay": {
+    "status": "ambiguous",
+    "candidates_unchanged": true,
+    "code_commit": "35ba97d9157bb1b051a83b3af0b8d59e93985ab3",
+    "cli_sha256": "5d5286d8b60930bc2109ba1424967ea98bc3f2f7378924c19ca5f9b14081f499",
+    "report_sha256": "b7d58c9b335749a145b4b53bcb01553119c6e57edec977e3e09bcdc8f485ecdf",
+    "location_accuracy_fixed": false
+  }
 }
