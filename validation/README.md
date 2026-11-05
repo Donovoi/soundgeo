@@ -925,3 +925,23 @@ clocks. The resource limit is explicitly 50 million hypotheses per case.
 See [qualified-batch-consolidation.json](qualified-batch-consolidation.json).
 The preselected November 4 recordings keep their original planned build and
 acceptance criteria.
+
+## Completed preselected November 4 recordings
+
+Both new one-hour Midway recordings finished on their planned revision,
+`2988d77`, without a recording start time. They used the original broad box,
+the complete downloaded Chicago reference day, and a 50-million-hypothesis
+limit. Both returned `insufficient_evidence`, with no candidates. Acceptance
+is **0/2**, with no coordinate hits. A complete download does not establish
+that every audible aircraft has complete position data.
+
+| Recording | Detected events | Hypotheses | Runtime | Candidates |
+| --- | ---: | ---: | ---: | ---: |
+| midway-nov4-a | 9 | 19,227,476 | 6,389.21 s | 0 |
+| midway-nov4-b | 4 | 7,964,629 | 710.46 s | 0 |
+
+These are new recordings from the existing camera, not a new location.
+Their plan, source files, dates, bounds and executable were fixed before
+evaluation. The second run finished before the combined results were reviewed.
+See [fresh-cases-results.json](fresh-cases-results.json). These failed results
+do not replace any of the original ten cases.

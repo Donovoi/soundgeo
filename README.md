@@ -29,6 +29,10 @@ All three results remain ambiguous. The other recordings have not passed the loc
 An earlier Midway result was 27 m away. Later runs returned first choices 24.6 km and 26.9 km away.
 A later Lake Hood recording returned a first choice 5.38 km away after a larger search.
 
+Two further one-hour Midway recordings were selected before testing.
+Both returned no location on their planned test build.
+They used the free Chicago flight data and no recording start times.
+
 The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
