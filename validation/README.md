@@ -1205,4 +1205,42 @@ All 76 local tests pass, with no failures or ignored tests. The five new tests
 cover tile selection, cache integrity and repair, invalid downloads, cancellation,
 the date-line boundary, and CLI use. Automatic and manual terrain input produce
 the same candidate evidence in the CLI test. Formatting, strict release Clippy,
-documentation tests and both release builds pass. CI is pending for this change.
+documentation tests and both release builds pass.
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42047220138)
+each passed all 76 tests. The logs were checked for the expected source test names.
+
+The native CLI downloaded all six real terrain tiles from an empty cache.
+Their bytes match the independently downloaded files. Two paired real-video
+diagnostics then produced identical events, candidates, hypotheses, status,
+and flight references with automatic and manual terrain input.
+An initial test-script assertion incorrectly required a null clock in these
+computed-proposal jobs. The corrected check preserves the original inferred
+clock. The first log and completed runs remain saved; they were not rerun.
+See [terrain-download-evidence.json](terrain-download-evidence.json).
+
+## Whole-day temperature diagnostic
+
+The app uses 15 °C unless another value is supplied. A separate diagnostic
+downloaded free routine weather reports from the Iowa Environmental Mesonet.
+It used all stations within each original broad area and the whole UTC day.
+It calculated hourly station medians, daily station medians, and a median
+across stations. It used no camera position or recording clock to select weather.
+
+The Lake Hood reference was 1.389 °C. With that temperature, its local first
+choice moved from 108.563 m to 233.326 m. Its next choice was 607.289 m away.
+The Chicago reference was 17.778 °C. Its first choice moved from 70.411 m to
+69.059 m, with a competing choice 327.588 m away. Both remain ambiguous.
+Temperature changes also changed the fitted sound observations.
+Surface temperature is not the average temperature along the sound path.
+Automatic weather selection was not added. These local diagnostics do not
+count as location acceptance. See [weather-followup.json](weather-followup.json).
+
+## New Lake Hood recordings on the fixed experimental build
+
+The first preselected November 4 recording finished in about 105 minutes.
+The `a5e0a99` build used the original broad bounds, full free ADSB.lol day,
+and no recording clock. Its first choice is 8,560.765 m from the camera.
+All five returned candidates have three matches. The result is ambiguous
+and fails the 250 m target. The second preselected recording is still running.
+The failed run remains part of the test set. The earlier 83 m improvement
+does not establish reliability. See [fresh-lake-cases-results.json](fresh-lake-cases-results.json).
