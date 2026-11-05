@@ -483,6 +483,15 @@ pub fn locate(
             .par_iter()
             .flat_map_iter(|&point| {
                 let cpas: Vec<_> = tracks.iter().map(|t| t.cpa(point.ecef(), c)).collect();
+                // complete_seed only accepts CPA times within 45 seconds.
+                // Index them once instead of scanning a whole reference day
+                // for each alternate observation of every proposed sound.
+                let mut timed_cpas: Vec<_> = cpas
+                    .iter()
+                    .enumerate()
+                    .filter_map(|(j, cpa)| cpa.map(|(t, r, v)| (j, t, r, v)))
+                    .collect();
+                timed_cpas.sort_by(|a, b| a.1.total_cmp(&b.1).then(a.0.cmp(&b.0)));
                 let mut here = vec![];
                 for &anchor in &anchors {
                     for first in events[anchor].variants() {
@@ -501,14 +510,19 @@ pub fn locate(
                             if score > FEATURE_ERROR_LIMIT {
                                 continue;
                             }
-                            if let Some(seed) =
-                                complete_seed(point, start, anchor, i, score, events, |_, _| {
-                                    cpas.iter()
-                                        .enumerate()
-                                        .filter_map(|(j, cpa)| cpa.map(|(t, r, v)| (j, t, r, v)))
-                                        .collect()
-                                })
-                            {
+                            if let Some(seed) = complete_seed(
+                                point,
+                                start,
+                                anchor,
+                                i,
+                                score,
+                                events,
+                                |wanted, _| {
+                                    let lo = timed_cpas.partition_point(|v| v.1 < wanted - 45.);
+                                    let hi = timed_cpas.partition_point(|v| v.1 <= wanted + 45.);
+                                    timed_cpas[lo..hi].to_vec()
+                                },
+                            ) {
                                 here.push(seed);
                             }
                         }

@@ -123,3 +123,7 @@ Short-flyover detection requires 8 dB of signal contrast by default.
 The former 6 dB default admitted occasional curves from generated wind and Gaussian noise.
 Explicit contrast settings in saved jobs are retained.
 Signal contrast is a detector setting, not a probability that the sound came from an aircraft.
+
+The regional search indexes closest-approach times once per grid point.
+Each observation then reads only the existing 45-second matching window from that index.
+This changes lookup cost; it does not narrow the allowed reference dates or change the matching gate.
