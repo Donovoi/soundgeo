@@ -23,17 +23,16 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 
 Ten public-camera recordings were tested without their recording start times.
 The tests used known dates and broad search areas.
-Two first-choice locations were near the correct camera: 27 m and 92 m away.
-Both recordings came from Midway. Both results still had insufficient support for a clear answer.
-The Lake Hood and Southampton tests failed.
+Development runs have produced three first-choice locations within 250 m of the camera.
+Two came from Midway: 27 m and 92 m away. One came from Lake Hood: 46 m away.
+All three results remain ambiguous. The other recordings have not passed the location tests.
 
 The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
-All 65 software tests pass locally.
-The search revision also passed all 65 tests in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41962057606).
+All 65 software tests pass locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41963574130).
 The Chicago download and data checks pass.
 Its broad-area location test reached the search limit and did not produce a result.
 Software test success does not establish location accuracy.

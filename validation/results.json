@@ -1,14 +1,14 @@
 {
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
-  "latest_code_commit": "7f95301094344e6c32cd27403e8e8002d4fb049d",
+  "latest_code_commit": "c5c9f598b20b4d1532cfed2a03f473cbaf346f8a",
   "latest_code_cases_tested": 0,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
   "date_and_broad_region_supplied": true,
   "real_accuracy_established": false,
-  "coordinate_hits": 2,
+  "coordinate_hits": 3,
   "accepted_cases": 0,
   "case_count": 10,
   "cases": [
@@ -1951,10 +1951,57 @@
           ],
           "top_error_m": 2840.822,
           "top_matches": 3
+        },
+        "parallel_retry": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 24,
+          "candidates": 10,
+          "flight_segments": 1040,
+          "hypotheses": 19814757,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": true,
+          "passed": false,
+          "report_sha256": "303638852c7a1fb7e211b985958dbf18b476898be822672a1be604a81fb68004",
+          "cli_sha256": "bd7d087d4dbcb8e56ba2f089e56e4d80013c5c26888caaf2b739b3ad48a6c4a9",
+          "grouped_sounds": 13,
+          "evaluated_code_commit": "163c76f223daf48cc1dca5963a97f67033662cad",
+          "candidate_errors_m": [
+            45.749,
+            248.129,
+            13108.783,
+            307.186,
+            19918.724,
+            9293.323,
+            9909.85,
+            11861.725,
+            647.76,
+            5793.596
+          ],
+          "top_error_m": 45.749,
+          "top_matches": 5
         }
       },
-      "incomplete_runs": [],
-      "latest_evaluated_stage": "short_windows"
+      "incomplete_runs": [
+        {
+          "stage": "time_index",
+          "case": "lake-hood-nov1",
+          "exit_code": 4294967295,
+          "elapsed_s": 83.3,
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb",
+          "cancellation": {
+            "reason": "Superseded duplicate: the newer 163c76f broad run is complete, and c5c9f59 is replaying the same original job. Preserve both of those results instead of starting another obsolete e1aa6bc search.",
+            "cancelled_code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb",
+            "completed_replacement": "parallel-retry-report.json",
+            "current_replay_stage": "envelopes",
+            "planned_process_id": 27632,
+            "not_an_accuracy_result": true
+          }
+        }
+      ],
+      "latest_evaluated_stage": "parallel_retry"
     },
     {
       "case": "lake-hood-nov1-later",
@@ -2132,7 +2179,16 @@
           "top_matches": 4
         }
       },
-      "incomplete_runs": [],
+      "incomplete_runs": [
+        {
+          "stage": "time_index",
+          "case": "lake-hood-nov1-later",
+          "exit_code": 1,
+          "elapsed_s": 12194.2,
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
+        }
+      ],
       "latest_evaluated_stage": "short_windows"
     }
   ]

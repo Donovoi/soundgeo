@@ -648,3 +648,45 @@ The CLI also accepts `--max-hypotheses` to retry a search with a different
 resource limit. Its checks verify the report's effective limit, preservation
 of the saved job, and rejection of invalid values before reading input files.
 All 65 software tests and required local checks pass with this option.
+The same revision passes [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41963574130).
+
+## Completed broad Lake Hood run
+
+The earlier November 1 Lake Hood recording now has a first candidate 45.749 m
+from the camera on revision `163c76f`. The run used the original broad bounds,
+the full reference day, the original recording, and `start_utc: null`.
+It examined 19,814,757 hypotheses from 1,040 flight segments in 5,956.5 seconds.
+No camera coordinates, recording clock, or aircraft identities were supplied.
+
+Five sound groups match five flight segments from three aircraft at the first
+location. Each of the other nine returned candidates has three matches.
+Nineteen detected groups remain unmatched. The report status is `ambiguous`.
+The result meets the 250 m coordinate target, but it does not pass the
+unambiguous-result requirement. The correct location survived the broad search;
+this case does not support changing pruning to fix a missing location.
+
+The development record now contains three coordinate hits from two cameras,
+with zero accepted unambiguous results. These are mixed development revisions,
+not a completed benchmark of the latest code. The complete result and hashes
+are summarized in [results.json](results.json). A replay with the faster index
+retains the original job and 20-million-hypothesis budget.
+
+The later Lake Hood run on `e1aa6bc` reached that budget after 12,194.2 seconds
+and returned no report. A separate retry raises only the resource limit to
+50 million. The newly started older-code duplicate for the earlier clip was
+cancelled after the newer `163c76f` run finished; its cancellation record and
+exit code remain in the development results. The current-code replay continues.
+
+A separate sensitivity diagnostic uses only the app's first Lake Hood candidate,
+its five matched observations, and the reference tracks. It supplies no camera
+coordinates or external recording clock. It samples 41 nearby positions and
+adjusts the inferred clock while holding the flight associations and observation
+variants fixed. Some sampled points retain all five matches at one clock setting
+but lose a curvature check at a setting with lower numerical error.
+
+This is a conditional diagnostic, not another blind location test. Sparse local
+sampling cannot bound the full uncertainty region. The app can also select
+alternative observations, so these fixed-variant results alone do not establish
+a refinement bug. Evidence is in [lake-hood-sensitivity.json](lake-hood-sensitivity.json).
+The diagnostic can be reproduced with `cargo run --release --example profile_candidate -- report.json sensitivity.json`
+when the report's original reference data is available.
