@@ -55,6 +55,10 @@ enum Commands {
         /// Return exit code 3 if analysis finishes without a candidate.
         #[arg(long)]
         require_match: bool,
+        /// Require candidates_found: exit 3 for no candidate, or 4 for ambiguity.
+        /// This checks the model status, not real-world location accuracy.
+        #[arg(long)]
+        require_unambiguous: bool,
     },
     /// Write a synthetic recording, flight CSV and unknown-time job.
     Demo {
@@ -114,6 +118,7 @@ fn run(args: Args) -> Result<u8> {
             max_hypotheses,
             output,
             require_match,
+            require_unambiguous,
         }) => {
             if output.canonicalize().ok().is_some_and(|p| {
                 config
@@ -199,8 +204,11 @@ fn run(args: Args) -> Result<u8> {
                     );
                 }
             }
-            if require_match && report.candidates.is_empty() {
+            if (require_match || require_unambiguous) && report.candidates.is_empty() {
                 return Ok(3);
+            }
+            if require_unambiguous && report.status != "candidates_found" {
+                return Ok(4);
             }
         }
         Some(Commands::Demo { output }) => {

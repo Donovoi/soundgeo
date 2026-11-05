@@ -34,6 +34,7 @@ fn headless_cli_generates_demo_and_streams_a_complete_report() {
             "--output",
             "-",
             "--require-match",
+            "--require-unambiguous",
             "--max-hypotheses",
             "50000000",
         ])
@@ -49,6 +50,7 @@ fn headless_cli_generates_demo_and_streams_a_complete_report() {
     let report: soundgeo::Report = serde_json::from_slice(&result.stdout).unwrap();
     assert_eq!(report.events.len(), 2);
     assert!(!report.candidates.is_empty());
+    assert_eq!(report.status, "candidates_found");
     assert!(report.job.start_utc.is_none());
     assert_eq!(report.job.max_hypotheses, 50_000_000);
     let saved: soundgeo::Job = serde_json::from_slice(&std::fs::read(&config).unwrap()).unwrap();
@@ -110,6 +112,80 @@ fn headless_cli_direct_paths_quiet_mode_and_no_match_exit_code() {
         .unwrap();
     assert_eq!(result.status.code(), Some(0));
     assert!(serde_json::from_slice::<soundgeo::Report>(&result.stdout).is_ok());
+    let result = cli()
+        .args(["--quiet", "analyze", "--input"])
+        .arg(&wav)
+        .arg("--tracks")
+        .arg(&tracks)
+        .args(["--output", "-", "--require-unambiguous"])
+        .output()
+        .unwrap();
+    assert_eq!(result.status.code(), Some(3));
+    let report: soundgeo::Report = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(report.status, "insufficient_evidence");
+    assert!(report.candidates.is_empty());
+}
+
+#[test]
+fn headless_cli_can_reject_ambiguity_after_saving_the_report() {
+    let dir = tempfile::tempdir().unwrap();
+    soundgeo::demo::create(dir.path()).unwrap();
+    let config = dir.path().join("job.json");
+    let mut job: soundgeo::Job = serde_json::from_slice(&std::fs::read(&config).unwrap()).unwrap();
+    // Keep only the first flyover. Its unknown clock must remain provisional.
+    let mut reader = hound::WavReader::open(&job.media).unwrap();
+    let spec = reader.spec();
+    let short = dir.path().join("one-flyover.wav");
+    let mut writer = hound::WavWriter::create(&short, spec).unwrap();
+    for sample in reader
+        .samples::<i16>()
+        .take(spec.sample_rate as usize * 100)
+    {
+        writer.write_sample(sample.unwrap()).unwrap();
+    }
+    writer.finalize().unwrap();
+    job.media = short;
+    std::fs::write(&config, serde_json::to_vec(&job).unwrap()).unwrap();
+    let output = dir.path().join("reports/ambiguous.json");
+    let result = cli()
+        .args(["--quiet", "analyze", "--config"])
+        .arg(&config)
+        .arg("--output")
+        .arg(&output)
+        .arg("--require-unambiguous")
+        .output()
+        .unwrap();
+    assert_eq!(
+        result.status.code(),
+        Some(4),
+        "{}",
+        String::from_utf8_lossy(&result.stderr)
+    );
+    assert!(result.stdout.is_empty());
+    assert!(result.stderr.is_empty());
+    let report: soundgeo::Report =
+        serde_json::from_slice(&std::fs::read(&output).unwrap()).unwrap();
+    assert_eq!(report.status, "ambiguous");
+    assert_eq!(report.events.len(), 1);
+    assert!(!report.candidates.is_empty());
+    assert!(report.job.start_utc.is_none());
+
+    // Existing --require-match callers keep their candidate-only behavior.
+    let result = cli()
+        .args(["--quiet", "analyze", "--config"])
+        .arg(&config)
+        .args(["--output", "-", "--require-match"])
+        .output()
+        .unwrap();
+    assert_eq!(result.status.code(), Some(0));
+    let compatible: soundgeo::Report = serde_json::from_slice(&result.stdout).unwrap();
+    assert_eq!(compatible.status, report.status);
+    let mut expected = serde_json::to_value(&report).unwrap();
+    let mut actual = serde_json::to_value(&compatible).unwrap();
+    // The two invocations necessarily have different report creation times.
+    expected.as_object_mut().unwrap().remove("created_utc");
+    actual.as_object_mut().unwrap().remove("created_utc");
+    assert!(actual == expected, "The CLI policy changed report evidence");
 }
 
 #[test]
@@ -120,6 +196,7 @@ fn headless_cli_help_and_errors_have_documented_exit_codes() {
     let help = cli().args(["analyze", "--help"]).output().unwrap();
     assert!(help.status.success());
     assert!(String::from_utf8_lossy(&help.stdout).contains("--require-match"));
+    assert!(String::from_utf8_lossy(&help.stdout).contains("--require-unambiguous"));
     assert!(String::from_utf8_lossy(&help.stdout).contains("--max-hypotheses"));
     for budget in ["0", "99", "100000001", "-1", "many"] {
         let invalid = cli()
