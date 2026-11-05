@@ -100,6 +100,24 @@ fn cli_uses_verified_offline_terrain_and_preserves_manual_analysis() {
         String::from_utf8_lossy(&output.stderr)
     );
     let manual: Report = serde_json::from_slice(&std::fs::read(manual_path).unwrap()).unwrap();
+    // Saving a report must never corrupt its terrain input or cache metadata.
+    let tile = tiles(bounds).unwrap().remove(0);
+    let cache = manual.job.terrain.as_ref().unwrap();
+    for name in [
+        format!("{tile}.hgt"),
+        format!("{tile}.terrain.json"),
+        "TERRAIN-ATTRIBUTION.txt".into(),
+    ] {
+        let path = cache.join(name);
+        let before = std::fs::read(&path).unwrap();
+        assert!(
+            soundgeo::save_report(&manual, &path)
+                .unwrap_err()
+                .to_string()
+                .contains("terrain")
+        );
+        assert_eq!(std::fs::read(path).unwrap(), before);
+    }
     assert!(!auto.candidates.is_empty());
     assert_eq!(auto.status, manual.status);
     assert_eq!(
