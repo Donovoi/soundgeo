@@ -88,6 +88,10 @@ pub(crate) struct Seed {
     pub indices: Vec<usize>,
     pub alternatives: Arc<Vec<[usize; 3]>>,
     pub score: f64,
+    // Coarse pruning does not change a retained proposal's point or options.
+    // Profile new proposals once instead of repeating the same clock search
+    // whenever another worker batch is merged into the beam.
+    pub coarse_profiled: bool,
 }
 
 struct CorroboratedFit {
@@ -193,7 +197,10 @@ pub(crate) fn score_and_prune_seeds(
 ) -> Result<()> {
     let evaluate = |seed: &mut Seed| -> Result<()> {
         control.check()?;
-        profile_seed_clock(seed, job, events, tracks);
+        if !seed.coarse_profiled {
+            profile_seed_clock(seed, job, events, tracks);
+            seed.coarse_profiled = true;
+        }
         Ok(())
     };
     // Use the caller's bounded corridor pool, including nested worker batches.
@@ -389,27 +396,37 @@ fn profile_seed_clock(seed: &mut Seed, job: &Job, events: &[Event], tracks: &[Tr
     // that observation while profiling one rate shared by all associations.
     let pivot = events[seed.anchor].cpa_s;
     let unit_start = seed.start + (seed.clock_rate - 1.) * pivot;
-    let try_rate = |seed: &mut Seed, rate: f64| {
+    let template = seed.clone();
+    let evaluate_rate = |rate: f64| {
         let start = unit_start - (rate - 1.) * pivot;
         if (rate - 1.).abs() > drift + 1e-12 || !within_time(job, start) {
-            return;
+            return None;
         }
-        let mut trial = seed.clone();
+        let mut trial = template.clone();
         trial.clock_rate = rate;
         trial.start = start;
         (trial.score, trial.indices) = sampled_curve_fit(&trial, events, tracks, c);
-        if trial.score < seed.score {
-            *seed = trial;
-        }
+        Some(trial)
     };
-    for step in -4..=4 {
-        try_rate(seed, 1. + drift * step as f64 / 4.);
-    }
-    let mut step = drift / 4.;
-    for _ in 0..6 {
-        step *= 0.5;
-        for sign in [-1., 1.] {
-            try_rate(seed, seed.clock_rate + sign * step);
+    // A narrow correct clock basin can have a worse coarse score than a broad
+    // fit to unrelated flights. Refine each coarse start before comparing them.
+    for grid in -4..=4 {
+        let Some(mut basin) = evaluate_rate(1. + drift * grid as f64 / 4.) else {
+            continue;
+        };
+        let mut step = drift / 4.;
+        for _ in 0..6 {
+            step *= 0.5;
+            for sign in [-1., 1.] {
+                if let Some(trial) = evaluate_rate(basin.clock_rate + sign * step)
+                    && trial.score < basin.score
+                {
+                    basin = trial;
+                }
+            }
+        }
+        if basin.score < seed.score {
+            *seed = basin;
         }
     }
 }
@@ -477,6 +494,7 @@ pub(crate) fn complete_seed(
         // Rewarding every loose association first lets unrelated sounds crowd
         // out three precise matches before they ever reach refinement.
         score: score.powi(2),
+        coarse_profiled: false,
     })
 }
 
@@ -1186,6 +1204,7 @@ mod tests {
             indices: vec![0, 1, 2, 3],
             alternatives: Default::default(),
             score: 0.,
+            coarse_profiled: false,
         };
         let first = exact_score(&seed, &events, &tracks, c);
         seed.point = shifted;
@@ -1379,6 +1398,7 @@ mod tests {
             indices: vec![0],
             alternatives: Default::default(),
             score: 0.,
+            coarse_profiled: false,
         };
         let (_, matches) = exact_score(&seed, &[event], &tracks, 340.39);
         assert!(
@@ -1435,6 +1455,7 @@ mod tests {
             indices: vec![0, 1, 2, 3],
             alternatives: Default::default(),
             score: 0.,
+            coarse_profiled: false,
         };
         let (core_error, matches) = exact_score(&seed, &events, &tracks, 340.39);
         assert!(core_error < 1., "The three-flight core must pass");
@@ -1457,6 +1478,7 @@ mod tests {
             indices: vec![0, 1, 2],
             alternatives: Default::default(),
             score: 0.,
+            coarse_profiled: false,
         };
         let mut seeds: Vec<_> = (0..9000)
             .map(|i| {
@@ -1522,6 +1544,7 @@ mod tests {
             indices: vec![0],
             alternatives: Default::default(),
             score: 1.,
+            coarse_profiled: false,
         };
         let mut wrong = correct.clone();
         wrong.point.lat += 0.03;
@@ -1845,6 +1868,105 @@ mod tests {
         );
     }
     #[test]
+    fn clock_profile_does_not_commit_to_the_best_coarse_basin() {
+        let job = Job::default();
+        let c = job.sound_speed();
+        let rate = 1.00207;
+        let decoy_rate = 1.00375;
+        let mut tracks = vec![];
+        let mut events = vec![];
+        for (i, passage) in [700., 1800., 3300.].into_iter().enumerate() {
+            let track = Track {
+                id: format!("real-{i}"),
+                kind: crate::aircraft::AircraftKind::Unknown,
+                samples: (-50..=50)
+                    .map(|offset| {
+                        crate::model::Sample::new(
+                            demo::EPOCH + passage + offset as f64,
+                            Point {
+                                lat: demo::TRUTH.lat + offset as f64 * 70. / 111320.,
+                                lon: demo::TRUTH.lon
+                                    + 50. / (111320. * demo::TRUTH.lat.to_radians().cos()),
+                                alt: demo::TRUTH.alt + 220.,
+                            },
+                        )
+                    })
+                    .collect(),
+            };
+            let (arrival, range, speed) = track.cpa(demo::TRUTH.ecef(), c).unwrap();
+            let center = (arrival - demo::EPOCH) / rate;
+            events.push(Event {
+                start_s: center - 12.,
+                end_s: center + 12.,
+                cpa_s: center,
+                base_hz: 150.,
+                speed_mps: speed,
+                slant_m: range,
+                fit_rmse_hz: 0.,
+                contrast_db: 20.,
+                ridge: (0..=96)
+                    .map(|k| {
+                        let time_s = center - 12. + k as f64 * 0.25;
+                        RidgePoint {
+                            time_s,
+                            hz: 150.
+                                * track
+                                    .factor(demo::TRUTH.ecef(), demo::EPOCH + rate * time_s, c)
+                                    .unwrap(),
+                            contrast_db: 20.,
+                        }
+                    })
+                    .collect(),
+                activity_span_s: None,
+                alternatives: vec![],
+            });
+            tracks.push(track);
+        }
+        let pivot = events[2].cpa_s;
+        for i in 0..3 {
+            let mut decoy = tracks[i].clone();
+            decoy.id = format!("decoy-{i}");
+            let shift =
+                (decoy_rate - rate) * (events[i].cpa_s - pivot) - 0.08 * events[i].slant_m / c;
+            for sample in &mut decoy.samples {
+                let p = sample.point;
+                *sample = crate::model::Sample::new(
+                    sample.time + shift,
+                    Point {
+                        lat: p.lat,
+                        lon: demo::TRUTH.lon + 1.08 * (p.lon - demo::TRUTH.lon),
+                        alt: demo::TRUTH.alt + 1.08 * (p.alt - demo::TRUTH.alt),
+                    },
+                );
+            }
+            tracks.push(decoy);
+        }
+        let mut seed = Seed {
+            point: demo::TRUTH,
+            start: demo::EPOCH + (rate - 1.) * pivot,
+            clock_rate: 1.,
+            anchor: 2,
+            indices: vec![0, 1, 2],
+            alternatives: Arc::new(vec![
+                [0, 3, usize::MAX],
+                [1, 4, usize::MAX],
+                [2, 5, usize::MAX],
+            ]),
+            score: 0.,
+            coarse_profiled: false,
+        };
+        profile_seed_clock(&mut seed, &job, &events, &tracks);
+        assert!(
+            (seed.clock_rate - rate).abs() < 0.00005,
+            "Coarse clock winner hid a better basin: rate {}, error {}",
+            seed.clock_rate,
+            seed.score
+        );
+        assert!(seed.score < 0.05);
+        assert_eq!(seed.indices, vec![0, 1, 2]);
+    }
+
+    #[test]
     fn coarse_scoring_profiles_the_same_shared_clock_as_refinement() {
         let rate = 1.004;
         let mut events = vec![];
@@ -1890,6 +2012,7 @@ mod tests {
             indices: vec![0, 1, 2],
             alternatives: Default::default(),
             score: 0.,
+            coarse_profiled: false,
         };
         assert!(exact_score(&seed, &events, &tracks, 340.39).0 > 1.);
         let mut seeds = vec![seed.clone()];
@@ -1936,6 +2059,15 @@ mod tests {
             assert_eq!(left.score.to_bits(), right.score.to_bits());
             assert_eq!(left.point.lat.to_bits(), right.point.lat.to_bits());
             assert_eq!(left.point.lon.to_bits(), right.point.lon.to_bits());
+        }
+        // Merging another batch must not shift already-ranked proposals again.
+        let once = serial.clone();
+        score_and_prune_seeds(&mut serial, 32, &default_job, &events, &tracks, &control).unwrap();
+        for (before, after) in once.iter().zip(&serial) {
+            assert_eq!(before.indices, after.indices);
+            assert_eq!(before.start.to_bits(), after.start.to_bits());
+            assert_eq!(before.clock_rate.to_bits(), after.clock_rate.to_bits());
+            assert_eq!(before.score.to_bits(), after.score.to_bits());
         }
         let job = Job {
             max_clock_drift_ppm: 0.,

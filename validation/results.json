@@ -1,7 +1,7 @@
 {
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
-  "latest_code_commit": "22393e3cfdb816b94bb1cd567f6e6bac562db73f",
+  "latest_code_commit": "c16c428baccdaeac5735eab7b9e554752ef7a5fd",
   "latest_code_cases_tested": 3,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
@@ -268,10 +268,26 @@
           "cli_sha256": "d6bf14b400b6cdf0f38d0f2bdca4c139f40270ce80bb79dbb03fc49831848f8c",
           "grouped_sounds": 1,
           "evaluated_code_commit": "22393e3cfdb816b94bb1cd567f6e6bac562db73f"
+        },
+        "proposal_assembly": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 4,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 10328968,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "719f483ae8eefc0ae8bc44feddf214b86ef66ebd6966b740d07b211294bd9d8b",
+          "cli_sha256": "609fb76060918b4d8ee2ca7913efdfe509ef6588b653fa255afbfbcb08c72bb6",
+          "grouped_sounds": 1,
+          "evaluated_code_commit": "c16c428baccdaeac5735eab7b9e554752ef7a5fd"
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "retained_support"
+      "latest_evaluated_stage": "proposal_assembly"
     },
     {
       "case": "southampton",
@@ -1056,10 +1072,26 @@
           "cli_sha256": "d6bf14b400b6cdf0f38d0f2bdca4c139f40270ce80bb79dbb03fc49831848f8c",
           "grouped_sounds": 0,
           "evaluated_code_commit": "22393e3cfdb816b94bb1cd567f6e6bac562db73f"
+        },
+        "proposal_assembly": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 2,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 3924222,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "1a50658782e0320ceb54f00fc1ef2a270682abd7eff9a630b0e2eff9f69c38e6",
+          "cli_sha256": "609fb76060918b4d8ee2ca7913efdfe509ef6588b653fa255afbfbcb08c72bb6",
+          "grouped_sounds": 0,
+          "evaluated_code_commit": "c16c428baccdaeac5735eab7b9e554752ef7a5fd"
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "retained_support"
+      "latest_evaluated_stage": "proposal_assembly"
     },
     {
       "case": "midway-nov1",
@@ -1862,10 +1894,31 @@
           ],
           "top_error_m": 7576.122,
           "top_matches": 3
+        },
+        "proposal_assembly": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 3,
+          "candidates": 1,
+          "flight_segments": 4134,
+          "hypotheses": 1821202,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "76a89ae7557386de098a53cf6cb851761fd4eb5e32106672e78a67dc694be5cb",
+          "cli_sha256": "609fb76060918b4d8ee2ca7913efdfe509ef6588b653fa255afbfbcb08c72bb6",
+          "grouped_sounds": 2,
+          "evaluated_code_commit": "c16c428baccdaeac5735eab7b9e554752ef7a5fd",
+          "candidate_errors_m": [
+            7576.122
+          ],
+          "top_error_m": 7576.122,
+          "top_matches": 3
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "retained_support"
+      "latest_evaluated_stage": "proposal_assembly"
     },
     {
       "case": "lake-hood",

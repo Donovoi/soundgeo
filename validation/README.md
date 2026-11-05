@@ -777,6 +777,33 @@ rejects a proposal that needs to count one flight twice.
 The contribution of this error to the broad Midway failure is not yet known.
 See [proposal-assembly-diagnostic.json](proposal-assembly-diagnostic.json).
 
-All 67 software tests, formatting, strict Clippy, documentation tests, and both
-release builds pass locally with the proposal-construction fix. Its effects on
-the broad real-recording searches still require testing.
+Revision `c16c428` passed all 67 software tests, formatting, strict Clippy,
+documentation tests, and both release builds locally.
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41972135344)
+also passed. It preserved the same three full controls and the known-area
+Chicago corridor results exactly. Its effects on the larger searches still
+require testing.
+
+## Clock intervals skipped before refinement
+
+Fifteen local proposals around the prior Midway app candidate were checked
+against the full reference data. The competing-flight construction fix did not
+change these proposals. All three expected flight options remained available.
+This diagnostic does not attribute the Midway failure to that construction bug.
+
+The clock search had a separate problem. It refined only the best coarse clock
+choice. A narrow interval with a better fit could start with a worse coarse
+score and never receive refinement. Refining each coarse start separately
+recovered the prior three-flight fit at the center point. The joint error fell
+to about 0.68%. This was a seeded diagnostic, not a new location test.
+
+A synthetic regression uses three close flyovers and three slightly wider
+decoy tracks. The old search selects the decoy clock rate and fails the test.
+The new search recovers the generated rate and true flight associations. It
+also reuses completed coarse clock searches when unchanged proposals pass
+through repeated pruning. Serial and parallel output checks pass.
+
+All 68 release software tests, formatting, strict Clippy, documentation tests,
+and both release builds pass locally with this clock-search change. Its effects
+on real-recording results and runtime still require testing. See
+[clock-basin-diagnostic.json](clock-basin-diagnostic.json).
