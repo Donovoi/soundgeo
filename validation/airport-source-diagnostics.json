@@ -278,7 +278,28 @@
         "search_mode": "regional_grid"
       }
     ],
-    "broad_original_bounds_run": "in_progress"
+    "broad_original_bounds_run": {
+      "case": "midway-arrivals",
+      "reference_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+      "cli_sha256": "b9e9c5b491e0315194ee10c43d2e4b2df7112e36eea86dda79dd1ff816b1811e",
+      "code_commit": "3807f702245a4822236049855be781abc1bdfcc9",
+      "known_area_diagnostic_only": false,
+      "recording_clock_supplied": false,
+      "full_reference_day_requested": "2026-11-03",
+      "native_automatic_archive": true,
+      "exit_code": 1,
+      "elapsed_s": 5921.61,
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      },
+      "max_hypotheses": 20000000,
+      "errors": [
+        "Error: Indexed search exceeded the 20000000 hypothesis budget; no partial location is reported. Narrow the region/date range, increase spacing, or raise the budget."
+      ]
+    }
   },
   "parallel_corridor_equivalence": {
     "not_location_acceptance": true,

@@ -31,9 +31,11 @@ The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
-All 63 software tests pass locally and in
+All 65 software tests pass locally.
+The previous 63-test revision also passed in
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41957111760).
-The Chicago download and data checks pass. Its broad-area location test is still running.
+The Chicago download and data checks pass.
+Its broad-area location test reached the search limit and did not produce a result.
 Software test success does not establish location accuracy.
 See the [validation record](validation/README.md) for results, data sources, and failures.
 

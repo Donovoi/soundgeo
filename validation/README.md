@@ -620,3 +620,26 @@ groups. Both results remain ambiguous and are excluded from acceptance.
 The older broad Midway holdout run on `e1aa6bc` reached its 20-million-hypothesis
 budget before finishing. It returned an error and no partial result. Its failed
 run and logs are retained. A larger search budget must be recorded as a new run.
+
+The broad November 3 Chicago airport-source run also reached its original
+20-million-hypothesis limit. It stopped after 5,921.6 seconds with no report.
+It used the original search area, the full reference day, and no recording
+start time. This is a failed search, not an accuracy result. Its source and
+failure record are in [airport-source-diagnostics.json](airport-source-diagnostics.json).
+
+## Conservative distance filter
+
+The flight index now rejects tracks whose position bounds are outside the
+sound's allowed range. The bounds include movement between position fixes.
+Cached queries are checked again for the exact observer position and radius.
+Tests cover crossings between fixes, minute boundaries, missing-data gaps,
+and nearby queries that share a cache entry.
+
+The Midway known-area corridor diagnostic keeps every compared event,
+candidate, score, clock, and hypothesis count unchanged. It still examines
+319,745 hypotheses. Runtime changed from 94.41 seconds to 64.60 seconds in
+these two runs. Other searches were active; this is not a controlled timing
+test or evidence of improved location accuracy. See
+[index-envelope-diagnostic.json](index-envelope-diagnostic.json).
+All 65 software tests, formatting, strict Clippy, and both release builds
+pass locally.

@@ -22,6 +22,39 @@ use std::{
 const CELL: f64 = 20000.;
 type Key = (i64, i32, i32, i32);
 type QueryKey = (i64, i64, i32, i32, i32, i32);
+#[derive(Clone, Copy)]
+struct Envelope {
+    min: Vec3,
+    max: Vec3,
+}
+impl Envelope {
+    fn point(p: Vec3) -> Self {
+        Self { min: p, max: p }
+    }
+    fn include(&mut self, p: Vec3) {
+        self.min = Vec3(
+            self.min.0.min(p.0),
+            self.min.1.min(p.1),
+            self.min.2.min(p.2),
+        );
+        self.max = Vec3(
+            self.max.0.max(p.0),
+            self.max.1.max(p.1),
+            self.max.2.max(p.2),
+        );
+    }
+    fn distance_squared(self, p: Vec3) -> f64 {
+        let dx = (self.min.0 - p.0).max(0.).max(p.0 - self.max.0);
+        let dy = (self.min.1 - p.1).max(0.).max(p.1 - self.max.1);
+        let dz = (self.min.2 - p.2).max(0.).max(p.2 - self.max.2);
+        dx * dx + dy * dy + dz * dz
+    }
+}
+#[derive(Clone, Copy)]
+struct QueryTrack {
+    id: usize,
+    envelope: Envelope,
+}
 fn key(xyz: Vec3, time: f64) -> Key {
     (
         (time / 60.).floor() as i64,
@@ -32,11 +65,13 @@ fn key(xyz: Vec3, time: f64) -> Key {
 }
 pub struct FlightIndex {
     buckets: Arc<HashMap<Key, Vec<usize>>>,
-    queries: Mutex<HashMap<QueryKey, Vec<usize>>>,
+    envelopes: Arc<Vec<Vec<(i64, Envelope)>>>,
+    queries: Mutex<HashMap<QueryKey, Arc<Vec<QueryTrack>>>>,
 }
 impl FlightIndex {
     pub fn new(tracks: &[Track], control: &Control) -> Result<Self> {
         let mut buckets: HashMap<Key, Vec<usize>> = HashMap::new();
+        let mut envelopes = Vec::with_capacity(tracks.len());
         for (i, track) in tracks.iter().enumerate() {
             control.check()?;
             for s in &track.samples {
@@ -45,20 +80,50 @@ impl FlightIndex {
                     bucket.push(i);
                 }
             }
+            let mut minutes: Vec<(i64, Envelope)> = Vec::new();
+            for pair in track.samples.windows(2) {
+                let dt = pair[1].time - pair[0].time;
+                if dt <= 0. || dt > 60. {
+                    continue;
+                }
+                // Both endpoints bound the entire interpolated ECEF segment.
+                // Include them in every crossed minute, including a boundary.
+                for minute in
+                    (pair[0].time / 60.).floor() as i64..=(pair[1].time / 60.).floor() as i64
+                {
+                    if minutes.last().is_none_or(|last| last.0 != minute) {
+                        minutes.push((minute, Envelope::point(pair[0].xyz)));
+                    }
+                    let envelope = &mut minutes.last_mut().unwrap().1;
+                    envelope.include(pair[0].xyz);
+                    envelope.include(pair[1].xyz);
+                }
+            }
+            envelopes.push(minutes);
         }
         Ok(Self {
             buckets: Arc::new(buckets),
+            envelopes: Arc::new(envelopes),
             queries: Mutex::new(HashMap::new()),
         })
     }
     fn fork_queries(&self) -> Self {
         Self {
             buckets: Arc::clone(&self.buckets),
+            envelopes: Arc::clone(&self.envelopes),
             queries: Mutex::new(HashMap::new()),
         }
     }
     pub fn nearby(&self, p: Point, arrival: f64, radius: f64, c: f64) -> Vec<usize> {
-        let (_, x, y, z) = key(p.ecef(), arrival);
+        let xyz = p.ecef();
+        let (_, x, y, z) = key(xyz, arrival);
+        let select = |hits: &[QueryTrack]| -> Vec<usize> {
+            let squared = (radius + 1e-6).powi(2);
+            hits.iter()
+                .filter(|hit| hit.envelope.distance_squared(xyz) <= squared)
+                .map(|hit| hit.id)
+                .collect()
+        };
         // A segment may cross the query radius between fixes up to 60 s apart.
         // One extra cell covers the importer's 280 m/s maximum segment speed.
         let reach = (radius / CELL).ceil() as i32 + 1;
@@ -72,7 +137,7 @@ impl FlightIndex {
             .ok()
             .and_then(|cache| cache.get(&query).cloned())
         {
-            return cached;
+            return select(&cached);
         }
         let mut found = BTreeSet::new();
         for t in from..=to {
@@ -86,16 +151,34 @@ impl FlightIndex {
                 }
             }
         }
-        let found: Vec<_> = found.into_iter().copied().collect();
+        let found: Vec<_> = found
+            .into_iter()
+            .copied()
+            .filter_map(|id| {
+                let minutes = &self.envelopes[id];
+                let start = minutes.partition_point(|(minute, _)| *minute < from);
+                let mut covered = minutes[start..]
+                    .iter()
+                    .take_while(|(minute, _)| *minute <= to);
+                let mut envelope = covered.next()?.1;
+                for (_, next) in covered {
+                    envelope.include(next.min);
+                    envelope.include(next.max);
+                }
+                Some(QueryTrack { id, envelope })
+            })
+            .collect();
+        let found = Arc::new(found);
         if let Ok(mut cache) = self.queries.lock() {
             // Neighboring metre-scale hypotheses share the same coarse buckets.
-            // Cache the exact query result, with bounded memory; no pruning changes.
+            // Cache unfiltered envelopes. Exact observer/radius filtering must
+            // happen again when another point shares these coarse buckets.
             if cache.len() >= 8192 {
                 cache.clear();
             }
-            cache.insert(query, found.clone());
+            cache.insert(query, Arc::clone(&found));
         }
-        found
+        select(&found)
     }
 }
 
@@ -376,4 +459,107 @@ fn track_seeds(
         }
     }
     Ok(seeds)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::{
+        aircraft::AircraftKind,
+        demo::{EPOCH, TRUTH},
+        model::Sample,
+    };
+
+    fn point(east: f64, north: f64, height: f64) -> Point {
+        Point {
+            lat: TRUTH.lat + north / 111320.,
+            lon: TRUTH.lon + east / (111320. * TRUTH.lat.to_radians().cos()),
+            alt: TRUTH.alt + height,
+        }
+    }
+
+    fn track(id: &str, fixes: &[(f64, f64, f64, f64)]) -> Track {
+        Track {
+            id: id.into(),
+            kind: AircraftKind::Unknown,
+            samples: fixes
+                .iter()
+                .map(|&(t, east, north, height)| Sample::new(EPOCH + t, point(east, north, height)))
+                .collect(),
+        }
+    }
+
+    #[test]
+    fn envelopes_keep_interpolated_crossings_and_all_in_range_cpas() {
+        let tracks = vec![
+            // Both fixes are outside a 1 km query, crossing a minute boundary.
+            track(
+                "crossing",
+                &[(30., -6000., 0., 500.), (90., 6000., 0., 500.)],
+            ),
+            track(
+                "far",
+                &[(30., 12000., 0., 500.), (90., 12000., 1000., 500.)],
+            ),
+            // No valid segment spans this data gap.
+            track("gap", &[(30., -6000., 0., 500.), (91., 6000., 0., 500.)]),
+            track(
+                "turn",
+                &[
+                    (0., -5000., -3000., 2000.),
+                    (60., 1000., 0., 1000.),
+                    (120., 6000., -2000., 1500.),
+                    (180., 1000., -6000., 1000.),
+                ],
+            ),
+        ];
+        let index = FlightIndex::new(&tracks, &Control::default()).unwrap();
+        assert_eq!(index.nearby(TRUTH, EPOCH + 60., 1000., 343.), vec![0]);
+        let mut checked = 0;
+        for east in [-8000., 0., 8000.] {
+            for north in [-8000., 0., 8000.] {
+                let observer = point(east, north, 0.);
+                for time in [0., 30., 59., 60., 90., 180., 600.] {
+                    for radius in [500., 1000., 5000., 15000., 40000.] {
+                        for c in [300., 343.] {
+                            let arrival = EPOCH + time;
+                            let hits = index.nearby(observer, arrival, radius, c);
+                            for (id, track) in tracks.iter().enumerate() {
+                                if let Some((_, range, _)) = track.cpa_near(
+                                    observer.ecef(),
+                                    c,
+                                    Some((arrival - 45., arrival + 45.)),
+                                ) && range <= radius
+                                {
+                                    assert!(
+                                        hits.contains(&id),
+                                        "missed {id} at {east},{north}, {time}, {radius}, {c}"
+                                    );
+                                    checked += 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        assert!(checked > 100);
+    }
+
+    #[test]
+    fn cached_envelopes_are_filtered_for_each_exact_observer_and_radius() {
+        let tracks = vec![track(
+            "overhead",
+            &[(30., -100., 0., 1000.), (90., 100., 0., 1000.)],
+        )];
+        let index = FlightIndex::new(&tracks, &Control::default()).unwrap();
+        let arrival = EPOCH + 60.;
+        let raised = point(0., 0., 700.);
+        assert_eq!(key(TRUTH.ecef(), arrival), key(raised.ecef(), arrival));
+        assert!(index.nearby(TRUTH, arrival, 500., 343.).is_empty());
+        assert_eq!(index.nearby(raised, arrival, 500., 343.), vec![0]);
+        assert_eq!(index.nearby(TRUTH, arrival, 1500., 343.), vec![0]);
+        assert!(index.nearby(TRUTH, arrival, 500., 343.).is_empty());
+        assert_eq!(index.queries.lock().unwrap().len(), 1);
+    }
 }
