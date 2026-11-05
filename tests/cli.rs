@@ -30,7 +30,13 @@ fn headless_cli_generates_demo_and_streams_a_complete_report() {
         .current_dir(dir.path())
         .args(["analyze", "--config"])
         .arg(&config)
-        .args(["--output", "-", "--require-match"])
+        .args([
+            "--output",
+            "-",
+            "--require-match",
+            "--max-hypotheses",
+            "50000000",
+        ])
         .output()
         .unwrap();
     assert_eq!(
@@ -44,6 +50,9 @@ fn headless_cli_generates_demo_and_streams_a_complete_report() {
     assert_eq!(report.events.len(), 2);
     assert!(!report.candidates.is_empty());
     assert!(report.job.start_utc.is_none());
+    assert_eq!(report.job.max_hypotheses, 50_000_000);
+    let saved: soundgeo::Job = serde_json::from_slice(&std::fs::read(&config).unwrap()).unwrap();
+    assert_eq!(saved.max_hypotheses, job.max_hypotheses);
     assert_eq!(report.version, env!("CARGO_PKG_VERSION"));
     assert!(!result.stderr.is_empty());
 }
@@ -111,6 +120,23 @@ fn headless_cli_help_and_errors_have_documented_exit_codes() {
     let help = cli().args(["analyze", "--help"]).output().unwrap();
     assert!(help.status.success());
     assert!(String::from_utf8_lossy(&help.stdout).contains("--require-match"));
+    assert!(String::from_utf8_lossy(&help.stdout).contains("--max-hypotheses"));
+    for budget in ["0", "99", "100000001", "-1", "many"] {
+        let invalid = cli()
+            .args([
+                "analyze",
+                "--config",
+                "unused.json",
+                "--output",
+                "-",
+                "--max-hypotheses",
+                budget,
+            ])
+            .output()
+            .unwrap();
+        assert_eq!(invalid.status.code(), Some(2), "invalid budget: {budget}");
+        assert!(invalid.stdout.is_empty());
+    }
     let invalid = cli().arg("analyze").output().unwrap();
     assert_eq!(invalid.status.code(), Some(2));
     let dir = tempfile::tempdir().unwrap();

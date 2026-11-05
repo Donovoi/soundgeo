@@ -1,8 +1,8 @@
 {
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
-  "latest_code_commit": "35ba97d9157bb1b051a83b3af0b8d59e93985ab3",
-  "latest_code_cases_tested": 1,
+  "latest_code_commit": "7f95301094344e6c32cd27403e8e8002d4fb049d",
+  "latest_code_cases_tested": 0,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,

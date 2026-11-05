@@ -46,6 +46,9 @@ enum Commands {
         /// Free flight source. Chicago replay covers the local airport radar area.
         #[arg(long, requires = "date")]
         provider: Option<ArchiveProvider>,
+        /// Maximum search hypotheses; overrides the saved job. Larger limits take longer.
+        #[arg(long, value_parser = clap::value_parser!(u64).range(100..=100_000_000))]
+        max_hypotheses: Option<u64>,
         /// Report file, or - for JSON on stdout.
         #[arg(long)]
         output: PathBuf,
@@ -108,6 +111,7 @@ fn run(args: Args) -> Result<u8> {
             date_to,
             cache,
             provider,
+            max_hypotheses,
             output,
             require_match,
         }) => {
@@ -173,6 +177,10 @@ fn run(args: Args) -> Result<u8> {
                     cache: cache.unwrap_or_else(|| PathBuf::from("flight-cache")),
                     provider,
                 });
+            }
+            if let Some(limit) = max_hypotheses {
+                // Clap limits this to 100 million, which also fits 32-bit usize.
+                job.max_hypotheses = limit as usize;
             }
             let report = soundgeo::analyze(&job, &Control::default(), &progress)?;
             if output == std::path::Path::new("-") {

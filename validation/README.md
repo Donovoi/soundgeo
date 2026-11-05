@@ -642,4 +642,9 @@ these two runs. Other searches were active; this is not a controlled timing
 test or evidence of improved location accuracy. See
 [index-envelope-diagnostic.json](index-envelope-diagnostic.json).
 All 65 software tests, formatting, strict Clippy, and both release builds
-pass locally.
+pass locally and in [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41962057606).
+
+The CLI also accepts `--max-hypotheses` to retry a search with a different
+resource limit. Its checks verify the report's effective limit, preservation
+of the saved job, and rejection of invalid values before reading input files.
+All 65 software tests and required local checks pass with this option.

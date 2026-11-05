@@ -32,8 +32,8 @@ A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
 All 65 software tests pass locally.
-The previous 63-test revision also passed in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41957111760).
+The search revision also passed all 65 tests in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41962057606).
 The Chicago download and data checks pass.
 Its broad-area location test reached the search limit and did not produce a result.
 Software test success does not establish location accuracy.
@@ -142,6 +142,18 @@ soundgeo-cli.exe analyze --config demo/job.json --output reports/demo.json
 Set `start_utc` to `null` when the recording start time is unknown.
 Set `bounds` to `null` to search the area covered by the imported flight data.
 Large searches can take much longer than small searches.
+
+If a search reaches its hypothesis limit, it stops without a partial result.
+To retry with a larger limit, use `--max-hypotheses`:
+
+```powershell
+soundgeo-cli.exe analyze --config "job.json" --max-hypotheses 50000000 --output "report-larger-search.json"
+```
+
+The limit can be between 100 and 100,000,000.
+This option changes the search budget for that run. It does not change the saved job,
+search area, flight data, or recording time.
+The report records the limit used. A larger limit can take much longer and does not guarantee a result.
 
 Paths in a job file are relative to that file.
 Paths supplied with `--input`, `--tracks`, and `--cache` are relative to the current directory.
