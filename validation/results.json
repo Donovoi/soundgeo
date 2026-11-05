@@ -221,6 +221,22 @@
           "grouped_sounds": 0,
           "evaluated_code_commit": "d55a80f4260d8603fc76145b1b1f117d34dcc192"
         },
+        "time_index": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 4,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 10328968,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "90f62ab172fb335416529f3539a2deaf047b80d14c300768b1f55db311fd2c3e",
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "grouped_sounds": 1,
+          "evaluated_code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
+        },
         "parallel_retry": {
           "version": "0.3.0-dev.1",
           "status": "insufficient_evidence",
@@ -449,6 +465,36 @@
           "cli_sha256": "89e63757f6df744cb3adc781f8120fef5ff798f1c9709025eb65b9ab4cbe20e3",
           "grouped_sounds": 0,
           "evaluated_code_commit": "d55a80f4260d8603fc76145b1b1f117d34dcc192"
+        },
+        "time_index": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 1,
+          "candidates": 10,
+          "flight_segments": 4336,
+          "hypotheses": 962812,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "89295362ad0e4823ab6bcf4ccf8137218f8ef78b9e5599fbd4ebce4cfaeddcb5",
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "grouped_sounds": 1,
+          "evaluated_code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb",
+          "candidate_errors_m": [
+            13621.587,
+            13246.103,
+            24638.872,
+            25678.316,
+            21839.606,
+            25843.859,
+            22229.014,
+            11974.001,
+            26168.878,
+            26072.82
+          ],
+          "top_error_m": 13621.587,
+          "top_matches": 1
         },
         "parallel_retry": {
           "version": "0.3.0-dev.1",
@@ -701,6 +747,39 @@
           ],
           "top_error_m": 27442.985,
           "top_matches": 3
+        },
+        "native_webtrak_expanded": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 6,
+          "candidates": 10,
+          "flight_segments": 4547,
+          "hypotheses": 34535596,
+          "recording_clock": null,
+          "duration_s": 1199.984125,
+          "coordinate_hit": true,
+          "passed": false,
+          "report_sha256": "30b8513d4cb538213cbebe001731d65ba1b123e0c3facf20784a78e9c4f23221",
+          "cli_sha256": "b194660afeaec1fc9d1b129e6ea0eca29630f34def6654666f644b7167882d44",
+          "reference_source": "webtrak-chicago",
+          "reference_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "7f95301094344e6c32cd27403e8e8002d4fb049d",
+          "candidate_errors_m": [
+            235.572,
+            492.594,
+            2891.397,
+            26877.774,
+            25878.549,
+            25495.466,
+            25668.057,
+            23803.071,
+            25544.184,
+            27480.562
+          ],
+          "top_error_m": 235.572,
+          "top_matches": 5
         }
       },
       "incomplete_runs": [
@@ -716,7 +795,7 @@
           "cancelled_utc": "2026-11-05T00:34:22.413608+00:00"
         }
       ],
-      "latest_evaluated_stage": "continuity"
+      "latest_evaluated_stage": "native_webtrak_expanded"
     },
     {
       "case": "midway-holdout",
@@ -1419,6 +1498,33 @@
           ],
           "top_error_m": 26.67,
           "top_matches": 3
+        },
+        "clock_support_expanded": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 11,
+          "candidates": 5,
+          "flight_segments": 5381,
+          "hypotheses": 23596939,
+          "recording_clock": null,
+          "duration_s": 3596.6085,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "773fdab76c89bb3a0121dbe06b592584ebe8441d021916be74fd133d87b1a584",
+          "cli_sha256": "5d5286d8b60930bc2109ba1424967ea98bc3f2f7378924c19ca5f9b14081f499",
+          "grouped_sounds": 4,
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "35ba97d9157bb1b051a83b3af0b8d59e93985ab3",
+          "candidate_errors_m": [
+            24606.237,
+            26826.712,
+            24556.293,
+            26590.235,
+            121.045
+          ],
+          "top_error_m": 24606.237,
+          "top_matches": 3
         }
       },
       "incomplete_runs": [
@@ -1431,7 +1537,7 @@
           "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
         }
       ],
-      "latest_evaluated_stage": "short_windows"
+      "latest_evaluated_stage": "clock_support_expanded"
     },
     {
       "case": "southampton-nov1",

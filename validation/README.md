@@ -690,3 +690,56 @@ alternative observations, so these fixed-variant results alone do not establish
 a refinement bug. Evidence is in [lake-hood-sensitivity.json](lake-hood-sensitivity.json).
 The diagnostic can be reproduced with `cargo run --release --example profile_candidate -- report.json sensitivity.json`
 when the report's original reference data is available.
+
+## Completed broad Chicago retry
+
+The November 3 `midway-arrivals` retry on `7f95301` finished in 3,393.53 seconds.
+It used the full free Chicago airport archive, original bounds, and no recording
+start time. The explicit resource limit was 50 million hypotheses; the failed
+20-million run remains recorded. Its first candidate is 235.572 m from the
+camera with five matches from six detected groups. The next candidate has four
+matches. The result remains ambiguous and does not pass full acceptance.
+
+This run gives another coordinate hit, but does not establish reliability.
+The result is recorded in
+[results.json](results.json) and [airport-source-diagnostics.json](airport-source-diagnostics.json).
+
+## Later Midway holdout result
+
+The November 1 Midway holdout retry on `35ba97d` finished in 6,580.7 seconds.
+It used the original bounds, full reference day, and no recording start time.
+The search limit was explicitly increased to 50 million hypotheses after the
+20-million run failed. It returned five ambiguous candidates, each with three
+matches. The first was **24,606.237 m** from the camera.
+
+The earlier 26.67 m result did not survive this later run. It remains in the
+history, but the latest completed result for this case is a failure. The mixed
+development record now has three coordinate hits and zero accepted results
+across ten recordings. This is not a completed benchmark of one revision.
+
+## Support lost during refinement
+
+A further diagnostic used the actual fitting function with all observation
+variants enabled. At a fixed position 250 m north of the app's Lake Hood
+estimate, adjusting the inferred clock reduced the core error from 0.5275%
+to 0.3173%, but reduced the valid curved matches from five to three.
+No camera coordinates or external recording time were supplied.
+
+An independent synthetic control reproduces the same trade-off. Four curves
+pass at one position. Moving 500 m makes three curves fit almost exactly but
+loses the fourth. With intermediate-result retention disabled, the full search
+regression returns three matches and fails. With retention enabled, it returns
+four matches within 250 m of the fixture's first position.
+
+Refinement now retains its strongest valid intermediate fit when it has extra
+matches beyond the minimum fitting consensus. The original final point remains
+available. An intermediate point is added only if it has more valid matches
+than that final point. All coverage, curvature, clock-span, residual, and
+quiet-gap checks remain in force. Search generation and the fitting objective
+are unchanged. This addresses discarded supporting evidence; real-video
+accuracy still requires validation. See
+[refinement-support-diagnostic.json](refinement-support-diagnostic.json).
+
+All 66 release software tests, formatting, strict Clippy, documentation tests,
+and both release builds pass locally. Real-recording comparisons of this fix
+are still required. Software checks do not establish location accuracy.

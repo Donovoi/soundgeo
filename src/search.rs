@@ -90,6 +90,72 @@ pub(crate) struct Seed {
     pub score: f64,
 }
 
+struct CorroboratedFit {
+    seed: Seed,
+    matches: Vec<Match>,
+    error: f64,
+}
+
+fn accepted_fit_error(
+    seed: &Seed,
+    events: &[Event],
+    objective: f64,
+    matches: &[Match],
+) -> Option<f64> {
+    if !objective.is_finite() || matches.len() < events.len().min(3) {
+        return None;
+    }
+    if (seed.clock_rate - 1.).abs() > 1e-12 {
+        let mut times = matches
+            .iter()
+            .filter_map(|m| m.event_index)
+            .map(|i| events[i].cpa_s);
+        let first = times.next().unwrap_or(0.);
+        let (min, max) = times.fold((first, first), |(min, max), t| (min.min(t), max.max(t)));
+        if max - min < 600. {
+            return None;
+        }
+    }
+    let error = match_error(matches);
+    if !error.is_finite()
+        || error > 1.
+        || matches
+            .iter()
+            .any(|m| m.coverage < 0.9 || m.rmse_hz / m.fitted_tone_hz > 0.015)
+    {
+        return None;
+    }
+    Some(error)
+}
+
+fn retain_corroborated_fit(
+    best: &mut Option<CorroboratedFit>,
+    seed: &Seed,
+    events: &[Event],
+    objective: f64,
+    matches: Vec<Match>,
+) {
+    // The objective fits a minimum consensus. Preserve additional valid curves
+    // if a later numerical improvement would discard their corroboration.
+    // Minimum-consensus-only results retain their existing behavior.
+    if matches.len() <= events.len().min(3) {
+        return;
+    }
+    let Some(error) = accepted_fit_error(seed, events, objective, &matches) else {
+        return;
+    };
+    if best.as_ref().is_none_or(|previous| {
+        matches.len() > previous.matches.len()
+            || (matches.len() == previous.matches.len() && error < previous.error)
+    }) {
+        *best = Some(CorroboratedFit {
+            seed: seed.clone(),
+            matches,
+            error,
+        });
+    }
+}
+
 fn unit_clock_rate() -> f64 {
     1.
 }
@@ -615,7 +681,16 @@ pub fn locate(
             ),
             0.73 + 0.25 * i as f32 / count.max(1) as f32,
         );
-        seed.score = exact_score(&seed, events, tracks, c).0;
+        let (initial_objective, initial_matches) = exact_score(&seed, events, tracks, c);
+        seed.score = initial_objective;
+        let mut corroborated = None;
+        retain_corroborated_fit(
+            &mut corroborated,
+            &seed,
+            events,
+            initial_objective,
+            initial_matches,
+        );
         let mut spatial = (spacing * 0.6).max(job.grid_m);
         let mut temporal = 4.;
         let mut rate_step = drift * 0.5;
@@ -644,7 +719,9 @@ pub fn locate(
                         continue;
                     }
                     trial.point.alt = terrain.elevation(trial.point);
-                    trial.score = exact_score(&trial, events, tracks, c).0;
+                    let (objective, matches) = exact_score(&trial, events, tracks, c);
+                    trial.score = objective;
+                    retain_corroborated_fit(&mut corroborated, &trial, events, objective, matches);
                     if trial.score < seed.score {
                         seed = trial;
                         improved = true;
@@ -666,58 +743,61 @@ pub fn locate(
         if !objective.is_finite() {
             incomplete_references += 1;
         }
-        if matches.len() < events.len().min(3) {
-            continue;
+        let final_error = accepted_fit_error(&seed, events, objective, &matches);
+        let final_count = final_error.map_or(0, |_| matches.len());
+        let mut fits = Vec::with_capacity(2);
+        if let Some(error) = final_error {
+            fits.push(CorroboratedFit {
+                seed,
+                matches,
+                error,
+            });
         }
-        if (seed.clock_rate - 1.).abs() > 1e-12 {
-            let mut matched_times = matches
-                .iter()
-                .filter_map(|m| m.event_index)
-                .map(|i| events[i].cpa_s);
-            let first = matched_times.next().unwrap_or(0.);
-            let (min, max) =
-                matched_times.fold((first, first), |(min, max), t| (min.min(t), max.max(t)));
-            if max - min < 600. {
+        // Keep the original endpoint, including its quiet-gap checks. An extra
+        // result is considered only when refinement lost valid corroboration.
+        if let Some(best) = corroborated
+            && best.matches.len() > final_count
+        {
+            fits.push(best);
+        }
+        for CorroboratedFit {
+            seed,
+            matches,
+            error: score,
+        } in fits
+        {
+            let Some(time) =
+                chrono::DateTime::from_timestamp_millis((seed.start * 1000.).round() as i64)
+            else {
+                continue;
+            };
+            let conflicts = if job.silence_mode != SilenceMode::Off {
+                silence_conflicts_with_rate(
+                    events,
+                    tracks,
+                    seed.point,
+                    seed.start,
+                    seed.clock_rate,
+                    c,
+                )
+            } else {
+                vec![]
+            };
+            if job.silence_mode == SilenceMode::Strict && !conflicts.is_empty() {
                 continue;
             }
+            candidates.push(Candidate {
+                latitude: seed.point.lat,
+                longitude: seed.point.lon,
+                ground_m: seed.point.alt,
+                recording_start_utc: time.to_rfc3339(),
+                recording_start_unix: seed.start,
+                recording_clock_rate: seed.clock_rate,
+                relative_error_percent: score,
+                matches,
+                silence_conflicts: conflicts,
+            });
         }
-        let score = if objective.is_finite() {
-            match_error(&matches)
-        } else {
-            objective
-        };
-        if !score.is_finite()
-            || score > 1.0
-            || matches
-                .iter()
-                .any(|m| m.coverage < 0.9 || m.rmse_hz / m.fitted_tone_hz > 0.015)
-        {
-            continue;
-        }
-        let Some(time) =
-            chrono::DateTime::from_timestamp_millis((seed.start * 1000.).round() as i64)
-        else {
-            continue;
-        };
-        let conflicts = if job.silence_mode != SilenceMode::Off {
-            silence_conflicts_with_rate(events, tracks, seed.point, seed.start, seed.clock_rate, c)
-        } else {
-            vec![]
-        };
-        if job.silence_mode == SilenceMode::Strict && !conflicts.is_empty() {
-            continue;
-        }
-        candidates.push(Candidate {
-            latitude: seed.point.lat,
-            longitude: seed.point.lon,
-            ground_m: seed.point.alt,
-            recording_start_utc: time.to_rfc3339(),
-            recording_start_unix: seed.start,
-            recording_clock_rate: seed.clock_rate,
-            relative_error_percent: score,
-            matches,
-            silence_conflicts: conflicts,
-        });
     }
     candidates.sort_by(|a, b| {
         b.matches.len().cmp(&a.matches.len()).then_with(|| {
@@ -771,7 +851,7 @@ pub fn locate(
         warnings.push("Some candidates leave detections unmatched. Only explicitly indexed matches support a candidate; the other sounds may be unrelated or lack reference data. Partial consensus remains ambiguous.".into());
     }
     if incomplete_references > 0 {
-        warnings.push(format!("{incomplete_references} of {count} refined hypotheses lacked enough independent events with at least 90% reference-position coverage. A downloaded archive can still have receiver-coverage gaps; a denser reference source may be needed."));
+        warnings.push(format!("{incomplete_references} of {count} final refinement points lacked enough independent events with at least 90% reference-position coverage. A downloaded archive can still have receiver-coverage gaps; a denser reference source may be needed."));
     }
     if distinct.len() > 1
         && distinct[1].relative_error_percent < distinct[0].relative_error_percent * 1.5 + 0.05
@@ -979,6 +1059,156 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
 mod tests {
     use super::*;
     use crate::{audio::RidgePoint, demo};
+
+    #[test]
+    fn refinement_preserves_additional_supported_curves() {
+        let truth = demo::TRUTH;
+        let shifted = Point {
+            lat: truth.lat + 500. / 111320.,
+            ..truth
+        };
+        let c = Job::default().sound_speed();
+        let mut tracks = Vec::new();
+        let mut events = Vec::new();
+        for (id, cpa) in [400., 1400., 2400., 3400.].into_iter().enumerate() {
+            let angle = if id < 3 {
+                id as f64 * std::f64::consts::TAU / 3.
+            } else {
+                0.
+            };
+            let lateral = if id < 3 { 1500. } else { 50. };
+            let height = if id < 3 { 8000. } else { 220. };
+            let samples = (-100..=100)
+                .map(|i| {
+                    let along = i as f64 * 4. * 70.;
+                    let east = along * angle.sin() + lateral * angle.cos();
+                    let north = along * angle.cos() - lateral * angle.sin();
+                    crate::model::Sample::new(
+                        demo::EPOCH + cpa + i as f64 * 4.,
+                        Point {
+                            lat: truth.lat + north / 111320.,
+                            lon: truth.lon + east / (111320. * truth.lat.to_radians().cos()),
+                            alt: truth.alt + height,
+                        },
+                    )
+                })
+                .collect();
+            let track = Track {
+                id: format!("test-{id}"),
+                samples,
+                kind: crate::aircraft::AircraftKind::Unknown,
+            };
+            let observer = if id < 3 { shifted } else { truth };
+            let (arrival, range, speed) = track.cpa(observer.ecef(), c).unwrap();
+            let time = arrival - demo::EPOCH;
+            let (extent, step) = if id < 3 { (300., 2.) } else { (30., 0.5) };
+            let ridge = (0..=(2. * extent / step) as usize)
+                .map(|i| {
+                    let time_s = time - extent + i as f64 * step;
+                    RidgePoint {
+                        time_s,
+                        hz: 150.
+                            * track
+                                .factor(observer.ecef(), demo::EPOCH + time_s, c)
+                                .unwrap(),
+                        contrast_db: 20.,
+                    }
+                })
+                .collect();
+            events.push(Event {
+                start_s: time - extent,
+                end_s: time + extent,
+                cpa_s: time,
+                base_hz: 150.,
+                speed_mps: speed,
+                slant_m: range,
+                fit_rmse_hz: 0.,
+                contrast_db: 20.,
+                ridge,
+                activity_span_s: None,
+                alternatives: vec![],
+            });
+            tracks.push(track);
+        }
+        let mut seed = Seed {
+            point: truth,
+            start: demo::EPOCH,
+            clock_rate: 1.,
+            anchor: 0,
+            indices: vec![0, 1, 2, 3],
+            alternatives: Default::default(),
+            score: 0.,
+        };
+        let first = exact_score(&seed, &events, &tracks, c);
+        seed.point = shifted;
+        let second = exact_score(&seed, &events, &tracks, c);
+        assert_eq!(first.1.len(), 4);
+        assert_eq!(second.1.len(), 3);
+        assert!(second.0 < first.0);
+        assert!(match_error(&first.1) <= 1.);
+
+        // Three distant curves have a small, coherent measurement perturbation.
+        // A close fourth curve still supports the first position. Minimizing
+        // only the best three can move 500 m and discard that extra evidence.
+        let mut retained = None;
+        seed.point = truth;
+        retain_corroborated_fit(&mut retained, &seed, &events, first.0, first.1);
+        seed.point = shifted;
+        retain_corroborated_fit(&mut retained, &seed, &events, second.0, second.1);
+        let retained = retained.unwrap();
+        assert_eq!(retained.matches.len(), 4);
+        assert!(retained.seed.point.distance(truth) < 1.);
+
+        // An acceptable mean error must not hide a failing individual curve.
+        let mut weak = retained.matches.clone();
+        weak[3].rmse_hz = 0.016 * weak[3].fitted_tone_hz;
+        assert!(match_error(&weak) < 1.);
+        let mut invalid = None;
+        retain_corroborated_fit(&mut invalid, &retained.seed, &events, first.0, weak);
+        assert!(invalid.is_none());
+
+        // Fix time only in this synthetic regression to isolate spatial
+        // refinement; the real diagnostic also exercises an inferred clock.
+        let job = Job {
+            bounds: Some(Bounds {
+                south: truth.lat,
+                north: truth.lat + 750. / 111320.,
+                west: truth.lon,
+                east: truth.lon + 500. / (111320. * truth.lat.to_radians().cos()),
+            }),
+            start_utc: Some(demo::EPOCH),
+            time_tolerance_s: 0.01,
+            ground_m: truth.alt,
+            grid_m: 250.,
+            search_mode: SearchMode::RegionalGrid,
+            max_clock_drift_ppm: 0.,
+            silence_mode: SilenceMode::Off,
+            ..Default::default()
+        };
+        let result = locate(
+            &job,
+            &events,
+            &tracks,
+            &mut Terrain::new(None, truth.alt),
+            &Control::default(),
+            &|_, _| {},
+        )
+        .unwrap();
+        let first = result
+            .candidates
+            .first()
+            .expect("The corroborated location must survive refinement");
+        assert_eq!(first.matches.len(), 4);
+        assert!(
+            Point {
+                lat: first.latitude,
+                lon: first.longitude,
+                alt: first.ground_m
+            }
+            .distance(truth)
+                < 250.
+        );
+    }
 
     #[test]
     fn alternative_associations_resolve_conflicts_before_rejecting_consensus() {

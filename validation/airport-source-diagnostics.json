@@ -299,6 +299,44 @@
       "errors": [
         "Error: Indexed search exceeded the 20000000 hypothesis budget; no partial location is reported. Narrow the region/date range, increase spacing, or raise the budget."
       ]
+    },
+    "broad_expanded_budget_run": {
+      "case": "midway-arrivals",
+      "reference_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+      "cli_sha256": "b194660afeaec1fc9d1b129e6ea0eca29630f34def6654666f644b7167882d44",
+      "code_commit": "7f95301094344e6c32cd27403e8e8002d4fb049d",
+      "known_area_diagnostic_only": false,
+      "recording_clock_supplied": false,
+      "full_reference_day_requested": "2026-11-03",
+      "native_automatic_archive": true,
+      "baseline_max_hypotheses": 20000000,
+      "effective_max_hypotheses": 50000000,
+      "job_sha256": "042e350215abf997afea5557c98c8379ee9d3819e09dc23ea1d7775e137f93c1",
+      "exit_code": 0,
+      "elapsed_s": 3393.53,
+      "status": "ambiguous",
+      "events": 6,
+      "candidates": 10,
+      "tracks": 4547,
+      "matches": [
+        5,
+        4,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "first_candidate_error_m": 235.57123021731798,
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      }
     }
   },
   "parallel_corridor_equivalence": {
