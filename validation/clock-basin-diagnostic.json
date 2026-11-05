@@ -353,5 +353,18 @@
     "red_log_sha256": "20841d79bf675257fad993558b1e9abd2bde5dce5fc4bc074eb19c9b90ba4e7b",
     "green_log_sha256": "a851637c27b3d077eb1d65d0faf59ab7d87f67e7016045f435d390baca402b91"
   },
-  "limitations": "Local proposals centered on a previous app result, not a blind search. Three center proposals recover a better accepted fit; the offset samples do not establish a confidence radius. Broad real-video effects and runtime require separate evaluation."
+  "limitations": "Local proposals centered on a previous app result, not a blind search. Three center proposals recover a better accepted fit; the offset samples do not establish a confidence radius. Broad real-video effects and runtime require separate evaluation.",
+  "production_comparison": {
+    "revision": "2988d7703885b46dc4971a1c37e2a347af18e43f",
+    "proposals_checked": 15,
+    "all_compared_fields_exactly_equal": true,
+    "fields": [
+      "sampled_error",
+      "accepted_error",
+      "matches"
+    ],
+    "report_sha256": "08540454d4f23aa4afe1c0c9f5d041ca5fcdd81f194f56ab5beeab500aeef1a0",
+    "diagnostic_source_sha256": "559f3187cf09010c5579ae1ac2ec983156928e719941986a570b901c099566f1",
+    "not_location_acceptance": true
+  }
 }

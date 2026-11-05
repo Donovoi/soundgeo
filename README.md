@@ -32,9 +32,8 @@ The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
-All 68 software tests pass locally after the clock-search fix.
-The preceding flight-selection fix passed 67 tests in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41972135344).
+All 68 software tests pass locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41973802326).
 The Chicago download and data checks pass.
 Its first broad-area location test reached the search limit.
 A run with a larger search limit produced the 236 m Midway result.
@@ -134,6 +133,22 @@ Use `soundgeo-cli.exe --help` or `soundgeo-cli.exe analyze --help` to see the av
 ### Settings and paths
 
 Use a job JSON file to set the search area, terrain, search limits, and aircraft filters.
+For example, save this as `region.json` for an unknown start time near Chicago Midway:
+
+```json
+{
+  "media": "recording.mp4",
+  "start_utc": null,
+  "bounds": {"south": 41.65, "north": 42.01, "west": -87.98, "east": -87.5},
+  "ground_m": 180,
+  "ground_datum": "egm96"
+}
+```
+
+Use this file with the download command examples above.
+Replace the area and ground height for your recording. The height is in metres above mean sea level.
+The program uses its default values for settings that are not listed.
+
 The `demo` command creates a complete example in `demo/job.json`.
 
 ```powershell

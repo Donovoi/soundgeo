@@ -803,7 +803,26 @@ The new search recovers the generated rate and true flight associations. It
 also reuses completed coarse clock searches when unchanged proposals pass
 through repeated pruning. Serial and parallel output checks pass.
 
-All 68 release software tests, formatting, strict Clippy, documentation tests,
-and both release builds pass locally with this clock-search change. Its effects
-on real-recording results and runtime still require testing. See
+Revision `2988d77` passed all 68 release software tests, formatting, strict
+Clippy, documentation tests, and both release builds locally.
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41973802326)
+also passed. The production fitter exactly reproduced the diagnostic's improved
+scores and match lists on all 15 proposals. See
 [clock-basin-diagnostic.json](clock-basin-diagnostic.json).
+
+The three full real controls kept their previous outcomes. The two Midway
+controls returned no candidates. Southampton still returned an ambiguous
+candidate 7.6 km away. The known-area Chicago check kept its four candidate
+locations and matches; one clock rate changed by one floating-point rounding
+step. It took 137.84 seconds, compared with 78.55 seconds for the preceding build.
+Other searches were active, so this is not a controlled speed test. See
+[clock-corridor-comparison.json](clock-corridor-comparison.json).
+
+The larger searches have not finished with this revision. Two further hour-long
+recordings from November 4 at the same Midway camera were selected before
+capture and analysis. Their source dates have been checked independently.
+They are separate from the ten development cases and do not add a new camera
+location. Their full free reference day is being downloaded. Recording clock
+readings remain in validation notes and are not supplied to the app.
+The fixed [capture plan](fresh-cases-plan.json) and
+[prepared media hashes](fresh-cases-prepared.json) are recorded before analysis.
