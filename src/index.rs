@@ -190,7 +190,14 @@ pub(crate) fn corridor_seeds(
                 for seed in result? {
                     seeds.push(seed);
                     if seeds.len() >= 8192 {
-                        score_and_prune_seeds(&mut seeds, 2048, job, events, tracks, control)?;
+                        let mut prune = || {
+                            score_and_prune_seeds(&mut seeds, 2048, job, events, tracks, control)
+                        };
+                        if let Some(pool) = &pool {
+                            pool.install(prune)?;
+                        } else {
+                            prune()?;
+                        }
                     }
                 }
             }

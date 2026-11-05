@@ -307,6 +307,80 @@ fn request_chunk(
     })
 }
 
+fn fetch_with_retry(
+    control: &Control,
+    next: &Mutex<Instant>,
+    mut fetch: impl FnMut() -> Result<Reply>,
+) -> Result<Vec<u8>> {
+    for attempt in 0..3 {
+        control.check()?;
+        loop {
+            control.check()?;
+            let wait = {
+                let mut n = next
+                    .lock()
+                    .map_err(|_| anyhow::anyhow!("Request scheduler failed"))?;
+                let now = Instant::now();
+                if now >= *n {
+                    *n = now + Duration::from_millis(500);
+                    None
+                } else {
+                    Some(n.saturating_duration_since(now))
+                }
+            };
+            match wait {
+                None => break,
+                Some(delay) => std::thread::sleep(delay.min(Duration::from_millis(50))),
+            }
+        }
+        let pause = match fetch() {
+            Ok(Reply::Data(bytes)) => return Ok(bytes),
+            Ok(Reply::RetryAfter(pause)) => pause,
+            Err(error) => {
+                let transient = error.downcast_ref::<reqwest::Error>().is_some_and(|e| {
+                    // reqwest marks a truncated streamed HTTP body as Decode.
+                    // XML parsing happens after this helper, so malformed
+                    // archive data is never retried here.
+                    e.is_timeout()
+                        || e.is_connect()
+                        || e.is_request()
+                        || e.is_body()
+                        || e.is_decode()
+                });
+                if attempt == 2 || !transient {
+                    return Err(error);
+                }
+                (1u64 << attempt).to_string()
+            }
+        };
+        {
+            if attempt == 2 {
+                bail!("Chicago replay retry limit reached");
+            }
+            let seconds = if let Ok(seconds) = pause.parse::<u64>() {
+                seconds
+            } else {
+                (DateTime::parse_from_rfc2822(&pause)
+                    .context("Unrecognized server retry delay; download stopped")?
+                    .timestamp()
+                    - Utc::now().timestamp())
+                .max(1) as u64
+            };
+            if seconds > 60 {
+                bail!(
+                    "Chicago server requests a longer pause; retry this resumable download later"
+                );
+            }
+            let mut n = next
+                .lock()
+                .map_err(|_| anyhow::anyhow!("Request scheduler failed"))?;
+            *n = (*n).max(Instant::now() + Duration::from_secs(seconds.max(1)));
+            continue;
+        }
+    }
+    bail!("Chicago replay retry limit reached")
+}
+
 pub fn download_day(
     date: &str,
     cache: &Path,
@@ -330,61 +404,14 @@ pub fn download_day(
                 "Chicago public replay keeps about 90 days. Use a complete local cache or another free source for older dates."
             );
         }
-        for attempt in 0..3 {
-            control.check()?;
-            loop {
-                control.check()?;
-                let wait = {
-                    let mut n = next
-                        .lock()
-                        .map_err(|_| anyhow::anyhow!("Request scheduler failed"))?;
-                    let now = Instant::now();
-                    if now >= *n {
-                        *n = now + Duration::from_millis(500);
-                        None
-                    } else {
-                        Some(n.saturating_duration_since(now))
-                    }
-                };
-                match wait {
-                    None => break,
-                    Some(delay) => std::thread::sleep(delay.min(Duration::from_millis(50))),
-                }
-            }
-            if let Reply::RetryAfter(pause) = match request_chunk(
+        fetch_with_retry(control, &next, || {
+            request_chunk(
                 &client,
                 &runtime,
                 &format!("{BASE}{handle}.mobile"),
                 control,
-            )? {
-                Reply::Data(bytes) => return Ok(bytes),
-                retry => retry,
-            } {
-                if attempt == 2 {
-                    bail!("Chicago replay retry limit reached");
-                }
-                let seconds = if let Ok(seconds) = pause.parse::<u64>() {
-                    seconds
-                } else {
-                    (DateTime::parse_from_rfc2822(&pause)
-                        .context("Unrecognized server retry delay; download stopped")?
-                        .timestamp()
-                        - Utc::now().timestamp())
-                    .max(1) as u64
-                };
-                if seconds > 60 {
-                    bail!(
-                        "Chicago server requests a longer pause; retry this resumable download later"
-                    );
-                }
-                let mut n = next
-                    .lock()
-                    .map_err(|_| anyhow::anyhow!("Request scheduler failed"))?;
-                *n = (*n).max(Instant::now() + Duration::from_secs(seconds.max(1)));
-                continue;
-            }
-        }
-        bail!("Chicago replay retry limit reached")
+            )
+        })
     })?;
     control.check()?;
     let catalog = path
@@ -409,6 +436,62 @@ pub fn coverage_warning(path: &Path) -> Result<Option<String>> {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn retries_truncated_response_but_does_not_retry_forbidden_status() {
+        for forbidden in [false, true] {
+            let server = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+            let address = server.local_addr().unwrap();
+            let thread = std::thread::spawn(move || {
+                for attempt in 0..if forbidden { 1 } else { 2 } {
+                    let (mut socket, _) = server.accept().unwrap();
+                    let mut request = [0; 2048];
+                    let _ = socket.read(&mut request);
+                    if forbidden {
+                        let _=socket.write_all(b"HTTP/1.1 403 Forbidden\r\nContent-Length: 0\r\nConnection: close\r\n\r\n");
+                    } else {
+                        let _ = socket.write_all(
+                            b"HTTP/1.1 200 OK\r\nContent-Length: 4\r\nConnection: close\r\n\r\n",
+                        );
+                        let _ = socket.write_all(if attempt == 0 { b"da" } else { b"data" });
+                    }
+                }
+            });
+            let runtime = tokio::runtime::Builder::new_multi_thread()
+                .worker_threads(2)
+                .enable_all()
+                .build()
+                .unwrap();
+            let client = reqwest::Client::builder()
+                .timeout(Duration::from_secs(3))
+                .build()
+                .unwrap();
+            let control = Control::default();
+            let next = Mutex::new(Instant::now());
+            let mut calls = 0;
+            let result = fetch_with_retry(&control, &next, || {
+                calls += 1;
+                request_chunk(
+                    &client,
+                    &runtime,
+                    &format!("http://{address}/chunk"),
+                    &control,
+                )
+            });
+            if forbidden {
+                assert!(
+                    result
+                        .unwrap_err()
+                        .downcast_ref::<reqwest::Error>()
+                        .is_some_and(|e| e.status() == Some(reqwest::StatusCode::FORBIDDEN))
+                );
+                assert_eq!(calls, 1);
+            } else {
+                assert_eq!(result.unwrap(), b"data");
+                assert_eq!(calls, 2);
+            }
+            thread.join().unwrap();
+        }
+    }
     #[test]
     fn cancellation_interrupts_stalled_replay_and_oversized_headers_are_rejected() {
         for oversized in [false, true] {

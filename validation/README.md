@@ -526,14 +526,35 @@ provides public radar replay through WebTrak. A partial-day coverage audit
 found positions 37 to 40 seconds before closest approach for five inspected
 Midway departures. The existing ADSB.lol traces usually began at or after
 closest approach. This source therefore fills a measured reference-data gap.
-The full-day download and the location checks are still in progress.
+The native provider downloaded all 2,880 parts for November 3.
+All 560,786 positions match an independent Python decoder in every compared field.
+The radar was not marked online in 25 parts. A complete download does not mean
+that every aircraft was recorded.
+
+Three known-area searches used that full day without recording start times.
+The 20-minute Midway clip produced a first candidate 50.1 m from the camera,
+with five matched sounds out of six. A second candidate also matched five
+sounds. The result remains ambiguous. The other two Midway clips produced no
+candidate. These searches used the known camera area and do not pass the
+broad-area acceptance test. The broad search is still running.
 
 The new native Rust provider checks every half-minute part, UTC/local time
 agreement, point coordinates, and cache checksums. Tests cover the repeated
 daylight-saving hour, the altitude field, missing parts, cancellation, cache
 corruption, and command-line analysis with no recording clock.
 All 62 software tests pass locally, with formatting and strict Clippy checks.
+[Windows and Ubuntu CI pass](https://github.com/Donovoi/soundgeo/actions/runs/41949614611).
 The detector and location matcher are unchanged from `e1aa6bc`.
+
+A later download stopped when the server closed a response early. The app now
+retries transient connection failures up to three attempts. It keeps valid
+cached parts for reuse. A local server test covers the truncated response and
+confirms that a forbidden response is not retried.
+
+The search now scores independent proposals on its existing four-worker pool.
+Serial and parallel scoring produce bit-for-bit equal values in the regression
+test. A separate real-recording comparison is running. All 63 software tests,
+formatting, strict Clippy, and both release builds pass locally.
 
 The [Southampton Airport noise page](https://www.southamptonairport.com/about-us/aircraft-noise/)
 links its public Volans tracker. Its November 1 and November 3 data produced no

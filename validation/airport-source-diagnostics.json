@@ -161,5 +161,123 @@
     },
     "used_as_filter": false,
     "reason": "Classifier missed all ten model-supported Lake Hood observations. Sound labels are not ground truth."
+  },
+  "native_chicago_full_day": {
+    "not_location_acceptance": true,
+    "parser_equivalence": {
+      "code_commit": "3807f702245a4822236049855be781abc1bdfcc9",
+      "cli_sha256": "b9e9c5b491e0315194ee10c43d2e4b2df7112e36eea86dda79dd1ff816b1811e",
+      "points": 560786,
+      "maximum_numeric_difference": 0.0,
+      "prototype_csv_sha256": "40fbc3d58be3dbbad4320b0c44bf7b6e35e9524ad32917d5aca982ec4f161b7c",
+      "native_csv_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+      "matched_fields": [
+        "aircraft",
+        "UTC timestamp",
+        "latitude",
+        "longitude",
+        "WGS84 ellipsoid altitude",
+        "type code",
+        "callsign",
+        "registration",
+        "raw MSL altitude"
+      ],
+      "full_utc_day": "2026-11-03",
+      "recording_clock_used": false,
+      "not_location_acceptance": true
+    },
+    "provider_manifest": {
+      "format": 1,
+      "date": "2026-11-03",
+      "provider": "webtrak_chicago",
+      "complete": true,
+      "chunks": 2880,
+      "rows": 560786,
+      "offline_chunks": 25,
+      "csv_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+      "source": "https://webtrak-us02.emsbk.com/WebTrak/cda/data/",
+      "altitude": "Field 18 MSL metres + EGM96 N; original sensor/pressure provenance unknown"
+    },
+    "known_area_diagnostics": [
+      {
+        "case": "midway-arrivals",
+        "reference_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+        "cli_sha256": "b9e9c5b491e0315194ee10c43d2e4b2df7112e36eea86dda79dd1ff816b1811e",
+        "code_commit": "3807f702245a4822236049855be781abc1bdfcc9",
+        "known_area_diagnostic_only": true,
+        "recording_clock_supplied": false,
+        "full_reference_day_requested": "2026-11-03",
+        "native_automatic_archive": true,
+        "exit_code": 0,
+        "elapsed_s": 35.3,
+        "status": "ambiguous",
+        "events": 6,
+        "candidates": 4,
+        "tracks": 4547,
+        "matches": [
+          5,
+          5,
+          4,
+          3
+        ],
+        "first_candidate_error_m": 50.1100202715284,
+        "bounds": {
+          "south": 41.77395094638533,
+          "north": 41.78293405813524,
+          "west": -87.74880116276583,
+          "east": -87.73675504533836
+        },
+        "search_mode": "regional_grid"
+      },
+      {
+        "case": "midway",
+        "reference_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+        "cli_sha256": "b9e9c5b491e0315194ee10c43d2e4b2df7112e36eea86dda79dd1ff816b1811e",
+        "code_commit": "3807f702245a4822236049855be781abc1bdfcc9",
+        "known_area_diagnostic_only": true,
+        "recording_clock_supplied": false,
+        "full_reference_day_requested": "2026-11-03",
+        "native_automatic_archive": true,
+        "exit_code": 0,
+        "elapsed_s": 25.05,
+        "status": "insufficient_evidence",
+        "events": 4,
+        "candidates": 0,
+        "tracks": 4547,
+        "matches": [],
+        "bounds": {
+          "south": 41.77395094638533,
+          "north": 41.78293405813524,
+          "west": -87.74880116276583,
+          "east": -87.73675504533836
+        },
+        "search_mode": "regional_grid"
+      },
+      {
+        "case": "midway-holdout",
+        "reference_sha256": "898ca298598b2f9a120b21ad52ae86959b8ae7c702cedb23c2218a0cde1f7e36",
+        "cli_sha256": "b9e9c5b491e0315194ee10c43d2e4b2df7112e36eea86dda79dd1ff816b1811e",
+        "code_commit": "3807f702245a4822236049855be781abc1bdfcc9",
+        "known_area_diagnostic_only": true,
+        "recording_clock_supplied": false,
+        "full_reference_day_requested": "2026-11-03",
+        "native_automatic_archive": true,
+        "exit_code": 0,
+        "elapsed_s": 21.68,
+        "status": "insufficient_evidence",
+        "events": 2,
+        "candidates": 0,
+        "tracks": 4547,
+        "matches": [],
+        "bounds": {
+          "south": 41.77395094638533,
+          "north": 41.78293405813524,
+          "west": -87.74880116276583,
+          "east": -87.73675504533836
+        },
+        "search_mode": "regional_grid"
+      }
+    ],
+    "broad_original_bounds_run": "in_progress"
   }
 }

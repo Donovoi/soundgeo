@@ -117,9 +117,20 @@ pub(crate) fn score_and_prune_seeds(
     tracks: &[Track],
     control: &Control,
 ) -> Result<()> {
-    for seed in seeds.iter_mut() {
+    let evaluate = |seed: &mut Seed| -> Result<()> {
         control.check()?;
         profile_seed_clock(seed, job, events, tracks);
+        Ok(())
+    };
+    // Use the caller's bounded corridor pool, including nested worker batches.
+    // Keep the terrain-cache fallback serial. Each seed is independent, and
+    // sorting/pruning still happens once in its original deterministic order.
+    if rayon::current_thread_index().is_some() {
+        seeds.par_iter_mut().try_for_each(evaluate)?;
+    } else {
+        for seed in seeds.iter_mut() {
+            evaluate(seed)?;
+        }
     }
     prune_coarse_seeds(seeds, limit, job.grid_m);
     Ok(())
@@ -1610,6 +1621,36 @@ mod tests {
             "Early pruning must not assume a fixed rate for a clock-drift job"
         );
         assert!(exact_score(&seeds[0], &events, &tracks, 340.39).0 < 0.05);
+        let mut serial: Vec<_> = (0..128)
+            .map(|i| {
+                let mut trial = seed.clone();
+                trial.point.lat += (i % 8) as f64 * 0.0002;
+                trial.point.lon += (i / 8) as f64 * 0.0002;
+                trial.start += (i % 5) as f64 - 2.;
+                trial
+            })
+            .collect();
+        let mut parallel = serial.clone();
+        let default_job = Job::default();
+        let control = Control::default();
+        score_and_prune_seeds(&mut serial, 32, &default_job, &events, &tracks, &control).unwrap();
+        let pool = rayon::ThreadPoolBuilder::new()
+            .num_threads(4)
+            .build()
+            .unwrap();
+        pool.install(|| {
+            score_and_prune_seeds(&mut parallel, 32, &default_job, &events, &tracks, &control)
+        })
+        .unwrap();
+        assert_eq!(serial.len(), parallel.len());
+        for (left, right) in serial.iter().zip(&parallel) {
+            assert_eq!(left.indices, right.indices);
+            assert_eq!(left.start.to_bits(), right.start.to_bits());
+            assert_eq!(left.clock_rate.to_bits(), right.clock_rate.to_bits());
+            assert_eq!(left.score.to_bits(), right.score.to_bits());
+            assert_eq!(left.point.lat.to_bits(), right.point.lat.to_bits());
+            assert_eq!(left.point.lon.to_bits(), right.point.lon.to_bits());
+        }
         let job = Job {
             max_clock_drift_ppm: 0.,
             ..Default::default()
