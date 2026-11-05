@@ -36,6 +36,40 @@
       "counts_toward_accuracy": false
     },
     {
+      "name": "lake_hood_retained_support_replay",
+      "known_area_diagnostic_only": false,
+      "recording_clock_supplied": false,
+      "compared_fields": {
+        "job": true,
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true
+      },
+      "report_sha256": [
+        "d9d11d6ca07773546ea7b198ebf0c69bf3c924707a60474b74f7fcb0309d1fa7",
+        "866cd8bd547d4190c9427ed8b2463a8c68ecae9e5759995252975a40bed9e077"
+      ],
+      "hypotheses": 19814757,
+      "events": 24,
+      "matches": [
+        5,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "status": "ambiguous",
+      "counts_toward_accuracy": false
+    },
+    {
       "name": "midway_retained_support_corridor",
       "known_area_diagnostic_only": true,
       "recording_clock_supplied": false,

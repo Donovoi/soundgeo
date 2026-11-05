@@ -1,0 +1,59 @@
+{
+  "not_location_acceptance": true,
+  "known_area_diagnostic_only": true,
+  "external_clock_supplied": false,
+  "trials": [
+    {
+      "tag": "clock-basins-corridor",
+      "code_commit": "2988d7703885b46dc4971a1c37e2a347af18e43f",
+      "cli_sha256": "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308",
+      "report_sha256": "f9771f5518b11a92285798ccc578e723b4229358a0563782e348d454b6437363",
+      "elapsed_s": 137.84,
+      "exactly_equal_fields": {
+        "job": true,
+        "events": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true,
+        "candidates": true
+      }
+    },
+    {
+      "tag": "clock-cache-corridor",
+      "code_commit": "2988d77+exact-rate-cache",
+      "cli_sha256": "585e0a73f777d1e269119b9cf529f658d547c6a9b44b4a35b1805a9d8e61eaa7",
+      "report_sha256": "92ed55b59d606cea12c9881bc473a59d279cd58faf296ad82da5bb241570fb35",
+      "elapsed_s": 267.49,
+      "exactly_equal_fields": {
+        "job": true,
+        "events": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true,
+        "candidates": true
+      }
+    },
+    {
+      "tag": "clock-basins-speed-control",
+      "code_commit": "2988d7703885b46dc4971a1c37e2a347af18e43f",
+      "cli_sha256": "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308",
+      "report_sha256": "6b81de0c1be3fd23b8586c00348e5c31c05246a5911d4532913f14e07482b1b6",
+      "elapsed_s": 334.5,
+      "exactly_equal_fields": {
+        "job": true,
+        "events": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true,
+        "candidates": true
+      }
+    }
+  ],
+  "local_tests_passed": 68,
+  "cache_key": "Exact clock-rate bits within one fixed proposal; no quantization",
+  "timing_note": "Other searches were active. The adjacent baseline was slower than the cached run, but these are not controlled performance measurements.",
+  "decision": "Retain the cache: all software checks and exact real-output comparison pass; no general speedup factor is claimed."
+}

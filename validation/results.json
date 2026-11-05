@@ -841,6 +841,14 @@
           "cancelled": true,
           "cancellation_reason": "Superseded by the tested e1aa6bc03295aca469aa35667e49393fa5c743fb executable; stopped to free CPU time. No completed result is implied.",
           "cancelled_utc": "2026-11-05T00:34:22.413608+00:00"
+        },
+        {
+          "stage": "time_index",
+          "case": "midway-arrivals",
+          "exit_code": 1,
+          "elapsed_s": 5854.5,
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
         }
       ],
       "latest_evaluated_stage": "native_webtrak_expanded"
@@ -2321,6 +2329,36 @@
           ],
           "top_error_m": 45.749,
           "top_matches": 5
+        },
+        "retained_support": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 24,
+          "candidates": 10,
+          "flight_segments": 1040,
+          "hypotheses": 19814757,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": true,
+          "passed": false,
+          "report_sha256": "866cd8bd547d4190c9427ed8b2463a8c68ecae9e5759995252975a40bed9e077",
+          "cli_sha256": "d6bf14b400b6cdf0f38d0f2bdca4c139f40270ce80bb79dbb03fc49831848f8c",
+          "grouped_sounds": 13,
+          "evaluated_code_commit": "22393e3cfdb816b94bb1cd567f6e6bac562db73f",
+          "candidate_errors_m": [
+            45.749,
+            248.129,
+            13108.783,
+            307.186,
+            19918.724,
+            9293.323,
+            9909.85,
+            11861.725,
+            647.76,
+            5793.596
+          ],
+          "top_error_m": 45.749,
+          "top_matches": 5
         }
       },
       "incomplete_runs": [
@@ -2341,7 +2379,7 @@
           }
         }
       ],
-      "latest_evaluated_stage": "envelopes"
+      "latest_evaluated_stage": "retained_support"
     },
     {
       "case": "lake-hood-nov1-later",
@@ -2517,6 +2555,38 @@
           ],
           "top_error_m": 272.579,
           "top_matches": 4
+        },
+        "envelopes_expanded": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 16,
+          "candidates": 10,
+          "flight_segments": 1040,
+          "hypotheses": 21459186,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "723c46f85fd706167debda546b466408a0b1844284cd3795e036406b486be123",
+          "cli_sha256": "4a1f482adbe551a2d2e2a0bd61d4809e79abf70cd2fec31ca19ff68e77f49976",
+          "grouped_sounds": 9,
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "c5c9f598b20b4d1532cfed2a03f473cbaf346f8a",
+          "candidate_errors_m": [
+            5384.709,
+            8124.728,
+            8105.573,
+            18314.471,
+            12206.468,
+            18385.668,
+            18097.846,
+            12819.482,
+            10123.105,
+            9389.471
+          ],
+          "top_error_m": 5384.709,
+          "top_matches": 4
         }
       },
       "incomplete_runs": [
@@ -2529,7 +2599,7 @@
           "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
         }
       ],
-      "latest_evaluated_stage": "short_windows"
+      "latest_evaluated_stage": "envelopes_expanded"
     }
   ]
 }

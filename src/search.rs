@@ -397,7 +397,10 @@ fn profile_seed_clock(seed: &mut Seed, job: &Job, events: &[Event], tracks: &[Tr
     let pivot = events[seed.anchor].cpa_s;
     let unit_start = seed.start + (seed.clock_rate - 1.) * pivot;
     let template = seed.clone();
-    let evaluate_rate = |rate: f64| {
+    // Different coarse starts revisit identical rates. Within this proposal,
+    // rate bits determine the same start, point, observations and flight options.
+    let mut evaluated_rates = std::collections::HashMap::new();
+    let mut evaluate_rate = |rate: f64| {
         let start = unit_start - (rate - 1.) * pivot;
         if (rate - 1.).abs() > drift + 1e-12 || !within_time(job, start) {
             return None;
@@ -405,7 +408,11 @@ fn profile_seed_clock(seed: &mut Seed, job: &Job, events: &[Event], tracks: &[Tr
         let mut trial = template.clone();
         trial.clock_rate = rate;
         trial.start = start;
-        (trial.score, trial.indices) = sampled_curve_fit(&trial, events, tracks, c);
+        let fit = evaluated_rates
+            .entry(rate.to_bits())
+            .or_insert_with(|| sampled_curve_fit(&trial, events, tracks, c));
+        trial.score = fit.0;
+        trial.indices.clone_from(&fit.1);
         Some(trial)
     };
     // A narrow correct clock basin can have a worse coarse score than a broad

@@ -27,6 +27,7 @@ The latest completed runs for these recordings include three first-choice locati
 Two came from Midway: 92 m and 236 m away. One came from Lake Hood: 46 m away.
 All three results remain ambiguous. The other recordings have not passed the location tests.
 An earlier Midway result was 27 m away. A later run returned a first choice 24.6 km away.
+A later Lake Hood recording returned a first choice 5.38 km away after a larger search.
 
 The latest changes have not completed this full benchmark.
 A newer Southampton run returned one model match 7.6 km from the camera.

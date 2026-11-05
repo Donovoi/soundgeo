@@ -826,3 +826,32 @@ location. Their full free reference day is being downloaded. Recording clock
 readings remain in validation notes and are not supplied to the app.
 The fixed [capture plan](fresh-cases-plan.json) and
 [prepared media hashes](fresh-cases-prepared.json) are recorded before analysis.
+
+The earlier Lake Hood replay on `22393e3` finished in 4,292.6 seconds.
+It exactly reproduced the preceding report's job, sounds, ten candidates,
+status, and hypothesis count. The first location remains 45.749 m from the
+camera, with five matches and an ambiguous status. Retaining supported
+intermediate fits did not change this case. The repeat on `2988d77` is running.
+See [refinement-real-comparisons.json](refinement-real-comparisons.json).
+
+## Later Lake Hood retry and clock-fit cache
+
+The later Lake Hood retry on `c5c9f59` completed 21,459,186 hypotheses in
+6,168.9 seconds. The explicit limit was 50 million. Its first candidate is
+5,384.709 m from the camera, with four matches. It returned ten ambiguous
+candidates. The earlier 272.579 m result remains in the history, but the new
+result is the latest failure for this recording. The 250 m target is unchanged.
+
+The 16 detected sound groups exactly match those in the earlier known-area
+diagnostic that found five supporting flights. The broad search did not retain
+that five-match solution. The known-area diagnostic supplies a location hint
+and cannot count as a successful location test.
+
+Clock-rate evaluation now caches repeated rates within each fixed proposal.
+The key uses the exact floating-point bits. All 68 software tests, formatting,
+strict Clippy, documentation tests, and both release builds pass locally.
+The cached Chicago diagnostic exactly preserves its job, sounds, candidates,
+status, track count, and hypothesis count. It took 267.49 seconds. An adjacent
+baseline repeat took 334.50 seconds; an earlier baseline took 137.84 seconds.
+Other searches were active, so these times do not establish a general speedup.
+See [clock-cache-comparison.json](clock-cache-comparison.json).
