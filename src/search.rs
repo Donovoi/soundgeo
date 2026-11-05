@@ -169,6 +169,120 @@ fn retain_corroborated_fit(
     }
 }
 
+/// Refine the complete accepted consensus without changing its observations.
+/// The minimum-consensus endpoint is retained separately. Every extra fit must
+/// preserve all of these curves and their original acceptance checks.
+fn refine_complete_fit(
+    original: &CorroboratedFit,
+    job: &Job,
+    events: &[Event],
+    tracks: &[Track],
+    bounds: Bounds,
+    terrain: &mut Terrain,
+    control: &Control,
+) -> Result<Option<CorroboratedFit>> {
+    if original.matches.len() <= events.len().min(3) {
+        return Ok(None);
+    }
+    let c = job.sound_speed();
+    let drift = allowed_clock_drift(job, events);
+    let first = events.iter().map(|e| e.cpa_s).fold(f64::INFINITY, f64::min);
+    let last = events.iter().map(|e| e.cpa_s).fold(0., f64::max);
+    let pivot = if job.start_utc.is_none() {
+        (first + last) * 0.5
+    } else {
+        0.
+    };
+    let mut seed = original.seed.clone();
+    let mut error = original.error;
+    let mut improved_fit = None;
+    let mut spatial = job.grid_m;
+    let mut temporal = 4.;
+    let mut rate_step = drift * 0.5;
+    for iteration in 0..50 {
+        control.check()?;
+        let mut improved = false;
+        for axis in 0..if drift > 0. { 4 } else { 3 } {
+            for sign in [-1., 1.] {
+                let mut trial = seed.clone();
+                match axis {
+                    0 => trial.point.lat += sign * spatial / 111320.,
+                    1 => {
+                        trial.point.lon += sign * spatial
+                            / (111320. * trial.point.lat.to_radians().cos().max(0.05))
+                    }
+                    2 => trial.start += sign * temporal,
+                    _ => {
+                        trial.clock_rate += sign * rate_step;
+                        trial.start -= sign * rate_step * pivot;
+                    }
+                }
+                if !bounds.contains(trial.point)
+                    || !within_time(job, trial.start)
+                    || (trial.clock_rate - 1.).abs() > drift + 1e-12
+                {
+                    continue;
+                }
+                trial.point.alt = terrain.elevation(trial.point);
+                let matches: Option<Vec<_>> = original
+                    .matches
+                    .iter()
+                    .map(|previous| {
+                        let index = previous.event_index?;
+                        let event = events.get(index)?.variant(previous.event_variant)?;
+                        let track = tracks.get(*trial.indices.get(index)?)?;
+                        let fitted = fit_observation(
+                            &trial,
+                            event,
+                            track,
+                            c,
+                            index,
+                            previous.event_variant,
+                        )?;
+                        let preserves_samples = fitted.modeled_hz.len()
+                            == previous.modeled_hz.len()
+                            && previous
+                                .modeled_hz
+                                .iter()
+                                .zip(&fitted.modeled_hz)
+                                .all(|(old, new)| *old == 0. || *new != 0.);
+                        (fitted.aircraft == previous.aircraft
+                            && preserves_samples
+                            && has_curvature(&fitted))
+                        .then_some(fitted)
+                    })
+                    .collect();
+                let Some(matches) = matches else { continue };
+                let objective = match_error(&matches);
+                let Some(trial_error) = accepted_fit_error(&trial, events, objective, &matches)
+                else {
+                    continue;
+                };
+                if trial_error < error {
+                    trial.score = objective;
+                    seed = trial;
+                    error = trial_error;
+                    improved = true;
+                    improved_fit = Some(CorroboratedFit {
+                        seed: seed.clone(),
+                        matches,
+                        error,
+                    });
+                }
+            }
+        }
+        if !improved || iteration % 5 == 4 {
+            spatial *= 0.5;
+            temporal *= 0.5;
+            rate_step *= 0.5;
+        }
+        if spatial < 1. && temporal < 0.01 && rate_step < 0.000002 {
+            break;
+        }
+    }
+    Ok(improved_fit)
+}
+
 fn unit_clock_rate() -> f64 {
     1.
 }
@@ -926,6 +1040,15 @@ pub fn locate(
         {
             fits.push(best);
         }
+        let mut complete_fits = Vec::new();
+        for fit in &fits {
+            if let Some(refined) =
+                refine_complete_fit(fit, job, events, tracks, bounds, terrain, control)?
+            {
+                complete_fits.push(refined);
+            }
+        }
+        fits.extend(complete_fits);
         for CorroboratedFit {
             seed,
             matches,
@@ -1351,6 +1474,83 @@ mod tests {
             tracks.push(track);
         }
         (truth, shifted, events, tracks)
+    }
+
+    #[test]
+    fn complete_consensus_refinement_preserves_all_original_observations() {
+        let (truth, _, events, tracks) = perturbed_corroboration_fixture();
+        let seed = corroboration_seed(truth);
+        let job = Job {
+            bounds: Some(Bounds {
+                south: truth.lat - 750. / 111320.,
+                north: truth.lat + 750. / 111320.,
+                west: truth.lon - 750. / (111320. * truth.lat.to_radians().cos()),
+                east: truth.lon + 750. / (111320. * truth.lat.to_radians().cos()),
+            }),
+            start_utc: Some(demo::EPOCH),
+            time_tolerance_s: 0.01,
+            max_clock_drift_ppm: 0.,
+            ground_m: truth.alt,
+            grid_m: 200.,
+            ..Default::default()
+        };
+        let (objective, matches) = exact_score(&seed, &events, &tracks, job.sound_speed());
+        assert_eq!(matches.len(), 4);
+        let original = CorroboratedFit {
+            error: accepted_fit_error(&seed, &events, objective, &matches).unwrap(),
+            seed,
+            matches,
+        };
+        let refined = refine_complete_fit(
+            &original,
+            &job,
+            &events,
+            &tracks,
+            job.bounds.unwrap(),
+            &mut Terrain::new(None, truth.alt),
+            &Control::default(),
+        )
+        .unwrap()
+        .expect("The complete consensus has a lower-error nearby fit");
+        assert!(refined.error < original.error - 1e-6);
+        assert_eq!(refined.matches.len(), original.matches.len());
+        for (old, new) in original.matches.iter().zip(&refined.matches) {
+            assert_eq!(old.aircraft, new.aircraft);
+            assert_eq!(old.event_index, new.event_index);
+            assert_eq!(old.event_variant, new.event_variant);
+            assert!(
+                old.modeled_hz
+                    .iter()
+                    .zip(&new.modeled_hz)
+                    .all(|(old, new)| *old == 0. || *new != 0.)
+            );
+            assert!(has_curvature(new));
+            assert!(new.coverage >= 0.9);
+            assert!(new.rmse_hz / new.fitted_tone_hz <= 0.015);
+        }
+        assert!(
+            accepted_fit_error(&refined.seed, &events, refined.error, &refined.matches).is_some()
+        );
+        assert!(job.bounds.unwrap().contains(refined.seed.point));
+        assert!(within_time(&job, refined.seed.start));
+        assert_eq!(refined.seed.clock_rate, 1.);
+        assert_eq!(original.seed.point.lat, truth.lat);
+
+        let mut core_only = original;
+        core_only.matches.truncate(3);
+        assert!(
+            refine_complete_fit(
+                &core_only,
+                &job,
+                &events,
+                &tracks,
+                job.bounds.unwrap(),
+                &mut Terrain::new(None, truth.alt),
+                &Control::default(),
+            )
+            .unwrap()
+            .is_none()
+        );
     }
 
     #[test]
