@@ -19,48 +19,31 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 
 ## Current status
 
-**The program does not yet find locations reliably in real recordings.**
+**The program is not complete. It does not yet find real locations reliably within 250 m.**
 
-Ten public-camera recordings were tested without their recording start times.
-The tests used known dates and broad search areas.
-The completed benchmark used one fixed build for all ten recordings.
-Nine runs returned reports. One Midway run reached its 50-million-hypothesis limit.
-Two first-choice locations were within 250 m.
-Midway was 28 m away. Lake Hood was 46 m away.
-Both results remain ambiguous. No recording passed the full location test.
-The failed Midway run previously returned a 92 m result on an older build.
-The Midway recording now 28 m away previously returned first choices 24.6 km and 26.9 km away.
-A later Lake Hood recording returned a first choice 5.22 km away after a larger search.
-The November 3 Lake Hood recording returned a first choice 6.78 km away.
-Midway arrivals returned a first choice 26.66 km away with ADSB.lol data.
-An earlier run with Chicago airport data returned a first choice 236 m away.
-These runs used different builds and sources. Both results remain ambiguous.
-A fixed follow-up with the main matcher and automatic Chicago data returned
-the same 236 m first choice. Its second choice is 488 m away.
-The other planned Chicago comparison is still running.
+The completed test set contains ten public-camera recordings.
+Each test used a known possible date, a broad search area, and no recording start time.
+Two first-choice locations were within 250 m, but both had competing locations.
+One run reached its search limit. No recording passed the full location test.
 
-A separate search experiment improved the later Lake Hood result to 83 m.
-Its next candidate is 479 m away. The result remains ambiguous.
-Two new Lake Hood recordings test the same fixed experimental build.
-The first returned a location 8.56 km away, with three matches. It failed.
-The second is still running. The 83 m improvement has not generalized to the first new recording.
+Separate tests with free Chicago airport data returned one first choice 236 m from the camera.
+Its next choice was 488 m away. The other Chicago test reached its search limit.
+Both new one-hour Midway recordings returned no location.
 
-Two further one-hour Midway recordings were selected before testing.
-Both returned no location on their planned test build.
-They used the free Chicago flight data and no recording start times.
-
-The latest changes have not completed this full benchmark.
-A newer Southampton run returned one model match 7.6 km from the camera.
-The current model checks can therefore accept a wrong location.
+An experimental search found one Lake Hood location within 83 m, with a competing choice 479 m away.
+On a new Lake Hood recording, the same experimental build chose a location 8.56 km away.
+A second new recording is still running. The experiment is not part of the main app.
+An earlier Southampton test also produced a wrong location with a positive model status.
+A positive model status is not proof that the location is correct.
 
 All 76 software tests pass locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42056753302).
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42061528743).
 Formatting, strict Clippy, documentation tests, and both release builds also pass.
-The Chicago download and data checks pass.
-Its first broad-area location test reached the search limit.
-A run with a larger search limit produced the 236 m Midway result.
-Software test success does not establish location accuracy.
-See the [validation record](validation/README.md) for results, data sources, and failures.
+The latest budget check avoids hours of work when a search cannot fit its limit.
+It rejected an oversized real search in 88 seconds instead of six hours.
+Two completed real-recording comparisons produced unchanged results.
+Software tests and faster processing do not establish location accuracy.
+See the [validation record](validation/README.md) for builds, results, data sources, and failures.
 
 ## Requirements
 

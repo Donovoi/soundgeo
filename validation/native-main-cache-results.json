@@ -143,11 +143,36 @@
     },
     {
       "case": "midway-nov1",
-      "state": "pending",
-      "accepted": false
+      "state": "terminal",
+      "accepted": false,
+      "summary": {
+        "case": "midway-nov1",
+        "source": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-01\\flights.csv",
+        "reference_sha256": "1fc128b441c6a5bbfc1cd875d0002196767ba85bcd5901ea07d5aa89bb9a2aef",
+        "cli_sha256": "2260e49f5e242684b403c136cdb604b89240fe8a1d0f81b8bf938de8171bba8b",
+        "code_commit": "0c2565cc666c9bb6ca6820ec2ac43c7492c1ae4e",
+        "known_area_diagnostic_only": false,
+        "recording_clock_supplied": false,
+        "full_reference_day_requested": "2026-11-01",
+        "source_manifest": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-01\\provider-manifest.json",
+        "started_utc": 1793881670.2823837,
+        "native_automatic_archive": true,
+        "baseline_max_hypotheses": 20000000,
+        "effective_max_hypotheses": 50000000,
+        "job_sha256": "a15cb41309fe774a04bac217ca89489da04dbd7b9e7953d2b8bb26088ad35745",
+        "exit_code": 1,
+        "elapsed_s": 13212.07
+      },
+      "summary_sha256": "9890229b35a7fa4b64a23da7423606efa1f9b8c0ef570d04ffb47197bd762c4d",
+      "status": "processing_error",
+      "no_partial_report": true,
+      "log_sha256": "63ed5736ed8a53bc2b60d7377c28b3907354ef4d41d500ebd8d1823b4e7cf57c",
+      "error_lines": [
+        "Error: Indexed search exceeded the 50000000 hypothesis budget; no partial location is reported. Narrow the region/date range, increase spacing, or raise the budget."
+      ]
     }
   ],
-  "terminal_cases": 1,
+  "terminal_cases": 2,
   "accepted_cases": 0,
   "original_coherent_benchmark_unchanged": true,
   "interpretation": "Separate fixed provider comparison. Pending cases are not successes. Coordinate hits with ambiguity are not acceptance passes."

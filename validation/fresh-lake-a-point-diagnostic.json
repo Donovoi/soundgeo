@@ -1,0 +1,60 @@
+{
+  "case": "lake-hood-nov4-a",
+  "ground_truth_supplied": true,
+  "recording_clock_supplied": false,
+  "counts_as_acceptance": false,
+  "same_frozen_executable_as_failed_broad_test": true,
+  "plan": {
+    "ground_truth_supplied": true,
+    "recording_clock_supplied": false,
+    "counts_as_acceptance": false,
+    "purpose": "Separate a missed search basin from missing detector/reference support after the fixed test failed.",
+    "original_and_pending_test_inputs_unchanged": true,
+    "build": "a5e0a99e45ccc8c1d503388e0e8c826e63a95cb1",
+    "cli_sha256": "c169be656fcddf456dea05696a3266232045aa3a9907489d0efb240b31324fc0"
+  },
+  "run": {
+    "exit_code": 0,
+    "elapsed_s": 343.40269390004687,
+    "counts_as_acceptance": false
+  },
+  "report_sha256": "4577b6829ef4209f9b788b32e1bbea111325c56029427a6c81ebfafdba874769",
+  "job": {
+    "media": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\fresh-validation\\lake-hood-nov4-a\\recording.mp4",
+    "tracks": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-04",
+    "archive": null,
+    "terrain": null,
+    "start_utc": null,
+    "time_tolerance_s": 60.0,
+    "max_clock_drift_ppm": 5000.0,
+    "bounds": {
+      "south": 61.178633000000005,
+      "north": 61.180633,
+      "west": -149.97396650000002,
+      "east": -149.9699665
+    },
+    "ground_m": 27.0,
+    "ground_datum": "egm96",
+    "smooth_tracks": true,
+    "temperature_c": 15.0,
+    "min_hz": 40.0,
+    "max_hz": 400.0,
+    "min_snr_db": 10.0,
+    "fast_flyovers": true,
+    "fast_min_snr_db": 8.0,
+    "grid_m": 50.0,
+    "max_grid_points": 6000,
+    "ffmpeg": null,
+    "aircraft_filter": "all",
+    "type_catalog": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-04\\aircraft-types.json",
+    "search_mode": "regional_grid",
+    "max_hypotheses": 50000000,
+    "silence_mode": "supporting_evidence"
+  },
+  "events": 24,
+  "same_detected_events": true,
+  "status": "insufficient_evidence",
+  "candidates": 0,
+  "hypotheses": 36,
+  "interpretation": "A small region around the known camera also has no accepted model candidate. More broad search alone does not establish that the detected observations and available flight references can support the true area."
+}
