@@ -1,0 +1,259 @@
+{
+  "case": "lake-hood-nov1-later",
+  "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+  "plan_sha256": "e99142c0ec2026f9b057c1352e515f912b695fb8aeff444a2e0fd598baa473a5",
+  "recording_clock_supplied": false,
+  "original_broad_bounds": true,
+  "unchanged_events_jobs_and_references": true,
+  "accuracy_target_m": 250,
+  "experiment_not_merged": true,
+  "acceptance_rules_unchanged": true,
+  "baseline_benchmark_not_replaced": true,
+  "controls": {
+    "commit": "a5e0a99e45ccc8c1d503388e0e8c826e63a95cb1",
+    "cli_sha256": "c169be656fcddf456dea05696a3266232045aa3a9907489d0efb240b31324fc0",
+    "resource_budget_only_override": 50000000,
+    "cases": [
+      {
+        "case": "midway",
+        "exact_comparison": {
+          "events": true,
+          "candidates": true,
+          "status": true,
+          "hypotheses": true,
+          "track_count": true,
+          "search_method": true,
+          "search_grid_m": true
+        },
+        "status": "insufficient_evidence",
+        "candidates": 0,
+        "counts_as_location_pass": false
+      },
+      {
+        "case": "midway-holdout",
+        "exact_comparison": {
+          "events": true,
+          "candidates": true,
+          "status": true,
+          "hypotheses": true,
+          "track_count": true,
+          "search_method": true,
+          "search_grid_m": true
+        },
+        "status": "insufficient_evidence",
+        "candidates": 0,
+        "counts_as_location_pass": false
+      },
+      {
+        "case": "southampton-nov1",
+        "exact_comparison": {
+          "events": true,
+          "candidates": true,
+          "status": true,
+          "hypotheses": true,
+          "track_count": true,
+          "search_method": true,
+          "search_grid_m": true
+        },
+        "status": "ambiguous",
+        "candidates": 1,
+        "counts_as_location_pass": false
+      }
+    ]
+  },
+  "runs": [
+    {
+      "stage": "arrival-cache-expanded",
+      "run": {
+        "case": "lake-hood-nov1-later",
+        "exit_code": 0,
+        "elapsed_s": 15303.3,
+        "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+        "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 50000000,
+        "status": "ambiguous",
+        "events": 16,
+        "candidates": 10,
+        "matches": [
+          4,
+          4,
+          4,
+          4,
+          3,
+          3,
+          3,
+          3,
+          3,
+          3
+        ]
+      },
+      "report_sha256": "87f6eea46638a10a6a8c8de87377d6fa9888bdeb10d30dcb49ffb6c4d66f1fc0",
+      "run_sha256": "c595035fae6dc16241dd59eebde1ee3283cbcf32ad426381a221f40e2aa9d008",
+      "status": "ambiguous",
+      "events": 16,
+      "hypotheses": 21459186,
+      "candidates": [
+        {
+          "error_m": 5215.866,
+          "matches": 4,
+          "relative_error_percent": 0.3359508069694907,
+          "recording_start_utc": "2026-11-01T20:51:18.622+00:00"
+        },
+        {
+          "error_m": 5384.709,
+          "matches": 4,
+          "relative_error_percent": 0.36590995499219636,
+          "recording_start_utc": "2026-11-01T20:51:12.186+00:00"
+        },
+        {
+          "error_m": 8146.757,
+          "matches": 4,
+          "relative_error_percent": 0.4038941832820063,
+          "recording_start_utc": "2026-11-01T22:34:24.451+00:00"
+        },
+        {
+          "error_m": 8105.573,
+          "matches": 4,
+          "relative_error_percent": 0.4900674793010632,
+          "recording_start_utc": "2026-11-01T21:28:52.933+00:00"
+        },
+        {
+          "error_m": 18314.471,
+          "matches": 3,
+          "relative_error_percent": 0.24680848469639854,
+          "recording_start_utc": "2026-11-01T18:17:43.141+00:00"
+        },
+        {
+          "error_m": 18385.668,
+          "matches": 3,
+          "relative_error_percent": 0.25099290717055656,
+          "recording_start_utc": "2026-11-01T18:17:40.997+00:00"
+        },
+        {
+          "error_m": 12197.031,
+          "matches": 3,
+          "relative_error_percent": 0.2530155856969156,
+          "recording_start_utc": "2026-10-31T23:47:21.745+00:00"
+        },
+        {
+          "error_m": 9160.792,
+          "matches": 3,
+          "relative_error_percent": 0.2625873286659326,
+          "recording_start_utc": "2026-11-01T19:49:18.703+00:00"
+        },
+        {
+          "error_m": 18097.846,
+          "matches": 3,
+          "relative_error_percent": 0.26381705612044903,
+          "recording_start_utc": "2026-11-01T18:17:44.878+00:00"
+        },
+        {
+          "error_m": 12819.482,
+          "matches": 3,
+          "relative_error_percent": 0.2646506240966847,
+          "recording_start_utc": "2026-11-01T18:47:30.355+00:00"
+        }
+      ],
+      "coordinate_hit": false,
+      "accepted": false
+    },
+    {
+      "stage": "corroboration-probe",
+      "run": {
+        "case": "lake-hood-nov1-later",
+        "exit_code": 0,
+        "elapsed_s": 15650.4,
+        "cli_sha256": "c169be656fcddf456dea05696a3266232045aa3a9907489d0efb240b31324fc0",
+        "code_commit": "a5e0a99e45ccc8c1d503388e0e8c826e63a95cb1",
+        "baseline_hypothesis_budget": 20000000,
+        "effective_hypothesis_budget": 50000000,
+        "status": "ambiguous",
+        "events": 16,
+        "candidates": 10,
+        "matches": [
+          5,
+          5,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4,
+          4
+        ]
+      },
+      "report_sha256": "538a35f322bfbb182613f75078894f75400c7d9df6085a290efeb072320fb73c",
+      "run_sha256": "151bf62d84a58b32e7eba2f6daa83101f85482bb52142d8a35fa1d3dd92df806",
+      "status": "ambiguous",
+      "events": 16,
+      "hypotheses": 21459186,
+      "candidates": [
+        {
+          "error_m": 82.787,
+          "matches": 5,
+          "relative_error_percent": 0.8252703797736353,
+          "recording_start_utc": "2026-11-01T21:30:01.890+00:00"
+        },
+        {
+          "error_m": 479.261,
+          "matches": 5,
+          "relative_error_percent": 0.844986640584204,
+          "recording_start_utc": "2026-11-01T21:29:54.342+00:00"
+        },
+        {
+          "error_m": 5215.866,
+          "matches": 4,
+          "relative_error_percent": 0.3359508069694907,
+          "recording_start_utc": "2026-11-01T20:51:18.622+00:00"
+        },
+        {
+          "error_m": 5384.709,
+          "matches": 4,
+          "relative_error_percent": 0.36590995499219636,
+          "recording_start_utc": "2026-11-01T20:51:12.186+00:00"
+        },
+        {
+          "error_m": 8146.757,
+          "matches": 4,
+          "relative_error_percent": 0.4038941832820063,
+          "recording_start_utc": "2026-11-01T22:34:24.451+00:00"
+        },
+        {
+          "error_m": 8105.573,
+          "matches": 4,
+          "relative_error_percent": 0.4900674793010632,
+          "recording_start_utc": "2026-11-01T21:28:52.933+00:00"
+        },
+        {
+          "error_m": 8674.628,
+          "matches": 4,
+          "relative_error_percent": 0.7072849709755575,
+          "recording_start_utc": "2026-11-01T22:42:16.754+00:00"
+        },
+        {
+          "error_m": 8649.932,
+          "matches": 4,
+          "relative_error_percent": 0.7331491841826708,
+          "recording_start_utc": "2026-11-01T22:42:11.598+00:00"
+        },
+        {
+          "error_m": 9093.306,
+          "matches": 4,
+          "relative_error_percent": 0.7545059578206446,
+          "recording_start_utc": "2026-11-01T21:41:56.881+00:00"
+        },
+        {
+          "error_m": 8517.595,
+          "matches": 4,
+          "relative_error_percent": 0.7734311897033609,
+          "recording_start_utc": "2026-11-01T22:42:04.408+00:00"
+        }
+      ],
+      "coordinate_hit": true,
+      "accepted": false
+    }
+  ],
+  "interpretation": "The first candidate improved into the 250 m target, but a second five-flight candidate remains outside it. Both runs are ambiguous. Fresh preselected recordings continue on the same frozen experimental executable."
+}

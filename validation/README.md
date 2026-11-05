@@ -1,6 +1,18 @@
 # Real-video validation
 
 This is a failing acceptance benchmark, not a claim of reliable geolocation.
+
+The completed fixed-build benchmark has nine reports and one search-limit error.
+Two first choices are within 250 m. Both remain ambiguous. Acceptance is **0/10**.
+The failure does not inherit an older successful coordinate result. See
+[qualified-batch-results.json](qualified-batch-results.json).
+
+A separate experimental search improved the later Lake Hood first choice to
+82.787 m. It also found a five-match alternative 479.261 m away. It remains
+ambiguous. Two preselected Lake Hood recordings are testing that fixed build.
+The current main app passes 71 software tests locally and in Windows and Ubuntu
+CI. This does not pass the real-video benchmark.
+
 Ten recordings from three public cameras were captured locally on 2026-11-04.
 The known UTC reference day and an approximately 40 km regional search box are
 provided; the recording clock, camera coordinates, aircraft identities, tone
@@ -975,7 +987,7 @@ occurred at other positions, including a distant alternative for the first
 recording. This method was not added to the app. See
 [fresh-midway-audio-diagnostics.json](fresh-midway-audio-diagnostics.json).
 
-## New Lake Hood recordings are queued
+## New Lake Hood recordings
 
 Two further one-hour Lake Hood recordings from November 4 were selected and
 captured before evaluation. Their source dates were checked from visible
@@ -987,13 +999,15 @@ The executable, original broad area, 50-million-hypothesis limit and 250 m
 target are fixed in [fresh-lake-cases-plan.json](fresh-lake-cases-plan.json).
 The experimental executable is `a5e0a99`; it preserves additional proposals
 supported by at least four complete curves. Its 72 local software tests pass.
-It has not completed real-video qualification. The two new recordings are
-queued after its existing Lake Hood run, with no recording clock supplied.
+It has not completed real-video qualification. Its existing Lake Hood run
+has finished. The two new recordings are now running, with no recording clock supplied.
 See [fresh-lake-cases-prepared.json](fresh-lake-cases-prepared.json).
 
 ## Further results from the same benchmark build
 
-Eight of the ten original cases have now finished on `a25bd0d`. The earlier
+All ten original attempts have now finished on `a25bd0d`. Nine returned reports.
+The first Midway November 1 run reached the 50-million-hypothesis limit.
+It returned no partial location. The earlier
 November 1 Lake Hood run again returned a first candidate 45.749 m from the
 camera, with five matching sounds. It remains ambiguous. The later
 November 1 Lake Hood run returned a first candidate 5,215.866 m from the
@@ -1002,9 +1016,18 @@ a first candidate 6,783.075 m away. Both results are ambiguous and fail the
 250 m target. Southampton also remains ambiguous, with one matching sound
 and a first candidate 13,621.587 m away.
 
-The combined record still has four coordinate hits and zero accepted results.
-The remaining two runs continue with their original inputs and executable.
-See [results.json](results.json).
+Midway arrivals returned a first candidate 26,658.142 m away, with three
+matches. This run used the original ADSB.lol reference data. The earlier
+236 m result used Chicago airport replay data and a different build.
+Both results remain ambiguous. The earlier result is preserved; it does not
+replace this failure. Two separate comparisons now use the current main
+build and Chicago data, with the original regions and no recording clocks.
+
+This fixed-build benchmark has two coordinate hits and zero accepted results.
+The older 92 m Midway result does not replace the failed current attempt.
+See [qualified-batch-results.json](qualified-batch-results.json) for every planned outcome.
+The historical mixed-revision record still has three hits among completed reports.
+It keeps the failed attempt separately. See [results.json](results.json).
 
 ## Sound timing as a search aid
 
@@ -1067,3 +1090,87 @@ The curve error fell, but the two nearby first candidates moved farther from
 the camera. The wrong Lake Hood result stayed more than 5 km away. This did
 not establish better location accuracy. See
 [full-consensus-experiment.json](full-consensus-experiment.json).
+
+## Full-area result from the additional-proposal experiment
+
+The separate `a5e0a99` search finished the later November 1 Lake Hood case.
+It kept the original recording, full reference data and broad search area.
+No recording clock was supplied. The budget stayed at 50 million hypotheses.
+The detected events, job settings and reference paths match the baseline exactly.
+
+Its first candidate is **82.787 m** from the camera, with five matching sounds.
+The previous first candidate was 5,215.866 m away, with four matches.
+The experimental search preserves that previous candidate as its third choice.
+The new second choice is 479.261 m away and also has five matches.
+The report remains `ambiguous`. This is a coordinate hit, not an acceptance pass.
+
+The three control cases remain unchanged. The two preselected November 4
+Lake Hood recordings have started on the same frozen experimental executable.
+This experiment is separate from the main benchmark and is not merged into
+the main app. See [corroboration-probe-result.json](corroboration-probe-result.json).
+
+A follow-up used a region and clock computed from both five-match candidates.
+It supplied no camera position or external recording clock. Both versions
+received the same local job. Joint fitting moved the first candidate from
+108.563 m to 83.034 m from the camera. The second moved from 473.175 m to
+303.134 m. Both reports remain ambiguous, with further alternatives outside
+250 m. This computed-proposal diagnostic does not count as another blind
+test. See [lake-five-curve-followup.json](lake-five-curve-followup.json).
+
+## Local sound-classifier diagnostic
+
+A separate diagnostic tested the free
+[AST AudioSet model](https://huggingface.co/MIT/ast-finetuned-audioset-10-10-0.4593).
+It ran locally. No recording was uploaded. It used the raw sound and a second
+version with volume normalization. The model received no flight data or location.
+
+The first run classified primary observations. Some flight matches used
+different intervals retained as alternatives. A pinned supplement checked all
+11 selected alternatives. The original results remain preserved. All 158
+case/observation/volume results were checked against their saved score matrices.
+
+At the descriptive 0.5 threshold, both volume settings gave aircraft scores
+above that threshold for eight of 11 observations in the first Midway clip
+and six of 11 in the second. None of the ten model-selected Lake Hood
+observations reached it. Neither reported flyover from the source recording
+reached it. These comparisons are not independent audio labels; they do not
+measure classification accuracy.
+
+The classifier could remove useful quiet observations. It was not added to
+the app. No detection, ranking or acceptance rule changed. See
+[audio-classifier-ast-diagnostic.json](audio-classifier-ast-diagnostic.json).
+
+## Command-line rejection of ambiguous results
+
+Revision `2a0952e` adds `--require-unambiguous`. It saves the report before
+returning code 3 for no candidates or code 4 for an ambiguous result.
+The existing `--require-match` behavior remains available. This is a status
+check for scripts, not proof of a correct location.
+
+The new regression runs real CLI processes on generated audio. It checks
+an empty result, a one-flyover ambiguous result, and the two-flyover demo.
+It also checks that the two exit policies preserve the same report evidence.
+Report creation timestamps are excluded from that comparison.
+
+A first qualification reused artifacts from the separate experimental branch
+through a shared Cargo target directory. Its 75-test result was rejected.
+The app's release artifacts were cleared and rebuilt from the main source.
+The clean run passed all 71 tests, with no failures or ignored tests.
+Documentation tests, strict Clippy, formatting and both release builds pass.
+The frozen executables used by the running video tests stayed unchanged.
+Each checkout must now use its own target directory, as recorded in `AGENTS.md`.
+The same revision passed all 71 tests in both Windows and Ubuntu CI. The CI
+logs were checked for the expected count and source test names. See
+[strict-cli-evidence.json](strict-cli-evidence.json).
+
+## Additional spectral evidence
+
+A diagnostic compared all matched curves in two completed Lake Hood reports
+with the raw spectrogram. It checked the primary tone and related harmonics.
+It preserved match-count priority and used no camera position to score them.
+
+The extra spectral score favored the later recording's 479.261 m candidate
+over its 82.787 m candidate. The earlier recording's first choice stayed at
+45.749 m. This rule made one first choice worse, so it was not added to the
+app. No result was accepted. See
+[candidate-spectral-support.json](candidate-spectral-support.json).
