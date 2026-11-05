@@ -287,7 +287,19 @@ impl App {
                 if ui.button("Choose terrain folder…").clicked() && let Some(path)=rfd::FileDialog::new().pick_folder(){self.job.terrain=Some(path);}
                 if let Some(p)=&self.job.terrain{ui.label(RichText::new(p.display().to_string()).small());if ui.small_button("Clear terrain").clicked(){self.job.terrain=None;self.job.download_terrain=false;}}
             });
+            ui.label("Sound matching method");
+            egui::ComboBox::from_id_salt("analysis-method")
+                .selected_text(match self.job.analysis_method {soundgeo::AnalysisMethod::Doppler=>"Doppler curves",soundgeo::AnalysisMethod::PassageTiming=>"Flight passage timing"})
+                .show_ui(ui,|ui| {
+                    ui.selectable_value(&mut self.job.analysis_method,soundgeo::AnalysisMethod::Doppler,"Doppler curves");
+                    ui.selectable_value(&mut self.job.analysis_method,soundgeo::AnalysisMethod::PassageTiming,"Flight passage timing");
+                });
+            if self.job.analysis_method == soundgeo::AnalysisMethod::PassageTiming {
+                ui.label("Set a search area. Use at least eight minutes of continuous audio. The app checks 19 shuffled-sound controls before it reports a timing signal.");
+                ui.label("Timing results are possible locations. Their accuracy is not guaranteed.");
+            }
             egui::CollapsingHeader::new("Advanced audio & search").show(ui,|ui|{
+                if self.job.analysis_method == soundgeo::AnalysisMethod::Doppler {
                 ui.checkbox(&mut self.job.fast_flyovers,"Also detect short flyovers (500–3900 Hz)");
                 if self.job.fast_flyovers {ui.horizontal(|ui|{ui.label("Short-pass contrast (dB)");ui.add(egui::DragValue::new(&mut self.job.fast_min_snr_db).range(6. ..=60.));});}
                 use soundgeo::search::SearchMode;
@@ -300,6 +312,14 @@ impl App {
                     ui.label("Grid point budget");ui.add(egui::DragValue::new(&mut self.job.max_grid_points).range(100..=50000));ui.end_row();
                     ui.label("Indexed hypothesis limit");ui.add(egui::DragValue::new(&mut self.job.max_hypotheses).range(100..=100_000_000));ui.end_row();
                 });
+                } else {
+                    egui::Grid::new("timing-options").num_columns(2).show(ui,|ui| {
+                        ui.label("Grid spacing (m)");ui.add(egui::DragValue::new(&mut self.job.timing_options.grid_m).range(50. ..=1000.));ui.end_row();
+                        ui.label("Grid point limit");ui.add(egui::DragValue::new(&mut self.job.timing_options.maximum_grid_points).range(100..=50000));ui.end_row();
+                        ui.label("Maximum flight distance (m)");ui.add(egui::DragValue::new(&mut self.job.timing_options.maximum_passage_distance_m).range(100. ..=5000.));ui.end_row();
+                        ui.label("Temperature (°C)");ui.add(egui::DragValue::new(&mut self.job.temperature_c).range(-50. ..=60.));ui.end_row();
+                    });
+                }
                 if ui.button("Choose FFmpeg executable…").clicked(){self.job.ffmpeg=rfd::FileDialog::new().pick_file();}
             });
             ui.add_space(10.);
@@ -452,7 +472,7 @@ impl App {
         ui.horizontal(|ui| {
             ui.vertical(|ui| {
                 ui.label(RichText::new("ANALYSIS").small().color(ACCENT));
-                ui.heading(if report.candidates.is_empty() {
+                ui.heading(if report.candidate_count() == 0 {
                     "Insufficient evidence"
                 } else if report.status == "ambiguous" {
                     "Ambiguous candidates"
@@ -477,13 +497,16 @@ impl App {
         });
         ui.label(
             RichText::new(format!(
-                "{} · {} flyovers · {} flight segments · {} hypotheses",
+                "{} · {} sound detections · {} flight segments · {} hypotheses",
                 report
                     .media
                     .file_name()
                     .unwrap_or_default()
                     .to_string_lossy(),
-                report.events.len(),
+                report
+                    .timing
+                    .as_ref()
+                    .map_or(report.events.len(), |t| t.peaks.len()),
                 report.track_count,
                 report.hypotheses
             ))
@@ -499,6 +522,10 @@ impl App {
             .color(MUTED),
         );
         ui.add_space(12.);
+        if let Some(timing) = &report.timing {
+            timing_results(ui, ctx, report, timing, &mut self.selected);
+            return;
+        }
         ui.horizontal(|ui| {
             ui.selectable_value(&mut self.tab, 0, "Locations");
             ui.selectable_value(&mut self.tab, 1, "Doppler evidence");
@@ -749,6 +776,100 @@ fn file_field(ui: &mut egui::Ui, path: &mut PathBuf, label: &str, extensions: &[
         *path = p;
     }
 }
+fn timing_results(
+    ui: &mut egui::Ui,
+    ctx: &egui::Context,
+    report: &Report,
+    timing: &soundgeo::timing::Assessment,
+    selected: &mut usize,
+) {
+    ui.label(&timing.explanation);
+    if timing.candidate_count() > 0
+        && let Some(search) = &timing.search
+        && let Some(candidate) = search
+            .candidates
+            .get((*selected).min(search.candidates.len().saturating_sub(1)))
+    {
+        ui.add_space(10.);
+        egui::Frame::new().fill(PANEL).corner_radius(10.).inner_margin(18.).show(ui,|ui| {
+            ui.label(RichText::new(format!("{:.5}, {:.5}",candidate.latitude,candidate.longitude)).size(28.).color(ACCENT));
+            ui.label("Possible recording location");
+            if let Some(time) = chrono::DateTime::from_timestamp_millis((candidate.offset_utc*1000.).round() as i64) {
+                ui.label(format!("Inferred start: {}",time.to_rfc3339()));
+            }
+            ui.label(format!("{} matched sound peaks out of {}",candidate.pairs.len(),timing.peaks.len()));
+            ui.label(format!("Timing score: {:.3}. This is not a confidence percentage.",candidate.log_likelihood_ratio));
+            if let Some(spread) = timing.competitive_location_spread_m {
+                ui.label(format!("Spread of competitive search locations: {:.0} m. This is not an accuracy radius.",spread));
+            }
+            ui.horizontal(|ui| {
+                ui.hyperlink_to("Open in OpenStreetMap",format!("https://www.openstreetmap.org/?mlat={}&mlon={}#map=15/{}/{}",candidate.latitude,candidate.longitude,candidate.latitude,candidate.longitude));
+                if ui.small_button("Copy coordinates").clicked() {ctx.copy_text(format!("{:.6}, {:.6}",candidate.latitude,candidate.longitude));}
+            });
+        });
+        ui.add_space(10.);
+        egui::ScrollArea::vertical()
+            .id_salt("timing-candidates")
+            .max_height(180.)
+            .show(ui, |ui| {
+                for (index, candidate) in search.candidates.iter().enumerate() {
+                    if ui
+                        .selectable_label(
+                            *selected == index,
+                            format!(
+                                "{:02}  {:.5}, {:.5}  ·  score {:.3}",
+                                index + 1,
+                                candidate.latitude,
+                                candidate.longitude,
+                                candidate.log_likelihood_ratio
+                            ),
+                        )
+                        .clicked()
+                    {
+                        *selected = index;
+                    }
+                }
+            });
+        ui.collapsing("Matched sound peaks", |ui| {
+            for pair in &candidate.pairs {
+                if let Some(peak) = timing.peaks.get(pair.peak) {
+                    ui.label(format!(
+                        "{:.1} s · flight {} · timing difference {:+.2} s",
+                        peak.time_s, pair.track, pair.residual_s
+                    ));
+                }
+            }
+        });
+    }
+    ui.collapsing("Sound peaks and shuffled controls", |ui| {
+        ui.label(format!(
+            "{} sound peaks; {} of {} controls completed.",
+            timing.peaks.len(),
+            timing.control_maximum_scores.len(),
+            timing.required_controls
+        ));
+        if let Some(maximum) = timing
+            .control_maximum_scores
+            .iter()
+            .copied()
+            .reduce(f64::max)
+        {
+            ui.label(format!("Highest shuffled-control score: {maximum:.3}"));
+        }
+        for peak in &timing.peaks {
+            ui.label(format!(
+                "{:.1} s · {:.1} dB above background · {:.1} s wide",
+                peak.time_s, peak.excess_db, peak.width_s
+            ));
+        }
+    });
+    ui.collapsing("Limitations", |ui| {
+        for warning in &report.warnings {
+            ui.label(warning);
+        }
+    });
+}
+
 fn location_plot(ui: &mut egui::Ui, report: &Report, selected: usize) {
     let (rect, _) =
         ui.allocate_exact_size(Vec2::new(ui.available_width(), 210.), egui::Sense::hover());

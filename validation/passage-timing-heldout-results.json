@@ -1,0 +1,406 @@
+{
+  "build": {
+    "commit": "72d4658b0aa7456d0d74be9bea554a24d75c463a",
+    "executable": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-search-72d4658.exe",
+    "sha256": "f30ba71ab36e4d7db5a9b6fd257e816740c312e29257467b27f1ea528ff2732b",
+    "required_local_checks_passed": true,
+    "tests": 86,
+    "ignored": 0,
+    "ci": "pending",
+    "created_utc": "2026-11-05T21:23:53.461868+00:00",
+    "development_not_release": true,
+    "original_clock_and_position_not_inputs": true
+  },
+  "plan_sha256": "92ef6716a8d678f4d6583cb21e201ddbc5737b3a4f4671816d7a376ffb799b7d",
+  "cases": [
+    {
+      "case": "midway-nov4-c",
+      "exit_code": 0,
+      "elapsed_s": null,
+      "reused_saved_report": true,
+      "media_sha256": "3b1c10792a8269ca98affd32288be89b2d5ae27a6ffb4f14488cb575abd11a1a",
+      "job_sha256": "1a0cec3922f03350a8de9edfbb52412875d8499e530276d1baf6705eaf1a4cb2",
+      "recording_clock_supplied": false,
+      "camera_position_supplied": false,
+      "accuracy_target_m": 1000,
+      "accepted_release": false,
+      "peaks": 91,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 6991,
+      "report_sha256": "11daa9f6ec51d1a2350425491a9cb2af44ea51b961c68f50c649470381893e3f",
+      "null_controls": [
+        {
+          "seed": 202611090,
+          "exit_code": 0,
+          "max_score": 11.5055008945635,
+          "report_sha256": "7aa71451dc58f30a50ca42862a9c29355076f1ef33560296b2900924ed85d6b5"
+        },
+        {
+          "seed": 202611091,
+          "exit_code": 0,
+          "max_score": 13.753032780428468,
+          "report_sha256": "3225cfb501ac61411537d3cd74ba88deb14bd0016003cc68284ff2c66d591612"
+        },
+        {
+          "seed": 202611092,
+          "exit_code": 0,
+          "max_score": 11.32737671416352,
+          "report_sha256": "6eb4456f2517c218bc5e394db634eba109f2299fe240b8b7f6b97258aa063db1"
+        },
+        {
+          "seed": 202611093,
+          "exit_code": 0,
+          "max_score": 10.919709652425801,
+          "report_sha256": "24874fe4a9437fe8e97dc8f7768f88656e02f2b758742fc0a492ed95323ad970"
+        },
+        {
+          "seed": 202611094,
+          "exit_code": 0,
+          "max_score": 12.74471168119361,
+          "report_sha256": "d19757a5aeec7e55a7cceb5b285073b000564091321d59caba17d5713f1b4cc9"
+        },
+        {
+          "seed": 202611095,
+          "exit_code": 0,
+          "max_score": 11.370454452256048,
+          "report_sha256": "372d8fd6374ebefa7f6e4cd140bae9120e6ab3d5e604f1f08f84c011bb3fa3ea"
+        },
+        {
+          "seed": 202611096,
+          "exit_code": 0,
+          "max_score": 10.923787978596195,
+          "report_sha256": "52863e574476b09827162b54e52669f1037c69b12714a3f15f426c872ceb1054"
+        },
+        {
+          "seed": 202611097,
+          "exit_code": 0,
+          "max_score": 12.557666754977223,
+          "report_sha256": "5dbc5754362e741279f520da4725f832c906fa44aa0b185e91703297ca12c419"
+        },
+        {
+          "seed": 202611098,
+          "exit_code": 0,
+          "max_score": 11.751596950624618,
+          "report_sha256": "4181380e46bdee0db2e8314cd1e2f85d3c6bdad9d2208cabdd7b2b601606b5e0"
+        },
+        {
+          "seed": 202611099,
+          "exit_code": 0,
+          "max_score": 10.917712808933198,
+          "report_sha256": "c897dcc6414350f981e735482d38cff4619165d96695d9498013324cb2ae066f"
+        },
+        {
+          "seed": 202611100,
+          "exit_code": 0,
+          "max_score": 10.873181702924391,
+          "report_sha256": "f0ac5c1af73946396cbb4ead75141007d7b41b689e6ab6da048db344e0cb1103"
+        },
+        {
+          "seed": 202611101,
+          "exit_code": 0,
+          "max_score": 10.884252706638193,
+          "report_sha256": "6e91df0b2888c2081e62ab8d3de1176de3c401c1402325c37c2f417f0fd54ceb"
+        },
+        {
+          "seed": 202611102,
+          "exit_code": 0,
+          "max_score": 12.904769390424441,
+          "report_sha256": "f35a23434ac5dc893e20155f9e2457c4f210085d482cda25d5b0604774dee485"
+        },
+        {
+          "seed": 202611103,
+          "exit_code": 0,
+          "max_score": 11.158901447021375,
+          "report_sha256": "a766c1cfd611ed5486c4eb30361fa1ad44912450278ff462c27b201e78fb6e9e"
+        },
+        {
+          "seed": 202611104,
+          "exit_code": 0,
+          "max_score": 10.60490429016074,
+          "report_sha256": "efdf56607b34ac84e3f855f5f6744f63a066bde0e8b766cc5fc25295eccba9ce"
+        },
+        {
+          "seed": 202611105,
+          "exit_code": 0,
+          "max_score": 14.625770205100078,
+          "report_sha256": "4c2d841c191a6e4b2bd43e398ec3c073efd073d8e5db0d9c1153d4524b6bac4c"
+        },
+        {
+          "seed": 202611106,
+          "exit_code": 0,
+          "max_score": 10.554050855679275,
+          "report_sha256": "da0d3262e134c51869071a1e062c93934972d27da9899a28e3146203d6842852"
+        },
+        {
+          "seed": 202611107,
+          "exit_code": 0,
+          "max_score": 12.139868414291165,
+          "report_sha256": "42df474e5a311ab86ec0e8217ecb34631134bb1cff6d664dd83a3a82c2742558"
+        },
+        {
+          "seed": 202611108,
+          "exit_code": 0,
+          "max_score": 12.00287355590454,
+          "report_sha256": "ad72de0ef7dd394c13742ebc55f439c6620863ce71b094d83f8c0db55153fd33"
+        }
+      ],
+      "first_error_m": 546.4508786068188,
+      "coordinate_hit_within_1km": true,
+      "first_score": 49.07396265350707,
+      "matched_peaks": 26,
+      "score_gap_to_location_over_1km": 7.976880866291907,
+      "completed_null_controls": 19,
+      "null_scores_at_least_real": 0,
+      "shuffled_rank_fraction": 0.05,
+      "candidate_count": 256
+    },
+    {
+      "case": "midway-nov4-d",
+      "exit_code": 0,
+      "elapsed_s": 10.079676499939524,
+      "reused_saved_report": false,
+      "media_sha256": "9a459488df4fa077f9ab1147730d4d2607a340ac67c7a385032bc3d714085dc3",
+      "job_sha256": "b69f091e9a9d1d38f1fa1a30be4961afdff4e074665fb552d4f09738bf74c038",
+      "recording_clock_supplied": false,
+      "camera_position_supplied": false,
+      "accuracy_target_m": 1000,
+      "accepted_release": false,
+      "peaks": 87,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 7105,
+      "report_sha256": "3b086092df9a38059cf30bb85c7c1bb51f7a13e1d0e934e43460b44185d530b1",
+      "null_controls": [
+        {
+          "seed": 202611090,
+          "exit_code": 0,
+          "max_score": 10.549789880386847,
+          "report_sha256": "8bf9d3f2d7fb29a250715827ce39a03fb0d1eeef1ccbd14e427204cba682cde1"
+        },
+        {
+          "seed": 202611091,
+          "exit_code": 0,
+          "max_score": 10.512832172892022,
+          "report_sha256": "17f211aac2baf9c2c2a7564fc5dc125f9f2d766b1de86e77826607d363290fdf"
+        },
+        {
+          "seed": 202611092,
+          "exit_code": 0,
+          "max_score": 10.120879730811215,
+          "report_sha256": "165cc4ca2d7a8b44de81c8412c9e08191c45572ea46e68371f0aff918aacb2e1"
+        },
+        {
+          "seed": 202611093,
+          "exit_code": 0,
+          "max_score": 12.33649289814818,
+          "report_sha256": "677ea9504b8c9d98c9ad8ab394f379d7ccb993cee064cad74e87b631bc42941a"
+        },
+        {
+          "seed": 202611094,
+          "exit_code": 0,
+          "max_score": 11.507477845828044,
+          "report_sha256": "a20269842a9426473cca6823e70d3a9e8141a5c4349db857c2f087a7d7a01023"
+        },
+        {
+          "seed": 202611095,
+          "exit_code": 0,
+          "max_score": 12.678300971273721,
+          "report_sha256": "6e9f85c80dfc542fb56ad87021088f745ff9fe394619fb3c7987e67d35b95421"
+        },
+        {
+          "seed": 202611096,
+          "exit_code": 0,
+          "max_score": 12.030700024987418,
+          "report_sha256": "7e555c29c8c065750c131de6db8946a514e2f7f9ee4b32eb56221b5f6a7ac9f1"
+        },
+        {
+          "seed": 202611097,
+          "exit_code": 0,
+          "max_score": 12.136935855888462,
+          "report_sha256": "ed7b4fc9563b5e24be058fc9353653b8d6fbb4fe661f91477475c3872c55b8a2"
+        },
+        {
+          "seed": 202611098,
+          "exit_code": 0,
+          "max_score": 12.806927647206757,
+          "report_sha256": "263f40fe573ea0b6379db9b3ceaad3d12c16613d43961ac67dd9729d54289f6d"
+        },
+        {
+          "seed": 202611099,
+          "exit_code": 0,
+          "max_score": 16.399339795962216,
+          "report_sha256": "c4b68f0b4398c3bbc350c4cf74d26c1839a942349b298a707ce39ddbcd209054"
+        },
+        {
+          "seed": 202611100,
+          "exit_code": 0,
+          "max_score": 11.722382955963692,
+          "report_sha256": "a033cf28cb753f7f37a7014e8f9d9811bd3dd3d20bfd916a8f2e28855c113523"
+        },
+        {
+          "seed": 202611101,
+          "exit_code": 0,
+          "max_score": 10.64289569574819,
+          "report_sha256": "2d585231ff534ef57b850d5af9b5cad9970565c7fdebb0a1ffd415932896c547"
+        },
+        {
+          "seed": 202611102,
+          "exit_code": 0,
+          "max_score": 11.681848245190633,
+          "report_sha256": "45e0390fb04a6b200cd7d8854ca6240f719543af4d87c3d1173f95e5651791c8"
+        },
+        {
+          "seed": 202611103,
+          "exit_code": 0,
+          "max_score": 12.470737558633989,
+          "report_sha256": "2b2aa5ce765fbdcc951015e6c7571e8c1a4034a52b1af651ec7f42af6b2451f5"
+        },
+        {
+          "seed": 202611104,
+          "exit_code": 0,
+          "max_score": 12.629262007355925,
+          "report_sha256": "c4463e36176fa9f2e23b6c5ee13a281d23666f3c8c4b45eff9293213b3563489"
+        },
+        {
+          "seed": 202611105,
+          "exit_code": 0,
+          "max_score": 11.180839325055436,
+          "report_sha256": "c87d1a7347e75c7493d926d3d23dd531ed0af76aa235473aa3b4bf96dea78ef9"
+        },
+        {
+          "seed": 202611106,
+          "exit_code": 0,
+          "max_score": 10.83683266731004,
+          "report_sha256": "040e1dee9ee94ee4395a32724352cc6ebc5500b53c0d47102db9b675f07fdf6f"
+        },
+        {
+          "seed": 202611107,
+          "exit_code": 0,
+          "max_score": 10.605894325533727,
+          "report_sha256": "814d1b71567798d333d80990f4cb585c7b8c16e2d9706b61ca7ed590405f6719"
+        },
+        {
+          "seed": 202611108,
+          "exit_code": 0,
+          "max_score": 15.315245519883577,
+          "report_sha256": "8d6f0382defb4bb1cbef5f5a25443f1bd8f40a0e4989b510ef75dcbc1685856d"
+        }
+      ],
+      "first_error_m": 546.4508786068188,
+      "coordinate_hit_within_1km": true,
+      "first_score": 40.215357111484366,
+      "matched_peaks": 22,
+      "score_gap_to_location_over_1km": 9.711113677801006,
+      "completed_null_controls": 19,
+      "null_scores_at_least_real": 0,
+      "shuffled_rank_fraction": 0.05,
+      "candidate_count": 256
+    }
+  ],
+  "not_a_calibrated_location_probability": true,
+  "original_plan": {
+    "purpose": "Preselected held-out recordings for the revised 1 km goal; no replacement of previous failures.",
+    "selected_before_capture_and_solver_results": true,
+    "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+    "utc_day": "2026-11-04",
+    "clips": [
+      {
+        "id": "midway-nov4-c",
+        "requested_utc": "2026-11-04T16:00:00+00:00",
+        "duration_s": 3600
+      },
+      {
+        "id": "midway-nov4-d",
+        "requested_utc": "2026-11-04T22:00:00+00:00",
+        "duration_s": 3600
+      }
+    ],
+    "reference_provider": "webtrak-chicago",
+    "bounds": {
+      "south": 41.65,
+      "north": 42.01,
+      "west": -87.98,
+      "east": -87.5
+    },
+    "ground_m": 180,
+    "ground_datum": "egm96",
+    "recording_clock_supplied_to_app": false,
+    "camera_position_supplied_to_app": false,
+    "accuracy_target_m": 1000,
+    "ground_truth": {
+      "latitude": 41.77844250226028,
+      "longitude": -87.74277810405209
+    },
+    "same_camera_new_recordings_not_new_location": true,
+    "planned_method": "density-corrected acoustic passage timing; freeze and qualify native implementation before evaluating these clips",
+    "development_algorithm_sha256": "cddff0a77fdaf7bf0ddabbc5e6c01dae995db285e849a4fff29887c1eaa792c3",
+    "acceptance": "First reported location within 1 km with honest competing-location handling. Retain every planned case and failure. Test against original broad bounds and full free reference day, with no supplied recording clock or selected aircraft.",
+    "redistribute_media": false
+  },
+  "native_plan": {
+    "kind": "native-heldout-evaluation-extension",
+    "created_utc": "2026-11-05T21:20:58.546274+00:00",
+    "before_first_native_analysis": true,
+    "original_plan": "timing-heldout-plan.json",
+    "cases": [
+      "midway-nov4-c",
+      "midway-nov4-d"
+    ],
+    "method_options": {
+      "grid_m": 300,
+      "maximum_grid_points": 50000,
+      "maximum_passage_distance_m": 500,
+      "retained_candidates": 256
+    },
+    "required_before_analysis": "All required local checks pass; source committed; executable copied to immutable path with commit and SHA-256 receipt.",
+    "full_region_and_day": true,
+    "no_supplied_recording_time_or_camera_location": true,
+    "free_reference": "webtrak-chicago full 2026-11-04 UTC day via native archive ensure and verified cache",
+    "null_controls": {
+      "count_per_clip": 19,
+      "seeds": [
+        202611090,
+        202611091,
+        202611092,
+        202611093,
+        202611094,
+        202611095,
+        202611096,
+        202611097,
+        202611098,
+        202611099,
+        202611100,
+        202611101,
+        202611102,
+        202611103,
+        202611104,
+        202611105,
+        202611106,
+        202611107,
+        202611108
+      ],
+      "method": "NumPy default_rng(seed).permutation(30) over 120-second blocks; preserve within-block times and counts; complete original spatial/clock search for each control."
+    },
+    "evaluation": [
+      "First candidate error against independently recorded camera coordinates, after search only; coordinate target1000m.",
+      "Record every failure and competing location; no location-confidence claim from the likelihood.",
+      "Report rank of real maximum among all 19 null maxima. This is a shuffled-control diagnostic, not calibrated location accuracy."
+    ],
+    "old_attempts_unchanged": true
+  },
+  "harness_correction": {
+    "observed_utc": "2026-11-05T21:25:07.454973+00:00",
+    "initial_harness_exit_code": 1,
+    "cause": "The harness incorrectly required decoded audio duration to equal the container duration exactly. Decoded audio is 3599.998625 seconds; container duration is 3600 seconds.",
+    "completed_native_report_preserved": true,
+    "duration_tolerance_s": 0.1,
+    "null_controls_use_same_decoded_duration_as_real_search": true,
+    "algorithm_and_frozen_binary_unchanged": true,
+    "first_candidate_not_evaluated_before_correction": true,
+    "initial_stderr_sha256": "dca3694f49e417b721200643749952736d75e90aa2f4bb8b1486753bc175af5a"
+  },
+  "coordinate_hits": 2,
+  "location_release_accepted": false,
+  "interpretation": "Both preselected same-camera clips ranked a location within 1 km first and exceeded all 19 shuffled controls. This does not establish accuracy across locations or qualify an integrated GUI/CLI release."
+}

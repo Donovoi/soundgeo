@@ -1,0 +1,48 @@
+{
+  "purpose": "Prospective same-camera validation of the integrated method and its new ambiguity/negative-control screens. These clips are reserved before capture and before evaluation.",
+  "selected_before_capture_and_solver_results": true,
+  "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+  "utc_day": "2026-11-04",
+  "clips": [
+    {
+      "id": "midway-nov4-e",
+      "requested_utc": "2026-11-04T14:00:00+00:00",
+      "duration_s": 3600
+    },
+    {
+      "id": "midway-nov4-f",
+      "requested_utc": "2026-11-04T02:00:00+00:00",
+      "duration_s": 3600
+    }
+  ],
+  "reference_provider": "webtrak-chicago",
+  "bounds": {
+    "south": 41.65,
+    "north": 42.01,
+    "west": -87.98,
+    "east": -87.5
+  },
+  "ground_m": 180,
+  "ground_datum": "egm96",
+  "recording_clock_supplied_to_app": false,
+  "camera_position_supplied_to_app": false,
+  "accuracy_target_m": 1000,
+  "ground_truth": {
+    "latitude": 41.77844250226028,
+    "longitude": -87.74277810405209
+  },
+  "same_camera_new_recordings_not_new_location": true,
+  "planned_method": "Integrated main CLI passage-timing mode. Freeze the implementation after all required checks. Then evaluate both clips with no supplied recording clock or camera position.",
+  "acceptance": "First reported location within 1 km with honest competing-location handling. Retain every planned case and failure. Test against original broad bounds and full free reference day, with no supplied recording clock or selected aircraft.",
+  "redistribute_media": false,
+  "created_utc": "2026-11-05T21:45:55.353009+00:00",
+  "screens": {
+    "minimum_matched_peaks": 6,
+    "shuffled_controls": 19,
+    "require_real_score_above_all_controls": true,
+    "maximum_competitive_location_distance_m": 1000,
+    "competitive_likelihood_factor": 100,
+    "not_calibrated_accuracy_radius": true
+  },
+  "development_cases_do_not_count_as_new_holdouts": true
+}

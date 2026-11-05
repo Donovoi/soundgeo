@@ -22,9 +22,19 @@ use std::{
     },
 };
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize, clap::ValueEnum)]
+#[serde(rename_all = "snake_case")]
+pub enum AnalysisMethod {
+    #[default]
+    Doppler,
+    PassageTiming,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(default)]
 pub struct Job {
+    pub analysis_method: AnalysisMethod,
+    pub timing_options: timing::Options,
     pub media: PathBuf,
     pub tracks: PathBuf,
     pub archive: Option<archive::ArchiveRequest>,
@@ -56,6 +66,8 @@ pub struct Job {
 impl Default for Job {
     fn default() -> Self {
         Self {
+            analysis_method: AnalysisMethod::default(),
+            timing_options: timing::Options::default(),
             media: PathBuf::new(),
             tracks: PathBuf::new(),
             archive: None,
@@ -87,6 +99,11 @@ impl Default for Job {
 }
 impl Job {
     pub fn validate(&self) -> Result<()> {
+        if self.analysis_method == AnalysisMethod::PassageTiming && self.bounds.is_none() {
+            bail!(
+                "Passage timing needs a search area. Set its south, north, west and east bounds."
+            );
+        }
         if !self.media.is_file() {
             bail!("Choose an existing video or audio file.");
         }
@@ -206,6 +223,16 @@ pub struct Report {
     pub reference_sources: Vec<PathBuf>,
     #[serde(default)]
     pub terrain_sources: Vec<terrain_archive::TileRecord>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub timing: Option<timing::Assessment>,
+}
+
+impl Report {
+    pub fn candidate_count(&self) -> usize {
+        self.timing
+            .as_ref()
+            .map_or(self.candidates.len(), timing::Assessment::candidate_count)
+    }
 }
 
 pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<Report> {
@@ -228,13 +255,31 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     progress("Extracting audio locally", 0.02);
     let samples = audio::decode(job, control)?;
     let duration_s = samples.len() as f64 / audio::SAMPLE_RATE as f64;
-    progress("Finding aircraft-like Doppler curves", 0.10);
-    let events = audio::detect(&samples, job, control, progress)?;
+    let (events, timing_peaks) = match job.analysis_method {
+        AnalysisMethod::Doppler => {
+            progress("Finding aircraft-like Doppler curves", 0.10);
+            (audio::detect(&samples, job, control, progress)?, None)
+        }
+        AnalysisMethod::PassageTiming => {
+            progress("Finding broadband sound peaks", 0.10);
+            (vec![], Some(timing::detect(&samples, control)?))
+        }
+    };
     let mut report = Report { version: env!("CARGO_PKG_VERSION").into(), status: "insufficient_evidence".into(),
         media: job.media.clone(), job: job.clone(), duration_s, track_count: 0, events,
         candidates: vec![], warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
-        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![] };
-    if report.events.is_empty() {
+        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![],timing:None };
+    if let Some(peaks) = &timing_peaks
+        && (peaks.len() < 6 || duration_s < 480.)
+    {
+        report.search_method = "passage_timing".into();
+        report.search_grid_m = job.timing_options.grid_m;
+        report.timing = Some(timing::Assessment::pending(peaks.clone()));
+        report.warnings.push("Passage timing needs at least six sound peaks and eight minutes of continuous audio. Flight downloads were not needed for this result.".into());
+        progress("Analysis complete", 1.0);
+        return Ok(report);
+    }
+    if timing_peaks.is_none() && report.events.is_empty() {
         report.warnings.push("No sufficiently strong, curved descending tone was detected. Try a longer outdoor recording or adjust the frequency band.".into());
         return Ok(report);
     }
@@ -287,6 +332,42 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         report.warnings.push("Terrain: Mapzen Terrain Tiles (https://registry.opendata.aws/terrain-tiles/). Provider credits are in TERRAIN-ATTRIBUTION.txt in the terrain cache. Bare-earth elevation does not include microphone height above the ground.".into());
     }
     let mut terrain = geo::Terrain::with_datum(job.terrain.clone(), job.ground_m, job.ground_datum);
+    if let Some(peaks) = timing_peaks {
+        let assessment = timing::assess(
+            job,
+            peaks,
+            duration_s,
+            &dataset.tracks,
+            &job.timing_options,
+            control,
+            &|m, p| progress(m, 0.42 + p * 0.57),
+        )?;
+        report.search_method = "passage_timing".into();
+        report.search_grid_m = job.timing_options.grid_m;
+        report.hypotheses = assessment
+            .search
+            .as_ref()
+            .map_or(0, |s| s.likelihood_evaluations);
+        report.hypotheses += assessment.control_likelihood_evaluations;
+        if assessment
+            .search
+            .as_ref()
+            .is_some_and(|s| s.terrain_fallback_points > 0)
+        {
+            report.warnings.push(format!("Missing/void terrain used the configured fallback height of {} m ({:?}). Candidate heights are WGS84 ellipsoid heights.",job.ground_m,job.ground_datum));
+        }
+        report.status = match assessment.screen {
+            timing::Screen::InsufficientEvidence => "insufficient_evidence",
+            timing::Screen::Ambiguous => "ambiguous",
+            timing::Screen::TimingCandidate => "candidates_found",
+        }
+        .into();
+        report.warnings.push(assessment.explanation.clone());
+        report.warnings.push("Passage timing uses nearby aircraft, a fixed media clock rate and a one-second timing width. Speech, missing flights, changing sound power and nonstationary noise can invalidate this model. Shuffled controls and the candidate spread are not a calibrated accuracy radius.".into());
+        report.timing = Some(assessment);
+        progress("Analysis complete", 1.);
+        return Ok(report);
+    }
     progress("Matching flyovers with a shared recording time", 0.42);
     let result = search::locate(
         job,

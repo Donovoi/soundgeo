@@ -52,6 +52,9 @@ enum Commands {
         /// Maximum search hypotheses; overrides the saved job. Larger limits take longer.
         #[arg(long, value_parser = clap::value_parser!(u64).range(100..=100_000_000))]
         max_hypotheses: Option<u64>,
+        /// Sound matching method; passage timing needs bounds and at least eight minutes.
+        #[arg(long)]
+        method: Option<soundgeo::AnalysisMethod>,
         /// Report file, or - for JSON on stdout.
         #[arg(long)]
         output: PathBuf,
@@ -159,6 +162,7 @@ fn run(args: Args) -> Result<u8> {
             provider,
             terrain_cache,
             max_hypotheses,
+            method,
             output,
             require_match,
             require_unambiguous,
@@ -230,6 +234,9 @@ fn run(args: Args) -> Result<u8> {
                 // Clap limits this to 100 million, which also fits 32-bit usize.
                 job.max_hypotheses = limit as usize;
             }
+            if let Some(method) = method {
+                job.analysis_method = method;
+            }
             if let Some(path) = terrain_cache {
                 job.terrain = Some(path);
                 job.download_terrain = true;
@@ -246,12 +253,12 @@ fn run(args: Args) -> Result<u8> {
                     println!(
                         "{}; {} candidate(s). Report: {}",
                         report.status,
-                        report.candidates.len(),
+                        report.candidate_count(),
                         output.display()
                     );
                 }
             }
-            if (require_match || require_unambiguous) && report.candidates.is_empty() {
+            if (require_match || require_unambiguous) && report.candidate_count() == 0 {
                 return Ok(3);
             }
             if require_unambiguous && report.status != "candidates_found" {
