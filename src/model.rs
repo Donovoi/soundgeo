@@ -31,7 +31,64 @@ pub(crate) struct PreparedTrack<'a> {
     observer: Vec3,
     sound_speed: f64,
     arrivals: Vec<f64>,
+    segments: Vec<std::cell::Cell<Option<CachedSegment>>>,
 }
+
+#[derive(Clone, Copy)]
+struct CachedSegment {
+    index: usize,
+    geometry: Option<PreparedSegment>,
+}
+
+/// Invariants of one segment at one observer. Initialize only segments that
+/// the clock profile visits; long tracks need not prepare unrelated geometry.
+#[derive(Clone, Copy)]
+struct PreparedSegment {
+    start: f64,
+    duration: f64,
+    velocity: Vec3,
+    relative: Vec3,
+    quadratic: f64,
+    projection: f64,
+    squared_delay: f64,
+}
+
+impl PreparedSegment {
+    fn new(track: &Track, observer: Vec3, c: f64, lo: usize, hi: usize) -> Option<Self> {
+        let s = &track.samples;
+        let dt = s[hi].time - s[lo].time;
+        if dt <= 0. || dt > 60. {
+            return None;
+        }
+        let vel = (s[hi].xyz - s[lo].xyz) * (1. / dt);
+        if vel.norm() >= c * 0.9 {
+            return None;
+        }
+        let r0 = s[lo].xyz - observer;
+        let c2 = c * c;
+        Some(Self {
+            start: s[lo].time,
+            duration: dt,
+            velocity: vel,
+            relative: r0,
+            quadratic: 1. - vel.dot(vel) / c2,
+            projection: r0.dot(vel) / c2,
+            squared_delay: r0.dot(r0) / c2,
+        })
+    }
+
+    fn factor(&self, arrival: f64, c: f64) -> f64 {
+        // Keep the unprepared calculation's floating-point operation order.
+        let q = arrival - self.start;
+        let k = q + self.projection;
+        let discriminant = (k * k - self.quadratic * (q * q - self.squared_delay)).max(0.);
+        let emission = ((k - discriminant.sqrt()) / self.quadratic).clamp(0., self.duration);
+        let r = self.relative + self.velocity * emission;
+        let radial = self.velocity.dot(r) / r.norm().max(1.);
+        c / (c + radial)
+    }
+}
+
 impl PreparedTrack<'_> {
     pub(crate) fn factor(&self, arrival: f64) -> Option<f64> {
         let times = &self.arrivals;
@@ -48,8 +105,22 @@ impl PreparedTrack<'_> {
                 hi = mid;
             }
         }
-        self.track
-            .factor_in_segment(self.observer, arrival, self.sound_speed, lo, hi)
+        // Bound storage independently of a long track's length. Collisions
+        // merely recompute the same immutable geometry, including invalid gaps.
+        let slot = &self.segments[lo % self.segments.len()];
+        let segment = match slot.get() {
+            Some(cached) if cached.index == lo => cached.geometry,
+            _ => {
+                let segment =
+                    PreparedSegment::new(self.track, self.observer, self.sound_speed, lo, hi);
+                slot.set(Some(CachedSegment {
+                    index: lo,
+                    geometry: segment,
+                }));
+                segment
+            }
+        };
+        segment.map(|segment| segment.factor(arrival, self.sound_speed))
     }
 }
 
@@ -63,6 +134,9 @@ impl Track {
                 .samples
                 .iter()
                 .map(|s| s.time + (s.xyz - observer).norm() / sound_speed)
+                .collect(),
+            segments: (0..self.samples.len().saturating_sub(1).min(64))
+                .map(|_| std::cell::Cell::new(None))
                 .collect(),
         }
     }
@@ -264,6 +338,64 @@ mod tests {
                             track.factor(observer, arrival, c).map(f64::to_bits),
                             "Prepared geometry changed a boundary, coverage gap or Doppler value"
                         );
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn prepared_segments_keep_exact_results_after_cache_collisions() {
+        let truth = crate::demo::TRUTH;
+        let track = Track {
+            id: "CACHE_COLLISIONS".into(),
+            kind: crate::aircraft::AircraftKind::Propeller,
+            samples: (0..260)
+                .map(|i| {
+                    // A missing interval and an invalid speed share cache slots
+                    // with valid geometry, and must still return no prediction.
+                    let time = crate::demo::EPOCH + 2. * i as f64 + if i >= 65 { 75. } else { 0. };
+                    let east = 100. * i as f64 + if i >= 129 { 1200. } else { 0. };
+                    Sample::new(
+                        time,
+                        Point {
+                            lat: truth.lat + 600. / 111320.,
+                            lon: truth.lon + east / (111320. * truth.lat.to_radians().cos()),
+                            alt: 1200.,
+                        },
+                    )
+                })
+                .collect(),
+        };
+        for c in [310., 340.39, 360.] {
+            for observer in [
+                truth.ecef(),
+                Point {
+                    lat: truth.lat + 0.01,
+                    ..truth
+                }
+                .ecef(),
+            ] {
+                let prepared = track.prepare(observer, c);
+                for round in 0..3 {
+                    for offset in 0..64 {
+                        for group in 0..4 {
+                            let index = offset + 64 * ((group + round) % 4);
+                            let a = prepared.arrivals[index];
+                            let b = prepared.arrivals[index + 1];
+                            for fraction in [0.1, 0.5, 0.9] {
+                                let arrival = a + fraction * (b - a);
+                                let expected = track.factor(observer, arrival, c);
+                                assert_eq!(
+                                    prepared.factor(arrival).map(f64::to_bits),
+                                    expected.map(f64::to_bits),
+                                    "A replaced cache entry changed segment {index}"
+                                );
+                                if index == 64 || index == 128 {
+                                    assert!(expected.is_none());
+                                }
+                            }
+                        }
                     }
                 }
             }
