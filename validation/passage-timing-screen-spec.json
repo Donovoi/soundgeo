@@ -1,0 +1,15 @@
+{
+  "created_utc": "2026-11-05T22:05:09.154653+00:00",
+  "before_first_integrated_case_evaluation": true,
+  "development_policy_not_calibrated_accuracy": true,
+  "minimum_matched_peaks": 6,
+  "minimum_recording_duration_s": 480,
+  "control_count": 19,
+  "controls": "Deterministic SplitMix64 Fisher-Yates permutations. Select distinct nonidentity permutations. Equal blocks use round(duration/120). Record each selected seed.",
+  "control_comparison_margin": 1e-07,
+  "competitive_likelihood_factor": 100,
+  "maximum_competitive_location_distance_m": 1000,
+  "spatial_coverage": "Keep the best score at every evaluated grid position before pruning the candidate list.",
+  "status": "insufficient_evidence if support or control checks fail; ambiguous if competitive evaluated positions are over 1 km apart; candidates_found otherwise.",
+  "limitations": "The screens were developed after the development-case results. The new E/F clips remain unused until the integrated binary is frozen. Success is a model status, not a calibrated probability or guaranteed radius."
+}

@@ -55,9 +55,13 @@ It accounts for chance matches where many aircraft pass.
 It placed the two development recordings within 547 m and 255 m of the camera.
 The Rust search reproduces the reference calculation on those recordings and six shuffled controls.
 These are development results from one camera. They do not prove reliable location accuracy.
-All 86 local software tests pass for the new module. Formatting, strict Clippy, documentation tests,
-and both release builds also pass. Windows and Ubuntu CI for this revision are pending.
-The method is not yet connected to the desktop application or the main analysis command.
+The frozen module also placed two reserved recordings within 547 m.
+Both scores exceeded all 19 shuffled controls for each recording.
+All four recordings came from the same camera. Lake Hood still needs work.
+The frozen module passed all 86 software tests locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42112268393).
+The desktop and CLI integration passed all 91 local software tests.
+Its new real-video tests and Windows and Ubuntu CI are still pending.
 See the [validation record](validation/README.md) for builds, results, data sources, and failures.
 
 ## Requirements
@@ -105,6 +109,24 @@ The demo does not require flight downloads. It does not prove accuracy with real
 Use `soundgeo-cli.exe` for scripts and scheduled tasks.
 Processing commands do not open a window or request interactive input.
 The `view` command opens the desktop application.
+
+To use flight passage timing, add `--method passage-timing`:
+
+```powershell
+soundgeo-cli.exe analyze --config "region.json" --input "recording.mp4" --method passage-timing --date 2026-11-04 --provider webtrak-chicago --cache "flight-cache" --output "report.json"
+```
+
+Set the search area in `region.json`. Leave `start_utc` empty or set it to `null`.
+Use at least eight minutes of continuous audio. Longer recordings can give more evidence.
+The app compares the result with 19 versions that shuffle blocks of sound peaks.
+It also checks for competing locations across the searched area.
+These checks can reject a weak result. They do not guarantee a 1 km accuracy radius.
+Timing details are in the report's `timing` field. Read location candidates from
+`timing.search.candidates`. The top-level `candidates` field is for Doppler results. A failed check keeps its diagnostic results
+but does not count them as a location match.
+
+In the desktop app, select **Flight passage timing** under **Sound matching method**.
+Set a search area before you start. The default method for older jobs remains **Doppler curves**.
 
 Use existing flight data:
 

@@ -1347,5 +1347,52 @@ cases. Ten focused tests cover detection, matching, geometry, numerical fits,
 input limits, and a generated search with an unknown clock. These checks do
 not qualify real location accuracy. Two further same-camera clips were reserved
 before the native search was tested. They will be evaluated after the native
-implementation is qualified and frozen. See
+implementation is qualified and frozen. Their completed results follow below. See
 [passage-timing-development.json](passage-timing-development.json).
+
+## Frozen passage-timing results
+
+Revision `72d4658` passed all 86 local tests and all required checks. Both Windows
+and Ubuntu CI also passed 86 tests. The frozen executable reproduced the leading
+candidate in each of the eight development/control cases. See
+[passage-timing-frozen-ci.json](passage-timing-frozen-ci.json) and
+[passage-timing-frozen-parity.json](passage-timing-frozen-parity.json).
+
+The two reserved recordings, C and D, both ranked a point 546.45 m from the camera
+first. Each score exceeded all 19 shuffled controls. Their scores were 49.074
+and 40.215. The strongest control scores were 14.626 and 16.399. These are new
+recordings from the same camera. They are not tests at a new location. The
+one-hour container duration differed from decoded audio by 0.001375 seconds.
+The test harness was corrected to use the decoded duration for the controls.
+The frozen program and the completed first report were preserved. See
+[passage-timing-heldout-results.json](passage-timing-heldout-results.json).
+
+The same frozen method then tested all ten original recordings and both fresh
+Lake Hood clips. Three original Midway recordings ranked within 1 km. The other
+nine cases failed that coordinate target. The two fresh Lake Hood errors were
+2.33 km and 10.23 km. A strong-looking timing score can also cover several
+locations. The raw ranking is not sufficient to claim a location. See
+[passage-timing-existing-cases.json](passage-timing-existing-cases.json).
+
+## Main CLI and desktop integration
+
+The new mode is available as `analyze --method passage-timing` and through the
+desktop method selector. Older jobs keep their Doppler method. Timing reports
+use a separate `timing` field. The normal CLI status and strict exit codes also
+apply to this mode.
+
+The development screens require six matched peaks and a score above all 19
+distinct shuffled controls. They also check competing locations more than 1 km
+away. All evaluated grid positions retain their best score, even when nearby
+candidates fill the detailed report. A likelihood factor of 100 defines the
+competitive score range. This is a screening rule, not a calibrated accuracy
+radius. See [passage-timing-screen-spec.json](passage-timing-screen-spec.json).
+
+All 91 local software tests and required checks pass. Tests cover the unknown
+clock, one-to-one matching, numerical fits, distinct controls, retained spatial
+alternatives, CLI status, old job files, and avoiding flight downloads for silent
+audio. The integrated real-video tests and CI are pending. Two further clips,
+E and F, were reserved before capture. They remain unused until the main CLI is
+qualified and frozen. See
+[passage-timing-integrated-local-checks.json](passage-timing-integrated-local-checks.json)
+and [timing-integrated-heldout-plan.json](timing-integrated-heldout-plan.json).

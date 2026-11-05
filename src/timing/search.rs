@@ -55,6 +55,19 @@ pub struct SearchResult {
     pub eligible_points: usize,
     pub likelihood_evaluations: usize,
     pub candidates: Vec<Candidate>,
+    /// Best evaluated score at each searched location, before candidate pruning.
+    /// Retain these to avoid hiding spatial alternatives behind a full beam.
+    #[serde(default)]
+    pub location_scores: Vec<LocationScore>,
+    #[serde(default)]
+    pub terrain_fallback_points: usize,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct LocationScore {
+    pub latitude: f64,
+    pub longitude: f64,
+    pub log_likelihood_ratio: f64,
 }
 
 /// Search the configured region and reference days with one shared unknown clock.
@@ -104,6 +117,8 @@ pub fn locate(
         eligible_points: 0,
         likelihood_evaluations: 0,
         candidates: vec![],
+        location_scores: vec![],
+        terrain_fallback_points: 0,
     };
     if peaks.len() < 3 {
         return Ok(result);
@@ -134,6 +149,7 @@ pub fn locate(
                 job,
                 control,
             )?;
+            let mut location_best: Option<f64> = None;
             for offset in proposals {
                 control.check()?;
                 if let Some(candidate) = evaluate(
@@ -147,8 +163,20 @@ pub fn locate(
                     job,
                 ) {
                     result.likelihood_evaluations += 1;
+                    location_best = Some(
+                        location_best.map_or(candidate.log_likelihood_ratio, |best| {
+                            best.max(candidate.log_likelihood_ratio)
+                        }),
+                    );
                     result.candidates.push(candidate);
                 }
+            }
+            if let Some(score) = location_best {
+                result.location_scores.push(LocationScore {
+                    latitude: point.lat,
+                    longitude: point.lon,
+                    log_likelihood_ratio: score,
+                });
             }
             if result.candidates.len() > options.retained_candidates {
                 sort(&mut result.candidates);
@@ -168,6 +196,7 @@ pub fn locate(
             );
         }
     }
+    result.terrain_fallback_points = terrain.missing;
     sort(&mut result.candidates);
     Ok(result)
 }
@@ -431,12 +460,22 @@ mod tests {
             &peaks,
             1200.,
             &tracks,
-            &Options::default(),
+            &Options {
+                retained_candidates: 1,
+                ..Default::default()
+            },
             &Control::default(),
             &|_, _| {},
         )
         .unwrap();
         let best = &result.candidates[0];
+        assert_eq!(result.candidates.len(), 1);
+        assert!(result.location_scores.len() > 1);
+        assert!(result.location_scores.iter().any(|s| truth.distance(Point {
+            lat: s.latitude,
+            lon: s.longitude,
+            alt: 0.
+        }) > 300.));
         assert!((best.latitude - truth.lat).abs() < 1e-10);
         assert!((best.longitude - truth.lon).abs() < 1e-10);
         assert!((best.offset_utc - offset).abs() < 1e-6);
