@@ -2,13 +2,13 @@
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
   "latest_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
-  "latest_code_cases_tested": 3,
+  "latest_code_cases_tested": 4,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
   "date_and_broad_region_supplied": true,
   "real_accuracy_established": false,
-  "coordinate_hits": 3,
+  "coordinate_hits": 4,
   "accepted_cases": 0,
   "case_count": 10,
   "cases": [
@@ -1714,6 +1714,33 @@
           ],
           "top_error_m": 26914.042,
           "top_matches": 3
+        },
+        "arrival_cache_expanded": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 11,
+          "candidates": 5,
+          "flight_segments": 5381,
+          "hypotheses": 23596939,
+          "recording_clock": null,
+          "duration_s": 3596.6085,
+          "coordinate_hit": true,
+          "passed": false,
+          "report_sha256": "09bcd3da77ec2ec44fbaa4838c0a2aa82dea65782c18edf604176061885c68af",
+          "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+          "grouped_sounds": 4,
+          "baseline_hypothesis_budget": 20000000,
+          "effective_hypothesis_budget": 50000000,
+          "evaluated_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+          "candidate_errors_m": [
+            28.393,
+            26897.139,
+            24606.237,
+            24556.293,
+            26590.235
+          ],
+          "top_error_m": 28.393,
+          "top_matches": 3
         }
       },
       "incomplete_runs": [
@@ -1751,7 +1778,7 @@
           }
         }
       ],
-      "latest_evaluated_stage": "retained_support_native"
+      "latest_evaluated_stage": "arrival_cache_expanded"
     },
     {
       "case": "southampton-nov1",

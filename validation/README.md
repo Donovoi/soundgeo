@@ -945,3 +945,18 @@ Their plan, source files, dates, bounds and executable were fixed before
 evaluation. The second run finished before the combined results were reviewed.
 See [fresh-cases-results.json](fresh-cases-results.json). These failed results
 do not replace any of the original ten cases.
+
+## First result from the consolidated benchmark
+
+The Midway November 1 holdout finished on `a25bd0d` with the original broad
+area, complete regional reference, no recording clock and an explicit
+50-million-hypothesis limit. Its first candidate is **28.393 m** from the
+camera. All five returned candidates have three supporting sounds; the app
+still reports `ambiguous`. This is a coordinate hit, not an acceptance pass.
+
+The run examined 23,596,939 hypotheses and took 6,586.9 seconds while other
+searches were active. Four of the original ten cases have now completed on
+this revision. The latest mixed-revision record has four coordinate hits and
+zero accepted results. The remaining consolidated runs continue unchanged.
+See [results.json](results.json) for the executable hash, report hash and
+preserved earlier failures.

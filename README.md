@@ -23,10 +23,10 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 
 Ten public-camera recordings were tested without their recording start times.
 The tests used known dates and broad search areas.
-The latest completed runs for these recordings include three first-choice locations within 250 m.
-Two came from Midway: 92 m and 236 m away. One came from Lake Hood: 46 m away.
-All three results remain ambiguous. The other recordings have not passed the location tests.
-An earlier Midway result was 27 m away. Later runs returned first choices 24.6 km and 26.9 km away.
+The latest completed runs for these recordings include four first-choice locations within 250 m.
+Three came from Midway: 28 m, 92 m and 236 m away. One came from Lake Hood: 46 m away.
+All four results remain ambiguous. The other recordings have not passed the location tests.
+The Midway recording now 28 m away previously returned first choices 24.6 km and 26.9 km away.
 A later Lake Hood recording returned a first choice 5.38 km away after a larger search.
 
 Two further one-hour Midway recordings were selected before testing.
