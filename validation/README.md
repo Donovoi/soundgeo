@@ -1182,7 +1182,9 @@ It used revision `0c2565c`, the original broad area, the full free reference day
 and no recording clock. It evaluated 34,535,596 hypotheses in about 80 minutes.
 Its first choice is 235.572 m from the camera, with five matching sounds.
 The second choice is 488.292 m away, also with five matches.
-The report remains ambiguous. The other planned case is still running.
+The report remains ambiguous. The other planned case, Midway November 1,
+reached the 50-million-hypothesis limit after 13,212 seconds. It saved no partial
+location. Both planned attempts are finished, with no acceptance passes.
 This comparison does not replace the ten-case benchmark. See
 [native-main-cache-results.json](native-main-cache-results.json).
 
@@ -1244,3 +1246,45 @@ All five returned candidates have three matches. The result is ambiguous
 and fails the 250 m target. The second preselected recording is still running.
 The failed run remains part of the test set. The earlier 83 m improvement
 does not establish reliability. See [fresh-lake-cases-results.json](fresh-lake-cases-results.json).
+
+## Further checks on the failed November 4 Lake Hood recording
+
+A diagnostic searched a small area around the known camera position, without
+its recording clock. It used the same frozen experimental build and detected
+sounds as the failed broad-area run. It returned no candidates. This check
+uses the answer position, so it is not an acceptance test. See
+[fresh-lake-a-point-diagnostic.json](fresh-lake-a-point-diagnostic.json).
+
+A separate check used both the known position and the visible camera clock.
+It compared every retained sound with the available flight tracks over 2,169
+clock-offset and clock-rate combinations. No combination passed the three-curve
+check. A run with only the slow sound detector restored three omitted observations,
+but still found no passing combination. This finite scan does not rule out every
+possible fit. The alternate free ADSB.lol archive added no positions more than
+30 seconds from a position already in the production archive. These diagnostics
+did not justify a change to the acceptance limits. See
+[fresh-lake-a-support-diagnostics.json](fresh-lake-a-support-diagnostics.json).
+
+## Check search budgets before matching
+
+Revision `c29f646` counts the proposed corridor locations before it compares
+sound curves. A search that needs more hypotheses than its limit now stops early.
+It reports no partial location. The proposal geometry and scoring rules are unchanged.
+
+The original failed Midway November 1 job used the same inputs and 50-million
+limit. It now stopped in 87.71 seconds, before matching. The original attempt
+took 21,838.6 seconds. Both failures remain recorded. Two completed real-recording
+controls produced identical events, candidates, status, hypotheses, flight counts,
+search settings, duration, and warnings. The budget count matched each report.
+These are software checks, not new location-accuracy passes. See
+[budget-precheck-evidence.json](budget-precheck-evidence.json).
+
+All 76 local tests pass. The extended regressions check exact budget limits,
+early rejection on serial and parallel paths, and unchanged terrain warning counts.
+Formatting, strict release Clippy, documentation tests, and both release builds pass.
+The preceding terrain-file protection fix also passed all 76 tests on Windows and
+Ubuntu. See [terrain-guard-evidence.json](terrain-guard-evidence.json).
+
+The budget-check revision passed all 76 tests in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42061528743).
+Both logs were checked for the expected test count and regression names.

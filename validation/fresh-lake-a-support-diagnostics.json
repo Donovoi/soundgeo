@@ -1,0 +1,287 @@
+{
+  "case": "lake-hood-nov4-a",
+  "ground_truth_and_recording_clock_used": true,
+  "counts_as_acceptance": false,
+  "original_and_pending_tests_unchanged": true,
+  "software_acceptance_rules_unchanged": true,
+  "curve_diagnostics": [
+    {
+      "diagnostic": "fresh-lake-a-curve-support",
+      "plan": {
+        "ground_truth_supplied": true,
+        "visible_recording_clock_supplied": true,
+        "counts_as_acceptance": false,
+        "original_broad_test_unchanged": true,
+        "report_sha256": "323640c5878eab9bab61e50384bd658988fe2391f3e102e783318d5cbb9c74b8",
+        "reference_sha256": "2b391e757bc860eeebfd6c491817c9eb5cab48e394bd6a5e08b9fe195261c274",
+        "source_data_blob_equal_between_export_and_test": "d7ff910e2657c44e7c3d0f33c9eeb03294c4034c",
+        "reference_already_smoothed_by_native_importer": true,
+        "camera": {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Previously verified owner map pin; not a survey"
+        },
+        "visible_start_unix": 1793818832.0,
+        "offset_range_s": [
+          -120,
+          120
+        ],
+        "offset_step_s": 1,
+        "rate_ppm_step": 1250,
+        "rate_range_ppm": [
+          -5000,
+          5000
+        ],
+        "profiles": 2169,
+        "sound_speed_mps": 340.39,
+        "finite_grid_not_exhaustive_continuous_search": true
+      },
+      "results_sha256": "b28af93f17d443f6ddba811b0872fa1ce5d75a40476ed949f36dab217ce9ee00",
+      "fit_matrix_sha256": "fe0c10148b945917989cfa5dcba543d0784e29d61d5a1bad00a4252f640a1f21",
+      "counts_as_acceptance": false,
+      "native_replay_curves": 15,
+      "native_replay_max_error_hz": 1.3642420526593924e-12,
+      "eligible_reference_tracks": 143,
+      "passing_three_curve_profiles": 0,
+      "maximum_independent_matches": 2,
+      "elapsed_s": 220.4052080999827,
+      "best_profile": {
+        "offset_s": -78.0,
+        "clock_rate": 1.005,
+        "matches": [
+          {
+            "event_index": 13,
+            "variant": 3,
+            "aircraft": "a7cd84/10",
+            "error_percent": 1.3278555122962667
+          },
+          {
+            "event_index": 1,
+            "variant": 2,
+            "aircraft": "ab3b97/0",
+            "error_percent": 1.42491902178271
+          }
+        ],
+        "core_error_percent": 1.3772426220847538,
+        "passing_three_curve_core": false
+      }
+    },
+    {
+      "diagnostic": "fresh-lake-a-slow-curve-support",
+      "plan": {
+        "ground_truth_supplied": true,
+        "visible_recording_clock_supplied": true,
+        "counts_as_acceptance": false,
+        "original_broad_test_unchanged": true,
+        "report_sha256": "323640c5878eab9bab61e50384bd658988fe2391f3e102e783318d5cbb9c74b8",
+        "reference_sha256": "2b391e757bc860eeebfd6c491817c9eb5cab48e394bd6a5e08b9fe195261c274",
+        "source_data_blob_equal_between_export_and_test": "d7ff910e2657c44e7c3d0f33c9eeb03294c4034c",
+        "reference_already_smoothed_by_native_importer": true,
+        "camera": {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Previously verified owner map pin; not a survey"
+        },
+        "visible_start_unix": 1793818832.0,
+        "offset_range_s": [
+          -120,
+          120
+        ],
+        "offset_step_s": 1,
+        "rate_ppm_step": 1250,
+        "rate_range_ppm": [
+          -5000,
+          5000
+        ],
+        "profiles": 2169,
+        "sound_speed_mps": 340.39,
+        "finite_grid_not_exhaustive_continuous_search": true,
+        "alternate_observations": {
+          "path": "work\\fresh-lake-a-slow-audio\\events.json",
+          "sha256": "66514d82315fbab15ee77385610ddaabc25d509b87fe328fd6101688e8b3fbbb",
+          "count": 10,
+          "native_original_report_used_only_for_evaluator_replay": true
+        }
+      },
+      "results_sha256": "90449ed9acf67127a1891b60490f68459ad8e524c59380d10729553731cd2bf9",
+      "fit_matrix_sha256": "1cb9bc077e3f745e848e94ffd1f148f34f93d5666dfeab65f346191b836db5f4",
+      "counts_as_acceptance": false,
+      "native_replay_curves": 15,
+      "native_replay_max_error_hz": 1.3642420526593924e-12,
+      "eligible_reference_tracks": 143,
+      "passing_three_curve_profiles": 0,
+      "maximum_independent_matches": 3,
+      "elapsed_s": 17.8777909000637,
+      "best_profile": {
+        "offset_s": -78.0,
+        "clock_rate": 1.005,
+        "matches": [
+          {
+            "event_index": 9,
+            "variant": 0,
+            "aircraft": "ab86f0/0",
+            "error_percent": 0.7382488715135637
+          },
+          {
+            "event_index": 2,
+            "variant": 3,
+            "aircraft": "a7cd84/10",
+            "error_percent": 1.3278555122962667
+          },
+          {
+            "event_index": 0,
+            "variant": 2,
+            "aircraft": "ab3b97/0",
+            "error_percent": 1.42491902178271
+          }
+        ],
+        "core_error_percent": 1.2025813730561474,
+        "passing_three_curve_core": false
+      }
+    }
+  ],
+  "slow_observation_retention": [
+    {
+      "i": 0,
+      "start_s": 162.024,
+      "end_s": 199.524,
+      "hz": 95.5,
+      "exact_primary_ridge_retained": true,
+      "variants": 4
+    },
+    {
+      "i": 1,
+      "start_s": 467.024,
+      "end_s": 539.524,
+      "hz": 95.1,
+      "exact_primary_ridge_retained": true,
+      "variants": 1
+    },
+    {
+      "i": 2,
+      "start_s": 1542.024,
+      "end_s": 1579.524,
+      "hz": 355.3,
+      "exact_primary_ridge_retained": true,
+      "variants": 4
+    },
+    {
+      "i": 3,
+      "start_s": 1854.024,
+      "end_s": 1922.024,
+      "hz": 246.5,
+      "exact_primary_ridge_retained": true,
+      "variants": 1
+    },
+    {
+      "i": 4,
+      "start_s": 1982.024,
+      "end_s": 2040.524,
+      "hz": 243.2,
+      "exact_primary_ridge_retained": true,
+      "variants": 1
+    },
+    {
+      "i": 5,
+      "start_s": 2162.024,
+      "end_s": 2186.524,
+      "hz": 86.0,
+      "exact_primary_ridge_retained": false,
+      "variants": 2
+    },
+    {
+      "i": 6,
+      "start_s": 2803.024,
+      "end_s": 2834.024,
+      "hz": 88.1,
+      "exact_primary_ridge_retained": false,
+      "variants": 1
+    },
+    {
+      "i": 7,
+      "start_s": 3162.524,
+      "end_s": 3199.524,
+      "hz": 62.0,
+      "exact_primary_ridge_retained": true,
+      "variants": 1
+    },
+    {
+      "i": 8,
+      "start_s": 3345.524,
+      "end_s": 3379.524,
+      "hz": 78.9,
+      "exact_primary_ridge_retained": true,
+      "variants": 2
+    },
+    {
+      "i": 9,
+      "start_s": 3462.024,
+      "end_s": 3499.524,
+      "hz": 371.8,
+      "exact_primary_ridge_retained": false,
+      "variants": 2
+    }
+  ],
+  "alternate_archive": {
+    "plan_sha256": "5a8988ff5abccc4b45e22a7049599bd553774a5864e0c278e57870a389eca13c",
+    "downloads": [
+      {
+        "file": "v2026.11.04-planes-readsb-staging-0.tar.aa",
+        "bytes": 2000000000,
+        "sha256": "bab8163cd1212910ad7e4bae388eef0f75d361e4f963348319a77e5ddd0891ce",
+        "elapsed_s": 350.88498750003055
+      },
+      {
+        "file": "v2026.11.04-planes-readsb-staging-0.tar.ab",
+        "bytes": 1618555392,
+        "sha256": "a5351bec97dec68252728bcf87697f07551eec4e2ca5ed7488ff4b174c4de714",
+        "elapsed_s": 304.43294339999557
+      }
+    ],
+    "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.04-planes-readsb-staging-0",
+    "comparison": {
+      "counts_as_acceptance": false,
+      "fixed_test_reference_unchanged": true,
+      "full_day_broad_region_comparison": true,
+      "sources": [
+        {
+          "file": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\fresh-lake-nov4-reference.csv",
+          "sha256": "2b391e757bc860eeebfd6c491817c9eb5cab48e394bd6a5e08b9fe195261c274",
+          "aircraft": 614,
+          "points": 233882
+        },
+        {
+          "file": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-archive-variants-nov4\\reference.csv",
+          "sha256": "72e8c794015fb2a0199060eee56485dc0bba1b668f9122aaacbc3e0ad5f5ce89",
+          "aircraft": 613,
+          "points": 233361
+        }
+      ],
+      "comparisons": [
+        {
+          "direction": "production_to_staging",
+          "paired_within_1s": 231914,
+          "horizontal_difference_m_percentiles_50_90_99": [
+            0.0,
+            0.4692023724568455,
+            14.884116612019989
+          ],
+          "points_without_other_source_within_30s": 571,
+          "aircraft_without_other_source_within_30s": 2
+        },
+        {
+          "direction": "staging_to_production",
+          "paired_within_1s": 231912,
+          "horizontal_difference_m_percentiles_50_90_99": [
+            0.0,
+            0.46918064013840044,
+            14.843540980082905
+          ],
+          "points_without_other_source_within_30s": 0,
+          "aircraft_without_other_source_within_30s": 0
+        }
+      ]
+    }
+  },
+  "interpretation": "No three-curve core passes on the tested finite clock grid, even at the supplied camera position. Removing short high-frequency detections restores three slow observations but does not produce a passing core. This is not a continuous-search impossibility proof. The free staging archive adds no positions absent from production within 30 seconds. No confidence threshold was relaxed."
+}

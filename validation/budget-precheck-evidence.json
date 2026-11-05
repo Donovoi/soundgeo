@@ -1,0 +1,139 @@
+{
+  "plan": {
+    "build": {
+      "commit": "c29f6462f78bfc89e05e02c9a7beec989e4c7712",
+      "parent": "8781fe3f58784955d8a488427c1aadaced8bb3b6",
+      "tests_passed": 76,
+      "tests_failed": 0,
+      "tests_ignored": 0,
+      "bins": {
+        "soundgeo-cli": {
+          "file": "soundgeo-cli-budget-precheck.exe",
+          "sha256": "3b76f24ac3c2dcc581448a4ec2eb35a705cda9ee2306fc3dddcdffa29354345e"
+        },
+        "soundgeo": {
+          "file": "soundgeo-budget-precheck.exe",
+          "sha256": "acf7f0539d839e1ae2d78f38b955fdbe6c5b3ff2bb903ec114c4046f58f23f7d"
+        }
+      },
+      "logs": {
+        "budget-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "budget-clippy.log": "d4209103d6612eed42f02b5d3f4d2b9f6dbc708bdce2c73da7e301faec64d908",
+        "budget-tests.log": "6b883a2b9a4a833916cef051b68b08da1254c5ac3a9d64da909029f0b589fed5",
+        "budget-docs.log": "586a5ae93ae5024ceefe7e825d6caac386f3c860ac297e4eaa4f58d724072efb",
+        "budget-build.log": "b9ee3c58c48e64cd78d100ceb609f4d17e1dc02df158d366b43b57d196620ed8"
+      }
+    },
+    "cases": [
+      {
+        "case": "midway-holdout",
+        "job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-holdout\\segment-cache-job.json",
+        "job_sha256": "bd1b45cd1013ab65e706b8d283ca8744bdcc9f04078f21be451d240e11aad6bd",
+        "media_sha256": "985b9035059956f43f989d8c14049d00d08679902e8b3d421fa7f1c9f63d6f04",
+        "baseline_run": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-holdout\\segment-cache-run.json",
+        "expected_report": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-holdout\\segment-cache-report.json",
+        "expected_report_sha256": "6b6ccc25ecd0a1faecc173e74f4b7dfc7e27648ebe21047b4b7115e38f53793b"
+      },
+      {
+        "case": "southampton-nov1",
+        "job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton-nov1\\segment-cache-job.json",
+        "job_sha256": "dcaa6ebf41fc4e775222e8618a39afa7393114414059a07d3e0ba675ca12859a",
+        "media_sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f",
+        "baseline_run": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton-nov1\\segment-cache-run.json",
+        "expected_report": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton-nov1\\segment-cache-report.json",
+        "expected_report_sha256": "ea22fa634af457bf465aa401eec19caab98e0349c60f485a61bfe6957910cf13"
+      },
+      {
+        "case": "midway-nov1",
+        "job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-nov1\\arrival-cache-expanded-job.json",
+        "job_sha256": "717cb6c7abc867a4f986cf4cbe7deff224f13f8104ac98a64fa6da8373beaf70",
+        "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810",
+        "baseline_run": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-nov1\\arrival-cache-expanded-run.json",
+        "expected_report": null,
+        "expected_report_sha256": null
+      }
+    ],
+    "original_inputs_unchanged": true,
+    "counts_as_accuracy_acceptance": false,
+    "hypothesis_budget": 50000000
+  },
+  "plan_sha256": "866e954f22ceb28a2cfcfabd487e484a71eacd221e9d59f89935cf9c8623f8e2",
+  "results": [
+    {
+      "case": "midway-holdout",
+      "elapsed_s": 34.0838157000253,
+      "exit_code": 0,
+      "job_unchanged": true,
+      "log_sha256": "3aa98c143beb84c1365da176c753661584be7ae04b75c5f8ad793bd0d69a53c1",
+      "parity": {
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true,
+        "search_grid_m": true,
+        "duration_s": true,
+        "warnings": true
+      },
+      "hypotheses": 3924222,
+      "budget_count_matches_report": true,
+      "passed": true
+    },
+    {
+      "case": "southampton-nov1",
+      "elapsed_s": 100.44113679998554,
+      "exit_code": 0,
+      "job_unchanged": true,
+      "log_sha256": "9c66026b1821222263d0574a62159fb8204f67dfc3f2dc08abcacd02a616672e",
+      "parity": {
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true,
+        "search_grid_m": true,
+        "duration_s": true,
+        "warnings": true
+      },
+      "hypotheses": 1821202,
+      "budget_count_matches_report": true,
+      "passed": true
+    },
+    {
+      "case": "midway-nov1",
+      "elapsed_s": 87.71035990002565,
+      "exit_code": 1,
+      "job_unchanged": true,
+      "log_sha256": "91e14d318ea8e7f58403057ef353ecaa026a0171a500e29ddeadbb30c7b53d52",
+      "baseline_elapsed_s": 21838.6,
+      "failed_before_curve_matching": true,
+      "no_partial_report": true,
+      "passed": true
+    }
+  ],
+  "all_checks_passed": true,
+  "counts_as_accuracy_acceptance": false,
+  "interpretation": "The unchanged failed Midway job is rejected before curve matching. Two existing real reports remain exactly equal on all checked evidence fields. The original failed attempts and location-accuracy results remain unchanged.",
+  "ci": {
+    "run": 42061528743,
+    "conclusion": "success",
+    "source_commit": "c29f6462f78bfc89e05e02c9a7beec989e4c7712",
+    "platforms": {
+      "windows-latest": {
+        "passed": 76,
+        "failed": 0,
+        "ignored": 0,
+        "expected_names_checked": true
+      },
+      "ubuntu-latest": {
+        "passed": 76,
+        "failed": 0,
+        "ignored": 0,
+        "expected_names_checked": true
+      }
+    },
+    "log_sha256": "c2a6a258fd600a9d57d5d9fd8af9078f1cf8c47a3c47c687b2f8b4c167ba2373"
+  }
+}
