@@ -54,7 +54,7 @@ A newer Southampton run returned one model match 7.6 km from the camera.
 The current model checks can therefore accept a wrong location.
 
 All 76 software tests pass locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42047220138).
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42056753302).
 Formatting, strict Clippy, documentation tests, and both release builds also pass.
 The Chicago download and data checks pass.
 Its first broad-area location test reached the search limit.
@@ -217,7 +217,9 @@ Set `start_utc` to `null` when the recording start time is unknown.
 Set `bounds` to `null` to search the area covered by the imported flight data.
 Large searches can take much longer than small searches.
 
-If a search reaches its hypothesis limit, it stops without a partial result.
+Before it compares sound curves, the flight-corridor search checks its hypothesis budget.
+If the search needs more hypotheses than the limit, it stops without a partial result.
+The check uses the same proposed locations as the search.
 To retry with a larger limit, use `--max-hypotheses`:
 
 ```powershell

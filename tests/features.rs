@@ -135,20 +135,30 @@ fn indexed_country_extent_search_recovers_unknown_time() {
     assert!(error < 200.);
     assert!((best.recording_start_unix - soundgeo::demo::EPOCH).abs() < 3.);
     job.max_hypotheses = 100;
+    let progress = std::sync::Mutex::new(Vec::new());
+    let missing_before = terrain.missing;
     let result = soundgeo::search::locate(
         &job,
         &events,
         &tracks,
         &mut terrain,
         &Control::default(),
-        &|_, _| {},
+        &|message, _| progress.lock().unwrap().push(message.to_owned()),
+    );
+    let error = result.err().unwrap().to_string();
+    assert!(error.contains("no partial location"));
+    assert!(error.contains("before curve matching"));
+    assert_eq!(terrain.missing, missing_before);
+    let messages = progress.into_inner().unwrap();
+    assert!(
+        messages
+            .iter()
+            .any(|s| s.starts_with("Checking search budget:"))
     );
     assert!(
-        result
-            .err()
-            .unwrap()
-            .to_string()
-            .contains("no partial location")
+        !messages
+            .iter()
+            .any(|s| s.starts_with("Indexed flight corridors:"))
     );
     let cancelled = Control::default();
     cancelled.stop();
@@ -292,6 +302,7 @@ fn parallel_corridors_match_serial_fallback_terrain() {
     // An empty tile folder exercises the serial terrain-cache path with
     // exactly the same fallback heights and search inputs.
     job.terrain = Some(dir.path().join("missing-tiles"));
+    job.max_hypotheses = parallel.hypotheses;
     let mut terrain = Terrain::new(job.terrain.clone(), supplied_height);
     let serial = soundgeo::search::locate(
         &job,
@@ -307,6 +318,31 @@ fn parallel_corridors_match_serial_fallback_terrain() {
     assert_eq!(
         serde_json::to_value(parallel.candidates).unwrap(),
         serde_json::to_value(serial.candidates).unwrap()
+    );
+    // An exact budget succeeds; one fewer proposal fails before matching,
+    // including on the serial, disk-backed terrain path.
+    job.max_hypotheses -= 1;
+    let missing_before = terrain.missing;
+    let messages = std::sync::Mutex::new(Vec::new());
+    let error = soundgeo::search::locate(
+        &job,
+        &events,
+        &tracks,
+        &mut terrain,
+        &Control::default(),
+        &|message, _| messages.lock().unwrap().push(message.to_owned()),
+    )
+    .err()
+    .unwrap()
+    .to_string();
+    assert!(error.contains("before curve matching"));
+    assert_eq!(terrain.missing, missing_before);
+    assert!(
+        !messages
+            .into_inner()
+            .unwrap()
+            .iter()
+            .any(|s| s.starts_with("Indexed flight corridors:"))
     );
 }
 

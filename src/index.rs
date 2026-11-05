@@ -191,7 +191,6 @@ pub(crate) fn corridor_seeds(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<(Vec<Seed>, usize)> {
-    let index = FlightIndex::new(tracks, control)?;
     let counter = AtomicUsize::new(0);
     let mut seeds = vec![];
     let anchors = crate::audio::anchor_indices(events);
@@ -207,6 +206,20 @@ pub(crate) fn corridor_seeds(
     } else {
         None
     };
+    // Count the same spatial proposals before expensive curve matching. A run
+    // that cannot fit its budget must not spend hours collecting partial seeds.
+    check_corridor_budget(
+        job,
+        events,
+        tracks,
+        &anchors,
+        bounds,
+        terrain,
+        pool.as_ref(),
+        control,
+        progress,
+    )?;
+    let index = FlightIndex::new(tracks, control)?;
     for (ordinal, &anchor) in anchors.iter().enumerate() {
         for (batch_no, batch) in tracks.chunks(32).enumerate() {
             control.check()?;
@@ -307,10 +320,84 @@ fn track_seeds(
     counter: &AtomicUsize,
     control: &Control,
 ) -> Result<Vec<Seed>> {
+    let c = job.sound_speed();
+    let range_factor = feature_range_factor();
+    let mut seeds = vec![];
+    for_each_corridor_point(
+        job,
+        &events[anchor],
+        track,
+        bounds,
+        terrain,
+        control,
+        |first, point, expected| {
+            let examined = counter.fetch_add(1, Ordering::Relaxed) + 1;
+            if examined > job.max_hypotheses {
+                bail!(
+                    "Indexed search exceeded the {} hypothesis budget; no partial location is reported. Narrow the region/date range, increase spacing, or raise the budget.",
+                    job.max_hypotheses
+                );
+            }
+            if examined.is_multiple_of(256) {
+                control.check()?;
+            }
+            let Some((arrival, range, actual_speed)) =
+                track.cpa_near(point.ecef(), c, Some((expected - 30., expected + 30.)))
+            else {
+                return Ok(());
+            };
+            let start = arrival - first.cpa_s;
+            if !within_time(job, start) {
+                return Ok(());
+            }
+            let score = feature_error(first, range, actual_speed);
+            if score > FEATURE_ERROR_LIMIT {
+                return Ok(());
+            }
+            if let Some(seed) =
+                complete_seed(point, start, anchor, id, score, events, |wanted, event| {
+                    let radius = (event.slant_m.max(100.) * range_factor).clamp(5000., 40000.);
+                    index
+                        .nearby(point, wanted, radius, c)
+                        .into_iter()
+                        .filter_map(|j| {
+                            let (t, r, v) = tracks[j].cpa_near(
+                                point.ecef(),
+                                c,
+                                Some((wanted - 45., wanted + 45.)),
+                            )?;
+                            Some((j, t, r, v))
+                        })
+                        .collect()
+                })
+            {
+                seeds.push(seed);
+                // Bound each worker's retained hypotheses as well as
+                // the global beam, even for unusually long tracks.
+                if seeds.len() >= 8192 {
+                    score_and_prune_seeds(&mut seeds, 2048, job, events, tracks, control)?;
+                }
+            }
+            Ok(())
+        },
+    )?;
+    Ok(seeds)
+}
+
+// Keep geometry in one place so the budget pass counts exactly what matching
+// will examine, including alternate ridges, time gates and terrain heights.
+fn for_each_corridor_point(
+    job: &Job,
+    event: &Event,
+    track: &Track,
+    bounds: Bounds,
+    terrain: &mut Terrain,
+    control: &Control,
+    mut visit: impl FnMut(&Event, Point, f64) -> Result<()>,
+) -> Result<()> {
     control.check()?;
     let c = job.sound_speed();
-    let mut seeds = vec![];
-    for first in events[anchor].variants() {
+    for first in event.variants() {
         let range_factor = feature_range_factor();
         // The straight-flight audio summary can underestimate range on turns or
         // partial curves. Sample the range interval already allowed by the feature
@@ -335,6 +422,7 @@ fn track_seeds(
         slants.sort_by(f64::total_cmp);
         slants.dedup_by(|a, b| (*a - *b).abs() < 1.);
         for pair in track.samples.windows(2) {
+            control.check()?;
             let dt = pair[1].time - pair[0].time;
             if dt <= 0. || dt > 60. {
                 continue;
@@ -396,69 +484,95 @@ fn track_seeds(
                         if !bounds.contains(point) {
                             continue;
                         }
-                        let examined = counter.fetch_add(1, Ordering::Relaxed) + 1;
-                        if examined > job.max_hypotheses {
-                            bail!(
-                                "Indexed search exceeded the {} hypothesis budget; no partial location is reported. Narrow the region/date range, increase spacing, or raise the budget.",
-                                job.max_hypotheses
-                            );
-                        }
-                        if examined.is_multiple_of(256) {
-                            control.check()?;
-                        }
-                        let expected = emit + slant / c;
-                        let Some((arrival, range, actual_speed)) =
-                            track.cpa_near(point.ecef(), c, Some((expected - 30., expected + 30.)))
-                        else {
-                            continue;
-                        };
-                        let start = arrival - first.cpa_s;
-                        if !within_time(job, start) {
-                            continue;
-                        }
-                        let score = feature_error(first, range, actual_speed);
-                        if score > FEATURE_ERROR_LIMIT {
-                            continue;
-                        }
-                        if let Some(seed) = complete_seed(
-                            point,
-                            start,
-                            anchor,
-                            id,
-                            score,
-                            events,
-                            |wanted, event| {
-                                let radius =
-                                    (event.slant_m.max(100.) * range_factor).clamp(5000., 40000.);
-                                index
-                                    .nearby(point, wanted, radius, c)
-                                    .into_iter()
-                                    .filter_map(|j| {
-                                        let (t, r, v) = tracks[j].cpa_near(
-                                            point.ecef(),
-                                            c,
-                                            Some((wanted - 45., wanted + 45.)),
-                                        )?;
-                                        Some((j, t, r, v))
-                                    })
-                                    .collect()
-                            },
-                        ) {
-                            seeds.push(seed);
-                            // Bound each worker's retained hypotheses as well as
-                            // the global beam, even for unusually long tracks.
-                            if seeds.len() >= 8192 {
-                                score_and_prune_seeds(
-                                    &mut seeds, 2048, job, events, tracks, control,
-                                )?;
-                            }
-                        }
+                        visit(first, point, emit + slant / c)?;
                     }
                 }
             }
         }
     }
-    Ok(seeds)
+    Ok(())
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_corridor_budget(
+    job: &Job,
+    events: &[Event],
+    tracks: &[Track],
+    anchors: &[usize],
+    bounds: Bounds,
+    terrain: &Terrain,
+    pool: Option<&rayon::ThreadPool>,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<()> {
+    let counter = AtomicUsize::new(0);
+    // Do not change the caller's missing-tile count or populate its cache.
+    let mut budget_terrain = terrain.empty_cache_clone();
+    let count = |_: &Event, _: Point, _: f64| -> Result<()> {
+        let examined = counter.fetch_add(1, Ordering::Relaxed) + 1;
+        if examined > job.max_hypotheses {
+            bail!(
+                "Indexed search needs more than the {} hypothesis budget; no partial location is reported. The budget check stopped before curve matching. Narrow the region/date range, increase spacing, or raise the budget.",
+                job.max_hypotheses
+            );
+        }
+        if examined.is_multiple_of(256) {
+            control.check()?;
+        }
+        Ok(())
+    };
+    for (ordinal, &anchor) in anchors.iter().enumerate() {
+        for (batch_no, batch) in tracks.chunks(32).enumerate() {
+            control.check()?;
+            progress(
+                &format!(
+                    "Checking search budget: anchor {}/{}, track {}/{}, {} hypotheses",
+                    ordinal + 1,
+                    anchors.len(),
+                    batch_no * 32 + 1,
+                    tracks.len(),
+                    counter.load(Ordering::Relaxed)
+                ),
+                0.42,
+            );
+            if let Some(pool) = pool {
+                pool.install(|| {
+                    batch.par_iter().try_for_each(|track| {
+                        let mut local_terrain = terrain.empty_cache_clone();
+                        for_each_corridor_point(
+                            job,
+                            &events[anchor],
+                            track,
+                            bounds,
+                            &mut local_terrain,
+                            control,
+                            count,
+                        )
+                    })
+                })?;
+            } else {
+                for track in batch {
+                    for_each_corridor_point(
+                        job,
+                        &events[anchor],
+                        track,
+                        bounds,
+                        &mut budget_terrain,
+                        control,
+                        count,
+                    )?;
+                }
+            }
+        }
+    }
+    progress(
+        &format!(
+            "Search budget fits: {} hypotheses",
+            counter.load(Ordering::Relaxed)
+        ),
+        0.42,
+    );
+    Ok(())
 }
 
 #[cfg(test)]
