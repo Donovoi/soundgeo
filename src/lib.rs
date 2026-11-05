@@ -331,6 +331,7 @@ pub fn save_report(report: &Report, path: &std::path::Path) -> Result<()> {
         for input in [&report.media, &report.job.tracks]
             .into_iter()
             .chain(report.job.type_catalog.iter())
+            .chain(report.job.terrain.iter())
             .chain(report.reference_sources.iter())
             .chain(report.job.archive.iter().map(|a| &a.cache))
         {
@@ -338,7 +339,7 @@ pub fn save_report(report: &Report, path: &std::path::Path) -> Result<()> {
                 && (target == source || (source.is_dir() && target.starts_with(&source)))
             {
                 bail!(
-                    "A report cannot overwrite an input recording, flight-data file, or catalog. Choose a separate output path."
+                    "A report cannot overwrite an input recording, flight-data file, terrain file, or catalog. Choose a separate output path."
                 );
             }
             // A split .aa archive reads all sibling parts. Protect those too.
