@@ -425,12 +425,9 @@ pub(crate) fn complete_seed(
     events: &[Event],
     mut nearby: impl FnMut(f64, &Event) -> Vec<(usize, f64, f64, f64)>,
 ) -> Option<Seed> {
-    let mut indices = vec![usize::MAX; events.len()];
     let mut alternatives = vec![[usize::MAX; 3]; events.len()];
-    indices[anchor] = track;
     alternatives[anchor][0] = track;
-    let mut errors = vec![initial_error];
-    let mut matched = 1;
+    let mut edges = vec![(initial_error, anchor, track)];
     for (i, event) in events.iter().enumerate().filter(|(i, _)| *i != anchor) {
         let mut choices = Vec::new();
         for event in event.variants() {
@@ -439,7 +436,7 @@ pub(crate) fn complete_seed(
                 nearby(wanted, event)
                     .into_iter()
                     .filter(|(j, time, range, speed)| {
-                        !indices.contains(j)
+                        *j != track
                             && *speed >= 25.
                             && *range <= 40000.
                             && (time - wanted).abs() <= 45.
@@ -460,13 +457,13 @@ pub(crate) fn complete_seed(
         for (slot, &(j, _)) in choices.iter().enumerate() {
             alternatives[i][slot] = j;
         }
-        if let Some(&(j, error)) = choices.first() {
-            indices[i] = j;
-            errors.push(error);
-            matched += 1;
-        }
+        edges.extend(choices.into_iter().map(|(j, error)| (error, i, j)));
     }
-    if matched < events.len().min(3) {
+    // Keep competing options until independent assignment. Reserving a
+    // non-anchor flight greedily can discard the only option for a later sound.
+    edges.sort_by(|a, b| a.0.total_cmp(&b.0).then(a.1.cmp(&b.1)).then(a.2.cmp(&b.2)));
+    let (score, indices) = independent_curve_assignment(&edges, events.len(), events.len().min(3));
+    if !score.is_finite() {
         return None;
     }
     Some(Seed {
@@ -479,11 +476,7 @@ pub(crate) fn complete_seed(
         // Coarse selection must use the same consensus size as exact fitting.
         // Rewarding every loose association first lets unrelated sounds crowd
         // out three precise matches before they ever reach refinement.
-        score: {
-            errors.sort_by(f64::total_cmp);
-            let required = events.len().min(3);
-            errors[..required].iter().sum::<f64>() / required as f64
-        },
+        score: score.powi(2),
     })
 }
 
@@ -1059,6 +1052,61 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
 mod tests {
     use super::*;
     use crate::{audio::RidgePoint, demo};
+
+    #[test]
+    fn proposal_assembly_preserves_competing_flight_choices() {
+        let event = |cpa_s| Event {
+            start_s: cpa_s - 10.,
+            end_s: cpa_s + 10.,
+            cpa_s,
+            base_hz: 100.,
+            speed_mps: 70.,
+            slant_m: 1000.,
+            fit_rmse_hz: 0.,
+            contrast_db: 20.,
+            ridge: vec![],
+            activity_span_s: None,
+            alternatives: vec![],
+        };
+        // The first sound has two nearby flights. The second can only use 10.
+        // Reserving 10 greedily for the first sound destroys a valid proposal.
+        let events = vec![event(100.), event(120.), event(500.)];
+        let assemble = |events: &[Event], alternative: bool| {
+            complete_seed(
+                demo::TRUTH,
+                demo::EPOCH,
+                2,
+                30,
+                0.,
+                events,
+                |time, event| {
+                    if event.cpa_s == 100. {
+                        let mut options = vec![(10, time, 1000., 70.)];
+                        if alternative {
+                            options.push((20, time, 1100., 70.));
+                        }
+                        options
+                    } else {
+                        vec![(10, time, 1000., 70.)]
+                    }
+                },
+            )
+        };
+        let seed = assemble(&events, true).expect("Three independent assignments are possible");
+        assert_eq!(seed.indices, vec![20, 10, 30]);
+        assert!(seed.alternatives[0].contains(&10) && seed.alternatives[0].contains(&20));
+        assert!(seed.alternatives[1].contains(&10));
+        let mut reordered = events.clone();
+        reordered.swap(0, 1);
+        assert_eq!(
+            assemble(&reordered, true).unwrap().indices,
+            vec![10, 20, 30]
+        );
+        assert!(
+            assemble(&events, false).is_none(),
+            "One flight cannot count twice"
+        );
+    }
 
     #[test]
     fn refinement_preserves_additional_supported_curves() {

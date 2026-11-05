@@ -1,0 +1,138 @@
+{
+  "purpose": "Regression output comparison, not an additional accuracy case",
+  "comparisons": [
+    {
+      "name": "lake_hood_envelope_replay",
+      "known_area_diagnostic_only": false,
+      "recording_clock_supplied": false,
+      "compared_fields": {
+        "job": true,
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true
+      },
+      "report_sha256": [
+        "303638852c7a1fb7e211b985958dbf18b476898be822672a1be604a81fb68004",
+        "d9d11d6ca07773546ea7b198ebf0c69bf3c924707a60474b74f7fcb0309d1fa7"
+      ],
+      "hypotheses": 19814757,
+      "events": 24,
+      "matches": [
+        5,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "status": "ambiguous",
+      "counts_toward_accuracy": false
+    },
+    {
+      "name": "midway_retained_support_corridor",
+      "known_area_diagnostic_only": true,
+      "recording_clock_supplied": false,
+      "compared_fields": {
+        "job": true,
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true
+      },
+      "report_sha256": [
+        "e54856243e6f4fad04ea42fc84b0426806c56bd315cc2e2fcc33135ad0c58fb6",
+        "47b6c331e83ff9bf20d730e13ab86fcc7685038e29d277855b55ac2d7b2f90fb"
+      ],
+      "hypotheses": 319745,
+      "events": 6,
+      "matches": [
+        5,
+        5,
+        5,
+        4
+      ],
+      "status": "ambiguous",
+      "counts_toward_accuracy": false
+    },
+    {
+      "name": "southampton-nov1_retained_support",
+      "known_area_diagnostic_only": false,
+      "recording_clock_supplied": false,
+      "compared_fields": {
+        "job": true,
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true
+      },
+      "report_sha256": [
+        "b7d58c9b335749a145b4b53bcb01553119c6e57edec977e3e09bcdc8f485ecdf",
+        "845582ccaad1a9076bcc1fc3dfea58281d47911b1252041a8d366811a4d0fa24"
+      ],
+      "hypotheses": 1821202,
+      "events": 3,
+      "matches": [
+        3
+      ],
+      "status": "ambiguous",
+      "counts_toward_accuracy": false
+    },
+    {
+      "name": "midway_retained_support",
+      "known_area_diagnostic_only": false,
+      "recording_clock_supplied": false,
+      "compared_fields": {
+        "job": true,
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true
+      },
+      "report_sha256": [
+        "2e95938a7f491b67710565c4ba8c5b455ccff6a21acbea3949615121c4f57d70",
+        "4959b9c800626ebeb3c869eb6e7c1d6bbd7f0c5991bf50bcc6c2574e8d26d43a"
+      ],
+      "hypotheses": 10328968,
+      "events": 4,
+      "matches": [],
+      "status": "insufficient_evidence",
+      "counts_toward_accuracy": false
+    },
+    {
+      "name": "midway-holdout_retained_support",
+      "known_area_diagnostic_only": false,
+      "recording_clock_supplied": false,
+      "compared_fields": {
+        "job": true,
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true
+      },
+      "report_sha256": [
+        "2f2df3eba690b2ca4957aec2d527bfb2ce4bcafe1ec808dfe2ab91c4e9dcaa51",
+        "db17c341c2b56b21443fa3867684e86d3f8c6e05334e5123f0f899a9df416bf3"
+      ],
+      "hypotheses": 3924222,
+      "events": 2,
+      "matches": [],
+      "status": "insufficient_evidence",
+      "counts_toward_accuracy": false
+    }
+  ]
+}

@@ -740,6 +740,43 @@ are unchanged. This addresses discarded supporting evidence; real-video
 accuracy still requires validation. See
 [refinement-support-diagnostic.json](refinement-support-diagnostic.json).
 
-All 66 release software tests, formatting, strict Clippy, documentation tests,
-and both release builds pass locally. Real-recording comparisons of this fix
-are still required. Software checks do not establish location accuracy.
+Revision `22393e3` passed all 66 release software tests, formatting, strict
+Clippy, documentation tests, and both release builds locally.
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41970417866)
+also passed. Software checks do not establish location accuracy.
+
+The full Midway, Midway holdout, and November 1 Southampton controls returned
+exactly the same candidates, status, detections, and hypothesis counts as their
+preceding runs. The two Midway controls returned no candidates. Southampton
+still returned the wrong ambiguous candidate 7.6 km away. The known-area
+Chicago corridor comparison also preserved its results exactly. These are
+regression checks, not additional accuracy cases.
+
+The separate Lake Hood replay on `c5c9f59` reproduced all ten candidates and
+19,814,757 hypotheses exactly. Its first result remains 45.749 m from the camera
+with five matches and an ambiguous status. Evidence is in
+[refinement-real-comparisons.json](refinement-real-comparisons.json).
+
+## Competing flight choices
+
+The previous near-camera Midway holdout candidate still passes the current
+fitter with three matches and 0.683% joint error. This check supplied the prior
+app-selected position, clock, and flight associations. It did not supply an
+external clock or camera coordinates. A second diagnostic restricted the full
+reference day to the three previously selected aircraft. It recovered a nearby
+candidate over the original broad bounds with no recording clock. Neither
+diagnostic counts as an accuracy pass.
+
+A regression test exposed a separate error in proposal construction. An early
+sound could take a flight that was the only option for a later sound. The
+proposal was then rejected before the alternative assignments were compared.
+The test fails with the old construction. The fix keeps the competing choices
+until independent assignment. The test also checks a different sound order and
+rejects a proposal that needs to count one flight twice.
+
+The contribution of this error to the broad Midway failure is not yet known.
+See [proposal-assembly-diagnostic.json](proposal-assembly-diagnostic.json).
+
+All 67 software tests, formatting, strict Clippy, documentation tests, and both
+release builds pass locally with the proposal-construction fix. Its effects on
+the broad real-recording searches still require testing.

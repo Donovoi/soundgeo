@@ -1,8 +1,8 @@
 {
   "software_version": "0.3.0-dev.1",
   "latest_stage": "mixed_development",
-  "latest_code_commit": "c5c9f598b20b4d1532cfed2a03f473cbaf346f8a",
-  "latest_code_cases_tested": 0,
+  "latest_code_commit": "22393e3cfdb816b94bb1cd567f6e6bac562db73f",
+  "latest_code_cases_tested": 3,
   "latest_code_fully_evaluated": false,
   "accuracy_target_m": 250,
   "recording_clock_supplied": false,
@@ -252,10 +252,26 @@
           "cli_sha256": "bd7d087d4dbcb8e56ba2f089e56e4d80013c5c26888caaf2b739b3ad48a6c4a9",
           "grouped_sounds": 1,
           "evaluated_code_commit": "163c76f223daf48cc1dca5963a97f67033662cad"
+        },
+        "retained_support": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 4,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 10328968,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "4959b9c800626ebeb3c869eb6e7c1d6bbd7f0c5991bf50bcc6c2574e8d26d43a",
+          "cli_sha256": "d6bf14b400b6cdf0f38d0f2bdca4c139f40270ce80bb79dbb03fc49831848f8c",
+          "grouped_sounds": 1,
+          "evaluated_code_commit": "22393e3cfdb816b94bb1cd567f6e6bac562db73f"
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "parallel_retry"
+      "latest_evaluated_stage": "retained_support"
     },
     {
       "case": "southampton",
@@ -993,6 +1009,22 @@
           "grouped_sounds": 0,
           "evaluated_code_commit": "d55a80f4260d8603fc76145b1b1f117d34dcc192"
         },
+        "time_index": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 2,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 3924222,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "0e2bfb79d7ac1e1da1949dcc30a1d8a760510977b750fc9761d8cb064a7a5337",
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "grouped_sounds": 0,
+          "evaluated_code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
+        },
         "parallel_retry": {
           "version": "0.3.0-dev.1",
           "status": "insufficient_evidence",
@@ -1008,10 +1040,26 @@
           "cli_sha256": "bd7d087d4dbcb8e56ba2f089e56e4d80013c5c26888caaf2b739b3ad48a6c4a9",
           "grouped_sounds": 0,
           "evaluated_code_commit": "163c76f223daf48cc1dca5963a97f67033662cad"
+        },
+        "retained_support": {
+          "version": "0.3.0-dev.1",
+          "status": "insufficient_evidence",
+          "events": 2,
+          "candidates": 0,
+          "flight_segments": 4947,
+          "hypotheses": 3924222,
+          "recording_clock": null,
+          "duration_s": 1800.010875,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "db17c341c2b56b21443fa3867684e86d3f8c6e05334e5123f0f899a9df416bf3",
+          "cli_sha256": "d6bf14b400b6cdf0f38d0f2bdca4c139f40270ce80bb79dbb03fc49831848f8c",
+          "grouped_sounds": 0,
+          "evaluated_code_commit": "22393e3cfdb816b94bb1cd567f6e6bac562db73f"
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "parallel_retry"
+      "latest_evaluated_stage": "retained_support"
     },
     {
       "case": "midway-nov1",
@@ -1276,6 +1324,14 @@
           "cancelled": true,
           "cancellation_reason": "Superseded by the tested e1aa6bc03295aca469aa35667e49393fa5c743fb executable; stopped to free CPU time. No completed result is implied.",
           "cancelled_utc": "2026-11-05T00:34:22.413026+00:00"
+        },
+        {
+          "stage": "time_index",
+          "case": "midway-nov1",
+          "exit_code": 1,
+          "elapsed_s": 15992.6,
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb"
         }
       ],
       "latest_evaluated_stage": "continuity"
@@ -1723,6 +1779,27 @@
           "grouped_sounds": 0,
           "evaluated_code_commit": "d55a80f4260d8603fc76145b1b1f117d34dcc192"
         },
+        "time_index": {
+          "version": "0.3.0-dev.1",
+          "status": "candidates_found",
+          "events": 3,
+          "candidates": 1,
+          "flight_segments": 4134,
+          "hypotheses": 1821202,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "c9cacb9e1832a8ee917daf47c5ad45cb3b264feac6101041783d117b0ec2c8c3",
+          "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+          "grouped_sounds": 2,
+          "evaluated_code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb",
+          "candidate_errors_m": [
+            7576.122
+          ],
+          "top_error_m": 7576.122,
+          "top_matches": 3
+        },
         "parallel_retry": {
           "version": "0.3.0-dev.1",
           "status": "candidates_found",
@@ -1764,10 +1841,31 @@
           ],
           "top_error_m": 7576.122,
           "top_matches": 3
+        },
+        "retained_support": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 3,
+          "candidates": 1,
+          "flight_segments": 4134,
+          "hypotheses": 1821202,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": false,
+          "passed": false,
+          "report_sha256": "845582ccaad1a9076bcc1fc3dfea58281d47911b1252041a8d366811a4d0fa24",
+          "cli_sha256": "d6bf14b400b6cdf0f38d0f2bdca4c139f40270ce80bb79dbb03fc49831848f8c",
+          "grouped_sounds": 2,
+          "evaluated_code_commit": "22393e3cfdb816b94bb1cd567f6e6bac562db73f",
+          "candidate_errors_m": [
+            7576.122
+          ],
+          "top_error_m": 7576.122,
+          "top_matches": 3
         }
       },
       "incomplete_runs": [],
-      "latest_evaluated_stage": "clock_support"
+      "latest_evaluated_stage": "retained_support"
     },
     {
       "case": "lake-hood",
@@ -2087,6 +2185,36 @@
           ],
           "top_error_m": 45.749,
           "top_matches": 5
+        },
+        "envelopes": {
+          "version": "0.3.0-dev.1",
+          "status": "ambiguous",
+          "events": 24,
+          "candidates": 10,
+          "flight_segments": 1040,
+          "hypotheses": 19814757,
+          "recording_clock": null,
+          "duration_s": 3599.998625,
+          "coordinate_hit": true,
+          "passed": false,
+          "report_sha256": "d9d11d6ca07773546ea7b198ebf0c69bf3c924707a60474b74f7fcb0309d1fa7",
+          "cli_sha256": "4a1f482adbe551a2d2e2a0bd61d4809e79abf70cd2fec31ca19ff68e77f49976",
+          "grouped_sounds": 13,
+          "evaluated_code_commit": "c5c9f598b20b4d1532cfed2a03f473cbaf346f8a",
+          "candidate_errors_m": [
+            45.749,
+            248.129,
+            13108.783,
+            307.186,
+            19918.724,
+            9293.323,
+            9909.85,
+            11861.725,
+            647.76,
+            5793.596
+          ],
+          "top_error_m": 45.749,
+          "top_matches": 5
         }
       },
       "incomplete_runs": [
@@ -2107,7 +2235,7 @@
           }
         }
       ],
-      "latest_evaluated_stage": "parallel_retry"
+      "latest_evaluated_stage": "envelopes"
     },
     {
       "case": "lake-hood-nov1-later",
