@@ -1,0 +1,165 @@
+{
+  "not_location_acceptance": true,
+  "webtrak": {
+    "known_location_diagnostic_only": true,
+    "partial_cached_day": true,
+    "not_recording_clock_input": true,
+    "passes": [
+      {
+        "registration": "N8970Q",
+        "icao24": "ac61bc",
+        "webtrak_track": "cda:65824055",
+        "webtrak_closest_utc": "2026-11-03T00:54:18Z",
+        "min_horizontal_range_m": 64.2,
+        "webtrak_points_in_4min": 42,
+        "archive_points_in_4min": 74,
+        "webtrak_first_relative_s": -40.0,
+        "webtrak_last_relative_s": 116.0,
+        "archive_first_relative_s": -8.509999990463257,
+        "archive_last_relative_s": 119.74000000953674,
+        "nearest_archive_before_s": -0.869999885559082,
+        "nearest_archive_after_s": 0.6400001049041748
+      },
+      {
+        "registration": "N1810U",
+        "icao24": "a146ce",
+        "webtrak_track": "cda:65824058",
+        "webtrak_closest_utc": "2026-11-03T00:57:05Z",
+        "min_horizontal_range_m": 42.6,
+        "webtrak_points_in_4min": 43,
+        "archive_points_in_4min": 68,
+        "webtrak_first_relative_s": -38.0,
+        "webtrak_last_relative_s": 116.0,
+        "archive_first_relative_s": 4.940000057220459,
+        "archive_last_relative_s": 119.59999990463257,
+        "nearest_archive_before_s": null,
+        "nearest_archive_after_s": 4.940000057220459
+      },
+      {
+        "registration": "N8941Q",
+        "icao24": "ac56ba",
+        "webtrak_track": "cda:65824116",
+        "webtrak_closest_utc": "2026-11-03T01:08:29Z",
+        "min_horizontal_range_m": 54.0,
+        "webtrak_points_in_4min": 42,
+        "archive_points_in_4min": 82,
+        "webtrak_first_relative_s": -38.0,
+        "webtrak_last_relative_s": 116.0,
+        "archive_first_relative_s": 2.549999952316284,
+        "archive_last_relative_s": 119.54999995231628,
+        "nearest_archive_before_s": null,
+        "nearest_archive_after_s": 2.549999952316284
+      },
+      {
+        "registration": "N8884Q",
+        "icao24": "ac3e80",
+        "webtrak_track": "cda:65824106",
+        "webtrak_closest_utc": "2026-11-03T01:09:19Z",
+        "min_horizontal_range_m": 91.5,
+        "webtrak_points_in_4min": 42,
+        "archive_points_in_4min": 90,
+        "webtrak_first_relative_s": -39.0,
+        "webtrak_last_relative_s": 116.0,
+        "archive_first_relative_s": 0.9100000858306885,
+        "archive_last_relative_s": 119.0,
+        "nearest_archive_before_s": null,
+        "nearest_archive_after_s": 0.9100000858306885
+      },
+      {
+        "registration": "N8982S",
+        "icao24": "ac65bb",
+        "webtrak_track": "cda:65824121",
+        "webtrak_closest_utc": "2026-11-03T01:10:06Z",
+        "min_horizontal_range_m": 77.1,
+        "webtrak_points_in_4min": 41,
+        "archive_points_in_4min": 64,
+        "webtrak_first_relative_s": -37.0,
+        "webtrak_last_relative_s": 116.0,
+        "archive_first_relative_s": 1.2699999809265137,
+        "archive_last_relative_s": 117.75,
+        "nearest_archive_before_s": null,
+        "nearest_archive_after_s": 1.2699999809265137
+      }
+    ]
+  },
+  "volans": [
+    {
+      "date": "2026-11-01",
+      "points": 42757,
+      "tracks": 1069,
+      "csv_sha256": "38162e9440a564d5e357850cf0b6c4c3748ac1d44802f1782bb182bb6c1c317a",
+      "published_range": {
+        "minDate": "2022-01-01T06:48:32",
+        "maxDate": "2026-11-03T23:27:46"
+      },
+      "full_requested_day_available": true,
+      "diagnostic": {
+        "status": "insufficient_evidence",
+        "events": 3,
+        "candidates": 0,
+        "known_area_only": true,
+        "recording_clock_supplied": false,
+        "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f"
+      }
+    },
+    {
+      "date": "2026-11-03",
+      "points": 63925,
+      "tracks": 1158,
+      "csv_sha256": "07e1116cf4674d81729caa257243f8f83ce26710bb4ff917c3a366b3c2e9a7ef",
+      "published_range": {
+        "minDate": "2022-01-01T06:48:32",
+        "maxDate": "2026-11-03T23:27:46"
+      },
+      "full_requested_day_available": false,
+      "diagnostic": {
+        "status": "insufficient_evidence",
+        "events": 1,
+        "candidates": 0,
+        "known_area_only": true,
+        "recording_clock_supplied": false,
+        "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f"
+      }
+    }
+  ],
+  "local_sound_classifier": {
+    "model_sha256": "4d8b4a53282dc83ef04e3e7dbc4fbc98082e34e44ed798e16c3a0cdd4c584faf",
+    "model_source": "https://storage.googleapis.com/mediapipe-models/audio_classifier/yamnet/float32/1/yamnet.tflite",
+    "synthetic_sanity_checks_passed": true,
+    "normalization": "Per detection RMS target .1, maximum gain100, clipping reported",
+    "cases": {
+      "southampton": {
+        "events": 1,
+        "model_supported_observations": 0,
+        "supported_with_any_aircraft_frame_above_half": 0
+      },
+      "southampton-nov1": {
+        "events": 3,
+        "model_supported_observations": 0,
+        "supported_with_any_aircraft_frame_above_half": 0
+      },
+      "lake-hood-nov1": {
+        "events": 24,
+        "model_supported_observations": 5,
+        "supported_with_any_aircraft_frame_above_half": 0
+      },
+      "lake-hood-nov1-later": {
+        "events": 16,
+        "model_supported_observations": 5,
+        "supported_with_any_aircraft_frame_above_half": 0
+      },
+      "midway-nov1": {
+        "events": 11,
+        "model_supported_observations": 5,
+        "supported_with_any_aircraft_frame_above_half": 4
+      },
+      "midway-nov1-holdout": {
+        "events": 11,
+        "model_supported_observations": 3,
+        "supported_with_any_aircraft_frame_above_half": 3
+      }
+    },
+    "used_as_filter": false,
+    "reason": "Classifier missed all ten model-supported Lake Hood observations. Sound labels are not ground truth."
+  }
+}

@@ -5,12 +5,22 @@ use chrono::{Days, NaiveDate};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize, clap::ValueEnum)]
+#[serde(rename_all = "snake_case")]
+pub enum ArchiveProvider {
+    #[default]
+    AdsbLol,
+    WebtrakChicago,
+}
+
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct ArchiveRequest {
     pub date_from: String,
     #[serde(default)]
     pub date_to: Option<String>,
     pub cache: PathBuf,
+    #[serde(default)]
+    pub provider: ArchiveProvider,
 }
 
 impl ArchiveRequest {
@@ -55,10 +65,18 @@ impl ArchiveRequest {
                 &format!("Preparing flight archive {date}"),
                 i as f32 / dates.len() as f32,
             );
+            let day_progress = |m: &str, p| {
+                progress(&format!("{date}: {m}"), (i as f32 + p) / dates.len() as f32);
+            };
             paths.push(
-                crate::data::download_day(date, &self.cache, control, &|m, p| {
-                    progress(&format!("{date}: {m}"), (i as f32 + p) / dates.len() as f32);
-                })
+                match self.provider {
+                    ArchiveProvider::AdsbLol => {
+                        crate::data::download_day(date, &self.cache, control, &day_progress)
+                    }
+                    ArchiveProvider::WebtrakChicago => {
+                        crate::webtrak::download_day(date, &self.cache, control, &day_progress)
+                    }
+                }
                 .with_context(|| {
                     format!(
                         "Could not obtain flight data for {date}; no dates were silently omitted"

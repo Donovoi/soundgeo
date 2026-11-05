@@ -30,6 +30,7 @@ fn selected_date_range_reuses_verified_cache_without_network() {
         date_from: "2024-03-01".into(),
         date_to: Some("2024-03-02".into()),
         cache: dir.path().into(),
+        provider: Default::default(),
     };
     let sources = request.ensure(&Control::default(), &|_, _| {}).unwrap();
     assert_eq!(sources.len(), 2);
@@ -56,6 +57,7 @@ fn invalid_ranges_and_wrong_date_cache_are_rejected() {
         date_from: "2024-03-01".into(),
         date_to: None,
         cache: dir.path().into(),
+        provider: Default::default(),
     };
     assert_eq!(request.dates().unwrap(), ["2024-03-01"]);
     request.date_to = Some("2024-02-28".into());

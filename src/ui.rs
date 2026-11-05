@@ -56,6 +56,7 @@ impl App {
                     date_from: String::new(),
                     date_to: None,
                     cache: PathBuf::from("flight-cache"),
+                    provider: Default::default(),
                 }),
                 ..Job::default()
             },
@@ -221,10 +222,18 @@ impl App {
             ui.add_space(6.);ui.label(RichText::new("2  Historical flight data").strong());
             let mut automatic = self.job.archive.is_some();
             if ui.checkbox(&mut automatic,"Download missing flight data automatically").changed() {
-                self.job.archive = automatic.then(|| soundgeo::archive::ArchiveRequest {date_from:self.date.clone(),date_to:None,cache:PathBuf::from("flight-cache")});
+                self.job.archive = automatic.then(|| soundgeo::archive::ArchiveRequest {date_from:self.date.clone(),date_to:None,cache:PathBuf::from("flight-cache"),provider:Default::default()});
             }
             if let Some(request) = &mut self.job.archive {
-                ui.label(RichText::new("Possible UTC date; exact recording time stays unknown. Each uncached day is several GB.").small().color(MUTED));
+                use soundgeo::archive::ArchiveProvider;
+                egui::ComboBox::from_id_salt("flight_provider").selected_text(match request.provider {
+                    ArchiveProvider::AdsbLol => "Worldwide: ADSB.lol",
+                    ArchiveProvider::WebtrakChicago => "Chicago: public airport replay",
+                }).show_ui(ui,|ui|{
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbLol,"Worldwide: ADSB.lol");
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakChicago,"Chicago: public airport replay");
+                });
+                ui.label(RichText::new("Possible UTC date; exact recording time stays unknown. Worldwide archives can require several GB per day.").small().color(MUTED));
                 ui.add(egui::TextEdit::singleline(&mut request.date_from).hint_text("YYYY-MM-DD").desired_width(f32::INFINITY));
                 let mut several = request.date_to.is_some();
                 if ui.checkbox(&mut several,"Search several possible dates").changed(){request.date_to=several.then(String::new);}

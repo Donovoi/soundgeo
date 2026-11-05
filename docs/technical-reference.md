@@ -127,3 +127,29 @@ Signal contrast is a detector setting, not a probability that the sound came fro
 The regional search indexes closest-approach times once per grid point.
 Each observation then reads only the existing 45-second matching window from that index.
 This changes lookup cost; it does not narrow the allowed reference dates or change the matching gate.
+
+## Chicago public replay
+
+Set `archive.provider` to `webtrak_chicago`, or use `--provider webtrak-chicago`
+with `--date`. The default provider remains `adsb_lol`.
+The public Chicago WebTrak source is separate from the worldwide archive.
+The program does not combine the two sources and count the same flight twice.
+
+Each UTC day contains 2,880 half-minute replay handles. The program checks the
+handle and the Chicago local start and end times of each response. The UTC
+handle resolves the repeated hour at the end of daylight saving time.
+It checks each point against its owning interval. Downloaded parts have SHA-256
+checksums. The final CSV and manifest are written only after all parts pass.
+The downloader uses two workers, at most two requests per second, bounded
+responses, and bounded retries. A later attempt can reuse valid parts.
+
+Radar field 18 is altitude in metres. Field 10 is the client's height field and
+is not used as aircraft altitude. The importer adds EGM96 geoid undulation to
+the MSL altitude to produce WGS84 ellipsoid heights. The original sensor and
+pressure correction remain unknown. The report states this limit and reports
+intervals whose radar status is not online.
+
+The public source provides about 90 days of replay. Older complete local caches
+remain usable. A successful download establishes the requested interval and
+file integrity. It does not establish complete traffic coverage or accurate
+geolocation. Source: [Chicago Department of Aviation flight tracker](https://www.flychicago.com/community/ordnoise/flighttracker/pages/default.aspx).

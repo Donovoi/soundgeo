@@ -8,6 +8,7 @@ pub mod index;
 pub mod model;
 mod network;
 pub mod search;
+pub mod webtrak;
 
 use anyhow::{Context, Result, bail};
 use serde::{Deserialize, Serialize};
@@ -225,10 +226,24 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         report.warnings.push("Only one flyover and no known clock: time and location can be ambiguous, especially on straight flight paths.".into());
     }
     let sources = if let Some(request) = &job.archive {
+        if request.provider == archive::ArchiveProvider::WebtrakChicago {
+            report.warnings.push("Chicago public airport data covers its local radar area. Altitudes are converted from MSL to WGS84 using EGM96; their original sensor/pressure provenance is unknown. Recorded coverage does not establish that every flight is present.".into());
+        }
         request.ensure(control, &|m, p| progress(m, 0.34 + p * 0.02))?
     } else {
         vec![job.tracks.clone()]
     };
+    if job
+        .archive
+        .as_ref()
+        .is_some_and(|request| request.provider == archive::ArchiveProvider::WebtrakChicago)
+    {
+        for path in &sources {
+            if let Some(warning) = webtrak::coverage_warning(path)? {
+                report.warnings.push(warning);
+            }
+        }
+    }
     let mut prepared = job.clone();
     if prepared.type_catalog.is_none() {
         prepared.type_catalog = sources

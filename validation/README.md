@@ -514,3 +514,45 @@ The original ten broad-area cases are running on that executable.
 The older 52-test benchmark stopped after eight completed cases; two slow Midway runs were cancelled to free CPU time.
 The old, unindexed main-Midway known-area diagnostic was also cancelled and replaced by a run on the current executable.
 Cancelled runs are incomplete. Their logs and metadata remain available; they do not count as completed tests.
+
+## Additional free airport sources
+
+These checks are diagnostics. They do not count as successful location tests.
+The recording start time was not supplied to either Southampton search, but
+the search areas were narrowed around the known cameras.
+
+The [Chicago Department of Aviation](https://www.flychicago.com/community/ordnoise/flighttracker/pages/default.aspx)
+provides public radar replay through WebTrak. A partial-day coverage audit
+found positions 37 to 40 seconds before closest approach for five inspected
+Midway departures. The existing ADSB.lol traces usually began at or after
+closest approach. This source therefore fills a measured reference-data gap.
+The full-day download and the location checks are still in progress.
+
+The new native Rust provider checks every half-minute part, UTC/local time
+agreement, point coordinates, and cache checksums. Tests cover the repeated
+daylight-saving hour, the altitude field, missing parts, cancellation, cache
+corruption, and command-line analysis with no recording clock.
+All 61 software tests pass locally, with formatting and strict Clippy checks.
+The detector and location matcher are unchanged from `e1aa6bc`.
+
+The [Southampton Airport noise page](https://www.southamptonairport.com/about-us/aircraft-noise/)
+links its public Volans tracker. Its November 1 and November 3 data produced no
+candidate in either known-area diagnostic. November 3's published range ended
+at 23:27:46 local time, with some returned track tails extending later. It is
+not claimed as complete coverage through midnight. The original altitude
+sensor and pressure correction are unknown. This source is not integrated
+into the Rust app.
+
+A separate local YAMNet sound-classification diagnostic suggested water and
+wave noise in the Southampton detections. It also missed all ten observations
+used in the two Lake Hood known-area fits, even after level normalization.
+It is therefore not used to reject detections. These predictions are not
+ground-truth labels. The model was downloaded from Google's public
+[MediaPipe model release](https://ai.google.dev/edge/mediapipe/solutions/audio/audio_classifier/index);
+recordings were processed locally.
+
+Compact evidence is in [airport-source-diagnostics.json](airport-source-diagnostics.json).
+The completed Midway November 1 regional diagnostic has a first candidate
+42.4 m from the camera with five matches. It remains ambiguous, uses the known
+camera area, and is excluded from acceptance. Its summary is recorded in
+[observation-controls.json](observation-controls.json).

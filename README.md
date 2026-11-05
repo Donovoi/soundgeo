@@ -29,7 +29,8 @@ The Lake Hood and Southampton tests failed.
 
 The latest changes have not completed this full benchmark.
 
-All 56 software tests pass locally and in [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41940895711).
+All 61 software tests pass locally. The new Chicago source is waiting for CI and real-video checks.
+The previous 56-test revision passed [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41940895711).
 Software test success does not establish location accuracy.
 See the [validation record](validation/README.md) for results, data sources, and failures.
 
@@ -62,6 +63,12 @@ Put FFmpeg on `PATH`, beside the application, or select its path in the advanced
 A new daily flight archive can require several GB of storage.
 The program checks downloaded files and uses valid files again.
 
+Select **Worldwide: ADSB.lol** for the worldwide archive.
+For a recording near Chicago, you can select **Chicago: public airport replay**.
+The Chicago source contains local airport radar data. It keeps about 90 days of history.
+It can contain positions that are missing from the worldwide archive.
+It has not yet passed the real-recording location tests.
+
 To use existing flight data, clear the automatic-download option. Then select the flight data file or folder.
 
 Select **Try a synthetic demo** to create a test recording and example flight data.
@@ -84,6 +91,23 @@ Download missing flight data. Use the search area and other settings in `region.
 ```powershell
 soundgeo-cli.exe analyze --config "region.json" --input "recording.mp4" --date 2026-11-03 --cache "flight-cache" --output "report.json"
 ```
+
+Select the free Chicago airport source:
+
+```powershell
+soundgeo-cli.exe analyze --config "region.json" --input "recording.mp4" --date 2026-11-03 --provider webtrak-chicago --cache "flight-cache" --output "report.json"
+```
+
+To download a day before analysis, use `download`:
+
+```powershell
+soundgeo-cli.exe download --date 2026-11-03 --provider webtrak-chicago --output "flight-cache"
+```
+
+The [Chicago Department of Aviation](https://www.flychicago.com/community/ordnoise/flighttracker/pages/default.aspx) provides the public flight tracker.
+The program checks every 30-second part of the selected UTC day.
+If a part is missing or invalid, the download fails and keeps the valid parts for the next attempt.
+An archive can still have gaps in flight observations.
 
 To search more than one possible date, add `--date-to`:
 

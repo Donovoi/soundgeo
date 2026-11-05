@@ -1,6 +1,7 @@
 use crate::ui;
 use anyhow::{Context, Result};
 use clap::{CommandFactory, Parser, Subcommand};
+use soundgeo::archive::{ArchiveProvider, ArchiveRequest};
 use soundgeo::{Control, Job};
 use std::path::PathBuf;
 
@@ -42,6 +43,9 @@ enum Commands {
         /// Cache directory for automatically fetched flight archives.
         #[arg(long, requires = "date")]
         cache: Option<PathBuf>,
+        /// Free flight source. Chicago replay covers the local airport radar area.
+        #[arg(long, requires = "date")]
+        provider: Option<ArchiveProvider>,
         /// Report file, or - for JSON on stdout.
         #[arg(long)]
         output: PathBuf,
@@ -54,12 +58,14 @@ enum Commands {
         #[arg(long, default_value = "demo")]
         output: PathBuf,
     },
-    /// Fetch a public ADSB.lol day (several GB); completed parts are cached.
+    /// Fetch a full UTC day from a free source; verified data is cached.
     Download {
         #[arg(long)]
         date: String,
         #[arg(long, default_value = "cache")]
         output: PathBuf,
+        #[arg(long, default_value = "adsb-lol")]
+        provider: ArchiveProvider,
     },
     /// Open the desktop app with an existing report.
     View { report: PathBuf },
@@ -101,6 +107,7 @@ fn run(args: Args) -> Result<u8> {
             date,
             date_to,
             cache,
+            provider,
             output,
             require_match,
         }) => {
@@ -157,10 +164,14 @@ fn run(args: Args) -> Result<u8> {
                 job.archive = None;
             }
             if let Some(date_from) = date {
+                let provider = provider.unwrap_or_else(|| {
+                    job.archive.as_ref().map(|r| r.provider).unwrap_or_default()
+                });
                 job.archive = Some(soundgeo::archive::ArchiveRequest {
                     date_from,
                     date_to,
                     cache: cache.unwrap_or_else(|| PathBuf::from("flight-cache")),
+                    provider,
                 });
             }
             let report = soundgeo::analyze(&job, &Control::default(), &progress)?;
@@ -191,11 +202,22 @@ fn run(args: Args) -> Result<u8> {
                 println!("Demo: {}", path.display());
             }
         }
-        Some(Commands::Download { date, output }) => {
-            let path =
-                soundgeo::data::download_day(&date, &output, &Control::default(), &progress)?;
+        Some(Commands::Download {
+            date,
+            output,
+            provider,
+        }) => {
+            let paths = ArchiveRequest {
+                date_from: date,
+                date_to: None,
+                cache: output,
+                provider,
+            }
+            .ensure(&Control::default(), &progress)?;
             if !args.quiet {
-                println!("Archive: {}", path.display());
+                for path in paths {
+                    println!("Archive: {}", path.display());
+                }
             }
         }
         command => {
