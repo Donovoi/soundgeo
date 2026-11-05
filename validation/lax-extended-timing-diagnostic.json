@@ -1,0 +1,122 @@
+{
+  "plan": {
+    "source": "https://www.youtube.com/watch?v=n4I0d44oBEs",
+    "site": "LAX H Hotel north-side fixed camera, as identified by its publisher",
+    "clips": [
+      {
+        "id": "c",
+        "requested_utc": "2026-11-03T20:00:00+00:00",
+        "duration_s": 7200
+      }
+    ],
+    "utc_day": "2026-11-03",
+    "bounds": {
+      "south": 33.76,
+      "north": 34.12,
+      "west": -118.65,
+      "east": -118.15
+    },
+    "ground_m": 38,
+    "ground_datum": "egm96",
+    "start_utc": null,
+    "analysis_method": "passage_timing",
+    "frozen_build": "4681a841863f6fb4810065f7445f5cabce3940c3",
+    "maximum_passage_distance_m": 500,
+    "accuracy_target_m": 1000,
+    "created_utc": "2026-11-05T23:23:27.982174+00:00",
+    "planned_before_capture_or_analysis": true,
+    "redistribute_media": false,
+    "reference_location": "Verify H Hotel building footprint independently; do not supply coordinates to app.",
+    "source_caution": "Title identifies ATC audio. Local microphone presence and date continuity must be checked; cannot assume all audio originated at the camera.",
+    "purpose": "Test whether two hours of additional, nonoverlapping audio provide enough timing evidence. Keep all original one-hour results and screens. Source-quality limitations remain.",
+    "provider": "webtrak_lax",
+    "capture_source_clock": "Use the same HLS anchor, independently checked against DASH head sequence and walltime. No captured clock enters the app."
+  },
+  "prepared": {
+    "source": "https://www.youtube.com/watch?v=n4I0d44oBEs",
+    "plan_sha256": "47a69f744214a3b784e597be1e2d2e2cb03f9765e1ea608a64a2f10acb5c465c",
+    "requested_utc": "2026-11-03T20:00:00+00:00",
+    "anchor": {
+      "status": 200,
+      "first_sequence": 1673368,
+      "anchor_seq": 1710689,
+      "anchor_utc": "2026-11-05T21:50:00.032000+00:00",
+      "segment_duration_s": 5.0,
+      "requested_utc": "2026-11-03T18:00:00+00:00",
+      "bytes": 275116
+    },
+    "first_sequence": 1674808,
+    "count": 1440,
+    "nominal_duration_s": 7200.0,
+    "media_sha256": "66a1001a41fc70a156794d889537c4e37d8c9152411d0ec9b336ed1b213b2d78",
+    "job_sha256": "e5949cf38a3c5779c046730e7384c2f09439a82e7d376f1a67c0cb9a752d1229",
+    "date_verification_pending": true,
+    "audio_source_verification_pending": true,
+    "redistribute_media": false
+  },
+  "result": {
+    "exit_code": 4,
+    "elapsed_s": 260.3185986999888,
+    "source_quality": {
+      "actual_duration_s": 7196.096145,
+      "visible_clock_first": "11:46",
+      "visible_clock_last": "13:52",
+      "observed_before_solver": true,
+      "limitation": "The visible clock advances about 126 min in about 120 min of video. The cause is unverified. The clip is a source diagnostic, not a clean continuous-recording accuracy test. The original one-hour tests remain unchanged."
+    },
+    "accuracy_accepted": false,
+    "status": "ambiguous",
+    "screen": "ambiguous",
+    "peaks": 176,
+    "controls": 19,
+    "control_max": 15.952062374007284,
+    "report_sha256": "f9ec81d596316c5b3d71ebe87bb619343d5f9c01d8bac9f16771b72ac47df7bb",
+    "score_gap_beyond_1km": 3.9315245024428975,
+    "competitive_location_spread_m": 1614.6411077941418,
+    "explanation": "The timing signal has competing locations more than 1 km apart. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.",
+    "first_score": 16.474830385014624,
+    "matches": 28,
+    "maximum_footprint_error_m": 1896.9891636789625,
+    "raw_coordinate_within_1km": false
+  },
+  "started": {
+    "command": [
+      "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-lax-4681a84.exe",
+      "analyze",
+      "--config",
+      "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-extended-camera\\c\\job.json",
+      "--output",
+      "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-extended-camera\\c\\report.json",
+      "--require-unambiguous"
+    ],
+    "build": {
+      "commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
+      "tests": 93,
+      "failed": 0,
+      "ignored": 0,
+      "required_local_checks_passed": true,
+      "ci": "pending",
+      "not_qualified_location_release": true,
+      "created_utc": "2026-11-05T23:07:24.914084+00:00",
+      "cli": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-lax-4681a84.exe",
+        "sha256": "d792b2ed46b2d3cbdb717698a77f0ea23fad943f3dead13ed1bcd58eba7e1d24"
+      },
+      "gui": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-lax-4681a84.exe",
+        "sha256": "e5811420a63e1c06c978c58e19c7f67f80d6aadd0f8f3bacc4ece907794e3b4e"
+      }
+    },
+    "started_utc": "2026-11-05T23:31:20.491126+00:00",
+    "source_quality": {
+      "actual_duration_s": 7196.096145,
+      "visible_clock_first": "11:46",
+      "visible_clock_last": "13:52",
+      "observed_before_solver": true,
+      "limitation": "The visible clock advances about 126 min in about 120 min of video. The cause is unverified. The clip is a source diagnostic, not a clean continuous-recording accuracy test. The original one-hour tests remain unchanged."
+    }
+  },
+  "native_reference_sha256": "921df6ab5825e6079b689626f9b929b1fc61e02ef6a0bebf96c0d1f1b7d26a21",
+  "accuracy_claim": false,
+  "production_changes": false
+}

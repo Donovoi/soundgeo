@@ -47,9 +47,12 @@ An experimental Lake Hood search found one first choice within 83 m, but failed 
 An earlier Southampton test returned a wrong location with a positive model status.
 A positive model status is not proof that the location is correct.
 
-The search-cache revision `38ff00e` passed all 92 software tests locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42124161220).
+Revision `4681a84` passed all 93 software tests locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42127052770).
 Formatting, strict Clippy, documentation tests, and both release builds also passed.
+The LAX downloader recovered a missing part and matched all 996,783 positions
+from an independent reader. Five LAX recording diagnostics still gave ambiguous
+or insufficient results. They do not establish accuracy at a second airport.
 Software checks do not establish location accuracy.
 See the [validation record](validation/README.md) for builds, results, data sources, and failures.
 

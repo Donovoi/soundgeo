@@ -1,0 +1,27 @@
+{
+  "commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
+  "run": 42127052770,
+  "attempt": 2,
+  "url": "https://github.com/Donovoi/soundgeo/actions/runs/42127052770",
+  "status": "completed",
+  "conclusion": "success",
+  "tests": {
+    "windows-latest": {
+      "passed": 93,
+      "failed": 0,
+      "ignored": 0
+    },
+    "ubuntu-latest": {
+      "passed": 93,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "log_sha256": "58cce6c71295ff20e9383942373fe82a04592bf8729726f3c2d8cfb21771c429",
+  "first_attempt_linux": {
+    "conclusion": "cancelled",
+    "reason": "Dependency installation was downloading Ubuntu packages very slowly for over 15 minutes. Cancelled that job and retried it after it was terminal. No application test had run on that Linux attempt. Windows passed on the first attempt.",
+    "log_sha256": "9a9cc99a1cf0c87cec2bd6969162c73f6b6b60fa9290e2238543f1acec7123b8"
+  },
+  "no_location_accuracy_claim": true
+}
