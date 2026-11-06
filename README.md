@@ -21,7 +21,7 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 
 **The program is not complete. It does not yet find real locations reliably.**
 
-The current location target is within 1 km. The user changed this target on November 6, 2026.
+The current location target is within 1 km.
 The original 250 m plans and results remain in the validation record.
 
 Revision `80d33f2` replayed 25 recordings with flight passage timing.

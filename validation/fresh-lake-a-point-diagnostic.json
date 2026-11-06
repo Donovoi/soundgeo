@@ -20,8 +20,8 @@
   },
   "report_sha256": "4577b6829ef4209f9b788b32e1bbea111325c56029427a6c81ebfafdba874769",
   "job": {
-    "media": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\fresh-validation\\lake-hood-nov4-a\\recording.mp4",
-    "tracks": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-04",
+    "media": "fresh-validation/lake-hood-nov4-a/recording.mp4",
+    "tracks": "real-validation/flight-cache/2026-11-04",
     "archive": null,
     "terrain": null,
     "start_utc": null,
@@ -46,7 +46,7 @@
     "max_grid_points": 6000,
     "ffmpeg": null,
     "aircraft_filter": "all",
-    "type_catalog": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-04\\aircraft-types.json",
+    "type_catalog": "real-validation/flight-cache/2026-11-04/aircraft-types.json",
     "search_mode": "regional_grid",
     "max_hypotheses": 50000000,
     "silence_mode": "supporting_evidence"

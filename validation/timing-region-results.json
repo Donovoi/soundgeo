@@ -20,11 +20,11 @@
     "real_validation": "19 replays complete; seven screened locations within 1 km, all at one Midway camera",
     "not_qualified_location_release": true,
     "cli": {
-      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-region-d6e9418.exe",
+      "path": "analysis-build/soundgeo-cli-region-d6e9418.exe",
       "sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f"
     },
     "gui": {
-      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-region-d6e9418.exe",
+      "path": "analysis-build/soundgeo-region-d6e9418.exe",
       "sha256": "980e454ec95643b04401b606a8fa442a0e6a184ac073c55d51708a160799c49f"
     }
   },

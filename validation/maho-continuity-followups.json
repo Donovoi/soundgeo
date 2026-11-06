@@ -16,7 +16,7 @@
     "reference_limit": "Host map pin plus a predeclared 200 m allowance. The microphone has not been surveyed.",
     "acceptance_rule": "App must report a screened region after all 19 shuffled controls, and distance from its center to the host pin plus the 200 m allowance must be at most 1000 m.",
     "cli": {
-      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-region-d6e9418.exe",
+      "path": "analysis-build/soundgeo-cli-region-d6e9418.exe",
       "sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f"
     },
     "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
@@ -194,7 +194,7 @@
     "no_location_result_used_for_selection": true,
     "source_commit": "67482a4526e1030fa7e33af99f16dd3fc3e24a17",
     "cli": {
-      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-sample-67482a4.exe",
+      "path": "analysis-build/soundgeo-cli-sample-67482a4.exe",
       "sha256": "afbd8a1aa618d2cc7d735c98330614581aa2c6e622f9dc28962e3f4bae98f120"
     },
     "source": "https://www.youtube.com/watch?v=iSeH45R-8R0",
@@ -218,7 +218,7 @@
     },
     "automatic_flight_download": true,
     "provider": "adsb_exchange_sample",
-    "cache": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\sample-native-validation\\cache"
+    "cache": "sample-native-validation/cache"
   },
   "followup_plan_sha256": "e20b77ffc1a1f85b0627e2d6f80b7639e84575fcfe80c0aef72cc66b2e1a5a41",
   "followup_cases": [

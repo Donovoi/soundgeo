@@ -101,7 +101,7 @@
   "event_detection": {
     "plan": {
       "commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
-      "executable": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-audio-lax-4681a84.exe",
+      "executable": "analysis-build/inspect-audio-lax-4681a84.exe",
       "sha256": "00fb483b780590a394dce0aee60ea3a4015356cb7633ab94c8c19645ea1ffc15",
       "cases": [
         "broadcast-b",

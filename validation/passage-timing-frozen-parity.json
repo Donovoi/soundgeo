@@ -1,7 +1,7 @@
 {
   "build": {
     "commit": "72d4658b0aa7456d0d74be9bea554a24d75c463a",
-    "executable": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-search-72d4658.exe",
+    "executable": "analysis-build/inspect-timing-search-72d4658.exe",
     "sha256": "f30ba71ab36e4d7db5a9b6fd257e816740c312e29257467b27f1ea528ff2732b",
     "required_local_checks_passed": true,
     "tests": 86,

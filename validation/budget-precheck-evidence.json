@@ -27,28 +27,28 @@
     "cases": [
       {
         "case": "midway-holdout",
-        "job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-holdout\\segment-cache-job.json",
+        "job": "real-validation/midway-holdout/segment-cache-job.json",
         "job_sha256": "bd1b45cd1013ab65e706b8d283ca8744bdcc9f04078f21be451d240e11aad6bd",
         "media_sha256": "985b9035059956f43f989d8c14049d00d08679902e8b3d421fa7f1c9f63d6f04",
-        "baseline_run": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-holdout\\segment-cache-run.json",
-        "expected_report": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-holdout\\segment-cache-report.json",
+        "baseline_run": "real-validation/midway-holdout/segment-cache-run.json",
+        "expected_report": "real-validation/midway-holdout/segment-cache-report.json",
         "expected_report_sha256": "6b6ccc25ecd0a1faecc173e74f4b7dfc7e27648ebe21047b4b7115e38f53793b"
       },
       {
         "case": "southampton-nov1",
-        "job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton-nov1\\segment-cache-job.json",
+        "job": "real-validation/southampton-nov1/segment-cache-job.json",
         "job_sha256": "dcaa6ebf41fc4e775222e8618a39afa7393114414059a07d3e0ba675ca12859a",
         "media_sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f",
-        "baseline_run": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton-nov1\\segment-cache-run.json",
-        "expected_report": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton-nov1\\segment-cache-report.json",
+        "baseline_run": "real-validation/southampton-nov1/segment-cache-run.json",
+        "expected_report": "real-validation/southampton-nov1/segment-cache-report.json",
         "expected_report_sha256": "ea22fa634af457bf465aa401eec19caab98e0349c60f485a61bfe6957910cf13"
       },
       {
         "case": "midway-nov1",
-        "job": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-nov1\\arrival-cache-expanded-job.json",
+        "job": "real-validation/midway-nov1/arrival-cache-expanded-job.json",
         "job_sha256": "717cb6c7abc867a4f986cf4cbe7deff224f13f8104ac98a64fa6da8373beaf70",
         "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810",
-        "baseline_run": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-nov1\\arrival-cache-expanded-run.json",
+        "baseline_run": "real-validation/midway-nov1/arrival-cache-expanded-run.json",
         "expected_report": null,
         "expected_report_sha256": null
       }

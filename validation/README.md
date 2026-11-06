@@ -2,9 +2,13 @@
 
 This is a failing acceptance benchmark, not a claim of reliable geolocation.
 
-The user changed the current target to 1 km on November 6, 2026.
+The current location target is within 1 km.
 The original 250 m plans and results below remain unchanged.
 New results must state which target they use.
+
+Local artifact paths in published records are relative to the validation data folder.
+Original artifact hashes are retained. Where paths were normalized in a published
+record, its bytes can differ from the original retained artifact.
 
 To repeat the current 1 km timing benchmark, run this command from the repository:
 
@@ -59,7 +63,7 @@ job has `start_utc: null`. This is not an unrestricted worldwide/date-unknown te
 - Each input is a continuous sequence of five-second DVR segments, with audio
   and video remuxed locally and metadata removed. SHA-256 hashes, durations,
   public sources and ground truth are in `cases.json`. Media is retained locally
-  for the user and is not redistributed in this repository.
+  and is not redistributed in this repository.
 - Stream timestamps are not independently accurate recording clocks: one
   Midway visible clock differed from the manifest-derived timestamp by about
   50 seconds. Exact inferred-clock accuracy therefore is not an acceptance claim.
@@ -148,7 +152,7 @@ Software checks: all 25 deterministic tests, strict Clippy, formatting and relea
 ## Free November 1 reference data
 
 The additional three recordings are two one-hour Midway clips and one one-hour
-Southampton clip. The user requires free sources only. ADS-B Exchange publishes
+Southampton clip. These tests use free sources only. ADS-B Exchange publishes
 a [free first-of-month sample](https://www.adsbexchange.com/data-products/sample-data/)
 and [public demo S3 access](https://www.adsbexchange.com/pull-data/). The documented
 sample interface worked without a private account. No paid data was used.

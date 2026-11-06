@@ -4,7 +4,7 @@
     "22276": 0,
     "42920": 1
   },
-  "original_wrapper_error": "Traceback (most recent call last):\n  File \"%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\download_lax_nov4_native.py\", line 14, in <module>\n    result.update(csv_sha256=sha(cache/'flights.csv'),manifest_sha256=sha(cache/'manifest.json'))\n                                                                      ~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\download_lax_nov4_native.py\", line 5, in sha\n    with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()\n         ~~~~~~^^^^^^\n  File \"C:\\Python314\\Lib\\pathlib\\__init__.py\", line 771, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\toor\\\\Documents\\\\Codex\\\\2026-11-04\\\\https-github-com-donovoi-soundgeo-https\\\\work\\\\lax-native-provider\\\\cache\\\\webtrak-lax4-2026-11-04\\\\manifest.json'\n",
+  "original_wrapper_error": "Traceback (most recent call last):\n  File \"download_lax_nov4_native.py\", line 14, in <module>\n    result.update(csv_sha256=sha(cache/'flights.csv'),manifest_sha256=sha(cache/'manifest.json'))\n                                                                      ~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"download_lax_nov4_native.py\", line 5, in sha\n    with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()\n         ~~~~~~^^^^^^\n  File \"C:\\Python314\\Lib\\pathlib\\__init__.py\", line 771, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'lax-native-provider\\\\cache\\\\webtrak-lax4-2026-11-04\\\\manifest.json'\n",
   "explanation": "The native CLI completed. The old Python receipt looked for manifest.json instead of provider-manifest.json. This separate record preserves that wrapper failure and verifies the real provider manifest and cached CLI reuse.",
   "manifest": {
     "format": 1,
@@ -35,11 +35,11 @@
     "not_qualified_location_release": true,
     "created_utc": "2026-11-05T23:07:24.914084+00:00",
     "cli": {
-      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-lax-4681a84.exe",
+      "path": "analysis-build/soundgeo-cli-lax-4681a84.exe",
       "sha256": "d792b2ed46b2d3cbdb717698a77f0ea23fad943f3dead13ed1bcd58eba7e1d24"
     },
     "gui": {
-      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-lax-4681a84.exe",
+      "path": "analysis-build/soundgeo-lax-4681a84.exe",
       "sha256": "e5811420a63e1c06c978c58e19c7f67f80d6aadd0f8f3bacc4ece907794e3b4e"
     }
   },

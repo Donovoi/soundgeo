@@ -9,7 +9,7 @@
       {
         "case": "fixed-a",
         "range_m": 1000,
-        "folder": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-a-1000",
+        "folder": "lax-range-diagnostic/fixed-a-1000",
         "source_job_sha256": "13976501ace9e1414e110d9c5e8fe355740930097ef04c590b1ac78d2cd25966",
         "job_sha256": "f512e691f516dba2fe0f8a12af406f5d77a6528a2084d506b9c06c983c8d2c42",
         "media_sha256": "96f6ca531aa521c6fa837103483a53b804825e049856ae0c3960f4ef370a1b0c",
@@ -28,7 +28,7 @@
       {
         "case": "fixed-b",
         "range_m": 1000,
-        "folder": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-b-1000",
+        "folder": "lax-range-diagnostic/fixed-b-1000",
         "source_job_sha256": "ca7cb2c71d355ae36cbe73da0e95c7c9fe33fbd13752dbe51528c006912e9a6e",
         "job_sha256": "2a242f25990bb7c453b0ac7684a8aed2e363ad55a80cd92d0e98a45ce528edf5",
         "media_sha256": "f7866bf3fa86c685c8670deb60c5b31c794e214793f42798f762841609fa25c4",
@@ -47,7 +47,7 @@
       {
         "case": "fixed-a",
         "range_m": 2000,
-        "folder": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-a-2000",
+        "folder": "lax-range-diagnostic/fixed-a-2000",
         "source_job_sha256": "13976501ace9e1414e110d9c5e8fe355740930097ef04c590b1ac78d2cd25966",
         "job_sha256": "005b1bc61be498eedc1ba6864f16864615910b1e4d5dea8e382d294c7cf4d8d9",
         "media_sha256": "96f6ca531aa521c6fa837103483a53b804825e049856ae0c3960f4ef370a1b0c",
@@ -66,7 +66,7 @@
       {
         "case": "fixed-b",
         "range_m": 2000,
-        "folder": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-b-2000",
+        "folder": "lax-range-diagnostic/fixed-b-2000",
         "source_job_sha256": "ca7cb2c71d355ae36cbe73da0e95c7c9fe33fbd13752dbe51528c006912e9a6e",
         "job_sha256": "4d78f25faa1499d68c835406b9686b6d36d0a3a05370aad75a328010a8ebd868",
         "media_sha256": "f7866bf3fa86c685c8670deb60c5b31c794e214793f42798f762841609fa25c4",

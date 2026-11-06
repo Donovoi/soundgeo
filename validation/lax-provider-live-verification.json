@@ -9,11 +9,11 @@
     "not_qualified_location_release": true,
     "created_utc": "2026-11-05T23:07:24.914084+00:00",
     "cli": {
-      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-lax-4681a84.exe",
+      "path": "analysis-build/soundgeo-cli-lax-4681a84.exe",
       "sha256": "d792b2ed46b2d3cbdb717698a77f0ea23fad943f3dead13ed1bcd58eba7e1d24"
     },
     "gui": {
-      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-lax-4681a84.exe",
+      "path": "analysis-build/soundgeo-lax-4681a84.exe",
       "sha256": "e5811420a63e1c06c978c58e19c7f67f80d6aadd0f8f3bacc4ece907794e3b4e"
     }
   },
