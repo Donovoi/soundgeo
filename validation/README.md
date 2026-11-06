@@ -141,9 +141,10 @@ still be absent. Reference coverage is therefore not claimed complete.
 
 The complete cache is a root folder containing `traces/` and `supplement/`; both
 must be supplied, not just the first directory. Pass this root as `--sample-cache`
-to `run.py` when reproducing November 1 cases. The application can import these
-readsb files; its integrated automatic downloader currently retrieves ADSB.lol.
-The supplemental sample download was a separate validation operation. Provider
+to `run.py` when reproducing November 1 cases. The application imported these
+readsb files. At that revision, the integrated downloader retrieved ADSB.lol.
+This sample download was a separate validation operation. The native sample
+downloader was added later; see the final section below. Provider
 data and camera media are retained locally and are not redistributed here.
 
 The prior eight-event matcher found no candidates in all three full-reference
@@ -1677,8 +1678,20 @@ A separate 200 m grid check kept November 1 B within 1 km, but A failed its
 shuffled controls. The Doppler method left both recordings ambiguous. An
 enclosing-circle diagnostic also failed to resolve earlier spatial ambiguity.
 These checks did not change the production detector or spatial thresholds.
-See [maho-results.json](maho-results.json). Two more same-camera intervals were
-selected afterward; they are separate follow-ups, not unseen-site tests.
+See [maho-results.json](maho-results.json).
+
+Two more fixed same-camera intervals were selected afterward. Both failed the
+original fragment-timing rule. They remain rejected. A separate plan then used
+only media timestamps to select each interval's longest continuous run, with
+two minutes removed from each end. It did not join sections or use a location
+result to choose them.
+
+The resulting 41-minute section passed all fragment checks and five visible
+clock checks. The frozen `67482a4` CLI used automatic sample downloads and no
+recording clock. It reported insufficient evidence after all 19 shuffled
+controls. The other section had a five-second jump in its visible clock and
+was rejected before analysis. Neither follow-up adds a successful location.
+See [maho-continuity-followups.json](maho-continuity-followups.json).
 
 The Linux package download at `3373361` was stopped after more than 26 minutes.
 Revision `6ba1a72` uses Ubuntu's public mirror and bounds installation waits.
@@ -1698,5 +1711,19 @@ account or paid bucket is used.
 
 All 105 local tests, formatting, strict Clippy, documentation tests, and both
 release builds pass. The new tests cover public-request signing, cache reuse
-and repair, missing data, cancellation, and CLI validation. The live-source and
-CI checks are separate. See [sample-provider-local-checks.json](sample-provider-local-checks.json).
+and repair, missing data, cancellation, and CLI validation. All 105 tests and
+required checks also passed in Windows and Ubuntu CI at `67482a4`. See
+[sample-provider-local-checks.json](sample-provider-local-checks.json) and
+[sample-provider-ci.json](sample-provider-ci.json).
+
+A fresh native CLI download saved all 288 discovery snapshots and 97 Maho
+traces. All 385 source files matched the independent downloads byte for byte.
+Complete cache reuse passed. One trace was moved aside in this new validation
+cache, and the CLI restored the same bytes. The withheld file remains saved.
+
+Automatic-download replays of the original November 1 Maho recordings kept
+every sound peak, search result, control score, and region unchanged. A stayed
+ambiguous. B stayed within 550 m, including the planned reference allowance.
+These checks prove download and replay behavior on those inputs. They do not
+add independent location tests. See
+[sample-provider-live-checks.json](sample-provider-live-checks.json).

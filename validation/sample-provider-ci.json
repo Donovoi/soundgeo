@@ -1,0 +1,22 @@
+{
+  "source_commit": "67482a4526e1030fa7e33af99f16dd3fc3e24a17",
+  "run_url": "https://github.com/Donovoi/soundgeo/actions/runs/42152162231",
+  "conclusion": "success",
+  "counts": {
+    "windows-latest": {
+      "passed": 105,
+      "failed": 0,
+      "ignored": 0
+    },
+    "ubuntu-latest": {
+      "passed": 105,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "all_required_checks_passed_on_both_platforms": true,
+  "log_sha256": "70caf3d5e53a16119dc4f9baf760e6634240ca5a4ca56e1e7fcaac3d04349dc7",
+  "cli_sha256": "afbd8a1aa618d2cc7d735c98330614581aa2c6e622f9dc28962e3f4bae98f120",
+  "gui_sha256": "9af5f7b024fd9bda32ba67b41296ea81de7a0f6786cd7840b767d005109fb386",
+  "location_release_qualified": false
+}
