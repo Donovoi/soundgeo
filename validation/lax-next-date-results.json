@@ -1,0 +1,368 @@
+{
+  "plan_sha256": "0f6596beda52dbc44043f43253ffec5f103455ae0c3c66455607362148712dbe",
+  "build": {
+    "commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
+    "tests": 93,
+    "failed": 0,
+    "ignored": 0,
+    "required_local_checks_passed": true,
+    "ci": "pending",
+    "not_qualified_location_release": true,
+    "created_utc": "2026-11-05T23:07:24.914084+00:00",
+    "cli": {
+      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-lax-4681a84.exe",
+      "sha256": "d792b2ed46b2d3cbdb717698a77f0ea23fad943f3dead13ed1bcd58eba7e1d24"
+    },
+    "gui": {
+      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-lax-4681a84.exe",
+      "sha256": "e5811420a63e1c06c978c58e19c7f67f80d6aadd0f8f3bacc4ece907794e3b4e"
+    }
+  },
+  "cases": [
+    {
+      "case": "a",
+      "exit_code": 3,
+      "elapsed_s": 863.6926074000075,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "screen": "insufficient_evidence",
+      "controls": 19,
+      "peaks": 178,
+      "null_max": 13.926030258595347,
+      "spread_m": null,
+      "report_sha256": "3a38af4f42534aedd8de1a0486470f0b8b99a2c3698d71665129ee71289811fa",
+      "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established.",
+      "first": {
+        "latitude": 33.94268656716417,
+        "longitude": -118.40974025974026,
+        "elevation_m": 2.0797662268096886,
+        "offset_utc": 1793810382.5248759,
+        "log_likelihood_ratio": 12.118414187637523,
+        "reference_passages": 155,
+        "reference_exposure": 155.0,
+        "background_expected_events": 156.86924139640203,
+        "detection_probability": 0.13632747486192232,
+        "pairs": [
+          {
+            "peak": 0,
+            "track": "lax4:102474840/0",
+            "residual_s": -0.4524400234222412
+          },
+          {
+            "peak": 1,
+            "track": "lax4:102475920/0",
+            "residual_s": 0.1702442169189453
+          },
+          {
+            "peak": 12,
+            "track": "lax4:102476081/0",
+            "residual_s": 1.817077398300171
+          },
+          {
+            "peak": 19,
+            "track": "lax4:102476249/0",
+            "residual_s": 2.4068734645843506
+          },
+          {
+            "peak": 24,
+            "track": "lax4:102476152/0",
+            "residual_s": 0.035527944564819336
+          },
+          {
+            "peak": 33,
+            "track": "lax4:102476122/0",
+            "residual_s": -0.5128142833709717
+          },
+          {
+            "peak": 35,
+            "track": "lax4:102476174/0",
+            "residual_s": 0.48241448402404785
+          },
+          {
+            "peak": 37,
+            "track": "lax4:102476000/0",
+            "residual_s": -0.960644006729126
+          },
+          {
+            "peak": 38,
+            "track": "lax4:102476226/0",
+            "residual_s": -0.923069953918457
+          },
+          {
+            "peak": 40,
+            "track": "lax4:102476232/0",
+            "residual_s": -1.049246072769165
+          },
+          {
+            "peak": 46,
+            "track": "lax4:102476060/0",
+            "residual_s": 2.528536319732666
+          },
+          {
+            "peak": 49,
+            "track": "lax4:102477802/0",
+            "residual_s": 1.5646963119506836
+          },
+          {
+            "peak": 62,
+            "track": "lax4:102476469/0",
+            "residual_s": 0.7474818229675293
+          },
+          {
+            "peak": 69,
+            "track": "lax4:102476497/0",
+            "residual_s": 2.5782432556152344
+          },
+          {
+            "peak": 74,
+            "track": "lax4:102476442/0",
+            "residual_s": -0.9839398860931396
+          },
+          {
+            "peak": 76,
+            "track": "lax4:102476529/0",
+            "residual_s": -0.5865516662597656
+          },
+          {
+            "peak": 79,
+            "track": "lax4:102476674/0",
+            "residual_s": -0.25064802169799805
+          },
+          {
+            "peak": 80,
+            "track": "lax4:102476385/0",
+            "residual_s": 2.4973769187927246
+          },
+          {
+            "peak": 83,
+            "track": "lax4:102476483/0",
+            "residual_s": -0.43649816513061523
+          },
+          {
+            "peak": 84,
+            "track": "lax4:102485719/0",
+            "residual_s": 2.353364944458008
+          },
+          {
+            "peak": 97,
+            "track": "lax4:102476465/0",
+            "residual_s": -2.764436960220337
+          },
+          {
+            "peak": 100,
+            "track": "lax4:102476508/0",
+            "residual_s": -0.035527944564819336
+          },
+          {
+            "peak": 107,
+            "track": "lax4:102476597/0",
+            "residual_s": -0.11829471588134766
+          },
+          {
+            "peak": 111,
+            "track": "lax4:102476545/0",
+            "residual_s": -0.5891852378845215
+          },
+          {
+            "peak": 114,
+            "track": "lax4:102476547/0",
+            "residual_s": -0.9989423751831055
+          },
+          {
+            "peak": 118,
+            "track": "lax4:102476645/0",
+            "residual_s": 0.06906867027282715
+          },
+          {
+            "peak": 120,
+            "track": "lax4:102476686/0",
+            "residual_s": 1.0568954944610596
+          },
+          {
+            "peak": 122,
+            "track": "lax4:102478306/0",
+            "residual_s": 0.3497490882873535
+          },
+          {
+            "peak": 125,
+            "track": "lax4:102476691/0",
+            "residual_s": -1.2993364334106445
+          },
+          {
+            "peak": 128,
+            "track": "lax4:102476734/0",
+            "residual_s": -0.5486102104187012
+          },
+          {
+            "peak": 129,
+            "track": "lax4:102476682/0",
+            "residual_s": 0.19448566436767578
+          },
+          {
+            "peak": 130,
+            "track": "lax4:102476634/0",
+            "residual_s": 0.7677421569824219
+          },
+          {
+            "peak": 131,
+            "track": "lax4:102477689/0",
+            "residual_s": 0.13405871391296387
+          },
+          {
+            "peak": 135,
+            "track": "lax4:102476744/0",
+            "residual_s": -1.9108333587646484
+          },
+          {
+            "peak": 142,
+            "track": "lax4:102476776/0",
+            "residual_s": 0.3700551986694336
+          },
+          {
+            "peak": 152,
+            "track": "lax4:102477647/0",
+            "residual_s": -0.9231317043304443
+          },
+          {
+            "peak": 163,
+            "track": "lax4:102477717/0",
+            "residual_s": -0.8749313354492188
+          },
+          {
+            "peak": 171,
+            "track": "lax4:102477835/0",
+            "residual_s": 0.3226659297943115
+          }
+        ]
+      },
+      "maximum_footprint_error_m": 1631.2370327404078,
+      "raw_coordinate_within_1km": false,
+      "job_sha256": "1d279034c32ccc90db48e1852e51756901e9f5c1d3f6a29388f24e6df39c63f7",
+      "source_quality_sha256": "58e526c49950bd4ce6fb095a0e86abb47587c1153601c4f1735dda04667c06fc",
+      "not_fixed_by_region_center_change": true
+    },
+    {
+      "case": "b",
+      "exit_code": 4,
+      "elapsed_s": 855.978474500007,
+      "screened_location": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "screen": "ambiguous",
+      "controls": 19,
+      "peaks": 164,
+      "null_max": 13.918046799019269,
+      "spread_m": 35769.00113279026,
+      "report_sha256": "35739b49d987aa8ab19c13078118d83f1b5eb400fbf0387fa3cdf69c5e8553d8",
+      "explanation": "The timing signal has competing locations more than 1 km apart. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.",
+      "first": {
+        "latitude": 33.824477611940296,
+        "longitude": -118.15649350649352,
+        "elevation_m": 2.4014046504150883,
+        "offset_utc": 1793805910.8929837,
+        "log_likelihood_ratio": 14.095939449700754,
+        "reference_passages": 25,
+        "reference_exposure": 25.0,
+        "background_expected_events": 153.0751877735708,
+        "detection_probability": 0.4369924890571677,
+        "pairs": [
+          {
+            "peak": 23,
+            "track": "lax4:102474862/0",
+            "residual_s": 0.0073544979095458984
+          },
+          {
+            "peak": 27,
+            "track": "lax4:102474738/0",
+            "residual_s": -0.18970847129821777
+          },
+          {
+            "peak": 37,
+            "track": "lax4:102474731/0",
+            "residual_s": 2.663210153579712
+          },
+          {
+            "peak": 50,
+            "track": "lax4:102475880/0",
+            "residual_s": -0.03664064407348633
+          },
+          {
+            "peak": 99,
+            "track": "lax4:102474855/1",
+            "residual_s": 0.18061232566833496
+          },
+          {
+            "peak": 118,
+            "track": "lax4:102476352/0",
+            "residual_s": -1.8730511665344238
+          },
+          {
+            "peak": 120,
+            "track": "lax4:102475929/0",
+            "residual_s": 0.3389248847961426
+          },
+          {
+            "peak": 127,
+            "track": "lax4:102476143/0",
+            "residual_s": 2.1805286407470703
+          },
+          {
+            "peak": 128,
+            "track": "lax4:102476086/0",
+            "residual_s": 0.15416836738586426
+          },
+          {
+            "peak": 130,
+            "track": "lax4:102476092/0",
+            "residual_s": -0.12980985641479492
+          },
+          {
+            "peak": 132,
+            "track": "lax4:102476129/0",
+            "residual_s": -0.0073544979095458984
+          },
+          {
+            "peak": 148,
+            "track": "lax4:102476240/0",
+            "residual_s": 0.056688547134399414
+          },
+          {
+            "peak": 157,
+            "track": "lax4:102476287/0",
+            "residual_s": -1.0772120952606201
+          },
+          {
+            "peak": 159,
+            "track": "lax4:102476267/0",
+            "residual_s": -0.39594602584838867
+          }
+        ]
+      },
+      "maximum_footprint_error_m": 25694.065638906526,
+      "raw_coordinate_within_1km": false,
+      "job_sha256": "4e83c43e23abe3bda67062cac3677ab519a7f5f1d8c4b25e8df925bfbc213a3d",
+      "source_quality_sha256": "bcfcc561e959febca1fd6ea3bd021e046a2e727b187943535addb1cbb40d5f56",
+      "not_fixed_by_region_center_change": true
+    }
+  ],
+  "completed_cases": 2,
+  "planned_cases": 2,
+  "screened_locations": 0,
+  "accepted_locations": 0,
+  "wrong_screened_locations": 0,
+  "site_already_used_for_development": true,
+  "microphone_location_not_surveyed": true,
+  "channel_check": {
+    "plan_sha256": "5deff23a1527087718b0fa4ee45bc53fbf24c3c35050105dc4a1ee6ebb301824",
+    "results_sha256": "ffa9a673758890bf0a8ca64e479202bebd41c395c9e58c4fecb9da721485a874",
+    "windows": 12,
+    "side_more_than_70_db_below_mid": 11,
+    "largest_side_to_mid_power_db": -27.272391937759547,
+    "interpretation": "The sampled left and right channels are almost identical. These windows do not support useful radio/ambient separation by subtracting the center channel."
+  },
+  "original_result_sha256": "f30fb1a19baf2cf065c4da746707e0bc2e5a7df4b360944db4bc859f59743336",
+  "original_fixed_plan_preserved": true,
+  "software_ci": "The planned 4681a84 build passed all 93 local, Windows and Ubuntu software tests; see lax-provider-ci.json.",
+  "not_qualified_location_release": true
+}

@@ -1565,17 +1565,74 @@ The report adds `timing.region` after the checks pass. Individual candidates
 remain in the report. The desktop app shows the area center and has a separate
 button to copy it. Old reports do not gain a region when they are loaded.
 
-All 97 local tests pass, with no ignored tests. Formatting, strict Clippy,
-documentation tests, and both release builds pass. The four added tests check
-an edge-leading candidate, the date line, invalid or wide regions, and older
-report loading. CI and complete CLI reruns are pending. See
-[timing-region-local-checks.json](timing-region-local-checks.json).
+All 97 tests pass locally, on Windows CI, and on Ubuntu CI, with no ignored
+tests. Formatting, strict Clippy, documentation tests, and both release builds
+pass. The four added tests check an edge-leading candidate, the date line,
+invalid or wide regions, and older report loading. See
+[timing-region-local-checks.json](timing-region-local-checks.json) and
+[timing-region-ci.json](timing-region-ci.json).
+
+The first Windows run failed because the FFmpeg package server returned HTTP
+503. The installer reported success without installing FFmpeg. Revision
+`81e6a38` checks the executable and retries a failed install. It passed all
+required checks. The application source and saved binaries did not change.
+The failed run and four setup checks remain in
+[ci-ffmpeg-setup-checks.json](ci-ffmpeg-setup-checks.json).
+
+The saved `d6e9418` CLI replayed all 18 original benchmark recordings and the
+continuous LAX development recording. Every search result, sound peak, and
+shuffled score matched the earlier report. The new region check added one
+Midway result. Its center was 89 m from the reference, and all 17 competitive
+grid points were within 959 m of that center. The 18-case totals are seven
+locations within 1 km, two ambiguous results, and nine insufficient results.
+No screened location was outside 1 km. All seven successes came from the same
+Midway camera. The extra LAX case stayed ambiguous. These are development
+replays, not proof of general accuracy. See
+[timing-region-results.json](timing-region-results.json).
 
 Two recordings from November 4 were reserved before the continuous November 3
 follow-up finished. Their intervals were selected using source timestamps,
 without location-search results. Five visible clocks and all fragment times
 were checked in each recording. They will use the original frozen `4681a84`
 build, the same broad area, a 1 km aircraft distance, and no recording clock.
-The complete free flight download is running. These cases do not yet have
-location results. See [the plan](lax-next-date-plan.json) and
-[the prepared recordings](lax-next-date-prepared.json).
+The complete free flight download saved 1,051,893 positions. All 2,880 parts
+were online. The manifest, CSV hash, row count, and cached CLI reuse passed
+checks. A separate Python receipt used the wrong manifest name and failed
+after the app completed; that failure is preserved. See
+[the download checks](lax-next-date-download.json).
+
+Both analyses finished with all 19 shuffled controls. Recording A reported
+insufficient evidence. Its first point was 1.63 km from the farthest hotel
+vertex, and its score did not exceed the controls. Recording B reported
+ambiguity. Its first point was 25.69 km away, with competitive points more
+than 35 km apart. Neither recording returned an accepted location. The new
+region-center check cannot remove either failure. See [the plan](lax-next-date-plan.json),
+[the prepared recordings](lax-next-date-prepared.json), and
+[the results](lax-next-date-results.json).
+
+Twelve fixed audio windows checked whether the stereo channels could separate
+radio speech from aircraft sound. In eleven windows, the channel difference
+was more than 70 dB below the shared signal. The remaining window was 27 dB
+below it. The sampled channels were almost identical. This does not support
+useful separation by subtracting the center channel.
+
+## Further sound checks
+
+The longer continuous LAX recording had 24 detected Doppler events. None of
+its 256 timing proposals had three supporting curves. Summing location scores
+from two recordings at the same camera also left LAX and Lake Hood unresolved.
+Neither test changed the app.
+
+The free LAX replay also contains readings from 25 noise monitors. A full-day
+search compared their level changes with five recordings. Two exceeded all
+19 shuffled controls. Their preferred clock changed with the monitor's
+position along the flight path. That clock cannot be treated as the camera's
+clock. A follow-up timing search using the inferred clock did not produce a
+qualifying 1 km region. See
+[additional-audio-diagnostics.json](additional-audio-diagnostics.json).
+
+The older, separate Midway Doppler retry also finished. It evaluated
+63,003,202 hypotheses and ranked a point 178 m from the reference first.
+Competing points were about 25 km away, so the result remained ambiguous.
+The earlier interrupted attempt remains saved. See
+[native-budget-followup.json](native-budget-followup.json).

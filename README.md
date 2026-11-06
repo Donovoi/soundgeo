@@ -24,21 +24,23 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 The current location target is within 1 km. The user changed this target on November 6, 2026.
 The earlier 250 m test results remain in the validation record.
 
-The fixed CLI benchmark at revision `f8f1735` used flight passage timing on 18 public-camera recordings.
+The CLI replay at revision `d6e9418` used flight passage timing on 18 public-camera recordings.
 Each test used a known possible date, a broad search area, and no recording start time.
 The app used free Chicago airport data for Midway and free flight archives for the other sites.
 
 | Result | Recordings |
 | --- | ---: |
-| Returned a location within 1 km | 6 |
-| Reported competing locations | 3 |
+| Returned a location within 1 km | 7 |
+| Reported competing locations | 2 |
 | Reported insufficient evidence | 9 |
 | Returned a location outside 1 km | 0 |
 
-All six returned locations came from the same Midway camera. Their errors were 99 to 547 m.
-One of these clips was reserved before the new screening rules were tested.
-A second reserved clip ranked a point 384 m away first, but reported competing locations.
-The other clips are development tests. They do not measure performance on unseen locations.
+All seven returned locations came from the same Midway camera. Their errors were 89 to 547 m.
+These are replays of the earlier benchmark. The original `f8f1735` results remain in the validation record.
+The new region check added one result. Its sound scores and shuffled checks did not change.
+One clip was reserved before the earlier screening rules were tested.
+A second reserved clip still ranked a point 384 m away first, but reported competing locations.
+The replays do not measure performance on unseen locations.
 Lake Hood and Southampton still returned no useful location.
 Withholding a weak result does not prove that the app can find every location.
 
@@ -47,12 +49,15 @@ An experimental Lake Hood search found one first choice within 83 m, but failed 
 An earlier Southampton test returned a wrong location with a positive model status.
 A positive model status is not proof that the location is correct.
 
-Revision `71d05e3` passed all 93 software tests locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42133465259).
+Revision `81e6a38` passed all 97 software tests locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42140628938).
 Formatting, strict Clippy, documentation tests, and both release builds also passed.
+This revision fixes CI setup. Its application code and saved binaries match `d6e9418`.
 The LAX downloader recovered a missing part and matched all 996,783 positions
-from an independent reader. Five LAX recording diagnostics still gave ambiguous
-or insufficient results. They do not establish accuracy at a second airport.
+from an independent reader. A second full-day download saved 1,051,893 positions
+and passed cache checks. LAX follow-up tests have not established a reliable location.
+Both reserved recordings from the second day failed to give a useful location.
+One reported insufficient evidence. The other reported widely separated choices.
 Software checks do not establish location accuracy.
 See the [validation record](validation/README.md) for builds, results, data sources, and failures.
 

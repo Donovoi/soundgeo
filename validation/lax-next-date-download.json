@@ -1,0 +1,47 @@
+{
+  "verified_utc": "2026-11-06T01:14:08.555708+00:00",
+  "original_process_exit_codes": {
+    "22276": 0,
+    "42920": 1
+  },
+  "original_wrapper_error": "Traceback (most recent call last):\n  File \"C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\download_lax_nov4_native.py\", line 14, in <module>\n    result.update(csv_sha256=sha(cache/'flights.csv'),manifest_sha256=sha(cache/'manifest.json'))\n                                                                      ~~~^^^^^^^^^^^^^^^^^^^^^^^\n  File \"C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\download_lax_nov4_native.py\", line 5, in sha\n    with p.open('rb') as f:return hashlib.file_digest(f,'sha256').hexdigest()\n         ~~~~~~^^^^^^\n  File \"C:\\Python314\\Lib\\pathlib\\__init__.py\", line 771, in open\n    return io.open(self, mode, buffering, encoding, errors, newline)\n           ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\nFileNotFoundError: [Errno 2] No such file or directory: 'C:\\\\Users\\\\toor\\\\Documents\\\\Codex\\\\2026-11-04\\\\https-github-com-donovoi-soundgeo-https\\\\work\\\\lax-native-provider\\\\cache\\\\webtrak-lax4-2026-11-04\\\\manifest.json'\n",
+  "explanation": "The native CLI completed. The old Python receipt looked for manifest.json instead of provider-manifest.json. This separate record preserves that wrapper failure and verifies the real provider manifest and cached CLI reuse.",
+  "manifest": {
+    "format": 1,
+    "date": "2026-11-04",
+    "provider": "webtrak_lax",
+    "complete": true,
+    "chunks": 2880,
+    "rows": 1051893,
+    "offline_chunks": 0,
+    "csv_sha256": "2858fa80e4399719abb77378de4ee0e1c70588294292c6cd736b4777eff1d865",
+    "source": "https://webtrak-us02.emsbk.com/WebTrak/lax4/data/",
+    "altitude": "Field 18 MSL metres + EGM96 N; original sensor/pressure provenance unknown"
+  },
+  "sha256": {
+    "csv": "2858fa80e4399719abb77378de4ee0e1c70588294292c6cd736b4777eff1d865",
+    "manifest": "442894575dbc037b9e60432a85e971aaf4074dc0917985b927a4337ae7a5c548"
+  },
+  "cache_reuse_exit_code": 0,
+  "cache_reuse_elapsed_s": 0.30551860004197806,
+  "cache_reuse_log_sha256": "abff3532bcd174e4217c2482065b6ee87cc8adf7f63bcc6e1a8aaeb68248eb0e",
+  "build": {
+    "commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
+    "tests": 93,
+    "failed": 0,
+    "ignored": 0,
+    "required_local_checks_passed": true,
+    "ci": "pending",
+    "not_qualified_location_release": true,
+    "created_utc": "2026-11-05T23:07:24.914084+00:00",
+    "cli": {
+      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-lax-4681a84.exe",
+      "sha256": "d792b2ed46b2d3cbdb717698a77f0ea23fad943f3dead13ed1bcd58eba7e1d24"
+    },
+    "gui": {
+      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-lax-4681a84.exe",
+      "sha256": "e5811420a63e1c06c978c58e19c7f67f80d6aadd0f8f3bacc4ece907794e3b4e"
+    }
+  },
+  "plan_sha256": "0f6596beda52dbc44043f43253ffec5f103455ae0c3c66455607362148712dbe"
+}

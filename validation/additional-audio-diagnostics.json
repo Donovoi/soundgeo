@@ -1,0 +1,443 @@
+{
+  "not_acceptance": true,
+  "production_changes": false,
+  "continuous_curve_check": {
+    "plan_sha256": "50a091257b7537ac8bdfbe39b02b97e0f2a8982af3deb2b7b46ac8e02165b755",
+    "results_sha256": "3ab6fd889c20365a365498d4d5ea49ab467b73e0cad1b96ae35281ee989c1132",
+    "summary": {
+      "detected_events": 24,
+      "tested_candidates": 256,
+      "maximum_supported_curves": 1,
+      "first_candidate_supported_curves": 0,
+      "candidates_with_three_curves": 0,
+      "not_acceptance": true
+    }
+  },
+  "joint_location_profiles": {
+    "plan_sha256": "80aa779307c485454ca49c2dd0d1423a619ed412d9cfc7fd833ba698e7a5b3f0",
+    "cases": [
+      {
+        "case": "midway-a-b",
+        "first": {
+          "latitude": 41.778955223880594,
+          "longitude": -87.7381954887218
+        },
+        "score": 76.69995775322548,
+        "control_counts": [
+          19,
+          19
+        ],
+        "maximum_control_upper_bound": 26.70224282077053,
+        "exceeds_every_control_upper_bound": true,
+        "computed_center": {
+          "latitude": 41.77626865671641,
+          "longitude": -87.74000000000001
+        },
+        "competitive_points": 4,
+        "enclosing_radius_m": 334.1162503205719,
+        "center_error_m": 333.91342981754383,
+        "first_error_m": 384.2472669123515
+      },
+      {
+        "case": "lax-fixed-a-b-1000",
+        "first": {
+          "latitude": 33.95343283582089,
+          "longitude": -118.3935064935065
+        },
+        "score": 21.12971600018535,
+        "control_counts": [
+          19,
+          19
+        ],
+        "maximum_control_upper_bound": 28.55373821225664,
+        "exceeds_every_control_upper_bound": false,
+        "computed_center": {
+          "latitude": 33.87820895522388,
+          "longitude": -118.31883116883117
+        },
+        "competitive_points": 147,
+        "enclosing_radius_m": 17576.52230231297,
+        "center_error_m": 10209.818526808594,
+        "first_error_m": 865.3211541957481
+      },
+      {
+        "case": "lax-fixed-a-b-2000",
+        "first": {
+          "latitude": 33.96686567164179,
+          "longitude": -118.39675324675325
+        },
+        "score": 23.792707419885602,
+        "control_counts": [
+          19,
+          19
+        ],
+        "maximum_control_upper_bound": 29.737444655344795,
+        "exceeds_every_control_upper_bound": false,
+        "computed_center": {
+          "latitude": 33.88492537313432,
+          "longitude": -118.32694805194805
+        },
+        "competitive_points": 28,
+        "enclosing_radius_m": 18710.224806248883,
+        "center_error_m": 9153.555714199148,
+        "first_error_m": 2385.7568594173745
+      },
+      {
+        "case": "lake-a-b",
+        "first": {
+          "latitude": 61.171940298507465,
+          "longitude": -149.93157894736842
+        },
+        "score": 19.268659002331002,
+        "control_counts": [
+          19,
+          0
+        ],
+        "maximum_control_upper_bound": null,
+        "exceeds_every_control_upper_bound": null,
+        "computed_center": {
+          "latitude": 61.221641791044775,
+          "longitude": -149.95383458646617
+        },
+        "competitive_points": 207,
+        "enclosing_radius_m": 17581.630725216535,
+        "center_error_m": 4771.082294587903,
+        "first_error_m": 2328.014200206221
+      }
+    ],
+    "not_acceptance": true
+  },
+  "noise_monitor_source": "https://www.lawa.org/lawa-environment/noise-management/lawa-noise-management-lax/lax-internet-flight-tracking-system",
+  "noise_monitor_config_sha256": "e5bdceb8e78956e6560a3c9314849fa261f4d0a6e2ea3b39f2987b6cd4c1fd3e",
+  "noise_monitor_levels_sha256": "ae847c4c95e59da3076ac7a5a3d103ed2fc16a1c8b8ccd87234576d97e9f715c",
+  "noise_search": {
+    "plan_sha256": "ec724f9f21efd2342733c5c98ec114ca792b4093912a8a73b9af96635def7966",
+    "results_sha256": "84e18bd1229bc4d3093a6cdf372e7c4f450d7c342f6c887e67e717a5aaf4c4db",
+    "cases": [
+      {
+        "case": "broadcast-a",
+        "first": {
+          "monitor_id": 140,
+          "name": "ATH2",
+          "latitude": 33.94782,
+          "longitude": -118.29544,
+          "offset_utc": 1793684329,
+          "correlation": 0.2843541128320616
+        },
+        "top_five_monitors": [
+          {
+            "monitor_id": 140,
+            "name": "ATH2",
+            "latitude": 33.94782,
+            "longitude": -118.29544,
+            "offset_utc": 1793684329,
+            "correlation": 0.2843541128320616
+          },
+          {
+            "monitor_id": 147,
+            "name": "SLA7",
+            "latitude": 33.94878,
+            "longitude": -118.27176,
+            "offset_utc": 1793684304,
+            "correlation": 0.26982434329482885
+          },
+          {
+            "monitor_id": 114,
+            "name": "ESG1",
+            "latitude": 33.92367,
+            "longitude": -118.426,
+            "offset_utc": 1793667760,
+            "correlation": 0.2617235837061211
+          },
+          {
+            "monitor_id": 126,
+            "name": "ING1",
+            "latitude": 33.95092,
+            "longitude": -118.35855,
+            "offset_utc": 1793694180,
+            "correlation": 0.2608420821047905
+          },
+          {
+            "monitor_id": 127,
+            "name": "ING2",
+            "latitude": 33.95885,
+            "longitude": -118.35795,
+            "offset_utc": 1793694179,
+            "correlation": 0.2562519629564224
+          }
+        ],
+        "controls": 19,
+        "maximum_control": 0.29332968271714127,
+        "exceeds_every_control": false
+      },
+      {
+        "case": "broadcast-b",
+        "first": {
+          "monitor_id": 124,
+          "name": "WCH5",
+          "latitude": 33.9539,
+          "longitude": -118.386,
+          "offset_utc": 1793740494,
+          "correlation": 0.5099106882924225
+        },
+        "top_five_monitors": [
+          {
+            "monitor_id": 124,
+            "name": "WCH5",
+            "latitude": 33.9539,
+            "longitude": -118.386,
+            "offset_utc": 1793740494,
+            "correlation": 0.5099106882924225
+          },
+          {
+            "monitor_id": 125,
+            "name": "WCH6",
+            "latitude": 33.95726,
+            "longitude": -118.38216,
+            "offset_utc": 1793740487,
+            "correlation": 0.40336569537221467
+          },
+          {
+            "monitor_id": 128,
+            "name": "ING3",
+            "latitude": 33.95579,
+            "longitude": -118.35081,
+            "offset_utc": 1793740446,
+            "correlation": 0.3874775003977924
+          },
+          {
+            "monitor_id": 126,
+            "name": "ING1",
+            "latitude": 33.95092,
+            "longitude": -118.35855,
+            "offset_utc": 1793740457,
+            "correlation": 0.35062739392101444
+          },
+          {
+            "monitor_id": 127,
+            "name": "ING2",
+            "latitude": 33.95885,
+            "longitude": -118.35795,
+            "offset_utc": 1793740455,
+            "correlation": 0.3398347747935051
+          }
+        ],
+        "controls": 19,
+        "maximum_control": 0.2614193384214912,
+        "exceeds_every_control": true
+      },
+      {
+        "case": "fixed-a",
+        "first": {
+          "monitor_id": 135,
+          "name": "LNX2",
+          "latitude": 33.94402,
+          "longitude": -118.36358,
+          "offset_utc": 1793704146,
+          "correlation": 0.2335348967093767
+        },
+        "top_five_monitors": [
+          {
+            "monitor_id": 135,
+            "name": "LNX2",
+            "latitude": 33.94402,
+            "longitude": -118.36358,
+            "offset_utc": 1793704146,
+            "correlation": 0.2335348967093767
+          },
+          {
+            "monitor_id": 136,
+            "name": "LNX3",
+            "latitude": 33.93489,
+            "longitude": -118.36015,
+            "offset_utc": 1793704146,
+            "correlation": 0.22502445796159964
+          },
+          {
+            "monitor_id": 111,
+            "name": "PDR1",
+            "latitude": 33.95172,
+            "longitude": -118.44326,
+            "offset_utc": 1793728000,
+            "correlation": 0.21993079971880522
+          },
+          {
+            "monitor_id": 122,
+            "name": "WCH3",
+            "latitude": 33.9589,
+            "longitude": -118.404,
+            "offset_utc": 1793704149,
+            "correlation": 0.21929156081642243
+          },
+          {
+            "monitor_id": 119,
+            "name": "DEL1",
+            "latitude": 33.92587,
+            "longitude": -118.37669,
+            "offset_utc": 1793714063,
+            "correlation": 0.2187435759700648
+          }
+        ],
+        "controls": 19,
+        "maximum_control": 0.2703324791452531,
+        "exceeds_every_control": false
+      },
+      {
+        "case": "fixed-b",
+        "first": {
+          "monitor_id": 114,
+          "name": "ESG1",
+          "latitude": 33.92367,
+          "longitude": -118.426,
+          "offset_utc": 1793664631,
+          "correlation": 0.19411218745872338
+        },
+        "top_five_monitors": [
+          {
+            "monitor_id": 114,
+            "name": "ESG1",
+            "latitude": 33.92367,
+            "longitude": -118.426,
+            "offset_utc": 1793664631,
+            "correlation": 0.19411218745872338
+          },
+          {
+            "monitor_id": 134,
+            "name": "LNX1",
+            "latitude": 33.93912,
+            "longitude": -118.36347,
+            "offset_utc": 1793706345,
+            "correlation": 0.1877996190647712
+          },
+          {
+            "monitor_id": 112,
+            "name": "PDR2",
+            "latitude": 33.95646,
+            "longitude": -118.44583,
+            "offset_utc": 1793727138,
+            "correlation": 0.17636638302253296
+          },
+          {
+            "monitor_id": 111,
+            "name": "PDR1",
+            "latitude": 33.95172,
+            "longitude": -118.44326,
+            "offset_utc": 1793726999,
+            "correlation": 0.17351279607051637
+          },
+          {
+            "monitor_id": 116,
+            "name": "ESG3",
+            "latitude": 33.9253,
+            "longitude": -118.411,
+            "offset_utc": 1793678092,
+            "correlation": 0.1718330197172122
+          }
+        ],
+        "controls": 19,
+        "maximum_control": 0.2286449320234155,
+        "exceeds_every_control": false
+      },
+      {
+        "case": "continuous",
+        "first": {
+          "monitor_id": 124,
+          "name": "WCH5",
+          "latitude": 33.9539,
+          "longitude": -118.386,
+          "offset_utc": 1793739706,
+          "correlation": 0.1696102515148388
+        },
+        "top_five_monitors": [
+          {
+            "monitor_id": 124,
+            "name": "WCH5",
+            "latitude": 33.9539,
+            "longitude": -118.386,
+            "offset_utc": 1793739706,
+            "correlation": 0.1696102515148388
+          },
+          {
+            "monitor_id": 111,
+            "name": "PDR1",
+            "latitude": 33.95172,
+            "longitude": -118.44326,
+            "offset_utc": 1793739829,
+            "correlation": 0.15894907706348357
+          },
+          {
+            "monitor_id": 128,
+            "name": "ING3",
+            "latitude": 33.95579,
+            "longitude": -118.35081,
+            "offset_utc": 1793739654,
+            "correlation": 0.15576456583371906
+          },
+          {
+            "monitor_id": 112,
+            "name": "PDR2",
+            "latitude": 33.95646,
+            "longitude": -118.44583,
+            "offset_utc": 1793739830,
+            "correlation": 0.15283615850783183
+          },
+          {
+            "monitor_id": 125,
+            "name": "WCH6",
+            "latitude": 33.95726,
+            "longitude": -118.38216,
+            "offset_utc": 1793739700,
+            "correlation": 0.15112848753663527
+          }
+        ],
+        "controls": 19,
+        "maximum_control": 0.15352643442315297,
+        "exceeds_every_control": true
+      }
+    ]
+  },
+  "noise_derived_clock_followup": {
+    "plan_sha256": "a33b50d30e60a05c811440a6a96a7faebaf2999c2408f5734c3eba3d5467fbe6",
+    "cases": [
+      {
+        "case": "broadcast-b",
+        "elapsed_s": 1.4822522000176832,
+        "report_sha256": "c56da9f0d3a088e76aa51cece62cd0a4cadda605907f83cb6e29df2beb395f38",
+        "candidates": 256,
+        "not_acceptance": true,
+        "first_error_m": 723.5967368390932,
+        "computed_center": {
+          "latitude": 33.95477611940298,
+          "longitude": -118.38863636363638
+        },
+        "center_error_m": 618.5628532202091,
+        "enclosing_radius_m": 1139.9062427859685,
+        "competitive_points": 22,
+        "exceeds_original_full_day_controls": true
+      },
+      {
+        "case": "continuous",
+        "elapsed_s": 3.832893199985847,
+        "report_sha256": "ab59af75831f3e7a63cacfa69a9ca579e9a346900157a175adcb99e7fcb5a17c",
+        "candidates": 256,
+        "not_acceptance": true,
+        "first_error_m": 17705.658862321456,
+        "computed_center": {
+          "latitude": 33.907761194029845,
+          "longitude": -118.3172077922078
+        },
+        "center_error_m": 8202.767195960241,
+        "enclosing_radius_m": 21745.409072915067,
+        "competitive_points": 294,
+        "exceeds_original_full_day_controls": false
+      }
+    ],
+    "clock_was_inferred_from_audio_and_monitor_data": true,
+    "no_known_camera_position_or_recording_clock_used": true
+  },
+  "interpretation": "The longer recording still had at most one supporting Doppler curve per timing proposal. Summing same-camera timing profiles did not resolve LAX or Lake Hood. Two recordings exceeded the noise-shuffle controls, but the best clock changes with monitor position. Restricting timing to one inferred clock did not produce a qualifying 1 km region. These diagnostics do not justify a production change.",
+  "preserved_failed_wrappers": [
+    "The first joint-profile script assumed all weak cases had 19 controls; one had none. The corrected record marks missing controls explicitly.",
+    "The first noise parser stopped because Python had no timezone database. The corrected parser uses each native-validated local-time envelope and its UTC chunk handle."
+  ]
+}
