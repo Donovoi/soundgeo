@@ -24,7 +24,21 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y ffmpeg libx11-dev libxkbcommon-dev libwayland-dev libgl1-mesa-dev libudev-dev pkg-config
       - name: Windows FFmpeg
         if: runner.os == 'Windows'
-        run: choco install ffmpeg --no-progress -y
+        shell: pwsh
+        run: |
+          # Chocolatey can exit zero after a failed package-feed request.
+          # Require the executable itself before starting the Rust checks.
+          $PSNativeCommandUseErrorActionPreference = $false
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            choco install ffmpeg --no-progress -y
+            $ffmpegCommand = Get-Command ffmpeg.exe -CommandType Application -ErrorAction SilentlyContinue
+            if ($ffmpegCommand) {
+              & $ffmpegCommand.Source -version
+              if ($LASTEXITCODE -eq 0) { exit 0 }
+            }
+            if ($attempt -lt 3) { Start-Sleep -Seconds 15 }
+          }
+          throw 'FFmpeg is unavailable after three installation attempts.'
       - run: cargo fmt --all -- --check
       - run: cargo clippy --release --all-targets --locked -- -D warnings
       - run: cargo test --release --locked --all-targets
