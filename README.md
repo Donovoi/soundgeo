@@ -87,8 +87,8 @@ Analyze offline with the prepared cache:
 soundgeo-cli.exe analyze --config region.json --input recording.mp4 --cache flight-cache --provider webtrak-chicago --terrain-cache terrain-cache --offline --output report.json
 ```
 
-Leave dates out of the command and job file to search every cached date for that provider. The report lists
-the dates searched and estimates the recording time from the matched sounds.
+Leave dates out of the command and job file to search every cached date for that provider. The report estimates
+the recording time from the matched sounds. Batched reports also list the dates searched.
 Longer searches run in overlapping daily batches. This covers recordings across
 midnight and keeps flight data for at most two adjacent days in memory at once.
 The app compares results across all batches before reporting a location.
@@ -269,7 +269,8 @@ soundgeo-cli.exe analyze --config "job.json" --max-hypotheses 50000000 --output 
 ```
 
 The limit can be between 100 and 100,000,000.
-This option sets the search budget for that run. The report records the limit used.
+This option sets the search budget for that run. In a date search, the budget
+applies to each batch. The report records the limit used.
 
 Paths in a job file are relative to that file.
 Paths supplied with `--input`, `--tracks`, `--cache`, and `--terrain-cache` are relative to the current directory.
