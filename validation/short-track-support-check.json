@@ -1,0 +1,30 @@
+{
+  "source_commit": "80d33f24c4ae9aad7b4944a0b9f982ae60212269",
+  "helper_sha256": "e796799bdd6a444be1a96d45ed8a7c5e0a8f8fa033024f543a23d8c1fb2213e1",
+  "report_sha256": "7e404d9f1006bac6d3159f5cd2c9f72df2f96a67faa04c52020b0bf58e91234d",
+  "full_day_export_sha256": "d401be003a35080bd45a580bec3d85860a2436eb686463ccf4e3781a7ff97063",
+  "additional_match": {
+    "peak": 62,
+    "media_time_s": 3902.85,
+    "track": "aae2ca/3",
+    "residual_s": 0.7596006393432617,
+    "recorded_position_count": 7,
+    "first_position_utc": 1793552493.12,
+    "last_position_utc": 1793552546.8
+  },
+  "frame_sha256": "17a65f575cd20d78921918757dd4d0443190fc99a7f3727beb0a8bbf6b767416",
+  "frame_observation": "The original local video shows an aircraft passing at the extra matched sound peak. The frame does not independently identify its registration.",
+  "existing_15_pairs_preserved": true,
+  "distinct_aircraft_in_new_best_fit": 16,
+  "no_extra_independent_location_test": true,
+  "ground_truth_not_given_to_app": true,
+  "helper_build_log_sha256": "cd80f93bdb0bbbb61c513d9ea61057dfd6851cad3759d02934ab337c77a83308",
+  "prior_failed_attempt": {
+    "observed_utc": "2026-11-06T03:32:21.395334+00:00",
+    "qualified": false,
+    "reason": "The standalone export_reference executable was stale. cargo test --all-targets builds its test harness, not the standalone example path. The source_commit claim in results.json is unverified. No rows for the added segment were exported. A separate explicit rebuild and repeat follow.",
+    "main_application_validation_affected": false
+  },
+  "prior_failure_sha256": "1d5fdf2ee435a7c0bbfe57a190af033b5f3c6b69fbbaed3bfd6de9942a1de9fe",
+  "qualified_for_this_diagnostic": true
+}

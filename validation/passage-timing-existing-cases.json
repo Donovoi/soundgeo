@@ -1,0 +1,388 @@
+{
+  "build": {
+    "commit": "72d4658b0aa7456d0d74be9bea554a24d75c463a",
+    "executable": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-search-72d4658.exe",
+    "sha256": "f30ba71ab36e4d7db5a9b6fd257e816740c312e29257467b27f1ea528ff2732b",
+    "required_local_checks_passed": true,
+    "tests": 86,
+    "ignored": 0,
+    "ci": "pending",
+    "created_utc": "2026-11-05T21:23:53.461868+00:00",
+    "development_not_release": true,
+    "original_clock_and_position_not_inputs": true
+  },
+  "plan": {
+    "purpose": "Evaluate all ten original recordings and both failed fresh Lake Hood clips with the frozen timing method. Preserve original solver failures.",
+    "build": {
+      "commit": "72d4658b0aa7456d0d74be9bea554a24d75c463a",
+      "executable": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-search-72d4658.exe",
+      "sha256": "f30ba71ab36e4d7db5a9b6fd257e816740c312e29257467b27f1ea528ff2732b",
+      "required_local_checks_passed": true,
+      "tests": 86,
+      "ignored": 0,
+      "ci": "pending",
+      "created_utc": "2026-11-05T21:23:53.461868+00:00",
+      "development_not_release": true,
+      "original_clock_and_position_not_inputs": true
+    },
+    "accuracy_target_m": 1000,
+    "not_acceptance": true,
+    "all_original_bounds_and_clocks_preserved": true,
+    "cases": [
+      {
+        "case": "midway",
+        "job_sha256": "86a88f883afc806e4f7ad6dc9635dfc053a89c3b5d051c1f585dc669f63fb033",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway\\arrival-cache-report.json",
+        "media_sha256": "38e22e7253db6eb19c1fb90d2d852ad6807467d3705f8d28e5635a2d6766b276",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_m": 180.0,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "southampton",
+        "job_sha256": "a8b154dbb02c754e0828f5e16f06e533b2d43e6ebb70d789869007002191fe20",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton\\arrival-cache-expanded-job.json",
+        "media_sha256": "88fadc80a7209432e01350aec3adc901e296e3174ee1f469022d6ec47c1d7e30",
+        "bounds": {
+          "east": -1.05,
+          "north": 51.16,
+          "south": 50.8,
+          "west": -1.63
+        },
+        "ground_m": 10,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "midway-arrivals",
+        "job_sha256": "909b3bdd8cdd98e3f8fceb641e292e056d97e9ed8e1317e6fe5c14aa50a4a8c7",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-arrivals\\arrival-cache-expanded-job.json",
+        "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+        "bounds": {
+          "south": 41.65,
+          "east": -87.5,
+          "west": -87.98,
+          "north": 42.01
+        },
+        "ground_m": 180,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "midway-holdout",
+        "job_sha256": "3bf78f10c7c84b2dff147407e939bf17cfaf0d5f1eeff686e698478af951bf4f",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-holdout\\arrival-cache-report.json",
+        "media_sha256": "985b9035059956f43f989d8c14049d00d08679902e8b3d421fa7f1c9f63d6f04",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_m": 180.0,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "midway-nov1",
+        "job_sha256": "717cb6c7abc867a4f986cf4cbe7deff224f13f8104ac98a64fa6da8373beaf70",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-nov1\\arrival-cache-expanded-job.json",
+        "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810",
+        "bounds": {
+          "south": 41.65,
+          "east": -87.5,
+          "west": -87.98,
+          "north": 42.01
+        },
+        "ground_m": 180,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "midway-nov1-holdout",
+        "job_sha256": "662a4911de85d501fa19284e51a3eff1a4a9d5b9cf8dd9b6cfacbeaf9fe1da33",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\midway-nov1-holdout\\arrival-cache-expanded-job.json",
+        "media_sha256": "915c8ccfe6e7af52920567c602b5dbacfaedc2973ce14b540b7d3367dacdb62f",
+        "bounds": {
+          "south": 41.65,
+          "east": -87.5,
+          "west": -87.98,
+          "north": 42.01
+        },
+        "ground_m": 180,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "southampton-nov1",
+        "job_sha256": "748eddac063e6c24c173fdb88bccaed503e4a25da2f7d0d6a99d08cfa71bf334",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\southampton-nov1\\arrival-cache-report.json",
+        "media_sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f",
+        "bounds": {
+          "south": 50.8,
+          "north": 51.16,
+          "west": -1.63,
+          "east": -1.05
+        },
+        "ground_m": 10.0,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "lake-hood",
+        "job_sha256": "1547ba7a1663c92746fb9ae974a421e89bb10aed2025b2ee1d93b1e3c669d507",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\lake-hood\\arrival-cache-expanded-job.json",
+        "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_m": 27,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "lake-hood-nov1",
+        "job_sha256": "86ad9c82b1154d53c65764c832070615227498ab3ae49b76d31bb1b9b2a1c92b",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\lake-hood-nov1\\arrival-cache-expanded-job.json",
+        "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_m": 27,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "lake-hood-nov1-later",
+        "job_sha256": "0a0ec27eaee5a24c7cd48e290580d13e31d79045e440a54a112029dac188347a",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\lake-hood-nov1-later\\arrival-cache-expanded-job.json",
+        "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_m": 27,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "lake-hood-nov4-a",
+        "job_sha256": "b206f208299fbf4c1e348957f9e492c81ff35a507a6941fa2a3ab2af24f9078c",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\fresh-validation\\lake-hood-nov4-a\\job.json",
+        "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_m": 27,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      },
+      {
+        "case": "lake-hood-nov4-b",
+        "job_sha256": "09fbe56db35398023b8d8b2086c8884195d81d4c5f10aa692c547d099ae7866b",
+        "job_source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\fresh-validation\\lake-hood-nov4-b\\job.json",
+        "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_m": 27,
+        "recording_time_supplied": false,
+        "camera_position_supplied": false
+      }
+    ]
+  },
+  "plan_sha256": "a93e6ff6f6392730d9afc1ff0bb98c91080d69aec989149eb22119e4507e5902",
+  "cases": [
+    {
+      "case": "midway",
+      "exit_code": 0,
+      "elapsed_s": 6.61114700010512,
+      "accepted": false,
+      "peaks": 65,
+      "eligible_points": 933,
+      "candidate_count": 256,
+      "report_sha256": "625a3a0f664ae6f61fd600e9fd6edb529ed18a2f51684c8fd5d73804895769ad",
+      "first_error_m": 384.2472669123515,
+      "first_score": 9.416028427101027,
+      "matches": 8,
+      "coordinate_hit_within_1km": true
+    },
+    {
+      "case": "southampton",
+      "exit_code": 0,
+      "elapsed_s": 5.231962600024417,
+      "accepted": false,
+      "peaks": 13,
+      "eligible_points": 343,
+      "candidate_count": 256,
+      "report_sha256": "e4a2db4470349378129e82f38aa1eaea892097ad46af4280c5bea98598e33346",
+      "first_error_m": 16501.651769219665,
+      "first_score": 10.614769893682038,
+      "matches": 3,
+      "coordinate_hit_within_1km": false
+    },
+    {
+      "case": "midway-arrivals",
+      "exit_code": 0,
+      "elapsed_s": 5.281214399961755,
+      "accepted": false,
+      "peaks": 27,
+      "eligible_points": 933,
+      "candidate_count": 256,
+      "report_sha256": "d6c191fb869e504a52f5f6c8082cccd1ca5a17b0373a326ffddddb9c47382cff",
+      "first_error_m": 868.0550641271241,
+      "first_score": 29.864749068554552,
+      "matches": 15,
+      "coordinate_hit_within_1km": true
+    },
+    {
+      "case": "midway-holdout",
+      "exit_code": 0,
+      "elapsed_s": 6.477909400011413,
+      "accepted": false,
+      "peaks": 52,
+      "eligible_points": 933,
+      "candidate_count": 256,
+      "report_sha256": "801bc61eb918765db051644ce633f503293add376e91f6a0d220da47220b775a",
+      "first_error_m": 29011.912091829097,
+      "first_score": 9.350803661970069,
+      "matches": 9,
+      "coordinate_hit_within_1km": false
+    },
+    {
+      "case": "midway-nov1",
+      "exit_code": 0,
+      "elapsed_s": 45.270720200031064,
+      "accepted": false,
+      "peaks": 30,
+      "eligible_points": 995,
+      "candidate_count": 256,
+      "report_sha256": "971ba1b8715a39a1c22ddc191f99c07b532d269e55706fc83dae4a5e8124a357",
+      "first_error_m": 98.83265186868603,
+      "first_score": 32.09173440532622,
+      "matches": 12,
+      "coordinate_hit_within_1km": true
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "exit_code": 0,
+      "elapsed_s": 45.65258170000743,
+      "accepted": false,
+      "peaks": 30,
+      "eligible_points": 995,
+      "candidate_count": 256,
+      "report_sha256": "14a5772a208d50421b2640e23ec170ea82a67f10896eda513332a8b6aa548eac",
+      "first_error_m": 1889.6845476963506,
+      "first_score": 18.71444871601119,
+      "matches": 13,
+      "coordinate_hit_within_1km": false
+    },
+    {
+      "case": "southampton-nov1",
+      "exit_code": 0,
+      "elapsed_s": 40.38346979999915,
+      "accepted": false,
+      "peaks": 11,
+      "eligible_points": 132,
+      "candidate_count": 256,
+      "report_sha256": "858a535561d52ebfcdaf9b0005e4766df646a807d07d38a89c1032394a2380b2",
+      "first_error_m": 2053.4892391272415,
+      "first_score": 7.142669709840426,
+      "matches": 2,
+      "coordinate_hit_within_1km": false
+    },
+    {
+      "case": "lake-hood",
+      "exit_code": 0,
+      "elapsed_s": 276.63871990004554,
+      "accepted": false,
+      "peaks": 48,
+      "eligible_points": 1378,
+      "candidate_count": 256,
+      "report_sha256": "a8735529ecf6eab6473f52747e7fda745a7c14ff3a05c52589eed913b5c1001f",
+      "first_error_m": 8089.300605675662,
+      "first_score": 10.286796649814466,
+      "matches": 7,
+      "coordinate_hit_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov1",
+      "exit_code": 0,
+      "elapsed_s": 10.299797000014223,
+      "accepted": false,
+      "peaks": 56,
+      "eligible_points": 867,
+      "candidate_count": 256,
+      "report_sha256": "e619d178a8758a06cd587524bca3c3f3c35c1766eeb3429c2369d744045c5bec",
+      "first_error_m": 6888.614368766376,
+      "first_score": 10.713717487314337,
+      "matches": 7,
+      "coordinate_hit_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "exit_code": 0,
+      "elapsed_s": 10.226900300011039,
+      "accepted": false,
+      "peaks": 40,
+      "eligible_points": 867,
+      "candidate_count": 256,
+      "report_sha256": "34e0f4d81e45f851e075cb0c014bb1cd1aabd4a8f231f84244f1905a27b8e7a1",
+      "first_error_m": 6646.246556662788,
+      "first_score": 10.8800400254014,
+      "matches": 7,
+      "coordinate_hit_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov4-a",
+      "exit_code": 0,
+      "elapsed_s": 281.4168714999687,
+      "accepted": false,
+      "peaks": 22,
+      "eligible_points": 1671,
+      "candidate_count": 256,
+      "report_sha256": "9b99fe15fe4b692b696c9c4669c1fbcc62157ed0950fed0ed8994baffb465edb",
+      "first_error_m": 2328.014200206221,
+      "first_score": 12.361644237707663,
+      "matches": 6,
+      "coordinate_hit_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov4-b",
+      "exit_code": 0,
+      "elapsed_s": 369.35646190005355,
+      "accepted": false,
+      "peaks": 26,
+      "eligible_points": 1671,
+      "candidate_count": 256,
+      "report_sha256": "96639301843ec563590ff5a709a9ce9f580ca5e3c46c8761234a863def9d85b2",
+      "first_error_m": 10225.817197127142,
+      "first_score": 10.476358420883928,
+      "matches": 4,
+      "coordinate_hit_within_1km": false
+    }
+  ],
+  "not_acceptance": true,
+  "coordinate_hits_within_1km": 3,
+  "interpretation": "The raw timing ranking is insufficient by itself. Three original Midway recordings rank within 1 km. The other original cases and both fresh Lake Hood clips fail. These results do not use the later ambiguity and shuffled-control screens."
+}

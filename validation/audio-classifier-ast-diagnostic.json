@@ -1,0 +1,1391 @@
+{
+  "model": "MIT/ast-finetuned-audioset-10-10-0.4593",
+  "revision": "f826b80d28226b62986cc218e5cec390b1096902",
+  "diagnostic_only": true,
+  "production_changes": false,
+  "accuracy_labels_available": false,
+  "threshold_half_is_descriptive_not_a_validated_detector": true,
+  "correction": "The original classifier used primary intervals, even when geolocation selected an alternative. A separately pinned supplement checks every selected non-primary interval. Original scores are retained.",
+  "audits": [
+    {
+      "directory": "audio-classifier-ast",
+      "rows": 136,
+      "plan_sha256": "7458d947ba78c7ea776e2ca09d1bd3ad1934c147231e3c790ad5a143a0a437f4",
+      "result_sha256": "31d1aa928233f4c489704a5ed5ce28d8061ec36a6132697bc868b371e6139789",
+      "all_score_matrices_checked": true
+    },
+    {
+      "directory": "audio-classifier-ast-matched-variants",
+      "rows": 22,
+      "plan_sha256": "0adaf6a8c291321297998f9f25729a9bc64251c21890c0d066d0d4947101286e",
+      "result_sha256": "7893aeaab0039765a0410488ef4efd50a85f3d6f41d60073b72e8941ff6a7f90",
+      "all_score_matrices_checked": true
+    }
+  ],
+  "by_case": [
+    {
+      "case": "southampton",
+      "mode": "raw",
+      "primary_observations": {
+        "observations": 1,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.2561628520488739,
+        "maximum_peak_aircraft_score": 0.2561628520488739,
+        "maximum_clipped_fraction": 0.0
+      },
+      "actual_model_selected_observations": {
+        "observations": 0,
+        "above_half": 0,
+        "median_peak_aircraft_score": null,
+        "maximum_peak_aircraft_score": null,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "southampton",
+      "mode": "event_rms_0.1_max_gain_100",
+      "primary_observations": {
+        "observations": 1,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.257974237203598,
+        "maximum_peak_aircraft_score": 0.257974237203598,
+        "maximum_clipped_fraction": 5.5e-05
+      },
+      "actual_model_selected_observations": {
+        "observations": 0,
+        "above_half": 0,
+        "median_peak_aircraft_score": null,
+        "maximum_peak_aircraft_score": null,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "southampton-nov1",
+      "mode": "raw",
+      "primary_observations": {
+        "observations": 3,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.08330543339252472,
+        "maximum_peak_aircraft_score": 0.1305096298456192,
+        "maximum_clipped_fraction": 0.0
+      },
+      "actual_model_selected_observations": {
+        "observations": 0,
+        "above_half": 0,
+        "median_peak_aircraft_score": null,
+        "maximum_peak_aircraft_score": null,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "southampton-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "primary_observations": {
+        "observations": 3,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.1646726131439209,
+        "maximum_peak_aircraft_score": 0.2117333859205246,
+        "maximum_clipped_fraction": 0.00010234375
+      },
+      "actual_model_selected_observations": {
+        "observations": 0,
+        "above_half": 0,
+        "median_peak_aircraft_score": null,
+        "maximum_peak_aircraft_score": null,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "raw",
+      "primary_observations": {
+        "observations": 24,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.005197423975914717,
+        "maximum_peak_aircraft_score": 0.21970334649085999,
+        "maximum_clipped_fraction": 0.0
+      },
+      "actual_model_selected_observations": {
+        "observations": 5,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.029370715841650963,
+        "maximum_peak_aircraft_score": 0.14533503353595734,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "primary_observations": {
+        "observations": 24,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.042138295248150826,
+        "maximum_peak_aircraft_score": 0.4824144244194031,
+        "maximum_clipped_fraction": 7.5e-05
+      },
+      "actual_model_selected_observations": {
+        "observations": 5,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.11126334220170975,
+        "maximum_peak_aircraft_score": 0.4552817940711975,
+        "maximum_clipped_fraction": 0.00036911764705882354
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "raw",
+      "primary_observations": {
+        "observations": 16,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.005180740961804986,
+        "maximum_peak_aircraft_score": 0.226373553276062,
+        "maximum_clipped_fraction": 0.0
+      },
+      "actual_model_selected_observations": {
+        "observations": 5,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.005453914869576693,
+        "maximum_peak_aircraft_score": 0.05251451954245567,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "event_rms_0.1_max_gain_100",
+      "primary_observations": {
+        "observations": 16,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.02244610618799925,
+        "maximum_peak_aircraft_score": 0.4165831506252289,
+        "maximum_clipped_fraction": 0.00071328125
+      },
+      "actual_model_selected_observations": {
+        "observations": 5,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.013286272063851357,
+        "maximum_peak_aircraft_score": 0.08946287631988525,
+        "maximum_clipped_fraction": 0.00015865384615384616
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "raw",
+      "primary_observations": {
+        "observations": 11,
+        "above_half": 8,
+        "median_peak_aircraft_score": 0.8434794545173645,
+        "maximum_peak_aircraft_score": 0.8901572823524475,
+        "maximum_clipped_fraction": 0.045283333333333335
+      },
+      "actual_model_selected_observations": {
+        "observations": 5,
+        "above_half": 4,
+        "median_peak_aircraft_score": 0.8650543093681335,
+        "maximum_peak_aircraft_score": 0.8901572823524475,
+        "maximum_clipped_fraction": 0.045283333333333335
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "primary_observations": {
+        "observations": 11,
+        "above_half": 8,
+        "median_peak_aircraft_score": 0.8269181847572327,
+        "maximum_peak_aircraft_score": 0.8614286184310913,
+        "maximum_clipped_fraction": 3.5714285714285714e-06
+      },
+      "actual_model_selected_observations": {
+        "observations": 5,
+        "above_half": 4,
+        "median_peak_aircraft_score": 0.8269181847572327,
+        "maximum_peak_aircraft_score": 0.8614286184310913,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "mode": "raw",
+      "primary_observations": {
+        "observations": 11,
+        "above_half": 6,
+        "median_peak_aircraft_score": 0.6947152018547058,
+        "maximum_peak_aircraft_score": 0.8746094107627869,
+        "maximum_clipped_fraction": 0.0713875
+      },
+      "actual_model_selected_observations": {
+        "observations": 3,
+        "above_half": 3,
+        "median_peak_aircraft_score": 0.790202260017395,
+        "maximum_peak_aircraft_score": 0.8671786189079285,
+        "maximum_clipped_fraction": 0.0713875
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "mode": "event_rms_0.1_max_gain_100",
+      "primary_observations": {
+        "observations": 11,
+        "above_half": 6,
+        "median_peak_aircraft_score": 0.6980863213539124,
+        "maximum_peak_aircraft_score": 0.8572639226913452,
+        "maximum_clipped_fraction": 0.0
+      },
+      "actual_model_selected_observations": {
+        "observations": 3,
+        "above_half": 3,
+        "median_peak_aircraft_score": 0.757633626461029,
+        "maximum_peak_aircraft_score": 0.8572639226913452,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": false
+    },
+    {
+      "case": "original-challenge-reported-aircraft",
+      "mode": "raw",
+      "primary_observations": {
+        "observations": 2,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.01362808933481574,
+        "maximum_peak_aircraft_score": 0.01877908781170845,
+        "maximum_clipped_fraction": 0.0
+      },
+      "actual_model_selected_observations": {
+        "observations": 0,
+        "above_half": 0,
+        "median_peak_aircraft_score": null,
+        "maximum_peak_aircraft_score": null,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": true
+    },
+    {
+      "case": "original-challenge-reported-aircraft",
+      "mode": "event_rms_0.1_max_gain_100",
+      "primary_observations": {
+        "observations": 2,
+        "above_half": 0,
+        "median_peak_aircraft_score": 0.04751585237681866,
+        "maximum_peak_aircraft_score": 0.04780074581503868,
+        "maximum_clipped_fraction": 2.4107142857142858e-05
+      },
+      "actual_model_selected_observations": {
+        "observations": 0,
+        "above_half": 0,
+        "median_peak_aircraft_score": null,
+        "maximum_peak_aircraft_score": null,
+        "maximum_clipped_fraction": 0.0
+      },
+      "external_comparisons_only": true
+    }
+  ],
+  "selected_observations": [
+    {
+      "case": "lake-hood-nov1",
+      "mode": "raw",
+      "event_index": 2,
+      "event_variant": 2,
+      "max_aircraft_score": 0.0016437622252851725,
+      "top_classes": [
+        {
+          "class": "Music",
+          "score": 0.17274720966815948
+        },
+        {
+          "class": "Foghorn",
+          "score": 0.1617409586906433
+        },
+        {
+          "class": "Hum",
+          "score": 0.09383099526166916
+        },
+        {
+          "class": "Singing bowl",
+          "score": 0.08268991112709045
+        },
+        {
+          "class": "Mains hum",
+          "score": 0.04990362003445625
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "raw",
+      "event_index": 3,
+      "event_variant": 2,
+      "max_aircraft_score": 0.05927390977740288,
+      "top_classes": [
+        {
+          "class": "Silence",
+          "score": 0.15032365918159485
+        },
+        {
+          "class": "Hum",
+          "score": 0.09711601585149765
+        },
+        {
+          "class": "Mains hum",
+          "score": 0.05440136417746544
+        },
+        {
+          "class": "White noise",
+          "score": 0.04543939232826233
+        },
+        {
+          "class": "Mechanical fan",
+          "score": 0.03444293141365051
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "raw",
+      "event_index": 5,
+      "event_variant": 2,
+      "max_aircraft_score": 0.14533503353595734,
+      "top_classes": [
+        {
+          "class": "Silence",
+          "score": 0.26259762048721313
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.08181577175855637
+        },
+        {
+          "class": "White noise",
+          "score": 0.050052788108587265
+        },
+        {
+          "class": "Field recording",
+          "score": 0.047289904206991196
+        },
+        {
+          "class": "Aircraft",
+          "score": 0.030778277665376663
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "raw",
+      "event_index": 7,
+      "event_variant": 3,
+      "max_aircraft_score": 0.029370715841650963,
+      "top_classes": [
+        {
+          "class": "Hum",
+          "score": 0.07786867022514343
+        },
+        {
+          "class": "Silence",
+          "score": 0.06269869208335876
+        },
+        {
+          "class": "Microwave oven",
+          "score": 0.04107293859124184
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.03461271896958351
+        },
+        {
+          "class": "Music",
+          "score": 0.032298602163791656
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "raw",
+      "event_index": 23,
+      "event_variant": 2,
+      "max_aircraft_score": 0.004063934087753296,
+      "top_classes": [
+        {
+          "class": "Tuning fork",
+          "score": 0.35511404275894165
+        },
+        {
+          "class": "Sine wave",
+          "score": 0.10264194011688232
+        },
+        {
+          "class": "Singing bowl",
+          "score": 0.096378393471241
+        },
+        {
+          "class": "Hum",
+          "score": 0.04703943058848381
+        },
+        {
+          "class": "Silence",
+          "score": 0.02127203904092312
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 2,
+      "event_variant": 2,
+      "max_aircraft_score": 0.05780857056379318,
+      "top_classes": [
+        {
+          "class": "Music",
+          "score": 0.1860620230436325
+        },
+        {
+          "class": "Gong",
+          "score": 0.08656399697065353
+        },
+        {
+          "class": "Foghorn",
+          "score": 0.07260192185640335
+        },
+        {
+          "class": "Singing bowl",
+          "score": 0.06406792253255844
+        },
+        {
+          "class": "Rumble",
+          "score": 0.05457022786140442
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 3,
+      "event_variant": 2,
+      "max_aircraft_score": 0.14367172122001648,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.2858623266220093
+        },
+        {
+          "class": "Rumble",
+          "score": 0.2568969428539276
+        },
+        {
+          "class": "Boat, Water vehicle",
+          "score": 0.10768455266952515
+        },
+        {
+          "class": "Motorboat, speedboat",
+          "score": 0.06877945363521576
+        },
+        {
+          "class": "Car",
+          "score": 0.0653960257768631
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 5,
+      "event_variant": 2,
+      "max_aircraft_score": 0.4552817940711975,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.25867706537246704
+        },
+        {
+          "class": "Field recording",
+          "score": 0.18125273287296295
+        },
+        {
+          "class": "Rumble",
+          "score": 0.10386746376752853
+        },
+        {
+          "class": "Aircraft",
+          "score": 0.09133248776197433
+        },
+        {
+          "class": "Music",
+          "score": 0.06256923824548721
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 7,
+      "event_variant": 3,
+      "max_aircraft_score": 0.11126334220170975,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.20648987591266632
+        },
+        {
+          "class": "Rumble",
+          "score": 0.1266387552022934
+        },
+        {
+          "class": "Music",
+          "score": 0.0708417296409607
+        },
+        {
+          "class": "Car",
+          "score": 0.06472121924161911
+        },
+        {
+          "class": "Boat, Water vehicle",
+          "score": 0.06327002495527267
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 23,
+      "event_variant": 2,
+      "max_aircraft_score": 0.03270220384001732,
+      "top_classes": [
+        {
+          "class": "Tuning fork",
+          "score": 0.08099087327718735
+        },
+        {
+          "class": "Singing bowl",
+          "score": 0.06362851709127426
+        },
+        {
+          "class": "Hum",
+          "score": 0.060129307210445404
+        },
+        {
+          "class": "Speech",
+          "score": 0.051032450050115585
+        },
+        {
+          "class": "Sine wave",
+          "score": 0.043707650154829025
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "raw",
+      "event_index": 2,
+      "event_variant": 2,
+      "max_aircraft_score": 0.0012022978626191616,
+      "top_classes": [
+        {
+          "class": "Silence",
+          "score": 0.22156159579753876
+        },
+        {
+          "class": "Mouse",
+          "score": 0.0566859245300293
+        },
+        {
+          "class": "Clicking",
+          "score": 0.029401859268546104
+        },
+        {
+          "class": "Inside, small room",
+          "score": 0.028178522363305092
+        },
+        {
+          "class": "Writing",
+          "score": 0.02588837966322899
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "raw",
+      "event_index": 7,
+      "event_variant": 0,
+      "max_aircraft_score": 0.012119998224079609,
+      "top_classes": [
+        {
+          "class": "Silence",
+          "score": 0.3616051971912384
+        },
+        {
+          "class": "White noise",
+          "score": 0.026448361575603485
+        },
+        {
+          "class": "Music",
+          "score": 0.018411803990602493
+        },
+        {
+          "class": "Mechanical fan",
+          "score": 0.015407939441502094
+        },
+        {
+          "class": "Rustle",
+          "score": 0.014810040593147278
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "raw",
+      "event_index": 8,
+      "event_variant": 3,
+      "max_aircraft_score": 0.005453914869576693,
+      "top_classes": [
+        {
+          "class": "Silence",
+          "score": 0.3095262050628662
+        },
+        {
+          "class": "White noise",
+          "score": 0.06724272668361664
+        },
+        {
+          "class": "Mechanical fan",
+          "score": 0.0331793911755085
+        },
+        {
+          "class": "Rustle",
+          "score": 0.024536369368433952
+        },
+        {
+          "class": "Music",
+          "score": 0.021160604432225227
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "raw",
+      "event_index": 9,
+      "event_variant": 1,
+      "max_aircraft_score": 0.0016083531081676483,
+      "top_classes": [
+        {
+          "class": "Silence",
+          "score": 0.32417458295822144
+        },
+        {
+          "class": "Clicking",
+          "score": 0.043092284351587296
+        },
+        {
+          "class": "Writing",
+          "score": 0.03162188082933426
+        },
+        {
+          "class": "Mouse",
+          "score": 0.024510763585567474
+        },
+        {
+          "class": "Inside, small room",
+          "score": 0.02071857638657093
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "raw",
+      "event_index": 15,
+      "event_variant": 3,
+      "max_aircraft_score": 0.05251451954245567,
+      "top_classes": [
+        {
+          "class": "Silence",
+          "score": 0.0842132568359375
+        },
+        {
+          "class": "Wind noise (microphone)",
+          "score": 0.07962743937969208
+        },
+        {
+          "class": "Rumble",
+          "score": 0.0685957744717598
+        },
+        {
+          "class": "Wind",
+          "score": 0.06167808920145035
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.058430880308151245
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 2,
+      "event_variant": 2,
+      "max_aircraft_score": 0.005599071271717548,
+      "top_classes": [
+        {
+          "class": "Bird",
+          "score": 0.06652110069990158
+        },
+        {
+          "class": "Mechanical fan",
+          "score": 0.04997893422842026
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.03377252817153931
+        },
+        {
+          "class": "Bird vocalization, bird call, bird song",
+          "score": 0.031667958945035934
+        },
+        {
+          "class": "White noise",
+          "score": 0.029584567993879318
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 7,
+      "event_variant": 0,
+      "max_aircraft_score": 0.08946287631988525,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.13467253744602203
+        },
+        {
+          "class": "Field recording",
+          "score": 0.103218674659729
+        },
+        {
+          "class": "White noise",
+          "score": 0.05052151530981064
+        },
+        {
+          "class": "Rumble",
+          "score": 0.0444410964846611
+        },
+        {
+          "class": "Silence",
+          "score": 0.032920148223638535
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 8,
+      "event_variant": 3,
+      "max_aircraft_score": 0.013286272063851357,
+      "top_classes": [
+        {
+          "class": "Rumble",
+          "score": 0.45076486468315125
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.17348553240299225
+        },
+        {
+          "class": "Car",
+          "score": 0.09874383360147476
+        },
+        {
+          "class": "White noise",
+          "score": 0.06409832090139389
+        },
+        {
+          "class": "Outside, rural or natural",
+          "score": 0.04355854541063309
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 9,
+      "event_variant": 1,
+      "max_aircraft_score": 0.006920292507857084,
+      "top_classes": [
+        {
+          "class": "White noise",
+          "score": 0.05723937600851059
+        },
+        {
+          "class": "Silence",
+          "score": 0.052357807755470276
+        },
+        {
+          "class": "Rustle",
+          "score": 0.04597771167755127
+        },
+        {
+          "class": "Mouse",
+          "score": 0.026216309517621994
+        },
+        {
+          "class": "Mechanical fan",
+          "score": 0.020827513188123703
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 15,
+      "event_variant": 3,
+      "max_aircraft_score": 0.07461559027433395,
+      "top_classes": [
+        {
+          "class": "Rumble",
+          "score": 0.18501968681812286
+        },
+        {
+          "class": "Wind noise (microphone)",
+          "score": 0.113223597407341
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.0883704125881195
+        },
+        {
+          "class": "Wind",
+          "score": 0.08266414701938629
+        },
+        {
+          "class": "Aircraft",
+          "score": 0.055767595767974854
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "raw",
+      "event_index": 1,
+      "event_variant": 0,
+      "max_aircraft_score": 0.8901572823524475,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.7293561100959778
+        },
+        {
+          "class": "Aircraft",
+          "score": 0.63990718126297
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.6172614097595215
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.4539882242679596
+        },
+        {
+          "class": "Outside, rural or natural",
+          "score": 0.12196186929941177
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "raw",
+      "event_index": 2,
+      "event_variant": 1,
+      "max_aircraft_score": 0.8665299415588379,
+      "top_classes": [
+        {
+          "class": "Aircraft",
+          "score": 0.8665299415588379
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.8607260584831238
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.842738926410675
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.6948609948158264
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.14352765679359436
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "raw",
+      "event_index": 5,
+      "event_variant": 0,
+      "max_aircraft_score": 0.8650543093681335,
+      "top_classes": [
+        {
+          "class": "Aircraft",
+          "score": 0.8650543093681335
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.846956193447113
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.8254503607749939
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.6687831878662109
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.14411082863807678
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "raw",
+      "event_index": 6,
+      "event_variant": 1,
+      "max_aircraft_score": 0.8598207235336304,
+      "top_classes": [
+        {
+          "class": "Aircraft",
+          "score": 0.8598207235336304
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.8468227386474609
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.8198323845863342
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.6888652443885803
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.14381679892539978
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "raw",
+      "event_index": 8,
+      "event_variant": 0,
+      "max_aircraft_score": 0.016659101471304893,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.26316511631011963
+        },
+        {
+          "class": "Car",
+          "score": 0.08818201720714569
+        },
+        {
+          "class": "Traffic noise, roadway noise",
+          "score": 0.05783027037978172
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.04689159244298935
+        },
+        {
+          "class": "Bus",
+          "score": 0.04046597704291344
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 1,
+      "event_variant": 0,
+      "max_aircraft_score": 0.8614286184310913,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.6606848239898682
+        },
+        {
+          "class": "Aircraft",
+          "score": 0.585796594619751
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.5637989044189453
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.4336605370044708
+        },
+        {
+          "class": "Outside, rural or natural",
+          "score": 0.11533144861459732
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 2,
+      "event_variant": 1,
+      "max_aircraft_score": 0.856800377368927,
+      "top_classes": [
+        {
+          "class": "Aircraft",
+          "score": 0.856800377368927
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.8404551148414612
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.8297844529151917
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.695937991142273
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.1407797783613205
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 5,
+      "event_variant": 0,
+      "max_aircraft_score": 0.8269181847572327,
+      "top_classes": [
+        {
+          "class": "Aircraft",
+          "score": 0.8269181847572327
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.8058422207832336
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.7898359894752502
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.6326118111610413
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.13338349759578705
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 6,
+      "event_variant": 1,
+      "max_aircraft_score": 0.8254006505012512,
+      "top_classes": [
+        {
+          "class": "Aircraft",
+          "score": 0.8254006505012512
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.8134262561798096
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.7837242484092712
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.6454598307609558
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.1268342286348343
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 8,
+      "event_variant": 0,
+      "max_aircraft_score": 0.018446147441864014,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.4067797362804413
+        },
+        {
+          "class": "Car",
+          "score": 0.17221057415008545
+        },
+        {
+          "class": "Traffic noise, roadway noise",
+          "score": 0.1534564048051834
+        },
+        {
+          "class": "Bus",
+          "score": 0.09077472239732742
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.0830833911895752
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "mode": "raw",
+      "event_index": 4,
+      "event_variant": 0,
+      "max_aircraft_score": 0.8671786189079285,
+      "top_classes": [
+        {
+          "class": "Aircraft",
+          "score": 0.8671786189079285
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.8581109642982483
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.8436091542243958
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.701231837272644
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.13211512565612793
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "mode": "raw",
+      "event_index": 6,
+      "event_variant": 0,
+      "max_aircraft_score": 0.6957446336746216,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.6695196628570557
+        },
+        {
+          "class": "Propeller, airscrew",
+          "score": 0.5200474858283997
+        },
+        {
+          "class": "Aircraft",
+          "score": 0.5100969672203064
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.4144424498081207
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.1828785538673401
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "mode": "raw",
+      "event_index": 7,
+      "event_variant": 0,
+      "max_aircraft_score": 0.790202260017395,
+      "top_classes": [
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.790202260017395
+        },
+        {
+          "class": "Aircraft",
+          "score": 0.7849814295768738
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.6887583136558533
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.49516475200653076
+        },
+        {
+          "class": "Outside, rural or natural",
+          "score": 0.13166217505931854
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 4,
+      "event_variant": 0,
+      "max_aircraft_score": 0.8572639226913452,
+      "top_classes": [
+        {
+          "class": "Aircraft",
+          "score": 0.8572639226913452
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.8362309336662292
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.8163989186286926
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.694794774055481
+        },
+        {
+          "class": "Outside, urban or manmade",
+          "score": 0.1265002191066742
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 6,
+      "event_variant": 0,
+      "max_aircraft_score": 0.7081819772720337,
+      "top_classes": [
+        {
+          "class": "Vehicle",
+          "score": 0.715583860874176
+        },
+        {
+          "class": "Propeller, airscrew",
+          "score": 0.5360838770866394
+        },
+        {
+          "class": "Aircraft",
+          "score": 0.5166931748390198
+        },
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.41886797547340393
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.19105525314807892
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "mode": "event_rms_0.1_max_gain_100",
+      "event_index": 7,
+      "event_variant": 0,
+      "max_aircraft_score": 0.757633626461029,
+      "top_classes": [
+        {
+          "class": "Fixed-wing aircraft, airplane",
+          "score": 0.757633626461029
+        },
+        {
+          "class": "Aircraft",
+          "score": 0.7571653723716736
+        },
+        {
+          "class": "Vehicle",
+          "score": 0.7108296751976013
+        },
+        {
+          "class": "Aircraft engine",
+          "score": 0.5043164491653442
+        },
+        {
+          "class": "Outside, rural or natural",
+          "score": 0.1383436769247055
+        }
+      ]
+    }
+  ],
+  "license": "bsd-3-clause",
+  "sources": [
+    "https://huggingface.co/MIT/ast-finetuned-audioset-10-10-0.4593",
+    "https://huggingface.co/docs/transformers/main/en/model_doc/audio-spectrogram-transformer",
+    "https://github.com/YuanGongND/ast/blob/master/src/traintest.py"
+  ],
+  "audio_uploaded": false,
+  "threshold_half_was_not_added_to_app": true,
+  "inputs": [
+    {
+      "case": "southampton",
+      "report_sha256": "4ed808e25d9bdccc90703347d0c44c1cb17fc1bbb22ed5ff44f883553726fb88",
+      "media_sha256": "88fadc80a7209432e01350aec3adc901e296e3174ee1f469022d6ec47c1d7e30"
+    },
+    {
+      "case": "southampton-nov1",
+      "report_sha256": "51c5d4706873e5aa9821c33b26575e3322aa10f6b7733fa821a8f6e1c7385c95",
+      "media_sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f"
+    },
+    {
+      "case": "lake-hood-nov1",
+      "report_sha256": "1fbe692d45ecf0a2750b7d140f28c77cd87223bd21468e5e8b8f60012ddac656",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414"
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "report_sha256": "e91554c8feebab5c355243b89ccc8cc6d5d2a7b60765662c03a491ed29b44770",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff"
+    },
+    {
+      "case": "midway-nov1",
+      "report_sha256": "4f5339932839222c2b3ff31eb5bc29fdf63ae952973f1608535412ad9d1b5c8b",
+      "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810"
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "report_sha256": "e1ef3b47b2fcfa2e8dc5efac6b6a7b5510f9e7b945628edaa5e5414769c6e2a3",
+      "media_sha256": "915c8ccfe6e7af52920567c602b5dbacfaedc2973ce14b540b7d3367dacdb62f"
+    },
+    {
+      "case": "original-challenge-reported-aircraft",
+      "media_sha256": "6884324b4fb9babbc89b10de71f283dd338766a15d2fbd1aeedb52216276692d",
+      "events_sha256": "f94210d242ede18f931c9880fd1c356dc9662b0e135b75ed6abc02fec901c476",
+      "selected_event_indices": [
+        14,
+        19
+      ],
+      "labels_are_external_replication_comparisons_not_independent_truth": true
+    }
+  ],
+  "dependency_lock_sha256": "0acb5477d9b0bc3fb05080d1b2ed46e9b28dfa56170dcc92c5134bc907869f4d",
+  "interpretation": "Aircraft scores above 0.5 identified some Midway observations but none of the ten model-selected Lake Hood observations and neither externally reported source-recording flyover, in either amplitude mode. These comparisons are not independent audio truth labels and do not measure classification accuracy. No classifier filter was adopted."
+}

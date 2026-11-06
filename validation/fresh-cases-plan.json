@@ -1,0 +1,22 @@
+{
+  "purpose": "Fresh recordings from an existing public camera; not a new location",
+  "selected_before_capture_and_solver_results": true,
+  "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+  "utc_day": "2026-11-04",
+  "clips": [
+    {"id": "midway-nov4-a", "requested_utc": "2026-11-04T18:00:00+00:00", "duration_s": 3600},
+    {"id": "midway-nov4-b", "requested_utc": "2026-11-04T20:00:00+00:00", "duration_s": 3600}
+  ],
+  "reference_provider": "webtrak-chicago",
+  "bounds": {"south": 41.65, "north": 42.01, "west": -87.98, "east": -87.5},
+  "ground_m": 180,
+  "ground_datum": "egm96",
+  "recording_clock_supplied_to_app": false,
+  "accuracy_target_m": 250,
+  "max_hypotheses": 50000000,
+  "candidate_build": "2988d7703885b46dc4971a1c37e2a347af18e43f",
+  "cli_sha256": "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308",
+  "ground_truth": {"latitude": 41.77844250226028, "longitude": -87.74277810405209},
+  "acceptance": "First candidate within 250 m and unambiguous. Preserve all failures. Verify source date independently before supplying only the date and broad region to the app.",
+  "redistribute_media": false
+}

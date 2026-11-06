@@ -1,0 +1,334 @@
+{
+  "not_location_acceptance": true,
+  "seed_source": "Prior known-area app diagnostic; coordinates and aircraft hints were used",
+  "external_recording_clock_supplied": false,
+  "inferred_app_clock_used_in_fixed_refit": true,
+  "code_commit": "e947120b862558720b70d78e3aa8abffdf58674e",
+  "raw_sha256": {
+    "lake-later-current-candidate-refit.json": "675c48ef27b58ae6b1132966ece8c05316378255706094f1db61aa7e33dff09c",
+    "lake-later-selected-corridor-proposals.json": "d36dd6f08678a035ad9dd074777d79f92da96ae8287188777598d0b42d2d0314",
+    "lake-later-seeded-production-refinement.json": "28fda4107c74a2573405dbf822c90804e2ca461f8faa89c98ed5935d6dd016b8"
+  },
+  "events_exactly_unchanged": true,
+  "fixed_refit": {
+    "accepted_error_percent": 0.8233170209320358,
+    "core_error_percent": 0.4692242194203136,
+    "matches": [
+      {
+        "aircraft": "a0e69b/7",
+        "error_percent": 0.43330331000873806,
+        "event": 2,
+        "variant": 2
+      },
+      {
+        "aircraft": "a6ad7d/2",
+        "error_percent": 0.7889174826363926,
+        "event": 7,
+        "variant": 0
+      },
+      {
+        "aircraft": "a682b3/0",
+        "error_percent": 1.0727700532938136,
+        "event": 8,
+        "variant": 3
+      },
+      {
+        "aircraft": "aa9447/0",
+        "error_percent": 1.1641560274080194,
+        "event": 9,
+        "variant": 1
+      },
+      {
+        "aircraft": "a04088/0",
+        "error_percent": 0.2702169286216311,
+        "event": 15,
+        "variant": 3
+      }
+    ],
+    "rate": 0.99810546875,
+    "sampled_error_percent": 0.4736024586409368,
+    "start": 1793568602.113721
+  },
+  "fixed_profiled": [
+    {
+      "anchor": 2,
+      "accepted_error_percent": 0.8212987435221228,
+      "matches": 5
+    },
+    {
+      "anchor": 7,
+      "accepted_error_percent": 0.8256127565096438,
+      "matches": 5
+    },
+    {
+      "anchor": 8,
+      "accepted_error_percent": 0.8301678470848323,
+      "matches": 5
+    },
+    {
+      "anchor": 9,
+      "accepted_error_percent": 0.90270334597204,
+      "matches": 4
+    },
+    {
+      "anchor": 15,
+      "accepted_error_percent": 0.8379941309348388,
+      "matches": 5
+    }
+  ],
+  "local_point_proposals": {
+    "count": 60,
+    "accepted_five_match_fits": 7
+  },
+  "actual_corridor_proposals": [
+    {
+      "anchor": 7,
+      "aircraft": "a6ad7d/2",
+      "hypotheses": 7317,
+      "retained_proposals": 6040,
+      "nearest_distance_to_prior_app_candidate_m": 417.63025283419313,
+      "nearby_profiled": 10,
+      "accepted_match_counts": {
+        "4": 2,
+        "3": 2
+      }
+    },
+    {
+      "anchor": 8,
+      "aircraft": "a682b3/0",
+      "hypotheses": 9779,
+      "retained_proposals": 8157,
+      "nearest_distance_to_prior_app_candidate_m": 621.8354925854733,
+      "nearby_profiled": 7,
+      "accepted_match_counts": {}
+    },
+    {
+      "anchor": 15,
+      "aircraft": "a04088/0",
+      "hypotheses": 7179,
+      "retained_proposals": 6024,
+      "nearest_distance_to_prior_app_candidate_m": 30.080364924248656,
+      "nearby_profiled": 346,
+      "accepted_match_counts": {
+        "3": 4,
+        "4": 6
+      }
+    }
+  ],
+  "seeded_production_refinement": {
+    "hypotheses": 24275,
+    "matches": [
+      5,
+      5,
+      5,
+      4,
+      4,
+      3,
+      3,
+      3
+    ],
+    "candidates": [
+      {
+        "latitude": 61.17957056059657,
+        "longitude": -149.9735054982863,
+        "recording_start_utc": "2026-11-01T21:30:01.890+00:00",
+        "recording_clock_rate": 0.9980664062499999,
+        "relative_error_percent": 0.8252703797736352,
+        "matches": [
+          {
+            "event": 2,
+            "aircraft": "a0e69b/7"
+          },
+          {
+            "event": 7,
+            "aircraft": "a6ad7d/2"
+          },
+          {
+            "event": 8,
+            "aircraft": "a682b3/0"
+          },
+          {
+            "event": 9,
+            "aircraft": "aa9447/0"
+          },
+          {
+            "event": 15,
+            "aircraft": "a04088/0"
+          }
+        ]
+      },
+      {
+        "latitude": 61.182260890942956,
+        "longitude": -149.96579965228943,
+        "recording_start_utc": "2026-11-01T21:29:54.964+00:00",
+        "recording_clock_rate": 0.9999218750000003,
+        "relative_error_percent": 0.8449698042600796,
+        "matches": [
+          {
+            "event": 2,
+            "aircraft": "a0e69b/7"
+          },
+          {
+            "event": 7,
+            "aircraft": "a6ad7d/2"
+          },
+          {
+            "event": 8,
+            "aircraft": "a682b3/0"
+          },
+          {
+            "event": 9,
+            "aircraft": "aa9447/0"
+          },
+          {
+            "event": 15,
+            "aircraft": "a04088/0"
+          }
+        ]
+      },
+      {
+        "latitude": 61.17735962056917,
+        "longitude": -149.97659791903155,
+        "recording_start_utc": "2026-11-01T21:30:06.410+00:00",
+        "recording_clock_rate": 0.9959765625000001,
+        "relative_error_percent": 0.8850512828138903,
+        "matches": [
+          {
+            "event": 2,
+            "aircraft": "a0e69b/7"
+          },
+          {
+            "event": 7,
+            "aircraft": "a6ad7d/2"
+          },
+          {
+            "event": 8,
+            "aircraft": "a682b3/0"
+          },
+          {
+            "event": 9,
+            "aircraft": "aa9447/0"
+          },
+          {
+            "event": 15,
+            "aircraft": "a04088/0"
+          }
+        ]
+      },
+      {
+        "latitude": 61.179236212450114,
+        "longitude": -149.96307171257308,
+        "recording_start_utc": "2026-11-01T21:30:03.733+00:00",
+        "recording_clock_rate": 0.995625,
+        "relative_error_percent": 0.6330943460669618,
+        "matches": [
+          {
+            "event": 2,
+            "aircraft": "a0e69b/7"
+          },
+          {
+            "event": 7,
+            "aircraft": "a6ad7d/2"
+          },
+          {
+            "event": 8,
+            "aircraft": "a682b3/0"
+          },
+          {
+            "event": 15,
+            "aircraft": "a04088/0"
+          }
+        ]
+      },
+      {
+        "latitude": 61.17819223881287,
+        "longitude": -149.9820873809197,
+        "recording_start_utc": "2026-11-01T21:30:06.069+00:00",
+        "recording_clock_rate": 0.9967578125,
+        "relative_error_percent": 0.9350684423174311,
+        "matches": [
+          {
+            "event": 7,
+            "aircraft": "a6ad7d/2"
+          },
+          {
+            "event": 8,
+            "aircraft": "a682b3/0"
+          },
+          {
+            "event": 9,
+            "aircraft": "aa9447/0"
+          },
+          {
+            "event": 15,
+            "aircraft": "a04088/0"
+          }
+        ]
+      },
+      {
+        "latitude": 61.18939271556653,
+        "longitude": -149.98298417255342,
+        "recording_start_utc": "2026-11-01T21:29:55.193+00:00",
+        "recording_clock_rate": 1.0015625,
+        "relative_error_percent": 0.7278895138817847,
+        "matches": [
+          {
+            "event": 2,
+            "aircraft": "a0e69b/7"
+          },
+          {
+            "event": 7,
+            "aircraft": "a6ad7d/2"
+          },
+          {
+            "event": 8,
+            "aircraft": "a682b3/0"
+          }
+        ]
+      },
+      {
+        "latitude": 61.18563685038714,
+        "longitude": -149.96896701406817,
+        "recording_start_utc": "2026-11-01T21:29:52.195+00:00",
+        "recording_clock_rate": 1.00251953125,
+        "relative_error_percent": 0.744777010834824,
+        "matches": [
+          {
+            "event": 2,
+            "aircraft": "a0e69b/7"
+          },
+          {
+            "event": 7,
+            "aircraft": "a6ad7d/2"
+          },
+          {
+            "event": 8,
+            "aircraft": "a682b3/0"
+          }
+        ]
+      },
+      {
+        "latitude": 61.18741113800401,
+        "longitude": -149.95449510440628,
+        "recording_start_utc": "2026-11-01T21:29:52.213+00:00",
+        "recording_clock_rate": 0.99912109375,
+        "relative_error_percent": 0.8042428768928308,
+        "matches": [
+          {
+            "event": 2,
+            "aircraft": "a0e69b/7"
+          },
+          {
+            "event": 7,
+            "aircraft": "a6ad7d/2"
+          },
+          {
+            "event": 8,
+            "aircraft": "a682b3/0"
+          }
+        ]
+      }
+    ]
+  },
+  "limitations": "The location and flight hints make all these diagnostics unsuitable for accuracy acceptance. They isolate fitting, proposal generation and pruning. No uncertainty radius is established."
+}

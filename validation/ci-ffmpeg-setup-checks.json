@@ -1,0 +1,88 @@
+{
+  "application_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+  "ci_run": 42138712076,
+  "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42138712076",
+  "ci_log_sha256": "750bcb97c7201390a8ac096721b22bcb8d1c50d86a7b210fb46926212e9a5c3b",
+  "ci_test_counts": {
+    "windows-latest": {
+      "passed": 58,
+      "failed": 2,
+      "ignored": 0
+    },
+    "ubuntu-latest": {
+      "passed": 97,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "windows_failure": "Chocolatey returned HTTP 503 from the package feed, installed zero packages, and exited successfully. Two integration tests then failed because FFmpeg was missing. The failed run is preserved.",
+  "fix": "Require a working ffmpeg.exe after installation. Retry up to three times with a 15 second delay. Fail before Rust checks if no working executable is available.",
+  "modified_workflow_sha256": "a8539c7c0a6642f7dbc14f673bfb2843aa122403bd2732c8e9bd43aafa4f6de9",
+  "offline_workflow_scenarios": [
+    {
+      "case": "installed",
+      "exit_code": 0,
+      "events": [
+        "install",
+        "ffmpeg"
+      ],
+      "passed": true
+    },
+    {
+      "case": "transient-feed-failure",
+      "exit_code": 0,
+      "events": [
+        "install",
+        "retry-delay",
+        "install",
+        "ffmpeg"
+      ],
+      "passed": true
+    },
+    {
+      "case": "installer-zero-without-binary",
+      "exit_code": 1,
+      "events": [
+        "install",
+        "retry-delay",
+        "install",
+        "retry-delay",
+        "install"
+      ],
+      "passed": true
+    },
+    {
+      "case": "broken-binary",
+      "exit_code": 1,
+      "events": [
+        "install",
+        "ffmpeg",
+        "retry-delay",
+        "install",
+        "ffmpeg",
+        "retry-delay",
+        "install",
+        "ffmpeg"
+      ],
+      "passed": true
+    }
+  ],
+  "local_test_counts": {
+    "passed": 97,
+    "failed": 0,
+    "ignored": 0
+  },
+  "required_local_checks_passed": true,
+  "local_log_sha256": {
+    "fmt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "clippy": "3b4aeaa0aa7e6e12cc2e6e4c1bce9096b9f2c03643bf1fc4f6a8b08693de5be6",
+    "tests": "8e0e2686f7c41b43b51b43ce7a4b2c3b008bd532a5d74b1d06a56b0dc474028e",
+    "doc": "6c94785913e6bf4656394e4acbd7d841c0e80662b713d1c8c68ff150204f4822",
+    "build": "96a49aec839aff99750fd7f63bca6554b109d487de0aa3d3ac631a6836c458e5"
+  },
+  "application_binaries_unchanged_from_frozen_region_build": true,
+  "cli_sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f",
+  "gui_sha256": "980e454ec95643b04401b606a8fa442a0e6a184ac073c55d51708a160799c49f",
+  "new_ci": "pending",
+  "not_location_accuracy_validation": true
+}

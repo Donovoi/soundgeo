@@ -1,0 +1,6 @@
+/target/
+/demo/
+/reports/
+/cache/
+*.part
+__pycache__/

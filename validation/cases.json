@@ -1,0 +1,258 @@
+{
+  "accuracy_target_m": 250,
+  "cases": [
+    {
+      "id": "midway",
+      "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+      "sha256": "38e22e7253db6eb19c1fb90d2d852ad6807467d3705f8d28e5635a2d6766b276",
+      "duration_s": 1800.011,
+      "utc_day": "2026-11-03",
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      },
+      "ground_m": 180,
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209,
+        "basis": "Published StreamTime LIVE camera coordinates in the source description"
+      },
+      "clock_supplied": false,
+      "role": "development",
+      "ground_datum": "egm96",
+      "reference_provider": "adsb_lol",
+      "requested_duration_s": 1800.0,
+      "max_hypotheses": 20000000
+    },
+    {
+      "id": "southampton",
+      "source": "https://www.youtube.com/watch?v=QO-hO_kwwmY",
+      "sha256": "88fadc80a7209432e01350aec3adc901e296e3174ee1f469022d6ec47c1d7e30",
+      "duration_s": 3599.99875,
+      "utc_day": "2026-11-03",
+      "bounds": {
+        "east": -1.05,
+        "north": 51.16,
+        "south": 50.8,
+        "west": -1.63
+      },
+      "ground_m": 10,
+      "ground_truth": {
+        "latitude": 50.89677,
+        "longitude": -1.40477,
+        "basis": "La Regata public ferry-camera host building; approximate building centroid, about 15 m uncertainty"
+      },
+      "clock_supplied": false,
+      "role": "development",
+      "ground_datum": "egm96",
+      "reference_provider": "adsb_lol",
+      "requested_duration_s": 3600.0,
+      "max_hypotheses": 20000000
+    },
+    {
+      "id": "midway-arrivals",
+      "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+      "sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+      "duration_s": 1199.984,
+      "utc_day": "2026-11-03",
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      },
+      "ground_m": 180,
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209,
+        "basis": "Published StreamTime LIVE camera coordinates in the source description"
+      },
+      "clock_supplied": false,
+      "role": "development",
+      "ground_datum": "egm96",
+      "reference_provider": "adsb_lol",
+      "requested_duration_s": 1200.0,
+      "max_hypotheses": 20000000
+    },
+    {
+      "id": "midway-holdout",
+      "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+      "sha256": "985b9035059956f43f989d8c14049d00d08679902e8b3d421fa7f1c9f63d6f04",
+      "duration_s": 1800.011,
+      "utc_day": "2026-11-03",
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      },
+      "ground_m": 180,
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209,
+        "basis": "Published StreamTime LIVE camera coordinates in the source description"
+      },
+      "clock_supplied": false,
+      "role": "development_retest",
+      "ground_datum": "egm96",
+      "reference_provider": "adsb_lol",
+      "requested_duration_s": 1800.0,
+      "max_hypotheses": 20000000,
+      "initial_role": "holdout"
+    },
+    {
+      "id": "midway-nov1",
+      "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+      "sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810",
+      "duration_s": 3598.1875,
+      "utc_day": "2026-11-01",
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      },
+      "ground_m": 180,
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209,
+        "basis": "Published StreamTime LIVE camera coordinates in the source description"
+      },
+      "clock_supplied": false,
+      "role": "development",
+      "ground_datum": "egm96",
+      "reference_provider": "adsb_exchange_free_sample",
+      "max_hypotheses": 20000000,
+      "requested_duration_s": 3600.0
+    },
+    {
+      "id": "midway-nov1-holdout",
+      "source": "https://www.youtube.com/watch?v=67BCsiW-1Io",
+      "sha256": "915c8ccfe6e7af52920567c602b5dbacfaedc2973ce14b540b7d3367dacdb62f",
+      "duration_s": 3596.6085,
+      "utc_day": "2026-11-01",
+      "bounds": {
+        "south": 41.65,
+        "east": -87.5,
+        "west": -87.98,
+        "north": 42.01
+      },
+      "ground_m": 180,
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209,
+        "basis": "Published StreamTime LIVE camera coordinates in the source description"
+      },
+      "clock_supplied": false,
+      "role": "development",
+      "ground_datum": "egm96",
+      "reference_provider": "adsb_exchange_free_sample",
+      "max_hypotheses": 20000000,
+      "requested_duration_s": 3600.0
+    },
+    {
+      "id": "southampton-nov1",
+      "source": "https://www.youtube.com/watch?v=QO-hO_kwwmY",
+      "sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f",
+      "duration_s": 3599.99875,
+      "utc_day": "2026-11-01",
+      "bounds": {
+        "east": -1.05,
+        "north": 51.16,
+        "south": 50.8,
+        "west": -1.63
+      },
+      "ground_m": 10,
+      "ground_truth": {
+        "latitude": 50.89677,
+        "longitude": -1.40477,
+        "basis": "La Regata public ferry-camera host building; approximate building centroid, about 15 m uncertainty"
+      },
+      "clock_supplied": false,
+      "role": "development",
+      "ground_datum": "egm96",
+      "reference_provider": "adsb_exchange_free_sample",
+      "max_hypotheses": 20000000,
+      "requested_duration_s": 3600.0
+    },
+    {
+      "id": "lake-hood",
+      "source": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+      "sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+      "duration_s": 3600.0,
+      "requested_duration_s": 3600,
+      "utc_day": "2026-11-03",
+      "bounds": {
+        "south": 61.0,
+        "north": 61.36,
+        "west": -150.36,
+        "east": -149.62
+      },
+      "ground_m": 27,
+      "ground_datum": "egm96",
+      "ground_truth": {
+        "latitude": 61.179633,
+        "longitude": -149.9719665,
+        "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+      },
+      "clock_supplied": false,
+      "role": "additional_site_validation",
+      "reference_provider": "adsb_lol",
+      "max_hypotheses": 20000000
+    },
+    {
+      "id": "lake-hood-nov1",
+      "source": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+      "sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "duration_s": 3600.0,
+      "requested_duration_s": 3600,
+      "utc_day": "2026-11-01",
+      "bounds": {
+        "south": 61.0,
+        "north": 61.36,
+        "west": -150.36,
+        "east": -149.62
+      },
+      "ground_m": 27,
+      "ground_datum": "egm96",
+      "ground_truth": {
+        "latitude": 61.179633,
+        "longitude": -149.9719665,
+        "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+      },
+      "clock_supplied": false,
+      "role": "additional_site_reference_validation",
+      "reference_provider": "adsb_exchange_free_sample",
+      "max_hypotheses": 20000000,
+      "sample_region": "alaska"
+    },
+    {
+      "id": "lake-hood-nov1-later",
+      "source": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+      "sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "duration_s": 3600.0,
+      "requested_duration_s": 3600,
+      "utc_day": "2026-11-01",
+      "bounds": {
+        "south": 61.0,
+        "north": 61.36,
+        "west": -150.36,
+        "east": -149.62
+      },
+      "ground_m": 27,
+      "ground_datum": "egm96",
+      "ground_truth": {
+        "latitude": 61.179633,
+        "longitude": -149.9719665,
+        "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+      },
+      "clock_supplied": false,
+      "role": "later_capture_after_early_curve_scoring",
+      "reference_provider": "adsb_exchange_free_sample",
+      "max_hypotheses": 20000000,
+      "sample_region": "alaska"
+    }
+  ]
+}

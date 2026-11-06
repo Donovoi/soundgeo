@@ -1,0 +1,89 @@
+{
+  "cases": [
+    {
+      "case": "maho",
+      "files": 97,
+      "ordered_source_sha256": "4fdbcd6f94ecfcedf719952afb8efe8b3b50b2e02a23f79c42c058ad8939e1db",
+      "native_retained_segment_count_reproduced": true,
+      "groups": {
+        "one": {
+          "segments": 30,
+          "positions": 30,
+          "segments_entering_search_region": 20,
+          "segments_with_recorded_height_below_ground_plus_1km_in_region": 18
+        },
+        "two_to_seven": {
+          "segments": 51,
+          "positions": 223,
+          "segments_entering_search_region": 34,
+          "segments_with_recorded_height_below_ground_plus_1km_in_region": 33
+        },
+        "eight_or_more": {
+          "segments": 336,
+          "positions": 22688,
+          "segments_entering_search_region": 286,
+          "segments_with_recorded_height_below_ground_plus_1km_in_region": 221
+        }
+      }
+    },
+    {
+      "case": "lake-hood-nov1",
+      "files": 568,
+      "ordered_source_sha256": "8e130a494a3a2edf5a1338e91cfac04512c6895d2156f8171a625936564bf77f",
+      "native_retained_segment_count_reproduced": true,
+      "groups": {
+        "one": {
+          "segments": 21,
+          "positions": 21,
+          "segments_entering_search_region": 6,
+          "segments_with_recorded_height_below_ground_plus_1km_in_region": 6
+        },
+        "two_to_seven": {
+          "segments": 52,
+          "positions": 194,
+          "segments_entering_search_region": 15,
+          "segments_with_recorded_height_below_ground_plus_1km_in_region": 15
+        },
+        "eight_or_more": {
+          "segments": 1040,
+          "positions": 156362,
+          "segments_entering_search_region": 737,
+          "segments_with_recorded_height_below_ground_plus_1km_in_region": 691
+        }
+      }
+    },
+    {
+      "case": "southampton-nov1",
+      "files": 4466,
+      "ordered_source_sha256": "277c60930257256a5b1b27f00dc79e9d95701705e3d8bc9814dca3fe58e3ffd8",
+      "native_retained_segment_count_reproduced": true,
+      "groups": {
+        "one": {
+          "segments": 85,
+          "positions": 85,
+          "segments_entering_search_region": 5,
+          "segments_with_recorded_height_below_ground_plus_1km_in_region": 0
+        },
+        "two_to_seven": {
+          "segments": 174,
+          "positions": 664,
+          "segments_entering_search_region": 4,
+          "segments_with_recorded_height_below_ground_plus_1km_in_region": 0
+        },
+        "eight_or_more": {
+          "segments": 4134,
+          "positions": 392789,
+          "segments_entering_search_region": 535,
+          "segments_with_recorded_height_below_ground_plus_1km_in_region": 67
+        }
+      }
+    }
+  ],
+  "plan_sha256": "499bdad6235ce81539f11800ef35b71409f655334df6609ab32c38368c5edbb7",
+  "initial_failed_audit_log_sha256": "bac2d915b672c205c34786c3e889ee2257f6ea91328304d87d06aa11b3f186c7",
+  "initial_failure": "Independent parser used a 100 km altitude ceiling instead of the native 30 km limit. Southampton retained one extra segment. The corrected audit reproduces all three native counts.",
+  "range_group_note": "The audit groups two through seven points. The implementation requires at least three; the group is an upper bound on additional usable segments.",
+  "low_height_note": "The height screen uses the recorded altitude and model ground setting, not a surveyed clearance.",
+  "no_recording_clock_or_camera_position_used": true,
+  "does_not_establish_location_accuracy": true
+}

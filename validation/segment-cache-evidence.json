@@ -1,0 +1,83 @@
+{
+  "code_commit": "0c2565cc666c9bb6ca6820ec2ac43c7492c1ae4e",
+  "parent_code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+  "software_tests_passed": 70,
+  "software_tests_ignored": 0,
+  "ci_run": "https://github.com/Donovoi/soundgeo/actions/runs/42017950114",
+  "ci_platforms_passed": [
+    "windows-latest",
+    "ubuntu-latest"
+  ],
+  "changes": "Bounded immutable segment-geometry cache; search and acceptance unchanged",
+  "logs": {
+    "tests": "0c466fe40c8f73d588c20cb14780204aca9fdf07fe8218e837b77a5e4dd05573",
+    "doctests": "3b7eb8cfc82423308d99f738b4f0921d875c7081ad7d47cfbb21ed2e6094a96b",
+    "clippy": "ea8452668c69b5ebd1b9b5d1a29b19476f417077030fd126f6718e5cb0074acc",
+    "fmt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build": "21b8bddd90b444bb5bd8119e698add3e7fadbf1006d0545c6818dcf66f7579bd"
+  },
+  "executables": {
+    "soundgeo-cli": {
+      "sha256": "2260e49f5e242684b403c136cdb604b89240fe8a1d0f81b8bf938de8171bba8b",
+      "file": "soundgeo-cli-main-segment-cache.exe"
+    },
+    "soundgeo": {
+      "sha256": "27e3ed54b7eb191baf99e473559dfd423601f0cb6cb3381b44830894bab598fe",
+      "file": "soundgeo-main-segment-cache.exe"
+    }
+  },
+  "model_sha256": "1d880a6d2a9b6829d3e132a45dd09aa7083f561a4827c1ae29f2c7388242fb65",
+  "real_controls": [
+    {
+      "case": "midway-holdout",
+      "exact_comparison": {
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true,
+        "search_grid_m": true,
+        "duration_s": true,
+        "warnings": true
+      },
+      "status": "insufficient_evidence",
+      "candidates": 0,
+      "elapsed_s": 50.2,
+      "report_sha256": "604f3f40b58d9cf1f5f7b255516dba0c75efc9ad6b7db7b7ea657dcef6aca980",
+      "counts_as_location_pass": false
+    },
+    {
+      "case": "southampton-nov1",
+      "exact_comparison": {
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true,
+        "search_grid_m": true,
+        "duration_s": true,
+        "warnings": true
+      },
+      "status": "ambiguous",
+      "candidates": 1,
+      "elapsed_s": 136.1,
+      "report_sha256": "1ce30f8e5b090c170e20d68d4ee206cd12cacb7b749a52a37456cefe5f1c9c9e",
+      "counts_as_location_pass": false
+    }
+  ],
+  "full_curve_search_experiment_merged": false,
+  "kernel_measurement": {
+    "speed_ratios": [
+      1.212,
+      1.313,
+      1.361,
+      1.329
+    ],
+    "includes_prepare_and_drop": true,
+    "exact_floating_point_bits_preserved": true,
+    "general_end_to_end_speedup_established": false,
+    "measurement_binary_sha256": "530a462cbca8249fe7d33770d6389f16d683d45eec5383ded84b7e4b68b7319c"
+  }
+}

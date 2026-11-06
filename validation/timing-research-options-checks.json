@@ -1,0 +1,66 @@
+{
+  "commit": "71d05e320de0f1e00852d7ba76640706ec6eebb4",
+  "change": "The research command now uses job.timing_options. The application matching code is unchanged.",
+  "local": {
+    "passed": 93,
+    "failed": 0,
+    "ignored": 0
+  },
+  "required_local_checks_passed": [
+    "fmt",
+    "strict release Clippy",
+    "release all-target tests",
+    "documentation tests",
+    "release CLI and desktop builds"
+  ],
+  "ci": {
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42133465259",
+    "conclusion": "success",
+    "tests": {
+      "windows": {
+        "passed": 93,
+        "failed": 0,
+        "ignored": 0
+      },
+      "ubuntu": {
+        "passed": 93,
+        "failed": 0,
+        "ignored": 0
+      }
+    },
+    "log_sha256": "3ea4abbd62c075f079a432be5dead3ca1f581cd343e46be65a2453e407180cd5"
+  },
+  "build": {
+    "commit": "71d05e320de0f1e00852d7ba76640706ec6eebb4",
+    "executable": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-options-71d05e3.exe",
+    "sha256": "884a685ce71e106dcee893712fe917fdfe2dea7c4d802e8a473d5f41dd1f3585",
+    "tests": 93,
+    "failed": 0,
+    "ignored": 0,
+    "all_required_local_checks_passed": true,
+    "ci": "pending",
+    "research_only": true
+  },
+  "historical_build_receipt_ci_was_pending": true,
+  "raw_default_comparison": {
+    "candidates": 256,
+    "all_position_clock_choices_and_order_equal": true,
+    "location_count": 1066,
+    "maximum_candidate_score_difference": 4.121147867408581e-13,
+    "bit_identical": false,
+    "note": "Tiny floating-point differences occur when peaks are reloaded from JSON. No positions, clocks, or candidate order changed.",
+    "original_report_sha256": "026e898313c46f9d46c580b38630d2a54106d057d152d75b803148c973a1071f",
+    "research_report_sha256": "94980b560ce020796aef843de0d824f1ff1b5b05828de05a98940e857402273d"
+  },
+  "nondefault_option_verified": [
+    {
+      "case": "fixed-a",
+      "range_m": 1000.0
+    },
+    {
+      "case": "fixed-b",
+      "range_m": 1000.0
+    }
+  ],
+  "not_location_accuracy_qualification": true
+}

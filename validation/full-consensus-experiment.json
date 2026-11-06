@@ -1,0 +1,500 @@
+{
+  "commit": "6ce075348af53a5071d6570c634b6ba2501ae62d",
+  "parent": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+  "tests_passed": 74,
+  "tests_ignored": 0,
+  "real_qualification_complete": false,
+  "source_sha256": "e64f3a6da748dcb63f0ad3ffe4b2f03cdbda244071e24fc8b88bcf3fe13786ff",
+  "logs": {
+    "tests": "884e6cbca6057ae27038e0ff9dfceb130ce177341baf3b33980d96f0ca7860b6",
+    "doctests": "db24bc71faf1fe15c682144a2d821f1b6fe34b4862ffe46c3e04c90ded5300ba",
+    "clippy": "f25efb430e5e62730e382187a5ce0213adb4b9072f0edde2056883303a1590bf",
+    "fmt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build": "c85e239c4f23271889eb87d7d2ccd43c1ef7be941c622710dae0c3e5d7c3f1b6"
+  },
+  "executables": {
+    "soundgeo-cli": {
+      "sha256": "656b1e9aefca2cd505e52eddbd116bbf58e272ae40807c6ae46ede3a59efc8a9",
+      "file": "soundgeo-cli-full-consensus.exe"
+    },
+    "soundgeo": {
+      "sha256": "449f27e449a58f1b05ba3d7081dac267b495fda2c6eff86d11c517c842c10ddf",
+      "file": "soundgeo-full-consensus.exe"
+    }
+  },
+  "ci_run": "https://github.com/Donovoi/soundgeo/actions/runs/42022530070",
+  "ci_platforms_passed": [
+    "windows-latest",
+    "ubuntu-latest"
+  ],
+  "production_merged": false,
+  "development_diagnostics_complete": true,
+  "location_accuracy_improvement_established": false,
+  "controls": [
+    {
+      "case": "midway-holdout",
+      "exact_comparison": {
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true,
+        "search_grid_m": true,
+        "duration_s": true,
+        "warnings": true
+      },
+      "counts_as_location_pass": false
+    },
+    {
+      "case": "southampton-nov1",
+      "exact_comparison": {
+        "events": true,
+        "candidates": true,
+        "status": true,
+        "hypotheses": true,
+        "track_count": true,
+        "search_method": true,
+        "search_grid_m": true,
+        "duration_s": true,
+        "warnings": true
+      },
+      "counts_as_location_pass": false
+    }
+  ],
+  "evaluation": {
+    "diagnostic_not_broad_area_acceptance": true,
+    "externally_supplied_clock_or_camera": false,
+    "child_clock_and_region_from_previous_solver_outputs": true,
+    "acceptance_rules_unchanged": true,
+    "accuracy_target_m": 250,
+    "cases": [
+      {
+        "case": "midway-computed-proposal",
+        "counts_as_broad_area_acceptance": false,
+        "stages": {
+          "baseline": {
+            "status": "ambiguous",
+            "events": 11,
+            "report_sha256": "344b7079cb0924f66951e2b0ea85b358c02d2308b071aa34fdaa081a90fbe687",
+            "candidates": [
+              {
+                "rank": 1,
+                "error_m": 19.740685021497036,
+                "matches": 5,
+                "curve_error_percent": 0.7397414889612577,
+                "recording_clock_rate": 1.00005859375
+              },
+              {
+                "rank": 2,
+                "error_m": 310.0725900536541,
+                "matches": 4,
+                "curve_error_percent": 0.7074179807434797,
+                "recording_clock_rate": 1.0
+              },
+              {
+                "rank": 3,
+                "error_m": 581.7923498388019,
+                "matches": 3,
+                "curve_error_percent": 0.7594105949115337,
+                "recording_clock_rate": 1.0000976562500001
+              },
+              {
+                "rank": 4,
+                "error_m": 450.4301729332941,
+                "matches": 3,
+                "curve_error_percent": 0.8023097018933528,
+                "recording_clock_rate": 1.003125
+              },
+              {
+                "rank": 5,
+                "error_m": 723.665898110517,
+                "matches": 3,
+                "curve_error_percent": 0.838347010232986,
+                "recording_clock_rate": 1.00498046875
+              }
+            ]
+          },
+          "refined": {
+            "status": "ambiguous",
+            "events": 11,
+            "report_sha256": "edc578d3d38a4db10e1286db10393e3916c21a2b398c9701e20b02b92b15de88",
+            "candidates": [
+              {
+                "rank": 1,
+                "error_m": 39.30918350153907,
+                "matches": 5,
+                "curve_error_percent": 0.7040110107891194,
+                "recording_clock_rate": 1.00005859375
+              },
+              {
+                "rank": 2,
+                "error_m": 309.3852481844949,
+                "matches": 4,
+                "curve_error_percent": 0.6916642250990346,
+                "recording_clock_rate": 1.0000073242187502
+              },
+              {
+                "rank": 3,
+                "error_m": 581.7923498388019,
+                "matches": 3,
+                "curve_error_percent": 0.7594105949115337,
+                "recording_clock_rate": 1.0000976562500001
+              },
+              {
+                "rank": 4,
+                "error_m": 450.4301729332941,
+                "matches": 3,
+                "curve_error_percent": 0.8023097018933528,
+                "recording_clock_rate": 1.003125
+              },
+              {
+                "rank": 5,
+                "error_m": 723.665898110517,
+                "matches": 3,
+                "curve_error_percent": 0.838347010232986,
+                "recording_clock_rate": 1.00498046875
+              }
+            ]
+          }
+        }
+      },
+      {
+        "case": "lake-earlier-computed-proposal",
+        "counts_as_broad_area_acceptance": false,
+        "stages": {
+          "baseline": {
+            "status": "ambiguous",
+            "events": 24,
+            "report_sha256": "dc01576de84eaaca6567898ad3fbf6cad47c43bb9741d043db4f57772382874d",
+            "candidates": [
+              {
+                "rank": 1,
+                "error_m": 20.52099865184817,
+                "matches": 5,
+                "curve_error_percent": 0.43003061746839627,
+                "recording_clock_rate": 0.9998437500000001
+              },
+              {
+                "rank": 2,
+                "error_m": 718.1348353746346,
+                "matches": 5,
+                "curve_error_percent": 0.9848881500050469,
+                "recording_clock_rate": 0.99919921875
+              },
+              {
+                "rank": 3,
+                "error_m": 209.63819571007733,
+                "matches": 4,
+                "curve_error_percent": 0.6901252611199956,
+                "recording_clock_rate": 1.0038867187499998
+              },
+              {
+                "rank": 4,
+                "error_m": 965.3444019978496,
+                "matches": 4,
+                "curve_error_percent": 0.8799995954763367,
+                "recording_clock_rate": 0.998125
+              },
+              {
+                "rank": 5,
+                "error_m": 320.8626015799225,
+                "matches": 4,
+                "curve_error_percent": 0.8871230206444943,
+                "recording_clock_rate": 0.9993945312500001
+              },
+              {
+                "rank": 6,
+                "error_m": 806.7759810949397,
+                "matches": 4,
+                "curve_error_percent": 0.9373629619867927,
+                "recording_clock_rate": 0.99861328125
+              },
+              {
+                "rank": 7,
+                "error_m": 381.4262220174177,
+                "matches": 4,
+                "curve_error_percent": 0.9580969382463209,
+                "recording_clock_rate": 0.9983398437500001
+              },
+              {
+                "rank": 8,
+                "error_m": 302.12436565263556,
+                "matches": 3,
+                "curve_error_percent": 0.27925977127107365,
+                "recording_clock_rate": 1.002265625
+              },
+              {
+                "rank": 9,
+                "error_m": 425.3482192402897,
+                "matches": 3,
+                "curve_error_percent": 0.2803916119979327,
+                "recording_clock_rate": 0.9968359374999999
+              },
+              {
+                "rank": 10,
+                "error_m": 146.16388295924736,
+                "matches": 3,
+                "curve_error_percent": 0.3420497604560861,
+                "recording_clock_rate": 0.9955859374999999
+              }
+            ]
+          },
+          "refined": {
+            "status": "ambiguous",
+            "events": 24,
+            "report_sha256": "4193c6d7ea122123c5a33703a8dbd506ebf1c2c76365c2dd3fff746b83568dbb",
+            "candidates": [
+              {
+                "rank": 1,
+                "error_m": 28.932966422830283,
+                "matches": 5,
+                "curve_error_percent": 0.4058772269558992,
+                "recording_clock_rate": 1.0
+              },
+              {
+                "rank": 2,
+                "error_m": 841.0082163380196,
+                "matches": 5,
+                "curve_error_percent": 0.9607429553694113,
+                "recording_clock_rate": 0.99884521484375
+              },
+              {
+                "rank": 3,
+                "error_m": 209.63819571007733,
+                "matches": 4,
+                "curve_error_percent": 0.6901252611199956,
+                "recording_clock_rate": 1.0038867187499998
+              },
+              {
+                "rank": 4,
+                "error_m": 320.8626015799225,
+                "matches": 4,
+                "curve_error_percent": 0.8871230206444943,
+                "recording_clock_rate": 0.9993945312500001
+              },
+              {
+                "rank": 5,
+                "error_m": 726.6150695767024,
+                "matches": 4,
+                "curve_error_percent": 0.9078336512320686,
+                "recording_clock_rate": 0.9985742187500001
+              },
+              {
+                "rank": 6,
+                "error_m": 1064.4855126180582,
+                "matches": 4,
+                "curve_error_percent": 0.9166123856300175,
+                "recording_clock_rate": 0.9976562500000001
+              },
+              {
+                "rank": 7,
+                "error_m": 381.4262220174177,
+                "matches": 4,
+                "curve_error_percent": 0.9580969382463209,
+                "recording_clock_rate": 0.9983398437500001
+              },
+              {
+                "rank": 8,
+                "error_m": 302.12436565263556,
+                "matches": 3,
+                "curve_error_percent": 0.27925977127107365,
+                "recording_clock_rate": 1.002265625
+              },
+              {
+                "rank": 9,
+                "error_m": 425.3482192402897,
+                "matches": 3,
+                "curve_error_percent": 0.2803916119979327,
+                "recording_clock_rate": 0.9968359374999999
+              },
+              {
+                "rank": 10,
+                "error_m": 146.16388295924736,
+                "matches": 3,
+                "curve_error_percent": 0.3420497604560861,
+                "recording_clock_rate": 0.9955859374999999
+              }
+            ]
+          }
+        }
+      },
+      {
+        "case": "lake-later-computed-proposal",
+        "counts_as_broad_area_acceptance": false,
+        "stages": {
+          "baseline": {
+            "status": "ambiguous",
+            "events": 16,
+            "report_sha256": "4d8296fd53b70d1cc70636334bfae0624fc08c4c51ba3ff70af05245587cbdc3",
+            "candidates": [
+              {
+                "rank": 1,
+                "error_m": 5347.022519915845,
+                "matches": 4,
+                "curve_error_percent": 0.3551537975210782,
+                "recording_clock_rate": 1.00275390625
+              },
+              {
+                "rank": 2,
+                "error_m": 4870.19372262318,
+                "matches": 4,
+                "curve_error_percent": 0.41874062244168786,
+                "recording_clock_rate": 1.0049609375
+              },
+              {
+                "rank": 3,
+                "error_m": 5312.793799835223,
+                "matches": 3,
+                "curve_error_percent": 0.27821338236679904,
+                "recording_clock_rate": 1.00087890625
+              },
+              {
+                "rank": 4,
+                "error_m": 5438.6627605934855,
+                "matches": 3,
+                "curve_error_percent": 0.29058662948105907,
+                "recording_clock_rate": 1.005
+              },
+              {
+                "rank": 5,
+                "error_m": 5122.3237179838925,
+                "matches": 3,
+                "curve_error_percent": 0.29798744657883436,
+                "recording_clock_rate": 1.00142578125
+              },
+              {
+                "rank": 6,
+                "error_m": 4961.529112293459,
+                "matches": 3,
+                "curve_error_percent": 0.3247252455819971,
+                "recording_clock_rate": 0.995625
+              },
+              {
+                "rank": 7,
+                "error_m": 5173.507950362175,
+                "matches": 3,
+                "curve_error_percent": 0.3408056444746223,
+                "recording_clock_rate": 0.9973632812500001
+              }
+            ]
+          },
+          "refined": {
+            "status": "ambiguous",
+            "events": 16,
+            "report_sha256": "f4a7fef2cec6c70f7e44a40461cfa91f8784d2982717c7a6368c549ad2f7c564",
+            "candidates": [
+              {
+                "rank": 1,
+                "error_m": 5322.7129548236735,
+                "matches": 4,
+                "curve_error_percent": 0.348596590958628,
+                "recording_clock_rate": 1.00142578125
+              },
+              {
+                "rank": 2,
+                "error_m": 5373.325933209625,
+                "matches": 4,
+                "curve_error_percent": 0.3936352042403326,
+                "recording_clock_rate": 1.005
+              },
+              {
+                "rank": 3,
+                "error_m": 4869.600685110148,
+                "matches": 4,
+                "curve_error_percent": 0.4168262651935246,
+                "recording_clock_rate": 1.0049609375
+              },
+              {
+                "rank": 4,
+                "error_m": 5000.97782618751,
+                "matches": 4,
+                "curve_error_percent": 0.47519036451206303,
+                "recording_clock_rate": 1.00306640625
+              },
+              {
+                "rank": 5,
+                "error_m": 5312.793799835223,
+                "matches": 3,
+                "curve_error_percent": 0.27821338236679904,
+                "recording_clock_rate": 1.00087890625
+              },
+              {
+                "rank": 6,
+                "error_m": 5438.6627605934855,
+                "matches": 3,
+                "curve_error_percent": 0.29058662948105907,
+                "recording_clock_rate": 1.005
+              },
+              {
+                "rank": 7,
+                "error_m": 5122.3237179838925,
+                "matches": 3,
+                "curve_error_percent": 0.29798744657883436,
+                "recording_clock_rate": 1.00142578125
+              },
+              {
+                "rank": 8,
+                "error_m": 4961.529112293459,
+                "matches": 3,
+                "curve_error_percent": 0.3247252455819971,
+                "recording_clock_rate": 0.995625
+              },
+              {
+                "rank": 9,
+                "error_m": 5124.794945132016,
+                "matches": 3,
+                "curve_error_percent": 0.3480288461720329,
+                "recording_clock_rate": 0.99623046875
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "plan": {
+    "diagnostic_not_broad_area_acceptance": true,
+    "purpose": "Compare all-accepted-curve refinement with its unchanged parent",
+    "known_camera_or_external_clock_supplied": false,
+    "child_clock_and_region_computed_from_previous_solver_output": true,
+    "original_main_and_fresh_runs_unchanged": true,
+    "baseline_commit": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+    "baseline_cli_sha256": "c37bb556329863b59c0ad6ebd0ecc28aa112828b5afb94d45ef87a4ca29b6319",
+    "candidate_selection": "First candidate from each listed completed report, without truth-based selection",
+    "search_source_sha256": "e64f3a6da748dcb63f0ad3ffe4b2f03cdbda244071e24fc8b88bcf3fe13786ff",
+    "cases": [
+      {
+        "case": "midway-computed-proposal",
+        "job_sha256": "093a820f630255d11cbb00f062f87bbe814f1620d0bee0f74769321d87054297",
+        "origin_report": "timing-seed-diagnostic/doppler-followup/midway-nov1/1/report.json",
+        "origin_report_sha256": "344b7079cb0924f66951e2b0ea85b358c02d2308b071aa34fdaa081a90fbe687",
+        "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810",
+        "preserved_existing_computed_job": true,
+        "computed_parent_clock": 1793555857.2600503,
+        "parent_clock_supplied_by_user": false
+      },
+      {
+        "case": "lake-earlier-computed-proposal",
+        "job_sha256": "72fddb34ca2acb9b44171c5e9174ac536acfcd0f23a2b313b0d66423f0516128",
+        "origin_report": "real-validation/lake-hood-nov1/retained-support-report.json",
+        "origin_report_sha256": "866cd8bd547d4190c9427ed8b2463a8c68ecae9e5759995252975a40bed9e077",
+        "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+        "preserved_existing_computed_job": false,
+        "computed_parent_clock": null,
+        "parent_clock_supplied_by_user": false
+      },
+      {
+        "case": "lake-later-computed-proposal",
+        "job_sha256": "c7679d7e314df1c317fa08db39b545bd9496586c41d7b3ae3ae0dec91399dd63",
+        "origin_report": "real-validation/lake-hood-nov1-later/arrival-cache-expanded-report.json",
+        "origin_report_sha256": "87f6eea46638a10a6a8c8de87377d6fa9888bdeb10d30dcb49ffb6c4d66f1fc0",
+        "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+        "preserved_existing_computed_job": false,
+        "computed_parent_clock": null,
+        "parent_clock_supplied_by_user": false
+      }
+    ]
+  },
+  "interpretation": "Curve error fell, but both nearby first candidates moved farther from the camera. The wrong Lake candidate remained over 5 km away. All results remain ambiguous. Keep this experiment separate from the main app."
+}

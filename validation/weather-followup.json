@@ -1,0 +1,224 @@
+{
+  "plan_sha256": "fa3b2b4333792800aa80782a51ac567352c8aa8ffb697b3b3f5d40b3bee72895",
+  "build_commit": "0b394a01063ebc51f472a2fc7d905ca482fbc709",
+  "weather_method": "All routine full-day reports from stations within the original broad bounds; hourly median per station, then station median, then median across stations. No camera point or recording clock used.",
+  "counts_as_acceptance": false,
+  "computed_candidate_region_and_clock": true,
+  "original_and_fresh_tests_unchanged": true,
+  "automatic_weather_not_added": true,
+  "interpretation": "Both results remain ambiguous. Daily surface temperature is not the sound path's average temperature. Changing it also changes audio fits and detections. No location-confidence rule changed.",
+  "cases": [
+    {
+      "case": "lake-hood-nov1-later",
+      "source_url": "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?network=AK_ASOS&data=tmpf%2Cdrct%2Csknt%2Cmetar&report_type=3&sts=2026-11-01T00%3A00%3A00Z&ets=2026-11-02T00%3A00%3A00Z&tz=UTC&latlon=yes&format=onlycomma",
+      "reference_sha256": "384c7828394331caab1ab39cafd3e904214156daf3b269629e708163560766a3",
+      "stations": {
+        "PALH": {
+          "temperature_c": 1.6666666666666667,
+          "hours": 24
+        },
+        "PAMR": {
+          "temperature_c": 0.8333333333333334,
+          "hours": 24
+        },
+        "PANC": {
+          "temperature_c": 1.3888888888888888,
+          "hours": 24
+        }
+      },
+      "events_changed": true,
+      "runs": [
+        {
+          "report_sha256": "f1d0f8bf4c5d79faa745350428cdfac9f0dfa6345d1e79ac0c8f400266da8c9c",
+          "temperature_c": 15.0,
+          "status": "ambiguous",
+          "events": 16,
+          "candidates": [
+            {
+              "error_m": 114.395,
+              "matches": 5,
+              "relative_error_percent": 0.7931795442532602
+            },
+            {
+              "error_m": 346.097,
+              "matches": 5,
+              "relative_error_percent": 0.8110163103591154
+            },
+            {
+              "error_m": 308.858,
+              "matches": 5,
+              "relative_error_percent": 0.8282195561133368
+            },
+            {
+              "error_m": 175.883,
+              "matches": 5,
+              "relative_error_percent": 0.8481788665731519
+            },
+            {
+              "error_m": 555.758,
+              "matches": 5,
+              "relative_error_percent": 0.8726677103690345
+            },
+            {
+              "error_m": 630.615,
+              "matches": 5,
+              "relative_error_percent": 0.8855450638179202
+            },
+            {
+              "error_m": 402.528,
+              "matches": 5,
+              "relative_error_percent": 0.9115910990862439
+            },
+            {
+              "error_m": 466.814,
+              "matches": 4,
+              "relative_error_percent": 0.6106099262155728
+            },
+            {
+              "error_m": 339.509,
+              "matches": 4,
+              "relative_error_percent": 0.6201359058273878
+            },
+            {
+              "error_m": 411.33,
+              "matches": 4,
+              "relative_error_percent": 0.6580696391445578
+            }
+          ]
+        },
+        {
+          "report_sha256": "ad9fdfcea2becb43ddf909c18510c3e661575b6d2a57a70b7ff4e1fde5721054",
+          "temperature_c": 1.3888888888888888,
+          "status": "ambiguous",
+          "events": 15,
+          "candidates": [
+            {
+              "error_m": 233.326,
+              "matches": 5,
+              "relative_error_percent": 0.8003222220762104
+            },
+            {
+              "error_m": 607.289,
+              "matches": 5,
+              "relative_error_percent": 0.814958341148778
+            },
+            {
+              "error_m": 64.089,
+              "matches": 5,
+              "relative_error_percent": 0.8225482482741462
+            },
+            {
+              "error_m": 448.624,
+              "matches": 5,
+              "relative_error_percent": 0.854791107487461
+            },
+            {
+              "error_m": 322.352,
+              "matches": 5,
+              "relative_error_percent": 0.8640114486377117
+            },
+            {
+              "error_m": 238.695,
+              "matches": 5,
+              "relative_error_percent": 0.8674659195469072
+            },
+            {
+              "error_m": 544.84,
+              "matches": 5,
+              "relative_error_percent": 0.906496030978949
+            },
+            {
+              "error_m": 469.141,
+              "matches": 5,
+              "relative_error_percent": 0.989234452220114
+            },
+            {
+              "error_m": 597.875,
+              "matches": 4,
+              "relative_error_percent": 0.6206225169992857
+            },
+            {
+              "error_m": 449.825,
+              "matches": 4,
+              "relative_error_percent": 0.733913092806096
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "midway-arrivals",
+      "source_url": "https://mesonet.agron.iastate.edu/cgi-bin/request/asos.py?network=IL_ASOS&data=tmpf%2Cdrct%2Csknt%2Cmetar&report_type=3&sts=2026-11-03T00%3A00%3A00Z&ets=2026-11-04T00%3A00%3A00Z&tz=UTC&latlon=yes&format=onlycomma",
+      "reference_sha256": "ad656bd78546823c276f28da669e64c46900eae9ed08a3a0070f4699eaba7321",
+      "stations": {
+        "MDW": {
+          "temperature_c": 17.77777777777778,
+          "hours": 24
+        },
+        "ORD": {
+          "temperature_c": 17.77777777777778,
+          "hours": 24
+        }
+      },
+      "events_changed": true,
+      "runs": [
+        {
+          "report_sha256": "f682f0df5aca690ddba56e7c6b252ffc4601423df939dccfb27217d822410aa4",
+          "temperature_c": 15.0,
+          "status": "ambiguous",
+          "events": 6,
+          "candidates": [
+            {
+              "error_m": 70.411,
+              "matches": 5,
+              "relative_error_percent": 0.7844665758596788
+            },
+            {
+              "error_m": 322.803,
+              "matches": 5,
+              "relative_error_percent": 0.833831162664961
+            },
+            {
+              "error_m": 466.74,
+              "matches": 4,
+              "relative_error_percent": 0.8038068501367387
+            },
+            {
+              "error_m": 604.666,
+              "matches": 4,
+              "relative_error_percent": 0.8906985956147734
+            }
+          ]
+        },
+        {
+          "report_sha256": "ec9173c2471a6635436e603c3c2d18027c78b9917959644a2e7f82eced456102",
+          "temperature_c": 17.77777777777778,
+          "status": "ambiguous",
+          "events": 6,
+          "candidates": [
+            {
+              "error_m": 69.059,
+              "matches": 5,
+              "relative_error_percent": 0.761886521179076
+            },
+            {
+              "error_m": 327.588,
+              "matches": 5,
+              "relative_error_percent": 0.8228658632118498
+            },
+            {
+              "error_m": 466.74,
+              "matches": 4,
+              "relative_error_percent": 0.8185626481344048
+            },
+            {
+              "error_m": 604.666,
+              "matches": 4,
+              "relative_error_percent": 0.9102011954423875
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

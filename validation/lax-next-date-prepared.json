@@ -1,0 +1,66 @@
+{
+  "plan_sha256": "0f6596beda52dbc44043f43253ffec5f103455ae0c3c66455607362148712dbe",
+  "cases": [
+    {
+      "case": "a",
+      "selected_first_sequence": 1689208,
+      "media_sha256": "879310e95fe3c697fa32ccf0258109ce64a86f09a5c9a8b69e66c26be013f025",
+      "job_sha256": "1d279034c32ccc90db48e1852e51756901e9f5c1d3f6a29388f24e6df39c63f7",
+      "source_clock_inspection_pending": true,
+      "timestamp_audit": {
+        "video_ordered_manifest_sha256": "0bf1cd877880d4ff66a5028c578a5174becb1ffc98803c7709dbf2d72e0a9242",
+        "audio_first_to_last_start_s": 7195.004807256162,
+        "video_first_to_last_start_s": 7195.0,
+        "maximum_audio_video_start_difference_s": 0.017777778208255768,
+        "video_anomalies": []
+      }
+    },
+    {
+      "case": "b",
+      "selected_first_sequence": 1692088,
+      "media_sha256": "639c4e25d9a3a14e0d14c1f24c0bf05c66936547b8aab2740501a9abb7b9190b",
+      "job_sha256": "4e83c43e23abe3bda67062cac3677ab519a7f5f1d8c4b25e8df925bfbc213a3d",
+      "source_clock_inspection_pending": true,
+      "timestamp_audit": {
+        "video_ordered_manifest_sha256": "d1bba798de86795915cdfe31dda4e57579506c30faf0c00caa9220d45fa97fbb",
+        "audio_first_to_last_start_s": 7195.004807256162,
+        "video_first_to_last_start_s": 7195.0,
+        "maximum_audio_video_start_difference_s": 0.017777778208255768,
+        "video_anomalies": []
+      }
+    }
+  ],
+  "source_quality": {
+    "a": {
+      "observed_before_analysis_utc": "2026-11-06T00:40:39.955283+00:00",
+      "visible_clocks": {
+        "first": "07:59",
+        "minute30": "08:29",
+        "minute60": "08:59",
+        "minute90": "09:29",
+        "last": "09:59"
+      },
+      "selected_interval_clock_and_container_checks_passed": true,
+      "recording_clock_supplied_to_app": false,
+      "limits": "Five images and ordered container timestamps support continuity. The microphone position and the complete audio source have not been independently surveyed or verified.",
+      "timestamp_audit_sha256": "06c1510b34e0366daeb70d9f53195ca13d403500858e015448a8e38e12610f5d",
+      "prepared_sha256": "b180215e0a4b0448713fa358607c83749bc3060810b4935627242dc64ede0b26"
+    },
+    "b": {
+      "observed_before_analysis_utc": "2026-11-06T00:40:39.956268+00:00",
+      "visible_clocks": {
+        "first": "11:59",
+        "minute30": "12:29",
+        "minute60": "12:59",
+        "minute90": "13:29",
+        "last": "13:59"
+      },
+      "selected_interval_clock_and_container_checks_passed": true,
+      "recording_clock_supplied_to_app": false,
+      "limits": "Five images and ordered container timestamps support continuity. The microphone position and the complete audio source have not been independently surveyed or verified.",
+      "timestamp_audit_sha256": "2fda3f4b6ba18c45ed60a39323335cacda6253574fe367e2d68d42bbe6f6cd6d",
+      "prepared_sha256": "40ae4f949ba33c58e89020546ac0af42fef3631e6a96f6327f9ce9d9ab7537a3"
+    }
+  },
+  "flight_download_and_analysis_pending": true
+}

@@ -1,0 +1,40 @@
+{
+  "known_area_diagnostic_only": true,
+  "not_location_acceptance": true,
+  "external_recording_clock_supplied": false,
+  "revisions": [
+    "c16c428baccdaeac5735eab7b9e554752ef7a5fd",
+    "2988d7703885b46dc4971a1c37e2a347af18e43f"
+  ],
+  "cli_sha256": [
+    "609fb76060918b4d8ee2ca7913efdfe509ef6588b653fa255afbfbcb08c72bb6",
+    "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308"
+  ],
+  "report_sha256": [
+    "c9274a8b2635cb74f51085d0aeaf6056f1f7c0c4f9cee5eeb49814fc732bd626",
+    "f9771f5518b11a92285798ccc578e723b4229358a0563782e348d454b6437363"
+  ],
+  "compared_fields": {
+    "job": true,
+    "events": true,
+    "status": true,
+    "hypotheses": true,
+    "track_count": true,
+    "search_method": true
+  },
+  "identical_candidate_fields_except_clock_rounding": true,
+  "rounding_differences": [
+    {
+      "rank": 1,
+      "field": "recording_clock_rate",
+      "absolute_difference": 2.220446049250313e-16
+    }
+  ],
+  "first_candidate_error_m": 62.628286645570434,
+  "status": "ambiguous",
+  "elapsed_s": [
+    78.55,
+    137.84
+  ],
+  "timing_note": "One run per build with other searches active; not a controlled performance benchmark."
+}

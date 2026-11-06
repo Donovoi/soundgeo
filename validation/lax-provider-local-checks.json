@@ -1,0 +1,31 @@
+{
+  "tests": 93,
+  "failed": 0,
+  "ignored": 0,
+  "required_local_checks_passed": true,
+  "checks": {
+    "fmt": {
+      "path": "work/lax-provider-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "clippy": {
+      "path": "work/lax-provider-clippy.log",
+      "sha256": "cdb0b97f9d9e6657a19048e97da27604cea7bcbea4a248927b0314f229d82d19"
+    },
+    "tests": {
+      "path": "work/lax-provider-tests.log",
+      "sha256": "4860a2936086caf02b8b22cd00975fb27da9293135dc55837e755a1536b36dd3"
+    },
+    "doc": {
+      "path": "work/lax-provider-doc.log",
+      "sha256": "63c43e74ae30adcaa1c42910a673f1d46cacf18138d5f10751f7a3264cd70d9d"
+    },
+    "build": {
+      "path": "work/lax-provider-build.log",
+      "sha256": "6bf5bad2925fc566db65881417f8a08763feca9e36948a79609fc6643f2ed458"
+    }
+  },
+  "ci": "pending",
+  "purpose": "Add public LAX replay with separate Los Angeles time conversion, provider identity and cache. Preserve full-day integrity checks, cancellation and rate limits. No geolocation scoring change.",
+  "live_reference_check": "pending full-day source download"
+}

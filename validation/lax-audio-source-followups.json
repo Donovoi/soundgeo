@@ -1,0 +1,897 @@
+{
+  "not_location_acceptance": true,
+  "production_detector_changes": false,
+  "sources": {
+    "lax-passage-distance-audit/results.json": "04d63ce8f86c8fe477ece7d38f5b3f879583e222dd564a71940a3c1f062e961c",
+    "lax-known-site-timing/results.json": "bfa7b4182eabe17fd86cf0372deabc0a062f3eabe5561e6671f1a7b384c4c77c",
+    "lax-high-band-site-audit/results.json": "de61203f9c07e99c568f861919a2f388da16924f7cab24dca48a162bb6d5c484",
+    "lax-peak-width-audit/results.json": "71150c734c0cf173d36955a1501ef75dd583cbec911103fef247bc6b41d36137",
+    "timing-region-radius-audit/results.json": "8bbe2331d40477ec7e9373478f68168163c25fc54ac976ec0dbc43e484e62632",
+    "lax-peak-speech/results.json": "3c500610d2de6032d90f08d3e2cd78cef4ac35f573013253f0c319c7d99ecb45",
+    "lax-speech-search/results.json": "941c9759bc58ef0a9f865f43fcf4851877b7bfb8dfcf1139a1c1dcdab4eee5be"
+  },
+  "known_site_geometry": {
+    "camera_building_position_used": true,
+    "recording_clock_used": false,
+    "sites": {
+      "broadcast": {
+        "counts_by_maximum_slant_distance_m": {
+          "500": 371,
+          "1000": 461,
+          "2000": 1593,
+          "5000": 1700
+        },
+        "minimum_passage_slant_m": 136.25691851209967
+      },
+      "fixed": {
+        "counts_by_maximum_slant_distance_m": {
+          "500": 0,
+          "1000": 1085,
+          "2000": 1613,
+          "5000": 1705
+        },
+        "minimum_passage_slant_m": 580.1273227841534
+      }
+    },
+    "limit": "Building-center diagnostic at the prior 38 m ground elevation; the precise microphone position is not surveyed."
+  },
+  "known_site_time_checks": {
+    "known_position_used": true,
+    "recording_clock_used": false,
+    "not_significance_tests": true,
+    "checks": [
+      {
+        "case": "broadcast-a",
+        "range_m": 500,
+        "sigma_s": 1,
+        "reference_passages": 371,
+        "peaks": 26,
+        "first": {
+          "offset_utc": 1793679269.9915051,
+          "score": 9.341605681856038,
+          "matches": 6,
+          "background": 20.4617856310235,
+          "detection_probability": 0.23075893204068754,
+          "median_abs_residual_s": 0.686259388923645
+        }
+      },
+      {
+        "case": "broadcast-a",
+        "range_m": 500,
+        "sigma_s": 3,
+        "reference_passages": 371,
+        "peaks": 26,
+        "first": {
+          "offset_utc": 1793731492.7301247,
+          "score": 7.996542183415428,
+          "matches": 9,
+          "background": 18.92396811187749,
+          "detection_probability": 0.3724227309538164,
+          "median_abs_residual_s": 2.4369864463806152
+        }
+      },
+      {
+        "case": "broadcast-a",
+        "range_m": 500,
+        "sigma_s": 10,
+        "reference_passages": 371,
+        "peaks": 26,
+        "first": {
+          "offset_utc": 1793731493.1813037,
+          "score": 6.753566578988199,
+          "matches": 14,
+          "background": 15.739183680962398,
+          "detection_probability": 0.540042962838498,
+          "median_abs_residual_s": 4.402048468589783
+        }
+      },
+      {
+        "case": "broadcast-a",
+        "range_m": 1000,
+        "sigma_s": 1,
+        "reference_passages": 461,
+        "peaks": 26,
+        "first": {
+          "offset_utc": 1793679269.9915051,
+          "score": 8.118427928718829,
+          "matches": 6,
+          "background": 20.579606846742728,
+          "detection_probability": 0.18067977177524247,
+          "median_abs_residual_s": 0.686259388923645
+        }
+      },
+      {
+        "case": "broadcast-a",
+        "range_m": 1000,
+        "sigma_s": 3,
+        "reference_passages": 461,
+        "peaks": 26,
+        "first": {
+          "offset_utc": 1793731492.7301247,
+          "score": 6.672034011045874,
+          "matches": 9,
+          "background": 19.219276811040423,
+          "detection_probability": 0.29481405169389463,
+          "median_abs_residual_s": 2.4369864463806152
+        }
+      },
+      {
+        "case": "broadcast-a",
+        "range_m": 1000,
+        "sigma_s": 10,
+        "reference_passages": 461,
+        "peaks": 26,
+        "first": {
+          "offset_utc": 1793684965.2207632,
+          "score": 4.905641321059942,
+          "matches": 17,
+          "background": 15.535921609469634,
+          "detection_probability": 0.3737170846454845,
+          "median_abs_residual_s": 8.953276872634888
+        }
+      },
+      {
+        "case": "broadcast-a",
+        "range_m": 2000,
+        "sigma_s": 1,
+        "reference_passages": 1593,
+        "peaks": 26,
+        "first": {
+          "offset_utc": 1793727994.9713345,
+          "score": 10.208752122467617,
+          "matches": 12,
+          "background": 16.17161887356299,
+          "detection_probability": 0.09927657703471723,
+          "median_abs_residual_s": 0.40305066108703613
+        }
+      },
+      {
+        "case": "broadcast-a",
+        "range_m": 2000,
+        "sigma_s": 3,
+        "reference_passages": 1593,
+        "peaks": 26,
+        "first": {
+          "offset_utc": 1793673295.747551,
+          "score": 8.24448788511429,
+          "matches": 18,
+          "background": 12.288768425668403,
+          "detection_probability": 0.14902758885243367,
+          "median_abs_residual_s": 2.477238178253174
+        }
+      },
+      {
+        "case": "broadcast-a",
+        "range_m": 2000,
+        "sigma_s": 10,
+        "reference_passages": 1593,
+        "peaks": 26,
+        "first": {
+          "offset_utc": 1793717884.1394162,
+          "score": 5.590219810245333,
+          "matches": 24,
+          "background": 8.946489514140858,
+          "detection_probability": 0.26236127476059334,
+          "median_abs_residual_s": 6.104828476905823
+        }
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 500,
+        "sigma_s": 1,
+        "reference_passages": 371,
+        "peaks": 38,
+        "first": {
+          "offset_utc": 1793740500.718034,
+          "score": 15.819103313959433,
+          "matches": 8,
+          "background": 30.37249959338115,
+          "detection_probability": 0.5085000271079232,
+          "median_abs_residual_s": 0.47021543979644775
+        }
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 500,
+        "sigma_s": 3,
+        "reference_passages": 371,
+        "peaks": 38,
+        "first": {
+          "offset_utc": 1793740500.7583752,
+          "score": 10.473353936575442,
+          "matches": 9,
+          "background": 30.072585550645776,
+          "detection_probability": 0.5284883896089947,
+          "median_abs_residual_s": 0.4982929229736328
+        }
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 500,
+        "sigma_s": 10,
+        "reference_passages": 371,
+        "peaks": 38,
+        "first": {
+          "offset_utc": 1793690533.9281423,
+          "score": 3.342297109843823,
+          "matches": 7,
+          "background": 32.959864053828625,
+          "detection_probability": 0.6300169932714215,
+          "median_abs_residual_s": 1.4254462718963623
+        }
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 1000,
+        "sigma_s": 1,
+        "reference_passages": 461,
+        "peaks": 38,
+        "first": {
+          "offset_utc": 1793740500.718034,
+          "score": 14.867795084307225,
+          "matches": 8,
+          "background": 30.427490782779394,
+          "detection_probability": 0.4454417186600357,
+          "median_abs_residual_s": 0.47021543979644775
+        }
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 1000,
+        "sigma_s": 3,
+        "reference_passages": 461,
+        "peaks": 38,
+        "first": {
+          "offset_utc": 1793740500.7583752,
+          "score": 9.490155191204757,
+          "matches": 9,
+          "background": 30.219818222397723,
+          "detection_probability": 0.45765323814418357,
+          "median_abs_residual_s": 0.4982929229736328
+        }
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 1000,
+        "sigma_s": 10,
+        "reference_passages": 461,
+        "peaks": 38,
+        "first": {
+          "offset_utc": 1793690802.958108,
+          "score": 4.128789598693302,
+          "matches": 12,
+          "background": 29.934559462545355,
+          "detection_probability": 0.5761244892446631,
+          "median_abs_residual_s": 4.973565578460693
+        }
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 2000,
+        "sigma_s": 1,
+        "reference_passages": 1593,
+        "peaks": 38,
+        "first": {
+          "offset_utc": 1793713237.77263,
+          "score": 10.59929992962246,
+          "matches": 10,
+          "background": 29.388519243473993,
+          "detection_probability": 0.1813163396860433,
+          "median_abs_residual_s": 0.40476036071777344
+        }
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 2000,
+        "sigma_s": 3,
+        "reference_passages": 1593,
+        "peaks": 38,
+        "first": {
+          "offset_utc": 1793727727.6214082,
+          "score": 6.843264043208665,
+          "matches": 23,
+          "background": 23.432778391866258,
+          "detection_probability": 0.14667921049498162,
+          "median_abs_residual_s": 2.7528772354125977
+        }
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 2000,
+        "sigma_s": 10,
+        "reference_passages": 1593,
+        "peaks": 38,
+        "first": {
+          "offset_utc": 1793717184.887465,
+          "score": 6.235183418153113,
+          "matches": 31,
+          "background": 18.835866479087734,
+          "detection_probability": 0.2994909947034012,
+          "median_abs_residual_s": 6.787680387496948
+        }
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 500,
+        "sigma_s": 1,
+        "reference_passages": 0,
+        "peaks": 79,
+        "first": null
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 500,
+        "sigma_s": 3,
+        "reference_passages": 0,
+        "peaks": 79,
+        "first": null
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 500,
+        "sigma_s": 10,
+        "reference_passages": 0,
+        "peaks": 79,
+        "first": null
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 1000,
+        "sigma_s": 1,
+        "reference_passages": 1085,
+        "peaks": 79,
+        "first": {
+          "offset_utc": 1793728956.548577,
+          "score": 8.837922060744745,
+          "matches": 19,
+          "background": 66.30396616816867,
+          "detection_probability": 0.19837552862236452,
+          "median_abs_residual_s": 1.1265511512756348
+        }
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 1000,
+        "sigma_s": 3,
+        "reference_passages": 1085,
+        "peaks": 79,
+        "first": {
+          "offset_utc": 1793717162.7967634,
+          "score": 5.855698904430682,
+          "matches": 23,
+          "background": 66.8760839231164,
+          "detection_probability": 0.28866444479978837,
+          "median_abs_residual_s": 1.8513832092285156
+        }
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 1000,
+        "sigma_s": 10,
+        "reference_passages": 1085,
+        "peaks": 79,
+        "first": {
+          "offset_utc": 1793731560.5969625,
+          "score": 3.6725242613922973,
+          "matches": 56,
+          "background": 56.50483029709937,
+          "detection_probability": 0.3185811579073339,
+          "median_abs_residual_s": 6.71927535533905
+        }
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 2000,
+        "sigma_s": 1,
+        "reference_passages": 1613,
+        "peaks": 79,
+        "first": {
+          "offset_utc": 1793728956.8848906,
+          "score": 8.786151252266384,
+          "matches": 24,
+          "background": 64.53502174353564,
+          "detection_probability": 0.1506768568381704,
+          "median_abs_residual_s": 0.8299621343612671
+        }
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 2000,
+        "sigma_s": 3,
+        "reference_passages": 1613,
+        "peaks": 79,
+        "first": {
+          "offset_utc": 1793728957.0215008,
+          "score": 5.695199206634943,
+          "matches": 40,
+          "background": 61.93430662521375,
+          "detection_probability": 0.1777727231851402,
+          "median_abs_residual_s": 1.8199790716171265
+        }
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 2000,
+        "sigma_s": 10,
+        "reference_passages": 1613,
+        "peaks": 79,
+        "first": {
+          "offset_utc": 1793731559.9904308,
+          "score": 4.145751283354944,
+          "matches": 68,
+          "background": 49.92137224690063,
+          "detection_probability": 0.2862283661264923,
+          "median_abs_residual_s": 6.493630528450012
+        }
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 500,
+        "sigma_s": 1,
+        "reference_passages": 0,
+        "peaks": 80,
+        "first": null
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 500,
+        "sigma_s": 3,
+        "reference_passages": 0,
+        "peaks": 80,
+        "first": null
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 500,
+        "sigma_s": 10,
+        "reference_passages": 0,
+        "peaks": 80,
+        "first": null
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 1000,
+        "sigma_s": 1,
+        "reference_passages": 1085,
+        "peaks": 80,
+        "first": {
+          "offset_utc": 1793672057.6354456,
+          "score": 8.580185281926388,
+          "matches": 18,
+          "background": 68.30973253809844,
+          "detection_probability": 0.21255031748911923,
+          "median_abs_residual_s": 0.8844504356384277
+        }
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 1000,
+        "sigma_s": 3,
+        "reference_passages": 1085,
+        "peaks": 80,
+        "first": {
+          "offset_utc": 1793672058.1977842,
+          "score": 5.4281800611201465,
+          "matches": 27,
+          "background": 66.91508907477183,
+          "detection_probability": 0.23787136625829453,
+          "median_abs_residual_s": 1.77618408203125
+        }
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 1000,
+        "sigma_s": 10,
+        "reference_passages": 1085,
+        "peaks": 80,
+        "first": {
+          "offset_utc": 1793713811.1848192,
+          "score": 3.1660709080639986,
+          "matches": 34,
+          "background": 64.3430065028096,
+          "detection_probability": 0.3900396679460818,
+          "median_abs_residual_s": 5.1163413524627686
+        }
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 2000,
+        "sigma_s": 1,
+        "reference_passages": 1613,
+        "peaks": 80,
+        "first": {
+          "offset_utc": 1793737115.0305142,
+          "score": 9.175381546097665,
+          "matches": 23,
+          "background": 65.77722292035891,
+          "detection_probability": 0.16035677873638893,
+          "median_abs_residual_s": 0.8829119205474854
+        }
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 2000,
+        "sigma_s": 3,
+        "reference_passages": 1613,
+        "peaks": 80,
+        "first": {
+          "offset_utc": 1793737115.0305142,
+          "score": 6.174443441434462,
+          "matches": 37,
+          "background": 62.54566474837109,
+          "detection_probability": 0.19707407794827309,
+          "median_abs_residual_s": 1.6185543537139893
+        }
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 2000,
+        "sigma_s": 10,
+        "reference_passages": 1613,
+        "peaks": 80,
+        "first": {
+          "offset_utc": 1793713107.9612503,
+          "score": 2.9536990870429065,
+          "matches": 40,
+          "background": 62.353415432916734,
+          "detection_probability": 0.3605604245346252,
+          "median_abs_residual_s": 5.826850414276123
+        }
+      },
+      {
+        "case": "fixed-c",
+        "range_m": 500,
+        "sigma_s": 1,
+        "reference_passages": 0,
+        "peaks": 176,
+        "first": null
+      },
+      {
+        "case": "fixed-c",
+        "range_m": 500,
+        "sigma_s": 3,
+        "reference_passages": 0,
+        "peaks": 176,
+        "first": null
+      },
+      {
+        "case": "fixed-c",
+        "range_m": 500,
+        "sigma_s": 10,
+        "reference_passages": 0,
+        "peaks": 176,
+        "first": null
+      },
+      {
+        "case": "fixed-c",
+        "range_m": 1000,
+        "sigma_s": 1,
+        "reference_passages": 1085,
+        "peaks": 176,
+        "first": {
+          "offset_utc": 1793673485.8096185,
+          "score": 8.49327738553568,
+          "matches": 31,
+          "background": 159.45653501255654,
+          "detection_probability": 0.13234771989954774,
+          "median_abs_residual_s": 0.8431947231292725
+        }
+      },
+      {
+        "case": "fixed-c",
+        "range_m": 1000,
+        "sigma_s": 3,
+        "reference_passages": 1085,
+        "peaks": 176,
+        "first": {
+          "offset_utc": 1793735571.5176573,
+          "score": 7.945123865235331,
+          "matches": 56,
+          "background": 151.4744498966192,
+          "detection_probability": 0.20962008696679257,
+          "median_abs_residual_s": 2.6674081087112427
+        }
+      },
+      {
+        "case": "fixed-c",
+        "range_m": 1000,
+        "sigma_s": 10,
+        "reference_passages": 1085,
+        "peaks": 176,
+        "first": {
+          "offset_utc": 1793735517.727281,
+          "score": 3.5046851884313845,
+          "matches": 101,
+          "background": 144.21144381718446,
+          "detection_probability": 0.2777505247129768,
+          "median_abs_residual_s": 8.88027310371399
+        }
+      },
+      {
+        "case": "fixed-c",
+        "range_m": 2000,
+        "sigma_s": 1,
+        "reference_passages": 1613,
+        "peaks": 176,
+        "first": {
+          "offset_utc": 1793669496.5609014,
+          "score": 8.083016040488026,
+          "matches": 39,
+          "background": 157.92758250082971,
+          "detection_probability": 0.10268507773974944,
+          "median_abs_residual_s": 0.902864933013916
+        }
+      },
+      {
+        "case": "fixed-c",
+        "range_m": 2000,
+        "sigma_s": 3,
+        "reference_passages": 1613,
+        "peaks": 176,
+        "first": {
+          "offset_utc": 1793735571.8824065,
+          "score": 9.914986105305545,
+          "matches": 79,
+          "background": 142.93744466926688,
+          "detection_probability": 0.18166239243309285,
+          "median_abs_residual_s": 2.513615369796753
+        }
+      },
+      {
+        "case": "fixed-c",
+        "range_m": 2000,
+        "sigma_s": 10,
+        "reference_passages": 1613,
+        "peaks": 176,
+        "first": {
+          "offset_utc": 1793735523.2118888,
+          "score": 2.760364574385896,
+          "matches": 132,
+          "background": 143.09122046969304,
+          "detection_probability": 0.18285782528639166,
+          "median_abs_residual_s": 7.00005829334259
+        }
+      }
+    ]
+  },
+  "width_check": {
+    "unchanged_native_baseline_peaks_verified": true,
+    "cases": [
+      {
+        "case": "broadcast-a",
+        "variants": [
+          {
+            "width_s": [
+              0.5,
+              20
+            ],
+            "peaks": 26
+          },
+          {
+            "width_s": [
+              0.5,
+              120
+            ],
+            "peaks": 30
+          },
+          {
+            "width_s": [
+              10,
+              120
+            ],
+            "peaks": 18
+          }
+        ]
+      },
+      {
+        "case": "broadcast-b",
+        "variants": [
+          {
+            "width_s": [
+              0.5,
+              20
+            ],
+            "peaks": 38
+          },
+          {
+            "width_s": [
+              0.5,
+              120
+            ],
+            "peaks": 41
+          },
+          {
+            "width_s": [
+              10,
+              120
+            ],
+            "peaks": 21
+          }
+        ]
+      },
+      {
+        "case": "fixed-a",
+        "variants": [
+          {
+            "width_s": [
+              0.5,
+              20
+            ],
+            "peaks": 79
+          },
+          {
+            "width_s": [
+              0.5,
+              120
+            ],
+            "peaks": 79
+          },
+          {
+            "width_s": [
+              10,
+              120
+            ],
+            "peaks": 5
+          }
+        ]
+      },
+      {
+        "case": "fixed-b",
+        "variants": [
+          {
+            "width_s": [
+              0.5,
+              20
+            ],
+            "peaks": 80
+          },
+          {
+            "width_s": [
+              0.5,
+              120
+            ],
+            "peaks": 81
+          },
+          {
+            "width_s": [
+              10,
+              120
+            ],
+            "peaks": 12
+          }
+        ]
+      }
+    ],
+    "decision": "No detector change. Few additional peaks and no established location improvement."
+  },
+  "region_radius_check": {
+    "cases": 23,
+    "fit_a_1km_region_with_original_signal_screen": 7,
+    "new_cases_passing_region_check": 1,
+    "decision": "One additional Midway recording fits an enclosing region. This diagnostic does not alter the original benchmark statuses. A region-center implementation is being checked separately."
+  },
+  "speech_exclusion": {
+    "audio_only": true,
+    "model_revision": "f826b80d28226b62986cc218e5cec390b1096902",
+    "model_file_checksums_verified": true,
+    "threshold": 0.5,
+    "predictions_not_ground_truth": true,
+    "all_score_arrays_and_filter_decisions_verified": true,
+    "cases": [
+      {
+        "case": "broadcast-a",
+        "media_sha256": "e7ffaaf7663b4d8cd543acbc9b23b8538a9ef2f147b590ae3e91a3b6b1a8eaa5",
+        "duration_s": 3600.0,
+        "original_peaks": 26,
+        "retained_peaks": 10,
+        "elapsed_s": 80.48184720007703,
+        "scores_sha256": "0b5e9e38e80c8daea48ab684379c9d40a335817a6a8312511bc7dd6b818aa1c9"
+      },
+      {
+        "case": "broadcast-b",
+        "media_sha256": "f00ba7eeb9229d5f4404378f6d7ccb31034ea3190f96f013fbae53807d2a5701",
+        "duration_s": 3600.0,
+        "original_peaks": 38,
+        "retained_peaks": 10,
+        "elapsed_s": 114.17817749991082,
+        "scores_sha256": "290699d1beafeb4be5b3dfdec258f9e8ecf05517a47e17311405fb86d9ddb408"
+      },
+      {
+        "case": "fixed-a",
+        "media_sha256": "96f6ca531aa521c6fa837103483a53b804825e049856ae0c3960f4ef370a1b0c",
+        "duration_s": 3597.676625,
+        "original_peaks": 79,
+        "retained_peaks": 15,
+        "elapsed_s": 233.15895250008907,
+        "scores_sha256": "0181a832ec5bb7522cf166a9c06c565728b86c25e46ccfcb7abcc3aa90a96f92"
+      },
+      {
+        "case": "fixed-b",
+        "media_sha256": "f7866bf3fa86c685c8670deb60c5b31c794e214793f42798f762841609fa25c4",
+        "duration_s": 3599.998625,
+        "original_peaks": 80,
+        "retained_peaks": 18,
+        "elapsed_s": 230.65230580000207,
+        "scores_sha256": "be7a3011aed4e5317317f45b503a444616c670435b9b3811291c11d8abe168f9"
+      },
+      {
+        "case": "midway-nov4-a",
+        "media_sha256": "5ef6d2dacfa386ee62644d594994842c2d3863b40d40a047a2a66d3f1f23c8df",
+        "duration_s": 3599.998625,
+        "original_peaks": 69,
+        "retained_peaks": 69,
+        "elapsed_s": 201.64218089997303,
+        "scores_sha256": "b7081c9cd4e5d3f2e5d9042329bed8c4e016cceec5bdfaada8c05d55cc074b0f"
+      }
+    ],
+    "searches": [
+      {
+        "case": "broadcast-a",
+        "range_m": 500,
+        "job_sha256": "f31541e957ae8cebead62a5761a651598e60427d0d00292fb5e507e48d949bc5",
+        "exit_code": 0,
+        "elapsed_s": 14.722421500016935,
+        "peaks": 10,
+        "report_sha256": "b5fbc64b53d4a41ce025cd36a8e34844a059161475556f0f12b1dd20862bcc1a",
+        "score": 13.789754122202444,
+        "matches": 5,
+        "error_m": 18227.476683827696,
+        "raw_within_1km": false
+      },
+      {
+        "case": "broadcast-b",
+        "range_m": 500,
+        "job_sha256": "ec4403c1fd5e9ffdbf0ad714c392f216773553f0158a3694fd0939c3b96afbe1",
+        "exit_code": 0,
+        "elapsed_s": 14.87939150002785,
+        "peaks": 10,
+        "report_sha256": "e4b1fb80f11732df4c71fa84102832eeb03aba6d3df1365f005f0d9950efa1da",
+        "score": 14.792704680695145,
+        "matches": 5,
+        "error_m": 436.4386924791097,
+        "raw_within_1km": true
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 1000,
+        "job_sha256": "f512e691f516dba2fe0f8a12af406f5d77a6528a2084d506b9c06c983c8d2c42",
+        "exit_code": 0,
+        "elapsed_s": 45.75080349994823,
+        "peaks": 15,
+        "report_sha256": "7ca1d90cee6c0381e0126575f3393f196ae8f10783a7f52d5d9cdea971176ca1",
+        "score": 15.612510337631582,
+        "matches": 6,
+        "error_m": 17350.275169221568,
+        "raw_within_1km": false
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 1000,
+        "job_sha256": "2a242f25990bb7c453b0ac7684a8aed2e363ad55a80cd92d0e98a45ce528edf5",
+        "exit_code": 0,
+        "elapsed_s": 45.59415529994294,
+        "peaks": 18,
+        "report_sha256": "4ecfed040642c96f1c101c1a2d8927de4ae33fe522b07bf918c7b5f0b1b77ecd",
+        "score": 13.760580167772794,
+        "matches": 6,
+        "error_m": 16720.670544553843,
+        "raw_within_1km": false
+      },
+      {
+        "case": "midway-nov4-a",
+        "range_m": 500,
+        "job_sha256": "5f0d028fbbdcea2f7622389c88d767230ebccbd53793abcfacc589016175b294",
+        "exit_code": 0,
+        "elapsed_s": 5.539173300028779,
+        "peaks": 69,
+        "report_sha256": "94980b560ce020796aef843de0d824f1ff1b5b05828de05a98940e857402273d",
+        "score": 35.14347574287635,
+        "matches": 17,
+        "error_m": 546.4508786068188,
+        "raw_within_1km": true
+      }
+    ],
+    "negative_controls_run": false,
+    "decision": "No classifier added. One LAX broadcast point was within 437 m with only five matches; the other three LAX points were wrong. The Midway peaks were unchanged."
+  }
+}

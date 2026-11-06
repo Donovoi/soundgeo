@@ -1,0 +1,163 @@
+{
+  "not_location_acceptance": true,
+  "external_recording_clock_supplied": false,
+  "ground_truth_supplied": false,
+  "previous_app_candidate_used": true,
+  "evaluated_app_revision": "22393e3cfdb816b94bb1cd567f6e6bac562db73f",
+  "fixed_association_refit": {
+    "raw_sha256": "1afc02913cc083ee1e7b48961bb09b5a2875f223a885676aa83a5658309be211",
+    "source_sha256": "0781f42fb799dbdf62415856d85c444bf491847106ffd6586fd026b2a55ccb37",
+    "initial": {
+      "accepted_error_percent": 0.6828198435635118,
+      "core_error_percent": 0.6828198435635118,
+      "matches": [
+        {
+          "aircraft": "ac3eba/2",
+          "error_percent": 0.7775035115888009,
+          "event": 4,
+          "variant": 1
+        },
+        {
+          "aircraft": "ac9cb1/3",
+          "error_percent": 0.7059699177899488,
+          "event": 6,
+          "variant": 0
+        },
+        {
+          "aircraft": "ac6227/3",
+          "error_percent": 0.5438966638388513,
+          "event": 9,
+          "variant": 0
+        }
+      ],
+      "rate": 1.0020703124999997,
+      "sampled_error_percent": 0.7917449469297724,
+      "start": 1793563065.079454
+    },
+    "profiled": [
+      {
+        "anchor": 4,
+        "fit": {
+          "accepted_error_percent": 0.6828198435635118,
+          "core_error_percent": 0.6828198435635118,
+          "matches": [
+            {
+              "aircraft": "ac3eba/2",
+              "error_percent": 0.7775035115888009,
+              "event": 4,
+              "variant": 1
+            },
+            {
+              "aircraft": "ac9cb1/3",
+              "error_percent": 0.7059699177899488,
+              "event": 6,
+              "variant": 0
+            },
+            {
+              "aircraft": "ac6227/3",
+              "error_percent": 0.5438966638388513,
+              "event": 9,
+              "variant": 0
+            }
+          ],
+          "rate": 1.0020703124999997,
+          "sampled_error_percent": 0.7917449469297724,
+          "start": 1793563065.079454
+        }
+      },
+      {
+        "anchor": 6,
+        "fit": {
+          "accepted_error_percent": 0.6828198435635118,
+          "core_error_percent": 0.6828198435635118,
+          "matches": [
+            {
+              "aircraft": "ac3eba/2",
+              "error_percent": 0.7775035115888009,
+              "event": 4,
+              "variant": 1
+            },
+            {
+              "aircraft": "ac9cb1/3",
+              "error_percent": 0.7059699177899488,
+              "event": 6,
+              "variant": 0
+            },
+            {
+              "aircraft": "ac6227/3",
+              "error_percent": 0.5438966638388513,
+              "event": 9,
+              "variant": 0
+            }
+          ],
+          "rate": 1.0020703124999997,
+          "sampled_error_percent": 0.7917449469297724,
+          "start": 1793563065.079454
+        }
+      },
+      {
+        "anchor": 9,
+        "fit": {
+          "accepted_error_percent": 0.6693328488829147,
+          "core_error_percent": 0.6693328488829147,
+          "matches": [
+            {
+              "aircraft": "ac3eba/2",
+              "error_percent": 0.7479156357810848,
+              "event": 4,
+              "variant": 1
+            },
+            {
+              "aircraft": "ac9cb1/3",
+              "error_percent": 0.699133845729669,
+              "event": 6,
+              "variant": 0
+            },
+            {
+              "aircraft": "ac6227/3",
+              "error_percent": 0.5439241264097182,
+              "event": 9,
+              "variant": 0
+            }
+          ],
+          "rate": 1.0020898437499997,
+          "sampled_error_percent": 0.7817035459193563,
+          "start": 1793563065.0188868
+        }
+      }
+    ]
+  },
+  "restricted_reference_run": {
+    "previous_app_aircraft_identities_supplied": true,
+    "original_broad_bounds": true,
+    "cli_sha256": "d6bf14b400b6cdf0f38d0f2bdca4c139f40270ce80bb79dbb03fc49831848f8c",
+    "hypotheses": 563454,
+    "events": 11,
+    "candidates": 1,
+    "matches": [
+      3
+    ],
+    "status": "ambiguous",
+    "elapsed_s": 56.26,
+    "first_candidate": {
+      "latitude": 41.77841675136895,
+      "longitude": -87.74252544246058,
+      "ground_m": 146.19207918647186,
+      "recording_start_utc": "2026-11-01T19:57:45.150+00:00",
+      "recording_start_unix": 1793563065.150152,
+      "recording_clock_rate": 1.00208984375,
+      "relative_error_percent": 0.6368930164201742
+    },
+    "report_sha256": "2aeaf7e8a247833e537dfa5e34176baa49ed22923a353eb9af0fa5bcdcc6a0ea"
+  },
+  "proposal_regression": {
+    "name": "proposal_assembly_preserves_competing_flight_choices",
+    "old_proposal_rejected_valid_independent_assignment": true,
+    "corrected_proposal_preserves_options": true,
+    "event_order_permutation_checked": true,
+    "duplicate_flight_rejected": true,
+    "red_log_sha256": "653c594684308204491fa3bc4f4c8e919b595a06dcd6f74ee4e8f7572142de08",
+    "green_log_sha256": "ad094a72a3146c00a511ab390fa9eecb4a54f2054c951b2dddb1ce73ec35e356"
+  },
+  "limitations": "The restricted-reference run diagnoses lost proposals. It supplies previous app-selected aircraft, so it is not an accuracy case. The construction regression proves a separate order-dependent proposal bug; its contribution to the broad Midway failure is not yet established."
+}

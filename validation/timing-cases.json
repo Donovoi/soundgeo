@@ -1,0 +1,1188 @@
+{
+  "target_error_m": 1000,
+  "original_250m_manifest_unchanged": true,
+  "all_cases_are_replays": true,
+  "recording_clock_supplied": false,
+  "possible_date_and_broad_region_are_supplied": true,
+  "media_redistributed": false,
+  "selection_plan_sha256": "a6acdf45498011e90adf73abdfef2e1b5039ad5b0ee8bbc99bc815fe4f1885c2",
+  "cases": [
+    {
+      "id": "maho-nov1-a",
+      "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 17.85,
+          "north": 18.25,
+          "west": -63.35,
+          "east": -62.95
+        },
+        "ground_datum": "egm96",
+        "ground_m": 0.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "maho-nov1-validation/a/recording.mkv"
+      },
+      "references": [
+        {
+          "latitude": 18.0402897,
+          "longitude": -63.1208364
+        }
+      ],
+      "reference_allowance_m": 200,
+      "baseline_report_sha256": "5502f2b0cfa7980fa0667d1ed39bf6a96f13b13414ac723f1f00b46b2e2c3180",
+      "archive": {
+        "date_from": "2026-11-01",
+        "date_to": null,
+        "cache": "sample-native-validation/cache",
+        "provider": "adsb_exchange_sample"
+      }
+    },
+    {
+      "id": "maho-nov1-b",
+      "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 17.85,
+          "north": 18.25,
+          "west": -63.35,
+          "east": -62.95
+        },
+        "ground_datum": "egm96",
+        "ground_m": 0.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "maho-nov1-validation/b/recording.mkv"
+      },
+      "references": [
+        {
+          "latitude": 18.0402897,
+          "longitude": -63.1208364
+        }
+      ],
+      "reference_allowance_m": 200,
+      "baseline_report_sha256": "780bb95c33254577f6fb946fa6bcf74f02178185cbf8a15810076346e8a0b514",
+      "archive": {
+        "date_from": "2026-11-01",
+        "date_to": null,
+        "cache": "sample-native-validation/cache",
+        "provider": "adsb_exchange_sample"
+      }
+    },
+    {
+      "id": "maho-continuous-c",
+      "media_sha256": "75c0e04d7940f3b855ec598018861866b0ac40f07351e18eb400adaa94d30795",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 17.85,
+          "north": 18.25,
+          "west": -63.35,
+          "east": -62.95
+        },
+        "ground_datum": "egm96",
+        "ground_m": 0.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "maho-continuous-followup/c/recording.mkv"
+      },
+      "references": [
+        {
+          "latitude": 18.0402897,
+          "longitude": -63.1208364
+        }
+      ],
+      "reference_allowance_m": 200,
+      "baseline_report_sha256": "e41b44239afe1bb045a2ad474947c34c56eb7dce0a5f478e7a4d58adf719d2b2",
+      "archive": {
+        "date_from": "2026-11-01",
+        "date_to": null,
+        "cache": "sample-native-validation/cache",
+        "provider": "adsb_exchange_sample"
+      }
+    },
+    {
+      "id": "midway-arrivals",
+      "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/midway-arrivals/recording.mp4",
+        "tracks": "real-validation/midway-flights-full-day.csv",
+        "type_catalog": "free-airport-sources/webtrak-cda-2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209,
+          "basis": "Published StreamTime LIVE camera coordinates in the source description"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "55ad85a92377c9d570b798fe7fb93f04519c04f7960148082aab302ff8d6b71d",
+      "archive": {
+        "date_from": "2026-11-03",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "midway-nov4-e",
+      "media_sha256": "58077f7254407a6bbe1afd8f36e09dc1b5ca93de70b928485d469c1a9503a69d",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "timing-integrated-heldout/midway-nov4-e/recording.mp4",
+        "tracks": "free-airport-sources/webtrak-cda-2026-11-04/flights.csv",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "39adb99838743da3253d0ae5e569b0549f5b45b5302c9f049f3c956197bfc941",
+      "archive": {
+        "date_from": "2026-11-04",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "midway-nov4-f",
+      "media_sha256": "17bfd9100c38ecc14d0dd1988eccabf2c7fa7eb250b69345ba1a72da6a0b3471",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "timing-integrated-heldout/midway-nov4-f/recording.mp4",
+        "tracks": "free-airport-sources/webtrak-cda-2026-11-04/flights.csv",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "289cf0f32f2b0003bdcffd069b954e3e9683a69c8f252bfca3f9a79312641367",
+      "archive": {
+        "date_from": "2026-11-04",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "southampton",
+      "media_sha256": "88fadc80a7209432e01350aec3adc901e296e3174ee1f469022d6ec47c1d7e30",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 50.8,
+          "north": 51.16,
+          "west": -1.63,
+          "east": -1.05
+        },
+        "ground_datum": "egm96",
+        "ground_m": 10.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/southampton/recording.mp4",
+        "tracks": "real-validation/southampton-flights-full-day.csv"
+      },
+      "references": [
+        {
+          "latitude": 50.89677,
+          "longitude": -1.40477,
+          "basis": "La Regata public ferry-camera host building; approximate building centroid, about 15 m uncertainty"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "3995e59aaa3515f5dd530d7fc7de59cd5b9d75e8c421c612739a74f90bdfb4e6"
+    },
+    {
+      "id": "midway-nov4-a",
+      "media_sha256": "5ef6d2dacfa386ee62644d594994842c2d3863b40d40a047a2a66d3f1f23c8df",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "fresh-validation/midway-nov4-a/recording.mp4",
+        "tracks": "free-airport-sources/webtrak-cda-2026-11-04/flights.csv",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "87d3708c3fb98f417c08d5bc4f9c2a505a1b83859756933d1cd697010e2eb65a",
+      "archive": {
+        "date_from": "2026-11-04",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "midway-nov4-b",
+      "media_sha256": "4be21eaaa6a3569efdc2b486037b6871b2c72d4f514ea9bf510db89ffd166eb4",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "fresh-validation/midway-nov4-b/recording.mp4",
+        "tracks": "free-airport-sources/webtrak-cda-2026-11-04/flights.csv",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "231ede77b9d6c89240165d428cc3fb8753cd368df73ddbafaebfbb0be625b15a",
+      "archive": {
+        "date_from": "2026-11-04",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "midway-nov4-c",
+      "media_sha256": "3b1c10792a8269ca98affd32288be89b2d5ae27a6ffb4f14488cb575abd11a1a",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "timing-heldout/midway-nov4-c/recording.mp4",
+        "tracks": "free-airport-sources/webtrak-cda-2026-11-04/flights.csv",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "829544e5f69568caa23d1db38332bd009e3a66009970766e459a29bc65bd7963",
+      "archive": {
+        "date_from": "2026-11-04",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "midway-nov4-d",
+      "media_sha256": "9a459488df4fa077f9ab1147730d4d2607a340ac67c7a385032bc3d714085dc3",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "timing-heldout/midway-nov4-d/recording.mp4",
+        "tracks": "free-airport-sources/webtrak-cda-2026-11-04/flights.csv",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "be73370694a74dd2f465d6bdb2b6b9606b86751fd2c8825adae35eec867778ba",
+      "archive": {
+        "date_from": "2026-11-04",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "midway",
+      "media_sha256": "38e22e7253db6eb19c1fb90d2d852ad6807467d3705f8d28e5635a2d6766b276",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/midway/recording.mp4",
+        "tracks": "real-validation/midway-flights-full-day.csv",
+        "type_catalog": "free-airport-sources/webtrak-cda-2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209,
+          "basis": "Published StreamTime LIVE camera coordinates in the source description"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "8b409f1531008085a5e3a642269fe100c7a7c8930ddb925ce2b1553611db56e5",
+      "archive": {
+        "date_from": "2026-11-03",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "midway-holdout",
+      "media_sha256": "985b9035059956f43f989d8c14049d00d08679902e8b3d421fa7f1c9f63d6f04",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/midway-holdout/recording.mp4",
+        "tracks": "real-validation/midway-flights-full-day.csv",
+        "type_catalog": "free-airport-sources/webtrak-cda-2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209,
+          "basis": "Published StreamTime LIVE camera coordinates in the source description"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "e2169e4b0b5b861291f18a0b2115c1c594f8a70f9bb427888cabaa4b80d7b5b6",
+      "archive": {
+        "date_from": "2026-11-03",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "midway-nov1",
+      "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/midway-nov1/recording.mp4",
+        "tracks": "real-validation/free-exchange-2026-11-01",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209,
+          "basis": "Published StreamTime LIVE camera coordinates in the source description"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "b38c1fc75b9f108a26a36806807c90113fc12780ce7976a6cffa738c0764c638",
+      "archive": {
+        "date_from": "2026-11-01",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "midway-nov1-holdout",
+      "media_sha256": "915c8ccfe6e7af52920567c602b5dbacfaedc2973ce14b540b7d3367dacdb62f",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 41.65,
+          "north": 42.01,
+          "west": -87.98,
+          "east": -87.5
+        },
+        "ground_datum": "egm96",
+        "ground_m": 180.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/midway-nov1-holdout/recording.mp4",
+        "tracks": "real-validation/free-exchange-2026-11-01",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 41.77844250226028,
+          "longitude": -87.74277810405209,
+          "basis": "Published StreamTime LIVE camera coordinates in the source description"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "bb20cb4dc1960af949882fab7f6ac7080cbb763d3d2d5c949af3e51c52a381bf",
+      "archive": {
+        "date_from": "2026-11-01",
+        "date_to": null,
+        "cache": "free-airport-sources",
+        "provider": "webtrak_chicago"
+      }
+    },
+    {
+      "id": "southampton-nov1",
+      "media_sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 50.8,
+          "north": 51.16,
+          "west": -1.63,
+          "east": -1.05
+        },
+        "ground_datum": "egm96",
+        "ground_m": 10.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/southampton-nov1/recording.mp4",
+        "tracks": "real-validation/free-exchange-2026-11-01",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 50.89677,
+          "longitude": -1.40477,
+          "basis": "La Regata public ferry-camera host building; approximate building centroid, about 15 m uncertainty"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "5ef53987625673c39e3cb2229477190d4107e1d42a1304ca21447e55d93eb601"
+    },
+    {
+      "id": "lake-hood",
+      "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_datum": "egm96",
+        "ground_m": 27.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/lake-hood/recording.mp4",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "ae2684c89419125ea3fd1f3b59695153adb28596835fe4475584a5c6b11dafbd",
+      "archive": {
+        "date_from": "2026-11-03",
+        "date_to": null,
+        "cache": "real-validation/flight-cache",
+        "provider": "adsb_lol"
+      }
+    },
+    {
+      "id": "lake-hood-nov1",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_datum": "egm96",
+        "ground_m": 27.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/lake-hood-nov1/recording.mp4",
+        "tracks": "real-validation/free-exchange-alaska-2026-11-01",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "0a4a33d986551b4e777ceb9c344a12e350d9f46679f456a758e2e146edfbde43"
+    },
+    {
+      "id": "lake-hood-nov1-later",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_datum": "egm96",
+        "ground_m": 27.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "real-validation/lake-hood-nov1-later/recording.mp4",
+        "tracks": "real-validation/free-exchange-alaska-2026-11-01",
+        "type_catalog": "real-validation/flight-cache/2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "e88c88495168bb5008f1f339d0f9977691162d68d425d53e30f616581a464619"
+    },
+    {
+      "id": "lake-hood-nov4-a",
+      "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_datum": "egm96",
+        "ground_m": 27.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "fresh-validation/lake-hood-nov4-a/recording.mp4",
+        "tracks": "real-validation/flight-cache/2026-11-04",
+        "type_catalog": "real-validation/flight-cache/2026-11-04/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Previously verified owner map pin; not a survey"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "73d8fd22996c85185d7f3a861f823ff51da99f2e7ae6e9598d793950b4bec3cd"
+    },
+    {
+      "id": "lake-hood-nov4-b",
+      "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        },
+        "ground_datum": "egm96",
+        "ground_m": 27.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "fresh-validation/lake-hood-nov4-b/recording.mp4",
+        "tracks": "real-validation/flight-cache/2026-11-04",
+        "type_catalog": "real-validation/flight-cache/2026-11-04/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Previously verified owner map pin; not a survey"
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "0406e168feed3d509192ce43657645f1cda222d636a9d1203d25cb13abaac276"
+    },
+    {
+      "id": "lax-continuous-development",
+      "media_sha256": "7ea6f46155f3cdc900b8da26f9c4bc2c07c43b7c760d43cfe71a4434e9dd1606",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 33.76,
+          "north": 34.12,
+          "west": -118.65,
+          "east": -118.15
+        },
+        "ground_datum": "egm96",
+        "ground_m": 38.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 1000.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "lax-continuous-followup/recording.mkv",
+        "type_catalog": "lax-native-provider/cache/webtrak-lax4-2026-11-03/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 33.9456855,
+          "longitude": -118.3926219
+        },
+        {
+          "latitude": 33.9456861,
+          "longitude": -118.392963
+        },
+        {
+          "latitude": 33.9457671,
+          "longitude": -118.392962
+        },
+        {
+          "latitude": 33.9457672,
+          "longitude": -118.3929423
+        },
+        {
+          "latitude": 33.9458068,
+          "longitude": -118.3929423
+        },
+        {
+          "latitude": 33.9458067,
+          "longitude": -118.3929664
+        },
+        {
+          "latitude": 33.9462213,
+          "longitude": -118.3929669
+        },
+        {
+          "latitude": 33.9462939,
+          "longitude": -118.3929672
+        },
+        {
+          "latitude": 33.9463661,
+          "longitude": -118.3929673
+        },
+        {
+          "latitude": 33.9463664,
+          "longitude": -118.3926219
+        },
+        {
+          "latitude": 33.9458053,
+          "longitude": -118.3926212
+        },
+        {
+          "latitude": 33.9458053,
+          "longitude": -118.3926444
+        },
+        {
+          "latitude": 33.9457684,
+          "longitude": -118.3926444
+        },
+        {
+          "latitude": 33.9457685,
+          "longitude": -118.392624
+        },
+        {
+          "latitude": 33.9456855,
+          "longitude": -118.3926219
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "d13eef439c29ce649d3a867fe6fe0ffe5e437c6a7d99defdf35674e234b2ef69",
+      "archive": {
+        "date_from": "2026-11-03",
+        "date_to": null,
+        "cache": "lax-native-provider/cache",
+        "provider": "webtrak_lax"
+      }
+    },
+    {
+      "id": "maho-nov4-b",
+      "media_sha256": "66bff87e701936146f1c21f7cebdec1025a87b59b4244c0dbaf45d17455f05c4",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 17.85,
+          "north": 18.25,
+          "west": -63.35,
+          "east": -62.95
+        },
+        "ground_datum": "egm96",
+        "ground_m": 0.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 500.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "maho-nov4-validation/b/recording.mkv",
+        "tracks": "real-validation/flight-cache/2026-11-04",
+        "type_catalog": "real-validation/flight-cache/2026-11-04/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 18.0402897,
+          "longitude": -63.1208364
+        }
+      ],
+      "reference_allowance_m": 200,
+      "baseline_report_sha256": "9ad6430cf2370a7551e6cfbfc4e09413277db13cc4b0562f56248cf87d200fd1"
+    },
+    {
+      "id": "lax-nov4-a",
+      "media_sha256": "879310e95fe3c697fa32ccf0258109ce64a86f09a5c9a8b69e66c26be013f025",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 33.76,
+          "north": 34.12,
+          "west": -118.65,
+          "east": -118.15
+        },
+        "ground_datum": "egm96",
+        "ground_m": 38.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 1000.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "lax-nov4-reserved/a/recording.mkv",
+        "type_catalog": "lax-native-provider/cache/webtrak-lax4-2026-11-04/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 33.9456855,
+          "longitude": -118.3926219
+        },
+        {
+          "latitude": 33.9456861,
+          "longitude": -118.392963
+        },
+        {
+          "latitude": 33.9457671,
+          "longitude": -118.392962
+        },
+        {
+          "latitude": 33.9457672,
+          "longitude": -118.3929423
+        },
+        {
+          "latitude": 33.9458068,
+          "longitude": -118.3929423
+        },
+        {
+          "latitude": 33.9458067,
+          "longitude": -118.3929664
+        },
+        {
+          "latitude": 33.9462213,
+          "longitude": -118.3929669
+        },
+        {
+          "latitude": 33.9462939,
+          "longitude": -118.3929672
+        },
+        {
+          "latitude": 33.9463661,
+          "longitude": -118.3929673
+        },
+        {
+          "latitude": 33.9463664,
+          "longitude": -118.3926219
+        },
+        {
+          "latitude": 33.9458053,
+          "longitude": -118.3926212
+        },
+        {
+          "latitude": 33.9458053,
+          "longitude": -118.3926444
+        },
+        {
+          "latitude": 33.9457684,
+          "longitude": -118.3926444
+        },
+        {
+          "latitude": 33.9457685,
+          "longitude": -118.392624
+        },
+        {
+          "latitude": 33.9456855,
+          "longitude": -118.3926219
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "3a38af4f42534aedd8de1a0486470f0b8b99a2c3698d71665129ee71289811fa",
+      "archive": {
+        "date_from": "2026-11-04",
+        "date_to": null,
+        "cache": "lax-native-provider/cache",
+        "provider": "webtrak_lax"
+      }
+    },
+    {
+      "id": "lax-nov4-b",
+      "media_sha256": "639c4e25d9a3a14e0d14c1f24c0bf05c66936547b8aab2740501a9abb7b9190b",
+      "settings": {
+        "aircraft_filter": "all",
+        "bounds": {
+          "south": 33.76,
+          "north": 34.12,
+          "west": -118.65,
+          "east": -118.15
+        },
+        "ground_datum": "egm96",
+        "ground_m": 38.0,
+        "smooth_tracks": true,
+        "temperature_c": 15.0,
+        "timing_options": {
+          "grid_m": 300.0,
+          "maximum_grid_points": 50000,
+          "maximum_passage_distance_m": 1000.0,
+          "retained_candidates": 256
+        }
+      },
+      "paths": {
+        "media": "lax-nov4-reserved/b/recording.mkv",
+        "type_catalog": "lax-native-provider/cache/webtrak-lax4-2026-11-04/aircraft-types.json"
+      },
+      "references": [
+        {
+          "latitude": 33.9456855,
+          "longitude": -118.3926219
+        },
+        {
+          "latitude": 33.9456861,
+          "longitude": -118.392963
+        },
+        {
+          "latitude": 33.9457671,
+          "longitude": -118.392962
+        },
+        {
+          "latitude": 33.9457672,
+          "longitude": -118.3929423
+        },
+        {
+          "latitude": 33.9458068,
+          "longitude": -118.3929423
+        },
+        {
+          "latitude": 33.9458067,
+          "longitude": -118.3929664
+        },
+        {
+          "latitude": 33.9462213,
+          "longitude": -118.3929669
+        },
+        {
+          "latitude": 33.9462939,
+          "longitude": -118.3929672
+        },
+        {
+          "latitude": 33.9463661,
+          "longitude": -118.3929673
+        },
+        {
+          "latitude": 33.9463664,
+          "longitude": -118.3926219
+        },
+        {
+          "latitude": 33.9458053,
+          "longitude": -118.3926212
+        },
+        {
+          "latitude": 33.9458053,
+          "longitude": -118.3926444
+        },
+        {
+          "latitude": 33.9457684,
+          "longitude": -118.3926444
+        },
+        {
+          "latitude": 33.9457685,
+          "longitude": -118.392624
+        },
+        {
+          "latitude": 33.9456855,
+          "longitude": -118.3926219
+        }
+      ],
+      "reference_allowance_m": 0,
+      "baseline_report_sha256": "35739b49d987aa8ab19c13078118d83f1b5eb400fbf0387fa3cdf69c5e8553d8",
+      "archive": {
+        "date_from": "2026-11-04",
+        "date_to": null,
+        "cache": "lax-native-provider/cache",
+        "provider": "webtrak_lax"
+      }
+    }
+  ]
+}

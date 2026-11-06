@@ -1,0 +1,166 @@
+{
+  "accuracy_target_m": 250,
+  "development_experiment": true,
+  "production_code_contains_timing_pipeline": false,
+  "externally_supplied_clock_or_camera": false,
+  "computed_proposals_supplied_to_child_doppler_searches": true,
+  "acceptance_limits_unchanged": true,
+  "followup_code_commit": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+  "followup_cli_sha256": "c37bb556329863b59c0ad6ebd0ecc28aa112828b5afb94d45ef87a4ca29b6319",
+  "script_sha256": {
+    "prepare_timing_seed_diagnostic.py": "59d3e715d5a7d5e1617ce4cfd97222175198e168df95b134b056db17fdc1b5e2",
+    "probe_timing_seed_region.py": "39a12ec50572667408bd6badde37be4e6cac4ee67b92763134f56050f328ec05",
+    "run_timing_seed_followup.py": "1992a19974769758517e4c8bbb017ebff9a1185cf147f2036fcd5c1a19048be9",
+    "evaluate_timing_seed_followup.py": "d053d0d627453a9f114ea1733b55a796dc408c11960d17d04c97b970fe909ba5"
+  },
+  "cases": [
+    {
+      "case": "midway-nov1",
+      "selected_proposals": 2,
+      "counts_as_production_acceptance": false,
+      "followups": [
+        {
+          "case": "midway-nov1",
+          "selected_number": 1,
+          "exit_code": 0,
+          "elapsed_s": 191.71313259995077,
+          "counts_as_production_location_pass": false,
+          "status": "ambiguous",
+          "events": 11,
+          "candidates": 5,
+          "matches": [
+            5,
+            4,
+            3,
+            3,
+            3
+          ],
+          "hypotheses": 462,
+          "proposal_rank": 1,
+          "proposal_error_m": 98.8325153554016,
+          "candidate_evaluation": [
+            {
+              "rank": 1,
+              "error_m": 19.740657754539225,
+              "coordinate_hit": true,
+              "matches": 5,
+              "relative_error_percent": 0.7397414889612577,
+              "recording_clock_rate": 1.00005859375
+            },
+            {
+              "rank": 2,
+              "error_m": 310.07216176374305,
+              "coordinate_hit": false,
+              "matches": 4,
+              "relative_error_percent": 0.7074179807434797,
+              "recording_clock_rate": 1.0
+            },
+            {
+              "rank": 3,
+              "error_m": 581.791546234092,
+              "coordinate_hit": false,
+              "matches": 3,
+              "relative_error_percent": 0.7594105949115337,
+              "recording_clock_rate": 1.0000976562500001
+            },
+            {
+              "rank": 4,
+              "error_m": 450.42955077350024,
+              "coordinate_hit": false,
+              "matches": 3,
+              "relative_error_percent": 0.8023097018933528,
+              "recording_clock_rate": 1.003125
+            },
+            {
+              "rank": 5,
+              "error_m": 723.6648985419866,
+              "coordinate_hit": false,
+              "matches": 3,
+              "relative_error_percent": 0.838347010232986,
+              "recording_clock_rate": 1.00498046875
+            }
+          ],
+          "report_sha256": "344b7079cb0924f66951e2b0ea85b358c02d2308b071aa34fdaa081a90fbe687"
+        },
+        {
+          "case": "midway-nov1",
+          "selected_number": 2,
+          "exit_code": 0,
+          "elapsed_s": 205.2290793999564,
+          "counts_as_production_location_pass": false,
+          "status": "ambiguous",
+          "events": 11,
+          "candidates": 6,
+          "matches": [
+            5,
+            5,
+            3,
+            3,
+            3,
+            3
+          ],
+          "hypotheses": 462,
+          "proposal_rank": 17,
+          "proposal_error_m": 1084.7518198198163,
+          "candidate_evaluation": [
+            {
+              "rank": 1,
+              "error_m": 38.57267772971567,
+              "coordinate_hit": true,
+              "matches": 5,
+              "relative_error_percent": 0.7197099380864059,
+              "recording_clock_rate": 1.000078125
+            },
+            {
+              "rank": 2,
+              "error_m": 341.40715909304055,
+              "coordinate_hit": false,
+              "matches": 5,
+              "relative_error_percent": 0.9335546349416883,
+              "recording_clock_rate": 1.00005859375
+            },
+            {
+              "rank": 3,
+              "error_m": 425.5293735893422,
+              "coordinate_hit": false,
+              "matches": 3,
+              "relative_error_percent": 0.8223834691384772,
+              "recording_clock_rate": 1.0046093749999998
+            },
+            {
+              "rank": 4,
+              "error_m": 753.1174421294108,
+              "coordinate_hit": false,
+              "matches": 3,
+              "relative_error_percent": 0.8462877405126434,
+              "recording_clock_rate": 1.005
+            },
+            {
+              "rank": 5,
+              "error_m": 599.8320001374965,
+              "coordinate_hit": false,
+              "matches": 3,
+              "relative_error_percent": 0.9293583928862489,
+              "recording_clock_rate": 1.00466796875
+            },
+            {
+              "rank": 6,
+              "error_m": 331.5487950475763,
+              "coordinate_hit": false,
+              "matches": 3,
+              "relative_error_percent": 0.9353616270736475,
+              "recording_clock_rate": 1.0044140625
+            }
+          ],
+          "report_sha256": "d933e2edabdfce8d226005b4f334e7556400cbca66cfade0cd88d2b840f4c722"
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "selected_proposals": 0,
+      "counts_as_production_acceptance": false,
+      "followups": []
+    }
+  ]
+}

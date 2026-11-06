@@ -1,0 +1,85 @@
+{
+  "prior_run": {
+    "id": 42144590023,
+    "head": "33733613e8e3a5e2a09c8a1dfed6be0bafd840c3",
+    "conclusion": "cancelled",
+    "reason": "The Ubuntu package download was still fetching packages after more than 26 minutes. The run was stopped to inspect and bound setup.",
+    "windows": {
+      "passed": 97,
+      "failed": 0,
+      "ignored": 0,
+      "required_checks": "success"
+    },
+    "ubuntu": "Cancelled during dependency installation; Rust checks had not started.",
+    "full_log_sha256": "60a92a088eedef77e820b13672f83ca639000317977f06d635ccde450ee721d9"
+  },
+  "changes": [
+    "Use the official Ubuntu archive instead of the slow Azure mirror.",
+    "Bound network waits to 30 seconds, package-lock waits to 60 seconds, and the dependency step to 10 minutes.",
+    "Install without recommended packages and verify FFmpeg before Rust checks."
+  ],
+  "offline_setup_checks": {
+    "exact_setup_body_sha256": "43602d37b2d11983ab5e3e868c4f41142bb4afa1381285d5a2418f9bf51f3e56",
+    "syntax_passed": true,
+    "cases": [
+      {
+        "case": "azure-http",
+        "exit_code": 0,
+        "passed": true
+      },
+      {
+        "case": "azure-https",
+        "exit_code": 0,
+        "passed": true
+      },
+      {
+        "case": "other-mirror",
+        "exit_code": 0,
+        "passed": true
+      },
+      {
+        "case": "apt-failure",
+        "exit_code": 41,
+        "passed": true
+      },
+      {
+        "case": "ffmpeg-failure",
+        "exit_code": 42,
+        "passed": true
+      }
+    ],
+    "limits": "Isolated command stubs establish shell control flow. The real mirror and package installation still need CI."
+  },
+  "required_local_checks": {
+    "fmt": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    "clippy": {
+      "sha256": "4a9865574b24fe2cb87d096af13a1b46d0cb39e889510b3185784b5445e9c847",
+      "passed": true
+    },
+    "tests": {
+      "sha256": "03110e4619676509e2416ae47668a761e90b559144c4037ef82ea50492dd6d13",
+      "passed": true
+    },
+    "doc": {
+      "sha256": "f0862db6200f8a5dba4685f76d8eb961c091da92e9c6a33bb7b3900cfd9e153b",
+      "passed": true
+    },
+    "build": {
+      "sha256": "b9b6c27e2995e96dd804cb58197c2ec905b916c1138314d48b970677c01a8eb0",
+      "passed": true
+    }
+  },
+  "local_tests": {
+    "passed": 97,
+    "failed": 0,
+    "ignored": 0
+  },
+  "application_binaries_identical_to_frozen_d6e9418": {
+    "cli": true,
+    "gui": true
+  },
+  "new_ci": "Pending; this receipt does not claim a live package-install pass."
+}

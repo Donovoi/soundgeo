@@ -1,0 +1,159 @@
+{
+  "build": {
+    "commit": "0b394a01063ebc51f472a2fc7d905ca482fbc709",
+    "tests_passed": 76,
+    "tests_failed": 0,
+    "tests_ignored": 0,
+    "bins": {
+      "soundgeo": {
+        "file": "soundgeo-free-terrain.exe",
+        "sha256": "312c76de954bd9c2e99b75139920bdf01132ae21a3e8a3bbd2a206254252ceb9"
+      },
+      "soundgeo-cli": {
+        "file": "soundgeo-cli-free-terrain.exe",
+        "sha256": "ed547ebb90964119aa4dfc36938b5ce288eeaf576a25a4234d690763ae812bcf"
+      }
+    },
+    "logs": {
+      "terrain-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terrain-clippy.log": "2b09b0efb8d21b629f5af0ea2706adf18696f2d5e2397418cfa733df970de7d3",
+      "terrain-all-tests.log": "6891e25cbaae525c93e5cb72523df6f429aa3ca044095479d924822061b5a2f3",
+      "terrain-doc-tests.log": "6626eb3ffb7a0b899f0c4a1728e22cef8d881a9ecbd06baa3cbdca73c70b6279",
+      "terrain-build.log": "3d09cd488f5a2e1895c3990919202fddf30b5bab9d2acf7c14da138f36a04e73"
+    }
+  },
+  "ci_run": 42047220138,
+  "ci_status": "success",
+  "ci_tests_passed": {
+    "windows-latest": 76,
+    "ubuntu-latest": 76
+  },
+  "ci_log_sha256": "23bc60778fa5fa5cd9b75f86a758ea56423afb4e479be433285ad460d8a97b32",
+  "live_plan_sha256": "9affc83ffe236128cb6547de11c8bd4eaa92bcb2a611450c6317b78a3bb089ef",
+  "live_runs": [
+    {
+      "tag": "download-0",
+      "exit_code": 0,
+      "elapsed_s": 3.3318935999413952
+    },
+    {
+      "tag": "download-1",
+      "exit_code": 0,
+      "elapsed_s": 6.5618726999964565
+    },
+    {
+      "tag": "download-2",
+      "exit_code": 0,
+      "elapsed_s": 4.638903300045058
+    },
+    {
+      "tag": "lake-hood-nov1-later-manual",
+      "exit_code": 0,
+      "elapsed_s": 67.1482845999999
+    },
+    {
+      "tag": "lake-hood-nov1-later-automatic",
+      "exit_code": 0,
+      "elapsed_s": 66.69154980010353
+    },
+    {
+      "tag": "midway-arrivals-manual",
+      "exit_code": 0,
+      "elapsed_s": 28.994002599967644
+    },
+    {
+      "tag": "midway-arrivals-automatic",
+      "exit_code": 0,
+      "elapsed_s": 28.561872599995695
+    }
+  ],
+  "live_completion": {
+    "all_runs_passed": true,
+    "tile_bytes_match": true,
+    "manual_and_automatic_results_equal": true,
+    "counts_as_acceptance": false,
+    "initial_harness_failure": "Incorrectly required a null clock in a computed-proposal diagnostic. Corrected the assertion to require the original model-computed clock. Preserved initial log and completed runs; did not repeat them."
+  },
+  "tiles": [
+    {
+      "tile": "N41W088",
+      "source_url": "https://elevation-tiles-prod.s3.amazonaws.com/skadi/N41/N41W088.hgt.gz",
+      "sha256": "aaceed648f0d73d9b7961598b875b7fd7ac0d9133d79f6dd2f7f0a1bbb732fbd",
+      "compressed_sha256": "8092098bdfdcdb4f8d97591ecf036ecca77a6fc6f90c4589c962323d9d9e70cd",
+      "size_bytes": 25934402,
+      "downloaded_utc": "2026-11-05T14:40:48.304213900+00:00"
+    },
+    {
+      "tile": "N42W088",
+      "source_url": "https://elevation-tiles-prod.s3.amazonaws.com/skadi/N42/N42W088.hgt.gz",
+      "sha256": "a2fcabdd55fc153239b5de62c5ba721251c6cebc4a2c990eda79a58561a4aea9",
+      "compressed_sha256": "27d90cfc9ce618e0daebc02bee8f5984d5af9695dafb95b527a1f9982b8a95ef",
+      "size_bytes": 25934402,
+      "downloaded_utc": "2026-11-05T14:40:48.775839100+00:00"
+    },
+    {
+      "tile": "N50W002",
+      "source_url": "https://elevation-tiles-prod.s3.amazonaws.com/skadi/N50/N50W002.hgt.gz",
+      "sha256": "0beca8ced31e0b8b7c52b6c7d6e81b1055d0a7583a47f073850758c7dc19b999",
+      "compressed_sha256": "eae10e520cc8e2a537b9d54b02ba0d83a9474bd9191b2504142d64f6e43d9adf",
+      "size_bytes": 25934402,
+      "downloaded_utc": "2026-11-05T14:40:51.293790200+00:00"
+    },
+    {
+      "tile": "N51W002",
+      "source_url": "https://elevation-tiles-prod.s3.amazonaws.com/skadi/N51/N51W002.hgt.gz",
+      "sha256": "28db0519129136ee8333d94ce98435398894c83d9d2ff41c24c2a7350967f3bb",
+      "compressed_sha256": "fc520b22c8c90ef3343e84a6e6b10b1f8b9ada0939c8766d953a32d123c2e46c",
+      "size_bytes": 25934402,
+      "downloaded_utc": "2026-11-05T14:40:55.327106400+00:00"
+    },
+    {
+      "tile": "N61W150",
+      "source_url": "https://elevation-tiles-prod.s3.amazonaws.com/skadi/N61/N61W150.hgt.gz",
+      "sha256": "d5e7950f1e47eea6155ef395950b085ec9c9aebd18a8f46abcf61870dece0c3c",
+      "compressed_sha256": "d9b24180e66e6691b7b0550b3e78dbe73a625d5ac2cd53428cd8eac4db4e8b82",
+      "size_bytes": 25934402,
+      "downloaded_utc": "2026-11-05T14:40:59.958878+00:00"
+    },
+    {
+      "tile": "N61W151",
+      "source_url": "https://elevation-tiles-prod.s3.amazonaws.com/skadi/N61/N61W151.hgt.gz",
+      "sha256": "afabf033690f8e69a27984210b20bd55432a4cc6166add538c5faefe1031ed28",
+      "compressed_sha256": "82fc4e5035f5f02c2e96f70d543f112556569715c2f8f62358d39ca57a138aae",
+      "size_bytes": 25934402,
+      "downloaded_utc": "2026-11-05T14:40:58.180883200+00:00"
+    }
+  ],
+  "cases": [
+    {
+      "case": "lake-hood-nov1-later",
+      "exact_comparison": {
+        "events": true,
+        "candidates": true,
+        "hypotheses": true,
+        "status": true,
+        "reference_sources": true
+      },
+      "report_sha256": {
+        "manual": "f1d0f8bf4c5d79faa745350428cdfac9f0dfa6345d1e79ac0c8f400266da8c9c",
+        "automatic": "7efb96f7bf386cc506a3e06195a7fe6a1d45b923e28b169fbc44cd297f57fe31"
+      }
+    },
+    {
+      "case": "midway-arrivals",
+      "exact_comparison": {
+        "events": true,
+        "candidates": true,
+        "hypotheses": true,
+        "status": true,
+        "reference_sources": true
+      },
+      "report_sha256": {
+        "manual": "f682f0df5aca690ddba56e7c6b252ffc4601423df939dccfb27217d822410aa4",
+        "automatic": "dc28359f3da64070fd059f3d50438ea83cd22e80f0a5fa790de7fd33eab679ff"
+      }
+    }
+  ],
+  "counts_as_location_acceptance": false,
+  "location_acceptance_rules_unchanged": true
+}

@@ -1,0 +1,68 @@
+name: Rust
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  check:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Linux dependencies
+        if: runner.os == 'Linux'
+        timeout-minutes: 10
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          # The Azure mirror took over 26 minutes to download 73 packages.
+          # Use Ubuntu's public mirror and bound network and lock waits.
+          for source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
+            if [ -f "$source" ]; then
+              sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|https://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' "$source"
+            fi
+          done
+          apt_options=(-o Acquire::Retries=2 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o DPkg::Lock::Timeout=60)
+          sudo apt-get "${apt_options[@]}" update
+          sudo apt-get "${apt_options[@]}" install -y --no-install-recommends ffmpeg libx11-dev libxkbcommon-dev libwayland-dev libgl1-mesa-dev libudev-dev pkg-config
+          ffmpeg -version
+      - name: Windows FFmpeg
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          # Chocolatey can exit zero after a failed package-feed request.
+          # Require the executable itself before starting the Rust checks.
+          $PSNativeCommandUseErrorActionPreference = $false
+          for ($attempt = 1; $attempt -le 3; $attempt++) {
+            choco install ffmpeg --no-progress -y
+            $ffmpegCommand = Get-Command ffmpeg.exe -CommandType Application -ErrorAction SilentlyContinue
+            if ($ffmpegCommand) {
+              & $ffmpegCommand.Source -version
+              if ($LASTEXITCODE -eq 0) { exit 0 }
+            }
+            if ($attempt -lt 3) { Start-Sleep -Seconds 15 }
+          }
+          throw 'FFmpeg is unavailable after three installation attempts.'
+      - run: cargo fmt --all -- --check
+      - run: python -m unittest discover -s validation -p test_run_timing.py
+      - run: cargo clippy --release --all-targets --locked -- -D warnings
+      - run: cargo test --release --locked --all-targets
+      - run: cargo test --release --locked --doc
+      - run: cargo build --release --locked --bins
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows'
+        with:
+          name: soundgeo-windows
+          path: |
+            target/release/soundgeo.exe
+            target/release/soundgeo-cli.exe

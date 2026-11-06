@@ -1,0 +1,76 @@
+{
+  "counts_as_acceptance": false,
+  "no_production_change": true,
+  "truth_used_only_after_fits": true,
+  "loudness": {
+    "plan_sha256": "b2166942c1ea3fa1718b57a052657acfd5d4e6e0c045336fbcdf5a0deb19555e",
+    "results_sha256": "b7d00dc95110b5a0baeb65216cbb1aad7f5576d122dd55ad9c5459c55f945188",
+    "native_curves_replayed": 78,
+    "max_replay_error_hz": 1.7053025658242404e-13,
+    "cases": [
+      {
+        "case": "lake-hood-nov1-later",
+        "original_first_error_m": 82.78707610076862,
+        "loudness_first_error_m": 479.2612478543038,
+        "loudness_first_original_index": 1,
+        "scores_by_original_index": [
+          -0.0015257238607901292,
+          0.004739812016829092,
+          -0.13557863282103677,
+          -0.11365030687711802,
+          -0.05078367620399832,
+          -0.1719293385994236,
+          -0.23125984459424043,
+          -0.14741230948611128,
+          -0.27744374806566136,
+          -0.13169170842207142
+        ],
+        "accepted": false
+      },
+      {
+        "case": "lake-hood-nov1",
+        "original_first_error_m": 45.749443337361726,
+        "loudness_first_error_m": 45.749443337361726,
+        "loudness_first_original_index": 0,
+        "scores_by_original_index": [
+          0.23340938344849418,
+          0.15920015462146087,
+          0.27410713929960734,
+          -0.1670841412589761,
+          -0.24295991128276845,
+          -0.004991944451691932,
+          0.3043727471855238,
+          0.2864151332147027,
+          0.2911918772771995,
+          0.2729430650957379
+        ],
+        "accepted": false
+      }
+    ]
+  },
+  "clock_rate_timing": {
+    "plan_sha256": "137bf63a4bac4364d7e553d0d339a202909a92d2ad69ab2aadd58f1457f6bc15",
+    "results_sha256": "efcf0a9c0cd65b722f8dbccd9d8569c0075adf0edff94844a1f96dd8f715414e",
+    "cases": [
+      {
+        "case": "midway-nov4-a",
+        "first_error_m": 503.5802948601819,
+        "first_converged": false,
+        "first_clock_rate": 0.9999638520099838,
+        "fit_count": 40,
+        "converged_count": 39,
+        "accepted": false
+      },
+      {
+        "case": "midway-nov4-b",
+        "first_error_m": 312.34348470502084,
+        "first_converged": true,
+        "first_clock_rate": 1.0000758847327653,
+        "fit_count": 40,
+        "converged_count": 40,
+        "accepted": false
+      }
+    ]
+  },
+  "interpretation": "The inverse-square loudness score worsens the later Lake Hood first choice. Clock-rate fitting leaves both Midway first choices outside 250 m; one first fit did not converge. Neither diagnostic qualifies a production change or an accuracy pass."
+}

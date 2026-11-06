@@ -1,0 +1,95 @@
+{
+  "plan": {
+    "source": "https://www.youtube.com/watch?v=aWNjoTocuNA",
+    "purpose": "New-site diagnostic; exact microphone location is not independently verified, so this cannot count as an accuracy pass.",
+    "clips": [
+      {
+        "id": "a",
+        "start_s": 0,
+        "duration_s": 3600
+      },
+      {
+        "id": "b",
+        "start_s": 7200,
+        "duration_s": 3600
+      }
+    ],
+    "utc_day": "2026-11-04",
+    "date_basis": "Publisher metadata release date; video clock inspected separately.",
+    "bounds": {
+      "south": 41.65,
+      "north": 42.1,
+      "west": -88.1,
+      "east": -87.5
+    },
+    "ground_m": 200,
+    "ground_datum": "egm96",
+    "supplied_recording_clock": false,
+    "supplied_camera_position": false,
+    "redistribute_media": false,
+    "format_ids": [
+      "243",
+      "251"
+    ],
+    "created_unix": 1793917508.9479415
+  },
+  "build": {
+    "commit": "f8f17352fa98a4961fbeb1202b4bdaa413c2af39",
+    "required_local_checks_passed": true,
+    "tests": 91,
+    "ignored": 0,
+    "ci": "pending",
+    "created_utc": "2026-11-05T22:06:00.119215+00:00",
+    "not_qualified_location_release": true,
+    "cli": {
+      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-timing-f8f1735.exe",
+      "sha256": "faf943fa3860114d95e61e20d2887180aae27c1cefc32d7dd816b11884c282b7"
+    },
+    "gui": {
+      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-timing-f8f1735.exe",
+      "sha256": "b72ecc8820e78b767f1afdb64b15292880da590d2399271e8c1a22fff2bdd478"
+    }
+  },
+  "cases": [
+    {
+      "case": "a",
+      "status": "insufficient_evidence",
+      "run": {
+        "exit_code": 3,
+        "elapsed_s": 111.2456591129303,
+        "verified_process_path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-timing-f8f1735.exe",
+        "not_acceptance": true
+      },
+      "report_sha256": "9c5c1c29f352ff2c0859b266a772816f72bb69d5e16af71c57d9d8b73c34b173",
+      "media_sha256": "3359916f50564ecb5118d7db5d8425d2857ab506cd99e00822b4463ab0a6f994",
+      "peaks": 69,
+      "score": 14.663104281302791,
+      "null_max": 15.896125155332228,
+      "controls": 19,
+      "matches": 20,
+      "coordinate_error_m": null,
+      "accepted": false
+    },
+    {
+      "case": "b",
+      "status": "insufficient_evidence",
+      "run": {
+        "exit_code": 3,
+        "elapsed_s": 115.2548394203186,
+        "verified_process_path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-timing-f8f1735.exe",
+        "not_acceptance": true
+      },
+      "report_sha256": "5462932cd17570bd28c7304504d0590eb5790d62369b64c9582ee73c30cffecd",
+      "media_sha256": "df05da8662408e9316bbcda721fa64117dc20cf543f564f6a8982f65a6171a0c",
+      "peaks": 93,
+      "score": 11.135183800994781,
+      "null_max": 14.89851764146341,
+      "controls": 19,
+      "matches": 15,
+      "coordinate_error_m": null,
+      "accepted": false
+    }
+  ],
+  "not_acceptance": true,
+  "interpretation": "Both public O Hare clips returned insufficient evidence. Exact camera/microphone coordinates are not independently verified. The source includes ATC audio; this is not a clean local-microphone benchmark. Neither result establishes location accuracy. The actual process exit codes were observed through handles after verifying executable paths."
+}

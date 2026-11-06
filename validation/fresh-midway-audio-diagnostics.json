@@ -1,0 +1,63 @@
+{
+  "not_location_acceptance": true,
+  "production_code_changed": false,
+  "experimental_timing_method_merged": false,
+  "stereo_channels_cancel": false,
+  "stereo_evidence": "audio-inspection/levels.json",
+  "low_and_high_band_visualizations": "audio-inspection/",
+  "known_position_timing_check": {
+    "matches": [
+      17,
+      27
+    ],
+    "recording_clock_used": false,
+    "counts_as_location_test": false
+  },
+  "broad_area_development_results": [
+    {
+      "stage": "coarse",
+      "case": "midway-nov4-a",
+      "first_error_m": 325.86337678113875,
+      "coordinate_hit": false,
+      "accepted": false,
+      "similar_score_candidate_span_m": 25013.5273108071,
+      "similar_score_is_not_a_confidence_region": true
+    },
+    {
+      "stage": "coarse",
+      "case": "midway-nov4-b",
+      "first_error_m": 254.84625268629367,
+      "coordinate_hit": false,
+      "accepted": false,
+      "similar_score_candidate_span_m": 668.2287702567929,
+      "similar_score_is_not_a_confidence_region": true
+    },
+    {
+      "stage": "refined",
+      "case": "midway-nov4-a",
+      "first_error_m": 317.2828692328009,
+      "coordinate_hit": false,
+      "accepted": false,
+      "similar_score_candidate_span_m": 24941.549639861933,
+      "similar_score_is_not_a_confidence_region": true
+    },
+    {
+      "stage": "refined",
+      "case": "midway-nov4-b",
+      "first_error_m": 312.4544741113265,
+      "coordinate_hit": false,
+      "accepted": false,
+      "similar_score_candidate_span_m": 732.3801468771156,
+      "similar_score_is_not_a_confidence_region": true
+    }
+  ],
+  "interpretation": "Broadband passage timing recovered useful clock/area information, but both first-choice locations missed the 250 m target. Nearby alternatives remain. This is an unqualified development experiment, not a production fallback.",
+  "script_sha256": {
+    "inspect_fresh_audio.py": "b2a4e922661f5887c0c7cf398656817690c4b8ba09f230355112f8081f55286a",
+    "inspect_fresh_low_band.py": "a4a8b6f43dc57c826c02108219d49d1a6846e0fd107b20f55e6720a73f0a3f0f",
+    "inspect_fresh_high_band.py": "408d6a6b5463639b6470f68b38cb0bad5a8b013472b52314d01346aaf7010043",
+    "diagnose_fresh_envelope.py": "0ba783e73529d6993c3619f10a12479d79556fabccab0288f27ff8f616849123",
+    "probe_envelope_region.py": "9c7c4b334436a50f82c36ee45b17422d2fd6aad53583dc77073560d549276b1f",
+    "refine_envelope_region.py": "cd58f203ee3eb7fb36e5adfaff949cbbac0a8fedf680b6d8e38ec1446c478421"
+  }
+}
