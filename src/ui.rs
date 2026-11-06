@@ -786,6 +786,39 @@ fn timing_results(
     selected: &mut usize,
 ) {
     ui.label(&timing.explanation);
+    if timing.screen == soundgeo::timing::Screen::TimingCandidate
+        && let Some(region) = &timing.region
+    {
+        ui.add_space(10.);
+        egui::Frame::new()
+            .fill(PANEL)
+            .corner_radius(10.)
+            .inner_margin(18.)
+            .show(ui, |ui| {
+                ui.label(RichText::new("Suggested area center").color(ACCENT));
+                ui.label(
+                    RichText::new(format!("{:.5}, {:.5}", region.latitude, region.longitude))
+                        .size(28.),
+                );
+                ui.label(format!(
+                    "The competitive search points lie within {:.0} m of this center.",
+                    region.enclosing_radius_m
+                ));
+                ui.label("This is not a verified location error bound.");
+                ui.horizontal(|ui| {
+                    ui.hyperlink_to(
+                        "Open area center in OpenStreetMap",
+                        format!(
+                            "https://www.openstreetmap.org/?mlat={}&mlon={}#map=15/{}/{}",
+                            region.latitude, region.longitude, region.latitude, region.longitude
+                        ),
+                    );
+                    if ui.small_button("Copy area center").clicked() {
+                        ctx.copy_text(format!("{:.6}, {:.6}", region.latitude, region.longitude));
+                    }
+                });
+            });
+    }
     if timing.candidate_count() > 0
         && let Some(search) = &timing.search
         && let Some(candidate) = search
@@ -795,7 +828,7 @@ fn timing_results(
         ui.add_space(10.);
         egui::Frame::new().fill(PANEL).corner_radius(10.).inner_margin(18.).show(ui,|ui| {
             ui.label(RichText::new(format!("{:.5}, {:.5}",candidate.latitude,candidate.longitude)).size(28.).color(ACCENT));
-            ui.label("Possible recording location");
+            ui.label("Selected search candidate");
             if let Some(time) = chrono::DateTime::from_timestamp_millis((candidate.offset_utc*1000.).round() as i64) {
                 ui.label(format!("Inferred start: {}",time.to_rfc3339()));
             }

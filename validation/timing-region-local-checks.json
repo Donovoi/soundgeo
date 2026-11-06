@@ -1,0 +1,30 @@
+{
+  "base_commit": "71d05e320de0f1e00852d7ba76640706ec6eebb4",
+  "tests": {
+    "passed": 97,
+    "failed": 0,
+    "ignored": 0
+  },
+  "required_checks_passed": [
+    "fmt",
+    "strict release Clippy",
+    "release all targets",
+    "documentation tests",
+    "release binaries"
+  ],
+  "logs": {
+    "fmt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "clippy": "7633bd269cb42fe6a8be065b5fbe6ca365d8d15821a595f0af73229a9450c45c",
+    "tests": "71bf2b2edf5f62fe30efd354f4b8e2e41e75a9525c6a1f3bd3a6cb2d307e91ff",
+    "doc": "dedaf73e8add41fd82b835ac7aa6e50cbe72ebf549026a3069da57b9dd792afb",
+    "build": "6bf5bad2925fc566db65881417f8a08763feca9e36948a79609fc6643f2ed458"
+  },
+  "modified_source": {
+    "src/timing/assessment.rs": "03e14b26583f22521018475d60ced4c163d371f2f98a6d7ebc66a57e28b57345",
+    "src/timing/mod.rs": "432a57f0f71ed585553e9a13dc8b0b387804ea1eb6e9617b961b25d39198db07",
+    "src/ui.rs": "3368933f207943a1873031ef605d73d831bcac25ab8cce7a9960751ef431a579"
+  },
+  "ci": "pending",
+  "real_cli_reruns": "pending",
+  "not_a_qualified_location_release": true
+}

@@ -15,6 +15,14 @@ pub enum Screen {
     Ambiguous,
     TimingCandidate,
 }
+/// An enclosing region for evaluated competitive grid points, not an accuracy bound.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct LocationRegion {
+    pub latitude: f64,
+    pub longitude: f64,
+    pub enclosing_radius_m: f64,
+    pub competitive_points: usize,
+}
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Assessment {
     pub peaks: Vec<Peak>,
@@ -29,13 +37,17 @@ pub struct Assessment {
     pub minimum_matches: usize,
     pub required_controls: usize,
     pub calibrated_location_probability: bool,
+    /// Present only after the signal and enclosing-region checks pass.
+    /// Older saved reports do not contain this field.
+    #[serde(default)]
+    pub region: Option<LocationRegion>,
 }
 impl Assessment {
     pub fn pending(peaks: Vec<Peak>) -> Self {
         Self {peaks,search:None,control_maximum_scores:vec![],control_likelihood_evaluations:0,control_permutation_seeds:vec![],screen:Screen::InsufficientEvidence,
             explanation:"Passage timing needs at least six sound peaks and eight minutes of continuous audio.".into(),
             score_gap_beyond_1km:None,competitive_location_spread_m:None,minimum_matches:MIN_MATCHES,
-            required_controls:CONTROLS,calibrated_location_probability:false}
+            required_controls:CONTROLS,calibrated_location_probability:false,region:None}
     }
     pub fn candidate_count(&self) -> usize {
         if self.screen == Screen::InsufficientEvidence {
@@ -98,6 +110,10 @@ pub fn assess(
 }
 
 fn apply_screen(result: &mut Assessment) {
+    result.region = None;
+    result.screen = Screen::InsufficientEvidence;
+    result.score_gap_beyond_1km = None;
+    result.competitive_location_spread_m = None;
     let Some(search) = &result.search else {
         return;
     };
@@ -135,13 +151,83 @@ fn apply_screen(result: &mut Assessment) {
     }
     result.score_gap_beyond_1km = distant.map(|s| first.log_likelihood_ratio - s);
     result.competitive_location_spread_m = Some(farthest);
-    if search.location_scores.is_empty() || farthest > REGION_M {
-        result.screen = Screen::Ambiguous;
-        result.explanation = "The timing signal has competing locations more than 1 km apart. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.".into();
-    } else {
+    let region = enclosing_region(center, first.log_likelihood_ratio, &search.location_scores);
+    if let Some(region) = region {
+        result.region = Some(region);
         result.screen = Screen::TimingCandidate;
-        result.explanation = "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 lie within 1 km of the first candidate. This is a model screen, not a verified accuracy radius.".into();
+        result.explanation = "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 fit within 1 km of the reported region center. This is a model screen, not a verified accuracy radius.".into();
+    } else {
+        result.screen = Screen::Ambiguous;
+        result.explanation = "The timing signal has competing locations that do not fit the checked 1 km regions. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.".into();
     }
+}
+
+fn enclosing_region(
+    first: Point,
+    best_score: f64,
+    scores: &[LocationScore],
+) -> Option<LocationRegion> {
+    if scores.is_empty()
+        || !first.valid()
+        || !best_score.is_finite()
+        || scores.iter().any(|p| {
+            !p.log_likelihood_ratio.is_finite()
+                || !Point {
+                    lat: p.latitude,
+                    lon: p.longitude,
+                    alt: 0.,
+                }
+                .valid()
+        })
+    {
+        return None;
+    }
+    let mut points: Vec<_> = scores
+        .iter()
+        .filter(|p| p.log_likelihood_ratio >= best_score - 100_f64.ln())
+        .map(|p| Point {
+            lat: p.latitude,
+            lon: p.longitude,
+            alt: 0.,
+        })
+        .collect();
+    if !points
+        .iter()
+        .any(|p| p.lat == first.lat && p.lon == first.lon)
+    {
+        points.push(first);
+    }
+    let region = |center: Point| {
+        let radius = points
+            .iter()
+            .map(|p| center.distance(*p))
+            .fold(0_f64, f64::max);
+        (radius <= REGION_M).then_some(LocationRegion {
+            latitude: center.lat,
+            longitude: center.lon,
+            enclosing_radius_m: radius,
+            competitive_points: points.len(),
+        })
+    };
+    // Keep existing accepted centers. If the first point lies near an edge,
+    // also check the middle of the competitive latitude/longitude bounds.
+    // This bounded calculation is conservative: it need not find the smallest
+    // possible circle. Every point must pass the final physical-distance check.
+    region(first).or_else(|| {
+        let (mut south, mut north, mut west, mut east) = (first.lat, first.lat, 0_f64, 0_f64);
+        for point in &points {
+            south = south.min(point.lat);
+            north = north.max(point.lat);
+            let delta = (point.lon - first.lon + 180.).rem_euclid(360.) - 180.;
+            west = west.min(delta);
+            east = east.max(delta);
+        }
+        region(Point {
+            lat: (south + north) * 0.5,
+            lon: (first.lon + (west + east) * 0.5 + 180.).rem_euclid(360.) - 180.,
+            alt: 0.,
+        })
+    })
 }
 fn horizontal_distance(center: Point, point: &LocationScore) -> f64 {
     center.distance(Point {
@@ -281,12 +367,114 @@ mod tests {
         result.search.as_mut().unwrap().location_scores[1].log_likelihood_ratio = 30.;
         apply_screen(&mut result);
         assert_eq!(result.screen, Screen::TimingCandidate);
+        assert!(result.region.is_some());
         result.control_maximum_scores[3] = 41.;
         apply_screen(&mut result);
         assert_eq!(result.screen, Screen::InsufficientEvidence);
         assert_eq!(result.candidate_count(), 0);
+        assert!(result.region.is_none());
         result.control_maximum_scores[3] = 40. - 1e-8;
         apply_screen(&mut result);
         assert_eq!(result.screen, Screen::InsufficientEvidence);
+    }
+
+    #[test]
+    fn compact_region_can_have_its_leading_point_near_an_edge() {
+        let first = Point {
+            lat: 41.,
+            lon: -87.,
+            alt: 0.,
+        };
+        let scores = [
+            LocationScore {
+                latitude: 41.,
+                longitude: -87.,
+                log_likelihood_ratio: 40.,
+            },
+            LocationScore {
+                latitude: 41.014,
+                longitude: -87.,
+                log_likelihood_ratio: 38.,
+            },
+            LocationScore {
+                latitude: 42.,
+                longitude: -87.,
+                log_likelihood_ratio: 20.,
+            },
+        ];
+        assert!(horizontal_distance(first, &scores[1]) > REGION_M);
+        let region = enclosing_region(first, 40., &scores).unwrap();
+        assert!((region.latitude - 41.007).abs() < 1e-10);
+        assert_eq!(region.competitive_points, 2);
+        assert!((700. ..800.).contains(&region.enclosing_radius_m));
+        let center = Point {
+            lat: region.latitude,
+            lon: region.longitude,
+            alt: 0.,
+        };
+        for score in &scores[..2] {
+            assert!(horizontal_distance(center, score) <= region.enclosing_radius_m);
+        }
+    }
+
+    #[test]
+    fn compact_region_handles_the_date_line_without_using_the_far_side_of_earth() {
+        let first = Point {
+            lat: 0.,
+            lon: 179.995,
+            alt: 0.,
+        };
+        let scores = [
+            LocationScore {
+                latitude: 0.,
+                longitude: 179.995,
+                log_likelihood_ratio: 40.,
+            },
+            LocationScore {
+                latitude: 0.,
+                longitude: -179.995,
+                log_likelihood_ratio: 38.,
+            },
+        ];
+        let region = enclosing_region(first, 40., &scores).unwrap();
+        assert!(region.longitude.abs() > 179.999);
+        assert!((500. ..600.).contains(&region.enclosing_radius_m));
+    }
+
+    #[test]
+    fn enclosing_region_rejects_wide_missing_and_invalid_evidence() {
+        let first = Point {
+            lat: 41.,
+            lon: -87.,
+            alt: 0.,
+        };
+        let mut scores = [
+            LocationScore {
+                latitude: 41.,
+                longitude: -87.,
+                log_likelihood_ratio: 40.,
+            },
+            LocationScore {
+                latitude: 41.03,
+                longitude: -87.,
+                log_likelihood_ratio: 38.,
+            },
+        ];
+        assert!(enclosing_region(first, 40., &scores).is_none());
+        assert!(enclosing_region(first, 40., &[]).is_none());
+        scores[1].latitude = f64::NAN;
+        assert!(enclosing_region(first, 40., &scores).is_none());
+        scores[1].latitude = 41.;
+        scores[1].log_likelihood_ratio = f64::NAN;
+        assert!(enclosing_region(first, 40., &scores).is_none());
+    }
+
+    #[test]
+    fn older_timing_reports_do_not_invent_a_region() {
+        let mut value = serde_json::to_value(Assessment::pending(vec![])).unwrap();
+        value.as_object_mut().unwrap().remove("region");
+        let old: Assessment = serde_json::from_value(value).unwrap();
+        assert!(old.region.is_none());
+        assert_eq!(old.screen, Screen::InsufficientEvidence);
     }
 }

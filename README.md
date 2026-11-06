@@ -24,7 +24,7 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 The current location target is within 1 km. The user changed this target on November 6, 2026.
 The earlier 250 m test results remain in the validation record.
 
-The latest CLI test used flight passage timing on 18 public-camera recordings.
+The fixed CLI benchmark at revision `f8f1735` used flight passage timing on 18 public-camera recordings.
 Each test used a known possible date, a broad search area, and no recording start time.
 The app used free Chicago airport data for Midway and free flight archives for the other sites.
 
@@ -47,8 +47,8 @@ An experimental Lake Hood search found one first choice within 83 m, but failed 
 An earlier Southampton test returned a wrong location with a positive model status.
 A positive model status is not proof that the location is correct.
 
-Revision `4681a84` passed all 93 software tests locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42127052770).
+Revision `71d05e3` passed all 93 software tests locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42133465259).
 Formatting, strict Clippy, documentation tests, and both release builds also passed.
 The LAX downloader recovered a missing part and matched all 996,783 positions
 from an independent reader. Five LAX recording diagnostics still gave ambiguous
@@ -114,12 +114,29 @@ Use at least eight minutes of continuous audio. Longer recordings can give more 
 The app compares the result with 19 versions that shuffle blocks of sound peaks.
 It also checks for competing locations across the searched area.
 These checks can reject a weak result. They do not guarantee a 1 km accuracy radius.
-Timing details are in the report's `timing` field. Read location candidates from
+Timing details are in the report's `timing` field. For a result with status
+`candidates_found`, read the area center from `timing.region.latitude` and
+`timing.region.longitude`. The region covers the competitive search points.
+Its `enclosing_radius_m` field is not a verified location error bound.
+Older reports can have no region field. Individual search candidates remain in
 `timing.search.candidates`. The top-level `candidates` field is for Doppler results. A failed check keeps its diagnostic results
 but does not count them as a location match.
 
 In the desktop app, select **Flight passage timing** under **Sound matching method**.
 Set a search area before you start. The default method for older jobs remains **Doppler curves**.
+
+The timing search uses aircraft within 500 m of each candidate position by default.
+To include more distant aircraft, add this setting to the job file:
+
+```json
+"timing_options": {
+  "maximum_passage_distance_m": 1000
+}
+```
+
+This is the three-dimensional distance from the aircraft to the candidate position.
+It can be 100 to 5,000 m. A larger value takes more time and can increase chance matches.
+The app keeps the same result checks. This setting does not change the location error target.
 
 Use existing flight data:
 
