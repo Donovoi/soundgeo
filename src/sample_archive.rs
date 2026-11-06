@@ -148,6 +148,7 @@ impl Client {
         })
     }
     async fn get(&self, key: &str, control: &Control) -> Result<Option<Vec<u8>>> {
+        control.require_network(key)?;
         let path = format!("/{BUCKET}/{key}");
         // Keys contain only validated dates, fixed names, hex digits and '~'.
         ensure!(

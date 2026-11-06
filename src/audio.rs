@@ -108,7 +108,11 @@ pub fn decode(job: &Job, control: &Control) -> Result<Vec<f32>> {
     let log = temp.path().join("ffmpeg.log");
     let stderr = std::fs::File::create(&log)?;
     // Decode 1 sample beyond the cap so long recordings are rejected, never silently truncated.
-    let mut child=quiet_command(ffmpeg_path(job)).args(["-nostdin","-hide_banner","-loglevel","error","-y","-i"])
+    let mut command = quiet_command(ffmpeg_path(job));
+    if job.offline || control.offline {
+        command.args(["-protocol_whitelist", "file,pipe"]);
+    }
+    let mut child=command.args(["-nostdin","-hide_banner","-loglevel","error","-y","-i"])
         .arg(&job.media).args(["-map","0:a:0","-vn","-ac","1","-ar","8000","-t","7200.001","-c:a","pcm_f32le"])
         .arg(&wav).stdin(Stdio::null()).stdout(Stdio::null()).stderr(stderr).spawn()
         .context("FFmpeg could not start. Install FFmpeg, place it beside SoundGeo, or set its path in Advanced settings.")?;

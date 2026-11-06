@@ -33,14 +33,14 @@ The [validation record](validation/README.md) contains test results, sources, an
 - A local video or audio file.
 - FFmpeg to read the audio.
 - Flight position data for a possible recording date.
-- A possible date or date range, if you use automatic downloads.
+- A prepared flight cache, or a date range for downloading flight data.
 
 ## Use the desktop application
 
 1. Start `soundgeo.exe`.
 2. Select a recording, or drag the file into the window.
 3. Keep **Download missing flight data automatically** selected.
-4. Enter a possible UTC date. You can select a date range of up to 31 days.
+4. Leave the dates blank to search all cached dates, or enter a UTC date range to download and search.
 5. Select a folder for the downloaded data.
 6. Leave **Recording time** empty if you do not know the start time.
 7. Set a search area if you know the region.
@@ -67,6 +67,38 @@ To use existing flight data, clear the automatic-download option. Then select th
 
 Select **Try a synthetic demo** to create a test recording and example flight data.
 The demo runs offline.
+
+## Prepare data for offline use
+
+Download flight data for the period you want to keep available. The worldwide and airport downloaders also
+prepare the aircraft catalog. Add terrain bounds and a terrain cache if needed:
+
+```powershell
+soundgeo-cli.exe download --date 2026-09-01 --date-to 2026-10-31 --provider webtrak-chicago --output flight-cache --terrain-cache terrain-cache --south 41.65 --north 42.01 --west -87.98 --east -87.5
+```
+
+Keep the full cache folders. You can copy them to another computer with SoundGeo
+and FFmpeg installed. Run the same download command to reuse complete files and
+finish an interrupted download.
+
+Analyze offline with the prepared cache:
+
+```powershell
+soundgeo-cli.exe analyze --config region.json --input recording.mp4 --cache flight-cache --provider webtrak-chicago --terrain-cache terrain-cache --offline --output report.json
+```
+
+Leave dates out of the command and job file to search every cached date for that provider. The report lists
+the dates searched and estimates the recording time from the matched sounds.
+Longer searches run in overlapping daily batches. This covers recordings across
+midnight and keeps flight data for at most two adjacent days in memory at once.
+The app compares results across all batches before reporting a location.
+
+Offline mode disables network access during analysis. It reports missing or
+invalid cache files. Prepare those files online, then repeat the offline run.
+
+In the desktop app, use **Prepare data for offline use** with the selected flight
+provider, date range, and terrain settings. Then select **Offline mode: use cached
+data only**. Leave the dates blank to search the prepared cache.
 
 ## Use the command line
 

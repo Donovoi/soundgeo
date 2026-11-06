@@ -251,6 +251,7 @@ fn ensure_day(
         );
         return Ok(path);
     }
+    control.require_network(&folder.display().to_string())?;
     let first = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() / 30;
     let handles: Vec<_> = (first..first + CHUNKS as i64).collect();
     let pool = rayon::ThreadPoolBuilder::new().num_threads(2).build()?;
@@ -472,6 +473,7 @@ pub fn download_day(
         .context("Missing WebTrak cache folder")?
         .join("aircraft-types.json");
     if !catalog.is_file() {
+        control.require_network(&catalog.display().to_string())?;
         crate::aircraft::download(&catalog).context("WebTrak flight data is saved, but the free aircraft-type catalog could not be downloaded")?;
     }
     Ok(path)

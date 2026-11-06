@@ -23,6 +23,7 @@ fn hash_file(path: &Path, control: &Control) -> Result<String> {
     Ok(format!("{:x}", hasher.finalize()))
 }
 pub(crate) async fn cancelable<F: Future>(future: F, control: &Control) -> Result<F::Output> {
+    control.require_network("network request")?;
     let mut pending = std::pin::pin!(future);
     loop {
         control.check()?;
@@ -61,6 +62,7 @@ pub fn fetch_file(
         progress("Using verified cached archive part", 1.);
         return Ok(());
     }
+    control.require_network(&path.display().to_string())?;
     let parent = path.parent().unwrap_or_else(|| Path::new("."));
     std::fs::create_dir_all(parent)?;
     let mut temp = tempfile::NamedTempFile::new_in(parent)?;
