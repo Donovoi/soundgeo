@@ -1,5 +1,12 @@
 # Working on SoundGeo
 
+Build for OSINT analysis of existing audio and video samples from the internet.
+Do not assume controlled capture conditions or a known recording start time.
+Validation must cover varied lengths and quality, including noise, compression,
+edits, and camera movement. Fixed-camera recordings cover only part of this scope.
+Document current model limits separately from the intended use. Keep unsupported
+cases and failed results visible. Do not require recordings made for the app.
+
 Use one Cargo target directory per checkout. Do not share `CARGO_TARGET_DIR`
 between worktrees. A shared directory previously reused test artifacts from
 an experimental branch during a main-branch check. That run was rejected.

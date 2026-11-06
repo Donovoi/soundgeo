@@ -1,7 +1,12 @@
 # SoundGeo
 
-SoundGeo uses aircraft sounds to search for the location of a recording.
-It accepts a video file or an audio file.
+SoundGeo is an open-source intelligence (OSINT) tool in development.
+It uses aircraft sounds to search for the location of an audio or video recording.
+It is intended for existing samples from the internet, with different lengths and quality.
+These can include noisy audio, compressed uploads, and edited clips.
+Recording times and capture conditions can be unknown.
+
+The app accepts local video and audio files.
 It compares changes in sound frequency, or the timing of sound peaks, with recorded aircraft positions.
 It can search when the recording start time is unknown.
 
@@ -37,7 +42,8 @@ Each job used a possible date, a broad search area, free flight data, and no rec
 Seven accepted locations came from one Midway camera. Their errors were 89 to 547 m.
 The eighth came from Maho Beach. Its error was within 550 m, including a planned
 200 m allowance for the unsurveyed microphone. These are repeated development
-tests at two successful sites. They do not measure general accuracy.
+tests at two successful sites. They do not measure general accuracy or cover
+the full range of internet samples.
 
 The latest change lets passage timing use flight segments with three to seven
 recorded positions. It added one aircraft match to the successful Maho result
@@ -61,17 +67,13 @@ missing trace also passed. The free LAX downloader passed full-day download,
 cache reuse, and missing-part recovery checks. Downloaded data can still have gaps.
 See the [validation record](validation/README.md) for builds, sources, results, and failures.
 
-## Requirements
+## Requirements and current input limits
 
 - A video or audio recording between 20 seconds and two hours long.
 - FFmpeg to read the audio.
 - Flight position data for a possible recording date.
 - A possible date or date range, if you use automatic downloads.
 - Enough aircraft sounds and flight positions to support the same location and recording start time.
-
-Use a stationary microphone. Use an unedited recording when possible.
-Wind, changing engine speed, and missing flight positions can prevent a useful result.
-The program cannot determine the recording date from every video.
 
 ## Use the desktop application
 
@@ -120,7 +122,8 @@ soundgeo-cli.exe analyze --config "region.json" --input "recording.mp4" --method
 ```
 
 Set the search area in `region.json`. Leave `start_utc` empty or set it to `null`.
-Use at least eight minutes of continuous audio. Longer recordings can give more evidence.
+The current passage-timing method requires at least eight minutes of continuous audio.
+This method cannot return an accepted location for a shorter clip.
 The app compares the result with 19 versions that shuffle blocks of sound peaks.
 It also checks for competing locations across the searched area.
 These checks can reject a weak result. They do not guarantee a 1 km accuracy radius.
@@ -371,7 +374,8 @@ See the [technical reference](docs/technical-reference.md) for format details, a
 4. Search for one location and one recording start time that explain the matched sounds.
 5. Report the possible locations and their supporting evidence.
 
-The model includes the time that sound takes to reach the microphone.
+The current model searches for one fixed recording location.
+It includes the time that sound takes to reach the microphone.
 The Doppler method can correct a small, constant clock-rate error in a long recording.
 Flight passage timing fits a shared start time. It does not fit clock-rate error.
 It cannot repair edits that remove or repeat parts of the recording.
