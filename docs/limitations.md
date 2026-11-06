@@ -49,7 +49,8 @@ plans, failed tests, older wrong Doppler results, source records, and build chec
   gaps or shorter retention periods. A missing required archive stops the run.
 - Offline analysis requires the complete selected flight cache, aircraft catalog
   where used, and terrain cache where configured. SoundGeo and FFmpeg must also
-  be installed. Missing or damaged required files stop the offline run.
+  be installed. Missing or damaged downloaded files stop the offline run.
+  Recorded source gaps remain visible when the available cache is used offline.
 - The current model fits one fixed recording location. Camera movement can
   invalidate that fit.
 - Edits that remove, repeat, or rearrange audio can break the shared timeline.
