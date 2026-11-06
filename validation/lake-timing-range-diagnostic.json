@@ -4,7 +4,7 @@
     {
       "case": "lake-hood-nov1-later",
       "range_m": 1000,
-      "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov1-later-1000",
+      "folder": "timing-range-diagnostic/lake-hood-nov1-later-1000",
       "job_sha256": "447281ab0246a4babffbe7946c23ea81dcb735a7ea4abc92b0ff809399016cf4",
       "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
       "exit_code": 3,
@@ -22,7 +22,7 @@
     {
       "case": "lake-hood-nov1-later",
       "range_m": 2000,
-      "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov1-later-2000",
+      "folder": "timing-range-diagnostic/lake-hood-nov1-later-2000",
       "job_sha256": "1c54089cdafa48edd6692f8bb1343e3a50d01c2664fc46073319733e732020e0",
       "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
       "exit_code": 3,
@@ -40,7 +40,7 @@
     {
       "case": "lake-hood-nov4-a",
       "range_m": 1000,
-      "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov4-a-1000",
+      "folder": "timing-range-diagnostic/lake-hood-nov4-a-1000",
       "job_sha256": "d11dc37b4e169590ee7b4a5a505ca6eca14a86391f694d1043e881977118e944",
       "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
       "exit_code": 3,
@@ -58,7 +58,7 @@
     {
       "case": "lake-hood-nov4-a",
       "range_m": 2000,
-      "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov4-a-2000",
+      "folder": "timing-range-diagnostic/lake-hood-nov4-a-2000",
       "job_sha256": "ddd07bd83f8b883bf1ddb021e948bcec3b0650e2f71519f6a0674ad0c19277dd",
       "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
       "exit_code": 3,
@@ -86,11 +86,11 @@
       "created_utc": "2026-11-05T22:06:00.119215+00:00",
       "not_qualified_location_release": true,
       "cli": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-timing-f8f1735.exe",
+        "path": "analysis-build/soundgeo-cli-timing-f8f1735.exe",
         "sha256": "faf943fa3860114d95e61e20d2887180aae27c1cefc32d7dd816b11884c282b7"
       },
       "gui": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-timing-f8f1735.exe",
+        "path": "analysis-build/soundgeo-timing-f8f1735.exe",
         "sha256": "b72ecc8820e78b767f1afdb64b15292880da590d2399271e8c1a22fff2bdd478"
       }
     },
@@ -98,28 +98,28 @@
       {
         "case": "lake-hood-nov1-later",
         "range_m": 1000,
-        "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov1-later-1000",
+        "folder": "timing-range-diagnostic/lake-hood-nov1-later-1000",
         "job_sha256": "447281ab0246a4babffbe7946c23ea81dcb735a7ea4abc92b0ff809399016cf4",
         "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff"
       },
       {
         "case": "lake-hood-nov1-later",
         "range_m": 2000,
-        "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov1-later-2000",
+        "folder": "timing-range-diagnostic/lake-hood-nov1-later-2000",
         "job_sha256": "1c54089cdafa48edd6692f8bb1343e3a50d01c2664fc46073319733e732020e0",
         "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff"
       },
       {
         "case": "lake-hood-nov4-a",
         "range_m": 1000,
-        "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov4-a-1000",
+        "folder": "timing-range-diagnostic/lake-hood-nov4-a-1000",
         "job_sha256": "d11dc37b4e169590ee7b4a5a505ca6eca14a86391f694d1043e881977118e944",
         "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea"
       },
       {
         "case": "lake-hood-nov4-a",
         "range_m": 2000,
-        "folder": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-range-diagnostic\\lake-hood-nov4-a-2000",
+        "folder": "timing-range-diagnostic/lake-hood-nov4-a-2000",
         "job_sha256": "ddd07bd83f8b883bf1ddb021e948bcec3b0650e2f71519f6a0674ad0c19277dd",
         "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea"
       }

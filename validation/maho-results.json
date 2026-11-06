@@ -17,7 +17,7 @@
       "reference_limit": "Host map pin plus a predeclared 200 m allowance. The microphone has not been surveyed.",
       "acceptance_rule": "App must report a screened region after all 19 shuffled controls, and distance from its center to the host pin plus the 200 m allowance must be at most 1000 m.",
       "cli": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-region-d6e9418.exe",
+        "path": "analysis-build/soundgeo-cli-region-d6e9418.exe",
         "sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f"
       },
       "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
@@ -65,7 +65,7 @@
       "reference_limit": "Host map pin plus a predeclared 200 m allowance. The microphone has not been surveyed.",
       "acceptance_rule": "App must report a screened region after all 19 shuffled controls, and distance from its center to the host pin plus the 200 m allowance must be at most 1000 m.",
       "cli": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-region-d6e9418.exe",
+        "path": "analysis-build/soundgeo-cli-region-d6e9418.exe",
         "sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f"
       },
       "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
@@ -188,8 +188,8 @@
       },
       "maximum_control": 12.656787099307241,
       "original_job": {
-        "media": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-validation\\a\\recording.mkv",
-        "tracks": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-reference\\traces",
+        "media": "maho-nov1-validation/a/recording.mkv",
+        "tracks": "maho-nov1-reference/traces",
         "bounds": {
           "south": 17.85,
           "north": 18.25,
@@ -271,8 +271,8 @@
       },
       "maximum_control": 12.763713659606138,
       "original_job": {
-        "media": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-validation\\b\\recording.mkv",
-        "tracks": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-reference\\traces",
+        "media": "maho-nov1-validation/b/recording.mkv",
+        "tracks": "maho-nov1-reference/traces",
         "bounds": {
           "south": 17.85,
           "north": 18.25,
@@ -345,8 +345,8 @@
       },
       "maximum_control": null,
       "original_job": {
-        "media": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov4-validation\\b\\recording.mkv",
-        "tracks": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-04",
+        "media": "maho-nov4-validation/b/recording.mkv",
+        "tracks": "real-validation/flight-cache/2026-11-04",
         "bounds": {
           "south": 17.85,
           "north": 18.25,
@@ -603,7 +603,7 @@
     "cases": [
       {
         "case": "lax-continuous-development",
-        "source_report": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-region-validation\\lax-continuous-development\\report.json",
+        "source_report": "timing-region-validation/lax-continuous-development/report.json",
         "source_report_sha256": "d13eef439c29ce649d3a867fe6fe0ffe5e437c6a7d99defdf35674e234b2ef69",
         "competitive_points": 11,
         "converged": true,
@@ -619,7 +619,7 @@
       },
       {
         "case": "midway-nov1-holdout",
-        "source_report": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-region-validation\\midway-nov1-holdout\\report.json",
+        "source_report": "timing-region-validation/midway-nov1-holdout/report.json",
         "source_report_sha256": "bb20cb4dc1960af949882fab7f6ac7080cbb763d3d2d5c949af3e51c52a381bf",
         "competitive_points": 23,
         "converged": true,
@@ -634,7 +634,7 @@
       },
       {
         "case": "midway-nov4-f",
-        "source_report": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-region-validation\\midway-nov4-f\\report.json",
+        "source_report": "timing-region-validation/midway-nov4-f/report.json",
         "source_report_sha256": "289cf0f32f2b0003bdcffd069b954e3e9683a69c8f252bfca3f9a79312641367",
         "competitive_points": 13,
         "converged": true,
@@ -649,7 +649,7 @@
       },
       {
         "case": "a",
-        "source_report": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-validation\\a\\report.json",
+        "source_report": "maho-nov1-validation/a/report.json",
         "source_report_sha256": "c8b829e41ecf5b54c99ebad798daa88b9871fb72e74eefad9ebae29c93c4e772",
         "competitive_points": 10,
         "converged": true,

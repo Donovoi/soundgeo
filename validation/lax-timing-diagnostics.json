@@ -10,11 +10,11 @@
       "created_utc": "2026-11-05T22:06:00.119215+00:00",
       "not_qualified_location_release": true,
       "cli": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-timing-f8f1735.exe",
+        "path": "analysis-build/soundgeo-cli-timing-f8f1735.exe",
         "sha256": "faf943fa3860114d95e61e20d2887180aae27c1cefc32d7dd816b11884c282b7"
       },
       "gui": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-timing-f8f1735.exe",
+        "path": "analysis-build/soundgeo-timing-f8f1735.exe",
         "sha256": "b72ecc8820e78b767f1afdb64b15292880da590d2399271e8c1a22fff2bdd478"
       }
     },
@@ -23,14 +23,14 @@
         "case": "broadcast-a",
         "job_sha256": "b9a250c94a60312730caf5dec9fdff93bfb0cd4b4b329dfbdcc55a597b66b17f",
         "media_sha256": "e7ffaaf7663b4d8cd543acbc9b23b8538a9ef2f147b590ae3e91a3b6b1a8eaa5",
-        "source_job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\a\\job-exact.json",
+        "source_job": "lax-diagnostic/a/job-exact.json",
         "bounds": {
           "south": 33.76,
           "north": 34.12,
           "west": -118.65,
           "east": -118.15
         },
-        "reference_location_file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\location-reference.json",
+        "reference_location_file": "lax-diagnostic/location-reference.json",
         "classification": "source diagnostic; no clean accuracy claim",
         "reference_location_sha256": "609206e813383331cd5769f9a80f1d392a21f8cf7eac5a1f5ee3a428235d547c"
       },
@@ -38,14 +38,14 @@
         "case": "broadcast-b",
         "job_sha256": "9eeef506b1889b1f0e5e980201af2d99eed7e76de9778944cb454f622b934538",
         "media_sha256": "f00ba7eeb9229d5f4404378f6d7ccb31034ea3190f96f013fbae53807d2a5701",
-        "source_job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\b\\job-exact.json",
+        "source_job": "lax-diagnostic/b/job-exact.json",
         "bounds": {
           "south": 33.76,
           "north": 34.12,
           "west": -118.65,
           "east": -118.15
         },
-        "reference_location_file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\location-reference.json",
+        "reference_location_file": "lax-diagnostic/location-reference.json",
         "classification": "source diagnostic; no clean accuracy claim",
         "reference_location_sha256": "609206e813383331cd5769f9a80f1d392a21f8cf7eac5a1f5ee3a428235d547c"
       },
@@ -53,14 +53,14 @@
         "case": "fixed-a",
         "job_sha256": "13976501ace9e1414e110d9c5e8fe355740930097ef04c590b1ac78d2cd25966",
         "media_sha256": "96f6ca531aa521c6fa837103483a53b804825e049856ae0c3960f4ef370a1b0c",
-        "source_job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\a\\job.json",
+        "source_job": "lax-fixed-camera/a/job.json",
         "bounds": {
           "south": 33.76,
           "north": 34.12,
           "west": -118.65,
           "east": -118.15
         },
-        "reference_location_file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\location-reference.json",
+        "reference_location_file": "lax-fixed-camera/location-reference.json",
         "classification": "source diagnostic; no clean accuracy claim",
         "reference_location_sha256": "e5b15f7dc817534be2d301a05623e1f40945855f327841f39a67366bf8990936"
       },
@@ -68,14 +68,14 @@
         "case": "fixed-b",
         "job_sha256": "ca7cb2c71d355ae36cbe73da0e95c7c9fe33fbd13752dbe51528c006912e9a6e",
         "media_sha256": "f7866bf3fa86c685c8670deb60c5b31c794e214793f42798f762841609fa25c4",
-        "source_job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\b\\job.json",
+        "source_job": "lax-fixed-camera/b/job.json",
         "bounds": {
           "south": 33.76,
           "north": 34.12,
           "west": -118.65,
           "east": -118.15
         },
-        "reference_location_file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\location-reference.json",
+        "reference_location_file": "lax-fixed-camera/location-reference.json",
         "classification": "source diagnostic; no clean accuracy claim",
         "reference_location_sha256": "e5b15f7dc817534be2d301a05623e1f40945855f327841f39a67366bf8990936"
       }
@@ -288,8 +288,8 @@
     "audio_overlap": {
       "plan": {
         "sources": {
-          "broadcast": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\b\\recording-exact.mkv",
-          "fixed": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\b\\recording.mp4"
+          "broadcast": "lax-diagnostic/b/recording-exact.mkv",
+          "fixed": "lax-fixed-camera/b/recording.mp4"
         },
         "rate_hz": 4000,
         "envelope_hz": 10,

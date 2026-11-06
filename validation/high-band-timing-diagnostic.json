@@ -2,7 +2,7 @@
   "plan": {
     "build": {
       "commit": "72d4658b0aa7456d0d74be9bea554a24d75c463a",
-      "executable": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-search-72d4658.exe",
+      "executable": "analysis-build/inspect-timing-search-72d4658.exe",
       "sha256": "f30ba71ab36e4d7db5a9b6fd257e816740c312e29257467b27f1ea528ff2732b",
       "required_local_checks_passed": true,
       "tests": 86,
@@ -15,27 +15,27 @@
     "cases": [
       {
         "case": "lax-broadcast-a",
-        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\broadcast-a\\job.json"
+        "job": "lax-frozen-diagnostics/broadcast-a/job.json"
       },
       {
         "case": "lax-broadcast-b",
-        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\broadcast-b\\job.json"
+        "job": "lax-frozen-diagnostics/broadcast-b/job.json"
       },
       {
         "case": "lax-fixed-a",
-        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\fixed-a\\job.json"
+        "job": "lax-frozen-diagnostics/fixed-a/job.json"
       },
       {
         "case": "lax-fixed-b",
-        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\fixed-b\\job.json"
+        "job": "lax-frozen-diagnostics/fixed-b/job.json"
       },
       {
         "case": "midway-nov4-a",
-        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-validation\\midway-nov4-a\\job.json"
+        "job": "timing-integrated-validation/midway-nov4-a/job.json"
       },
       {
         "case": "lake-hood-nov1-later",
-        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\lake-hood-nov1-later\\job.json"
+        "job": "timing-existing-cases/lake-hood-nov1-later/job.json"
       }
     ],
     "band_hz": [

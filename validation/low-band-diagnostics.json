@@ -6,7 +6,7 @@
   "plan": {
     "build": {
       "commit": "71d05e320de0f1e00852d7ba76640706ec6eebb4",
-      "executable": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-options-71d05e3.exe",
+      "executable": "analysis-build/inspect-timing-options-71d05e3.exe",
       "sha256": "884a685ce71e106dcee893712fe917fdfe2dea7c4d802e8a473d5f41dd1f3585",
       "tests": 93,
       "failed": 0,
@@ -17,39 +17,39 @@
     },
     "reports": {
       "lax-fixed-a": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-a-1000\\report.json",
+        "path": "lax-range-diagnostic/fixed-a-1000/report.json",
         "sha256": "7be8f602295681c73c0dfd36958b264a0d1d3cf46790fe27c1f05919197f26d4"
       },
       "lax-fixed-b": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-b-1000\\report.json",
+        "path": "lax-range-diagnostic/fixed-b-1000/report.json",
         "sha256": "aa827675a1142125e74631c2fbd35d3ba23eea7cb38b45b06023875f0f931efe"
       },
       "lax-continuous": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-continuous-followup\\report.json",
+        "path": "lax-continuous-followup/report.json",
         "sha256": "cfbaa4730533778b2f4527f43801d9ae7f0e74371502be7620d39b8019221477"
       },
       "lax-nov4-a": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-nov4-reserved\\a\\report.json",
+        "path": "lax-nov4-reserved/a/report.json",
         "sha256": "3a38af4f42534aedd8de1a0486470f0b8b99a2c3698d71665129ee71289811fa"
       },
       "lax-nov4-b": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-nov4-reserved\\b\\report.json",
+        "path": "lax-nov4-reserved/b/report.json",
         "sha256": "35739b49d987aa8ab19c13078118d83f1b5eb400fbf0387fa3cdf69c5e8553d8"
       },
       "lax-broadcast-b": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\broadcast-b\\report.json",
+        "path": "lax-frozen-diagnostics/broadcast-b/report.json",
         "sha256": "c804a11a756c02a0f6d0ab13da67064033ac7ea10fbfb6a6e6eaf01af3ad52b2"
       },
       "midway-a": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-validation\\midway-nov4-a\\report.json",
+        "path": "timing-integrated-validation/midway-nov4-a/report.json",
         "sha256": "026e898313c46f9d46c580b38630d2a54106d057d152d75b803148c973a1071f"
       },
       "midway-f": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-validation\\midway-nov4-f\\report.json",
+        "path": "timing-integrated-validation/midway-nov4-f/report.json",
         "sha256": "5a916ff37c09313430e72d636ad330bc736ba7b2e81db130db0989bda8929aa3"
       },
       "lake-a": {
-        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-validation\\lake-hood-nov4-a\\report.json",
+        "path": "timing-integrated-validation/lake-hood-nov4-a/report.json",
         "sha256": "5411e2f952cf666f443b67fec9ef9736fdb534f9ff90a79c6cd84fbb1e9caf53"
       }
     },

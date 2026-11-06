@@ -245,13 +245,13 @@
       "full_day_broad_region_comparison": true,
       "sources": [
         {
-          "file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\fresh-lake-nov4-reference.csv",
+          "file": "fresh-lake-nov4-reference.csv",
           "sha256": "2b391e757bc860eeebfd6c491817c9eb5cab48e394bd6a5e08b9fe195261c274",
           "aircraft": 614,
           "points": 233882
         },
         {
-          "file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-archive-variants-nov4\\reference.csv",
+          "file": "free-archive-variants-nov4/reference.csv",
           "sha256": "72e8c794015fb2a0199060eee56485dc0bba1b668f9122aaacbc3e0ad5f5ce89",
           "aircraft": 613,
           "points": 233361

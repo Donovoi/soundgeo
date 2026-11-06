@@ -29,11 +29,11 @@
     "real_validation": "All 25 fixed replays completed; eight accepted, no regressions, no wrong screened result.",
     "not_qualified_location_release": true,
     "cli": {
-      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-short-80d33f2.exe",
+      "path": "analysis-build/soundgeo-cli-short-80d33f2.exe",
       "sha256": "e8c4f1da9e2cfc391dd20f5d496d1e7881b9c0353d72fb7d1a7a62a234193e11"
     },
     "gui": {
-      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-short-80d33f2.exe",
+      "path": "analysis-build/soundgeo-short-80d33f2.exe",
       "sha256": "ae116619d6add3a1c8d171bfefd92f374ebab04b155aa41170ec5ff990628afd"
     }
   },

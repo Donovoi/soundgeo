@@ -32,7 +32,7 @@
   },
   "build": {
     "commit": "71d05e320de0f1e00852d7ba76640706ec6eebb4",
-    "executable": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-options-71d05e3.exe",
+    "executable": "analysis-build/inspect-timing-options-71d05e3.exe",
     "sha256": "884a685ce71e106dcee893712fe917fdfe2dea7c4d802e8a473d5f41dd1f3585",
     "tests": 93,
     "failed": 0,
