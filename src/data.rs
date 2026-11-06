@@ -1,6 +1,6 @@
 use crate::aircraft::{AircraftFilter, AircraftKind, Catalog};
 use crate::{
-    Control, Job, Progress,
+    AnalysisMethod, Control, Job, Progress,
     geo::{Bounds, Point},
     model::{Sample, Track},
 };
@@ -52,12 +52,23 @@ pub fn load(path: &Path, control: &Control) -> Result<Dataset> {
     load_filtered(&[path.to_owned()], control, &Filter::default())
 }
 
-#[derive(Default)]
 struct Filter {
     bounds: Option<Bounds>,
     time: Option<(f64, f64)>,
     aircraft: AircraftFilter,
     catalog: Catalog,
+    minimum_positions: usize,
+}
+impl Default for Filter {
+    fn default() -> Self {
+        Self {
+            bounds: None,
+            time: None,
+            aircraft: AircraftFilter::default(),
+            catalog: Catalog::default(),
+            minimum_positions: 8,
+        }
+    }
 }
 impl Filter {
     fn accepts(&self, p: Point, time: f64) -> bool {
@@ -82,6 +93,12 @@ pub fn load_for_job_sources(
     control: &Control,
 ) -> Result<Dataset> {
     let filter = Filter {
+        // Passage timing uses consecutive position pairs, rather than a
+        // sustained Doppler curve. Keep three real observations as a minimum.
+        minimum_positions: match job.analysis_method {
+            AnalysisMethod::Doppler => 8,
+            AnalysisMethod::PassageTiming => 3,
+        },
         bounds: job.bounds,
         aircraft: job.aircraft_filter,
         catalog: job
@@ -253,7 +270,7 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                 let dt = s.time - prev.time;
                 let speed = (s.xyz - prev.xyz).norm() / dt;
                 if dt > 60. || speed > 280. {
-                    if segment.len() >= 8 {
+                    if segment.len() >= filter.minimum_positions {
                         tracks.push(Track {
                             id: format!("{id}/{index}"),
                             kind,
@@ -266,7 +283,7 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
             }
             segment.push(s);
         }
-        if segment.len() >= 8 {
+        if segment.len() >= filter.minimum_positions {
             tracks.push(Track {
                 id: format!("{id}/{index}"),
                 kind,
@@ -276,10 +293,18 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
     }
     if tracks.is_empty() {
         bail!(
-            "No usable flight segments after type/region/time filtering. Each needs at least 8 valid airborne positions, at most 60 seconds apart."
+            "No usable flight segments after type/region/time filtering. Each needs at least {} valid airborne positions, at most 60 seconds apart.",
+            filter.minimum_positions
         );
     }
     let mut warnings = vec![];
+    let short = tracks
+        .iter()
+        .filter(|track| track.samples.len() < 8)
+        .count();
+    if short > 0 {
+        warnings.push(format!("Passage timing includes {short} short flight segments with 3 to 7 recorded positions. Positions are not added and gaps are not extended."));
+    }
     if skipped > 0 {
         warnings.push(format!(
             "Skipped {skipped} malformed, ground, or missing-altitude trace records."

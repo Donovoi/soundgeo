@@ -361,7 +361,8 @@ example,2026-09-08T10:00:00Z,35.0000,-110.0200,1200
 example,2026-09-08T10:00:02Z,35.0000,-110.0184,1200
 ```
 
-Each flight needs at least eight positions. Gaps between positions must not exceed 60 seconds.
+Passage timing needs at least three recorded positions per flight segment.
+Doppler matching needs at least eight. Gaps between positions must not exceed 60 seconds.
 Use WGS84 coordinates. Use geometric altitude when it is available.
 Use consistent altitude units and reference levels.
 

@@ -4,7 +4,7 @@ This page gives the detailed data and model rules. See the [README](../README.md
 
 ## Flight data
 
-CSV uses these exact headers. Time is Unix seconds or RFC3339 with a timezone; coordinates are WGS84 degrees and altitude is **metres**. Each aircraft needs at least eight points with gaps no larger than 60 seconds.
+CSV uses these exact headers. Time is Unix seconds or RFC3339 with a timezone; coordinates are WGS84 degrees and altitude is **metres**. Each flight segment needs at least three recorded points for passage timing, or eight for Doppler matching. Gaps must be no larger than 60 seconds. The importer does not add points to meet these limits.
 
 ```csv
 aircraft,time,lat,lon,altitude_m
