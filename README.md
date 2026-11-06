@@ -44,6 +44,15 @@ The replays do not measure performance on unseen locations.
 Lake Hood and Southampton still returned no useful location.
 Withholding a weak result does not prove that the app can find every location.
 
+A later test used two new recordings from Maho Beach, with a full day of free
+ADS-B Exchange sample data and no recording start time. One returned a point
+350 m from the host's map pin. It stayed within 550 m after adding the planned
+200 m allowance for the unsurveyed microphone. It matched 15 flights and passed
+all 19 shuffled checks. The other recording ranked the same point first, but
+reported competing locations. This adds a second successful site. It does not
+establish general accuracy. A different Maho date had too few nearby flights
+in the free archive and did not return a location.
+
 The older Doppler tests and failed experiments remain in the validation record.
 An experimental Lake Hood search found one first choice within 83 m, but failed on two later clips.
 An earlier Southampton test returned a wrong location with a positive model status.
@@ -59,6 +68,9 @@ and passed cache checks. LAX follow-up tests have not established a reliable loc
 Both reserved recordings from the second day failed to give a useful location.
 One reported insufficient evidence. The other reported widely separated choices.
 Software checks do not establish location accuracy.
+The added free sample downloader passes all 105 software tests locally, plus
+formatting, strict Clippy, documentation tests, and both release builds.
+Its live-download and CI results are recorded separately from the older build.
 See the [validation record](validation/README.md) for builds, results, data sources, and failures.
 
 ## Requirements
@@ -91,6 +103,11 @@ A new daily flight archive can require several GB of storage.
 The program checks downloaded files and uses valid files again.
 
 Select **Worldwide: ADSB.lol** for the worldwide archive.
+For a first-of-month recording, you can also select **Free evaluation sample:
+first of each month**. Set a search area. This source is limited to testing and
+evaluation. It downloads the full day's traces for aircraft found in 288
+worldwide snapshots, spaced five minutes apart. Short flights between those
+snapshots can be absent. Missing traces appear in the report and cache manifest.
 For a recording near Chicago, you can select **Chicago: public airport replay**.
 For a recording near Los Angeles, select **LAX: public airport replay**.
 The Chicago source contains local airport radar data. It keeps about 90 days of history.
@@ -174,6 +191,21 @@ These sources cover their local radar areas and keep about 90 days of data.
 The program checks every 30-second part of the selected UTC day.
 If a part is missing or invalid, the download fails and keeps the valid parts for the next attempt.
 An archive can still have gaps in flight observations.
+
+For the free first-of-month evaluation sample, specify a search area:
+
+```powershell
+soundgeo-cli.exe download --date 2026-11-01 --provider adsb-exchange-sample --south 17.85 --north 18.25 --west -63.35 --east -62.95 --output "flight-cache"
+```
+
+To download during analysis, use `--provider adsb-exchange-sample` with `--date`
+and `--cache`. Put the search bounds in the job file. Leave `start_utc` as `null`.
+The app uses the provider's [public sample access](https://www.adsbexchange.com/pull-data/).
+It does not use a private account or a paid bucket. The
+[sample page](https://www.adsbexchange.com/data-products/sample-data/) states the
+date and evaluation limits. A missing snapshot stops the download. Missing
+aircraft traces are listed in `sample-manifest.json` and in the report warning.
+The app checks cached file hashes and keeps damaged cache bytes before repair.
 
 To search more than one possible date, add `--date-to`:
 

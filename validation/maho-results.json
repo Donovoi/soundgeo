@@ -1,0 +1,669 @@
+{
+  "original_fixed_plans": [
+    {
+      "created_utc": "2026-11-06T02:04:29.549123+00:00",
+      "source": "https://www.youtube.com/watch?v=iSeH45R-8R0",
+      "source_date": "2026-11-01",
+      "source_metadata_sha256": "9671c531b239cf291ff13e39a2498c95dd22874218f9804cdbbdca56040cf957",
+      "ambient_sound_source": "https://www.visitstmaarten.com/sound-added-to-st-maarten-maho-webcam/",
+      "owner_camera_location": "Tortuga Maho Beach Cafe",
+      "host_location_source": "https://tortugamaho.com/",
+      "host_map_link": "https://www.google.com/maps/place/Tortuga+Maho/@18.0402897,-63.1230251,17z/data=!3m1!4b1!4m5!3m4!1s0x8c0e69457fab9471:0x3637a7ca749bde62!8m2!3d18.0402897!4d-63.1208364",
+      "reference_position": {
+        "latitude": 18.0402897,
+        "longitude": -63.1208364
+      },
+      "reference_allowance_m": 200,
+      "reference_limit": "Host map pin plus a predeclared 200 m allowance. The microphone has not been surveyed.",
+      "acceptance_rule": "App must report a screened region after all 19 shuffled controls, and distance from its center to the host pin plus the 200 m allowance must be at most 1000 m.",
+      "cli": {
+        "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-region-d6e9418.exe",
+        "sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f"
+      },
+      "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+      "bounds": {
+        "south": 17.85,
+        "north": 18.25,
+        "west": -63.35,
+        "east": -62.95
+      },
+      "ground_m": 0,
+      "ground_datum": "egm96",
+      "method": "passage_timing",
+      "timing_options": {
+        "maximum_passage_distance_m": 500
+      },
+      "source_selection": "Two fixed two-hour daylight intervals, selected before any solver result or inspection of regional flight coverage. No replacement after an unsuccessful location result.",
+      "windows": [
+        {
+          "id": "a",
+          "start_utc": "2026-11-01T12:00:00+00:00"
+        },
+        {
+          "id": "b",
+          "start_utc": "2026-11-01T16:00:00+00:00"
+        }
+      ],
+      "continuity_rule": "All 1440 fragment starts in both streams must advance by 5 seconds within 0.1 seconds. Check five visible clocks before analysis. Preserve and reject a broken interval.",
+      "recording_clock_or_camera_position_given_to_app": false,
+      "redistribute_media": false
+    },
+    {
+      "created_utc": "2026-11-06T01:58:10.298517+00:00",
+      "source": "https://www.youtube.com/watch?v=iSeH45R-8R0",
+      "source_date": "2026-11-04",
+      "source_metadata_sha256": "9671c531b239cf291ff13e39a2498c95dd22874218f9804cdbbdca56040cf957",
+      "ambient_sound_source": "https://www.visitstmaarten.com/sound-added-to-st-maarten-maho-webcam/",
+      "owner_camera_location": "Tortuga Maho Beach Cafe",
+      "host_location_source": "https://tortugamaho.com/",
+      "host_map_link": "https://www.google.com/maps/place/Tortuga+Maho/@18.0402897,-63.1230251,17z/data=!3m1!4b1!4m5!3m4!1s0x8c0e69457fab9471:0x3637a7ca749bde62!8m2!3d18.0402897!4d-63.1208364",
+      "reference_position": {
+        "latitude": 18.0402897,
+        "longitude": -63.1208364
+      },
+      "reference_allowance_m": 200,
+      "reference_limit": "Host map pin plus a predeclared 200 m allowance. The microphone has not been surveyed.",
+      "acceptance_rule": "App must report a screened region after all 19 shuffled controls, and distance from its center to the host pin plus the 200 m allowance must be at most 1000 m.",
+      "cli": {
+        "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-region-d6e9418.exe",
+        "sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f"
+      },
+      "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+      "bounds": {
+        "south": 17.85,
+        "north": 18.25,
+        "west": -63.35,
+        "east": -62.95
+      },
+      "ground_m": 0,
+      "ground_datum": "egm96",
+      "method": "passage_timing",
+      "timing_options": {
+        "maximum_passage_distance_m": 500
+      },
+      "source_selection": "Two fixed two-hour daylight intervals, selected before any solver result or inspection of regional flight coverage. No replacement after an unsuccessful location result.",
+      "windows": [
+        {
+          "id": "a",
+          "start_utc": "2026-11-04T12:00:00+00:00"
+        },
+        {
+          "id": "b",
+          "start_utc": "2026-11-04T16:00:00+00:00"
+        }
+      ],
+      "continuity_rule": "All 1440 fragment starts in both streams must advance by 5 seconds within 0.1 seconds. Check five visible clocks before analysis. Preserve and reject a broken interval.",
+      "recording_clock_or_camera_position_given_to_app": false,
+      "redistribute_media": false
+    }
+  ],
+  "plan_sha256": {
+    "nov1": "9682d434f5055bb14b0b9378be3aa7c1b80414c1408e00f6410fc1d9200dc254",
+    "nov4": "26989a3c3d245faa949782817cc76d7f44313f4b0dc4138c335648db8034dcf2"
+  },
+  "microphone_not_surveyed": true,
+  "known_reference_not_supplied_to_app": true,
+  "free_reference": {
+    "nov1": {
+      "source": "https://www.adsbexchange.com/data-products/sample-data/",
+      "public_access": "https://www.adsbexchange.com/pull-data/",
+      "all_288_discovery_snapshots": true,
+      "discovery_sha256": "d6ca18d985d6c95afbce45a6df1da0c9d17ffabf582b60e507646484351c2c1e",
+      "download_plan_sha256": "12f8686faef6545d26df49b00faf4eca90dcebb3f3c34dcb7defec339bf2ee80",
+      "download_results_sha256": "a8ae40fffe313742b35e74723b0bf790abcbaf6fa9d7248e6411cdaa2cef3fec",
+      "aircraft_downloaded": 97,
+      "unavailable_aircraft": 0,
+      "native_export_segments": 336,
+      "native_export_retained_points": 22688,
+      "native_export_sha256": "bc81ad318aa3bb579d7f0ccbe14150af35fa281836f5b685d386c5d692a3f15a",
+      "limitation": "Five-minute full-day discovery can miss brief flights; receiver coverage is not complete."
+    },
+    "nov4": {
+      "source": "ADSB.lol cached global full-day archive",
+      "native_export_sha256": "5d61fd011177176c2f70a9925bf4ddc69845539ff241dccbdff1fb8c0de1fcd7",
+      "retained_points": 145,
+      "segments": 12,
+      "minimum_altitude_m": 10881.36,
+      "no_near_ground_passages": true
+    }
+  },
+  "cases": [
+    {
+      "case": "maho-nov1-a",
+      "exit_code": 4,
+      "elapsed_s": 12.367833299911581,
+      "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+      "cli_sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f",
+      "job_sha256": "752dd2dd85e30883679d80ff151043540833bb633578dbaa43d3a99f97674335",
+      "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+      "recording_clock_supplied": false,
+      "screened": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "report_sha256": "c8b829e41ecf5b54c99ebad798daa88b9871fb72e74eefad9ebae29c93c4e772",
+      "sound_peaks": 86,
+      "controls": 19,
+      "region": null,
+      "first_error_to_pin_m": 349.64905663724693,
+      "first_score": 13.881781909946067,
+      "first_matches": 6,
+      "source_qualification": {
+        "passed": true,
+        "inspection": "Five original 480p source frames and all audio/video container fragment starts were checked before analysis.",
+        "visible_local_clocks": [
+          "2026-11-01T07:56:42",
+          "2026-11-01T08:26:42",
+          "2026-11-01T08:56:42",
+          "2026-11-01T09:26:42",
+          "2026-11-01T09:56:37"
+        ],
+        "nominal_frame_offsets_s": [
+          0,
+          1800,
+          3600,
+          5400,
+          7195
+        ],
+        "date_confirmed": "2026-11-01",
+        "maximum_audio_video_start_difference_s": 0.016235828399658203,
+        "not_passed_to_app": true,
+        "ambient_audio_documentation": "https://www.visitstmaarten.com/sound-added-to-st-maarten-maho-webcam/",
+        "microphone_not_surveyed": true
+      },
+      "source_qualification_sha256": "c1bc1813d4ee7483cbb38c90be8e320794c09859eff5b4b972afdba51ace8135",
+      "timestamp_audit": {
+        "streams": {
+          "140": {
+            "ordered_content_sha256": "55cb45e3713be377d5449d91d9a654724c1c46d1dc07b6bcb088be04f5d5fc3b",
+            "first_to_last_start_s": 7195.004807256162,
+            "anomalies": []
+          },
+          "160": {
+            "ordered_content_sha256": "1df5f9317ec112b755d928fc2430d63ccd78ffd2eb4dd656e6a2764148a0bc6e",
+            "first_to_last_start_s": 7195.0,
+            "anomalies": []
+          }
+        },
+        "maximum_audio_video_difference_s": 0.016235828399658203
+      },
+      "maximum_control": 12.656787099307241,
+      "original_job": {
+        "media": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-validation\\a\\recording.mkv",
+        "tracks": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-reference\\traces",
+        "bounds": {
+          "south": 17.85,
+          "north": 18.25,
+          "west": -63.35,
+          "east": -62.95
+        },
+        "ground_m": 0,
+        "ground_datum": "egm96",
+        "analysis_method": "passage_timing",
+        "start_utc": null,
+        "timing_options": {
+          "maximum_passage_distance_m": 500
+        }
+      }
+    },
+    {
+      "case": "maho-nov1-b",
+      "exit_code": 0,
+      "elapsed_s": 15.705170199973509,
+      "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+      "cli_sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f",
+      "job_sha256": "6e55ab1141164ebfbf4c4bd0726aa934cb259f56c3f347635c2cf769c88a7498",
+      "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+      "recording_clock_supplied": false,
+      "screened": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "report_sha256": "a7173e59b6acdb6ece41a1097a3810b85318564d6801e49161c63946edff6b6d",
+      "sound_peaks": 117,
+      "controls": 19,
+      "region": {
+        "latitude": 18.04328859060403,
+        "longitude": -63.121830985915494,
+        "enclosing_radius_m": 0.0,
+        "competitive_points": 1
+      },
+      "first_error_to_pin_m": 349.64905663724693,
+      "first_score": 28.822567668414784,
+      "first_matches": 15,
+      "error_with_reference_allowance_m": 549.649056637247,
+      "source_qualification": {
+        "passed": true,
+        "inspection": "Five original 480p source frames and all audio/video container fragment starts were checked before analysis.",
+        "visible_local_clocks": [
+          "2026-11-01T11:57:07",
+          "2026-11-01T12:27:07",
+          "2026-11-01T12:57:07",
+          "2026-11-01T13:27:07",
+          "2026-11-01T13:57:02"
+        ],
+        "nominal_frame_offsets_s": [
+          0,
+          1800,
+          3600,
+          5400,
+          7195
+        ],
+        "date_confirmed": "2026-11-01",
+        "maximum_audio_video_start_difference_s": 0.02231292426586151,
+        "not_passed_to_app": true,
+        "ambient_audio_documentation": "https://www.visitstmaarten.com/sound-added-to-st-maarten-maho-webcam/",
+        "microphone_not_surveyed": true
+      },
+      "source_qualification_sha256": "8fcc0fcec25cc02ce02f24ffb98b2713175a7baf946014d50af6dab6750bc8ce",
+      "timestamp_audit": {
+        "streams": {
+          "140": {
+            "ordered_content_sha256": "89fc1534cbcf9ef08076a1a55ccf9621d2015d324ec79c0478ee2f69bbe6877b",
+            "first_to_last_start_s": 7195.004807256162,
+            "anomalies": []
+          },
+          "160": {
+            "ordered_content_sha256": "bb73ef406d1495c8813af61e697ab8742c6b92f13cf0204581b5bf7470722c0c",
+            "first_to_last_start_s": 7195.0,
+            "anomalies": []
+          }
+        },
+        "maximum_audio_video_difference_s": 0.02231292426586151
+      },
+      "maximum_control": 12.763713659606138,
+      "original_job": {
+        "media": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-validation\\b\\recording.mkv",
+        "tracks": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-reference\\traces",
+        "bounds": {
+          "south": 17.85,
+          "north": 18.25,
+          "west": -63.35,
+          "east": -62.95
+        },
+        "ground_m": 0,
+        "ground_datum": "egm96",
+        "analysis_method": "passage_timing",
+        "start_utc": null,
+        "timing_options": {
+          "maximum_passage_distance_m": 500
+        }
+      }
+    },
+    {
+      "case": "maho-nov4-b",
+      "exit_code": 3,
+      "elapsed_s": 207.9794861000264,
+      "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+      "cli_sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f",
+      "job_sha256": "6f12badf05cf3a25c62ccd3cd998e815d2b65150f5ae7e3d82baaae0ea98282f",
+      "media_sha256": "66bff87e701936146f1c21f7cebdec1025a87b59b4244c0dbaf45d17455f05c4",
+      "recording_clock_supplied": false,
+      "screened": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "report_sha256": "9ad6430cf2370a7551e6cfbfc4e09413277db13cc4b0562f56248cf87d200fd1",
+      "sound_peaks": 62,
+      "controls": 0,
+      "region": null,
+      "source_qualification": {
+        "passed": true,
+        "inspection": "Five original 480p frames and all container fragment starts checked before analysis.",
+        "visible_local_clocks": [
+          "2026-11-04T11:59:52",
+          "2026-11-04T12:29:52",
+          "2026-11-04T12:59:52",
+          "2026-11-04T13:29:52",
+          "2026-11-04T13:59:47"
+        ],
+        "nominal_frame_offsets_s": [
+          0,
+          1800,
+          3600,
+          5400,
+          7195
+        ],
+        "date_confirmed": "2026-11-04",
+        "not_passed_to_app": true,
+        "ambient_audio_documentation": "https://www.visitstmaarten.com/sound-added-to-st-maarten-maho-webcam/",
+        "microphone_not_surveyed": true,
+        "reference_limit": "The cached free archive has no low flights in this region. Preserve the full app result; do not treat a refusal as a location pass."
+      },
+      "source_qualification_sha256": "84a9a20ee946afaf5ae8aa452425aaa828e41ee3c4ffb164ff91c957fdb48c3a",
+      "timestamp_audit": {
+        "streams": {
+          "140": {
+            "ordered_content_sha256": "c6321d04c4968b8fd31903f17a5bed5d22a29281f6fb0ad7e2660efcf3c35077",
+            "first_to_last_start_s": 7195.051247168332,
+            "anomalies": []
+          },
+          "160": {
+            "ordered_content_sha256": "5761652d52e677d12e0e129acff6a7b321a2a1b36f3822f47702fbb28046d251",
+            "first_to_last_start_s": 7195.066666666418,
+            "anomalies": []
+          }
+        },
+        "maximum_audio_video_difference_s": 0.022585034370422363
+      },
+      "maximum_control": null,
+      "original_job": {
+        "media": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov4-validation\\b\\recording.mkv",
+        "tracks": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\real-validation\\flight-cache\\2026-11-04",
+        "bounds": {
+          "south": 17.85,
+          "north": 18.25,
+          "west": -63.35,
+          "east": -62.95
+        },
+        "ground_m": 0,
+        "ground_datum": "egm96",
+        "analysis_method": "passage_timing",
+        "start_utc": null,
+        "timing_options": {
+          "maximum_passage_distance_m": 500
+        }
+      }
+    }
+  ],
+  "source_rejected_before_analysis": {
+    "case": "maho-nov4-a",
+    "timestamp_audit": {
+      "streams": {
+        "140": {
+          "ordered_content_sha256": "5d8f0ce203ef0efa3f3970df701a4637d4d2dbc068f53854c6ed87c5b931ba36",
+          "first_to_last_start_s": 7192.54349206388,
+          "anomalies": [
+            {
+              "sequence": 3634453,
+              "delta_s": 0.8126984126865864
+            },
+            {
+              "sequence": 3634468,
+              "delta_s": 5.1316099762916565
+            },
+            {
+              "sequence": 3634469,
+              "delta_s": 5.131609980016947
+            },
+            {
+              "sequence": 3634470,
+              "delta_s": 5.1316099762916565
+            },
+            {
+              "sequence": 3634471,
+              "delta_s": 5.1316099762916565
+            },
+            {
+              "sequence": 3634472,
+              "delta_s": 5.131609980016947
+            },
+            {
+              "sequence": 3634473,
+              "delta_s": 5.1316099762916565
+            },
+            {
+              "sequence": 3634474,
+              "delta_s": 5.1316099762916565
+            },
+            {
+              "sequence": 3634475,
+              "delta_s": 5.1316099762916565
+            },
+            {
+              "sequence": 3634476,
+              "delta_s": 5.131609980016947
+            },
+            {
+              "sequence": 3634477,
+              "delta_s": 5.1316099762916565
+            },
+            {
+              "sequence": 3634478,
+              "delta_s": 5.1316099762916565
+            },
+            {
+              "sequence": 3634479,
+              "delta_s": 5.1548299342393875
+            },
+            {
+              "sequence": 3634480,
+              "delta_s": 5.1316099762916565
+            }
+          ]
+        },
+        "160": {
+          "ordered_content_sha256": "c57938ee5af5ef1cc9821bc220672e49bf93f26fbeb8dd8223df30ba59a6bdac",
+          "first_to_last_start_s": 7192.5333333313465,
+          "anomalies": [
+            {
+              "sequence": 3634453,
+              "delta_s": 0.8000000007450581
+            },
+            {
+              "sequence": 3634468,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634469,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634470,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634471,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634472,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634473,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634474,
+              "delta_s": 5.133333336561918
+            },
+            {
+              "sequence": 3634475,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634476,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634477,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634478,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634479,
+              "delta_s": 5.133333332836628
+            },
+            {
+              "sequence": 3634480,
+              "delta_s": 5.133333332836628
+            }
+          ]
+        }
+      },
+      "maximum_audio_video_difference_s": 0.022585034370422363
+    },
+    "clock_strips_sha256": "b3162d58f697ee692e9bc54a8e92060dd2d104184e8e41446f99f3449ab71a8d",
+    "visible_local_clocks_at_nominal_0_30_60_90_and_119m55s": [
+      "07:59:22",
+      "08:29:27",
+      "08:59:52",
+      "09:29:52",
+      "09:59:47"
+    ],
+    "reason": "The original five-second fragment rule failed. Visible camera clocks also gained about 32 seconds relative to media timestamps. No location solve was run for this interval."
+  },
+  "finer_grid_development": {
+    "plan_sha256": "fa7757a2cf9dde0d5c55f06e51aa1dc50541f653b848511950d8c21a6820ffba",
+    "production_defaults_unchanged": true,
+    "cases": [
+      {
+        "case": "a",
+        "grid_m": 200,
+        "status": "insufficient_evidence",
+        "report_sha256": "d92a02a6c4f4562e185a51b1d04dad35124a34a200cb94766cc5529c3fab4725",
+        "first_score": 12.21223141636149,
+        "first_matches": 6,
+        "first_error_to_pin_m": 109.7451098976208,
+        "maximum_control": 12.801627456744338,
+        "controls": 19,
+        "region": null,
+        "counts_as_additional_independent_case": false,
+        "shell_exit_code": 1,
+        "native_exit_code_captured": false
+      },
+      {
+        "case": "b",
+        "grid_m": 200,
+        "status": "candidates_found",
+        "report_sha256": "bb6582bc0b9ccae432b88d94d992f65f1a70eaf56199e0ec78369e857d2b92ec",
+        "first_score": 25.329843110032673,
+        "first_matches": 17,
+        "first_error_to_pin_m": 430.04181104763444,
+        "maximum_control": 14.16904978054234,
+        "controls": 19,
+        "region": {
+          "latitude": 18.036547085201793,
+          "longitude": -63.11981132075472,
+          "enclosing_radius_m": 794.1226679449101,
+          "competitive_points": 8
+        },
+        "counts_as_additional_independent_case": false,
+        "error_with_reference_allowance_m": 630.0418110476344,
+        "native_exit_code": 0
+      }
+    ]
+  },
+  "doppler_development": {
+    "plan_sha256": "f3f5145f6e7d1aff6d79627a1b3da2e7faa29597c9edbe2c88bc47c1ce74d1f3",
+    "cases": [
+      {
+        "case": "a",
+        "exit_code": 4,
+        "elapsed_s": 479.45209410006646,
+        "job_sha256": "bff82a86406005e8081998211b3abf7637675ad4b85d8863f913398bbf15e281",
+        "accepted": false,
+        "status": "ambiguous",
+        "events": 24,
+        "hypotheses": 3869733,
+        "candidate_errors_with_allowance_m": [
+          947.7993643688311,
+          260.4011539850276,
+          925.2768358213392,
+          698.1807315307406,
+          1226.666156981825,
+          557.6043836555241,
+          670.5391302215112,
+          1555.2001256984875,
+          1797.3293363460848,
+          522.5653394345993
+        ],
+        "report_sha256": "bed4ca51870c5ba79e20f02dd6cd62606289adefa39522f3960107cb0abb199c"
+      },
+      {
+        "case": "b",
+        "exit_code": 4,
+        "elapsed_s": 298.4686074999627,
+        "job_sha256": "fd8418146857ba56ce9e7004d0f959656ce0736bfb37a5de2ccd9173432bbddd",
+        "accepted": false,
+        "status": "ambiguous",
+        "events": 24,
+        "hypotheses": 2903961,
+        "candidate_errors_with_allowance_m": [
+          451.6415441857771,
+          965.6317653224164,
+          656.2027001264139,
+          1220.925147098706,
+          678.0775129759832,
+          946.3253329558361,
+          1522.360141404264,
+          2003.943104981938,
+          2312.8517694154257,
+          1762.4545025653929
+        ],
+        "report_sha256": "e4eddff86a22c76a2498282df674cbffab9c84bf0232ba3ba9fbfb5c7a8f1008"
+      }
+    ]
+  },
+  "enclosing_circle_development": {
+    "not_acceptance": true,
+    "no_production_change": true,
+    "known_reference_not_used_in_optimization": true,
+    "cases": [
+      {
+        "case": "lax-continuous-development",
+        "source_report": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-region-validation\\lax-continuous-development\\report.json",
+        "source_report_sha256": "d13eef439c29ce649d3a867fe6fe0ffe5e437c6a7d99defdf35674e234b2ef69",
+        "competitive_points": 11,
+        "converged": true,
+        "solver_message": "Optimization terminated successfully",
+        "center": {
+          "latitude": 33.95208947523302,
+          "longitude": -118.40324657034708
+        },
+        "verified_enclosing_radius_m": 1005.2107454273822,
+        "all_points_fit_1km": false,
+        "production_change": false,
+        "error_with_reference_allowance_m": 1211.4116755845885
+      },
+      {
+        "case": "midway-nov1-holdout",
+        "source_report": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-region-validation\\midway-nov1-holdout\\report.json",
+        "source_report_sha256": "bb20cb4dc1960af949882fab7f6ac7080cbb763d3d2d5c949af3e51c52a381bf",
+        "competitive_points": 23,
+        "converged": true,
+        "solver_message": "Optimization terminated successfully",
+        "center": {
+          "latitude": 41.778956239401865,
+          "longitude": -87.74541162377324
+        },
+        "verified_enclosing_radius_m": 1497.2521028208735,
+        "all_points_fit_1km": false,
+        "production_change": false
+      },
+      {
+        "case": "midway-nov4-f",
+        "source_report": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-region-validation\\midway-nov4-f\\report.json",
+        "source_report_sha256": "289cf0f32f2b0003bdcffd069b954e3e9683a69c8f252bfca3f9a79312641367",
+        "competitive_points": 13,
+        "converged": true,
+        "solver_message": "Optimization terminated successfully",
+        "center": {
+          "latitude": 41.868933183049336,
+          "longitude": -87.82118364137685
+        },
+        "verified_enclosing_radius_m": 12803.31210552502,
+        "all_points_fit_1km": false,
+        "production_change": false
+      },
+      {
+        "case": "a",
+        "source_report": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\maho-nov1-validation\\a\\report.json",
+        "source_report_sha256": "c8b829e41ecf5b54c99ebad798daa88b9871fb72e74eefad9ebae29c93c4e772",
+        "competitive_points": 10,
+        "converged": true,
+        "solver_message": "Optimization terminated successfully",
+        "center": {
+          "latitude": 18.031207854415666,
+          "longitude": -63.1091547125484
+        },
+        "verified_enclosing_radius_m": 1894.5575020744254,
+        "all_points_fit_1km": false,
+        "production_change": false,
+        "error_with_reference_allowance_m": 1795.4099740525126
+      }
+    ]
+  },
+  "interpretation": "One original Maho recording passed with a 550 m error including the reference allowance. This adds a second successful camera site beyond Midway. The other November 1 recording was ambiguous; November 4 B had insufficient free reference coverage, and November 4 A failed source-continuity checks. These results do not establish general reliability."
+}

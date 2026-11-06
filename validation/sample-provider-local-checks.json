@@ -1,0 +1,56 @@
+{
+  "tests": {
+    "passed": 105,
+    "failed": 0,
+    "ignored": 0
+  },
+  "required_local_checks": "All five passed",
+  "logs": {
+    "fmt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "clippy": "6cb72765b007c65e9844e77f5d7f29204659a72ecb364b2c8d3415bb50753d4f",
+    "tests": "2b06cfa2462b129bdbcb2c6f807d0a8bfef2fc3e05af066b5e9b2f55d1820f9f",
+    "doc": "d91ac2c8d7dbaf5718d4ca9b4597e5fc9c390c4c27f72ebc72819d6fdd68bfeb",
+    "build": "b683b40ff1f7a3f9b0f4c3bdf5dead5d282b2c8f2c81c7b5fcb194d82ad2b199"
+  },
+  "modified_source": {
+    "Cargo.toml": "e7a267391943bf0a04457f46db6ed714dcb0629a213312d6d338dbbfd054bc13",
+    "Cargo.lock": "6e0751a4f680bf747bf8a1eb1b896e75d72bb0f086181fdb1dd80127c4c389d3",
+    "src/sample_archive.rs": "8efc992b0179146f98ea5ac53cdc9e75da684700d1fb12621e719d2a885c0514",
+    "src/archive.rs": "92bd726f7e68fc614592dbc3f4473e3456fa57a1ea20c461c4f8662bb59c519c",
+    "src/cli.rs": "f947a9f4318f0673685b31f4e5b1726001126e90b5552cf90e4c24f091beca65",
+    "src/lib.rs": "d03c4906f44d8a379cde08749038292420f6d21dc749b30eddb9fd4f6e742cb0",
+    "src/ui.rs": "c0e47f0a6f95b098d08cf2a9a532bd59b2ded42f2a1406c858c6d75279aea524",
+    "examples/inspect_timing_search.rs": "82b3616b62bb49fc569848bfbd37c8899d6ab47f5d00253f9522edc6180a1225",
+    "tests/sample_download_cli.rs": "3b8bd4b909187f1cead0e43b8a517ee43a6009e073d3666bba1c40237560a3e3"
+  },
+  "binary_sha256": {
+    "soundgeo.exe": "9af5f7b024fd9bda32ba67b41296ea81de7a0f6786cd7840b767d005109fb386",
+    "soundgeo-cli.exe": "afbd8a1aa618d2cc7d735c98330614581aa2c6e622f9dc28962e3f4bae98f120"
+  },
+  "preserved_failed_checks": {
+    "sample-provider-check.log": "f049ad569c99bee711c0b8fe735e5698adcf7ef6dbad53cae7f37ae8cf7065ff",
+    "sample-provider-focused.log": "deecc929e1dd1d735b4337c15a8edbc12365d7af37af9ec77c6245c5f5072c13",
+    "sample-provider-download-debug.log": "9e16d5e845782ca6bd64feb20f77b7de7f3099b88b198d2854d0d315b7cf3a92",
+    "sample-provider-focused-v2.log": "f86c34dfd87d0de49ff1ad7a03a38dce67fa4e4bb9d45cf646c1aa311b5ffe46",
+    "sample-provider-focused-v3.log": "589cd9be75efec9dfc2db6390fd0a11bb592298bd67114480abe83ab5328163d"
+  },
+  "fixed_test_issues": [
+    "Windows test sockets inherited nonblocking mode; the fixture now sets accepted sockets to blocking mode.",
+    "The import fixture now has ten points spaced three seconds apart, so the existing two-second thinning rule retains at least eight points.",
+    "The test server reports a thread panic without panicking again during cleanup."
+  ],
+  "new_semantic_checks": [
+    "Independent botocore signature fixture",
+    "Date, bounds, source-time and aircraft-identity checks",
+    "Full-day discovery including non-ICAO identifiers",
+    "Offline verified cache reuse",
+    "Cache repair with rejected-byte preservation",
+    "Missing traces are recorded; missing snapshots fail",
+    "Refused public access does not try another bucket",
+    "Cancellation during a stalled response",
+    "CLI rejects unsupported dates and incomplete bounds before network access"
+  ],
+  "live_download": "Pending",
+  "ci": "Pending",
+  "location_release_qualified": false
+}

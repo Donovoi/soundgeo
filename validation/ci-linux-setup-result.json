@@ -1,0 +1,21 @@
+{
+  "head": "6ba1a729e65f6e12521e485a3e5ed2d57ae7ccc9",
+  "run": 42148071708,
+  "conclusion": "success",
+  "required_checks": "All passed on both platforms",
+  "tests": {
+    "windows": {
+      "passed": 97,
+      "failed": 0,
+      "ignored": 0
+    },
+    "ubuntu": {
+      "passed": 97,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "log_sha256": "dbf4bce5dd58dbba549703d95a32d38809f44c651dcbcd832ea5c144980efa98",
+  "application_code_matches_d6e9418": true,
+  "does_not_qualify_new_sample_provider": true
+}

@@ -228,14 +228,20 @@ impl App {
                 use soundgeo::archive::ArchiveProvider;
                 egui::ComboBox::from_id_salt("flight_provider").selected_text(match request.provider {
                     ArchiveProvider::AdsbLol => "Worldwide: ADSB.lol",
+                    ArchiveProvider::AdsbExchangeSample => "Free evaluation sample: first of each month",
                     ArchiveProvider::WebtrakChicago => "Chicago: public airport replay",
                     ArchiveProvider::WebtrakLax => "LAX: public airport replay",
                 }).show_ui(ui,|ui|{
                     ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbLol,"Worldwide: ADSB.lol");
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbExchangeSample,"Free evaluation sample: first of each month");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakChicago,"Chicago: public airport replay");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakLax,"LAX: public airport replay");
                 });
                 ui.label(RichText::new("Possible UTC date; exact recording time stays unknown. Worldwide archives can require several GB per day.").small().color(MUTED));
+                if request.provider == ArchiveProvider::AdsbExchangeSample {
+                    ui.label(RichText::new("Use the first day of a month and set a search area below. This free sample is for testing and evaluation. It can miss flights between five-minute discovery snapshots.").small().color(MUTED));
+                    ui.hyperlink_to("Free sample coverage and terms", "https://www.adsbexchange.com/data-products/sample-data/");
+                }
                 ui.add(egui::TextEdit::singleline(&mut request.date_from).hint_text("YYYY-MM-DD").desired_width(f32::INFINITY));
                 let mut several = request.date_to.is_some();
                 if ui.checkbox(&mut several,"Search several possible dates").changed(){request.date_to=several.then(String::new);}

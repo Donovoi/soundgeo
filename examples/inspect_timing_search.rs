@@ -30,7 +30,7 @@ fn main() -> Result<()> {
         )
     };
     let sources = if let Some(archive) = &job.archive {
-        archive.ensure(&control, &|m, _| eprintln!("{m}"))?
+        archive.ensure_for_bounds(job.bounds, &control, &|m, _| eprintln!("{m}"))?
     } else {
         vec![job.tracks.clone()]
     };
