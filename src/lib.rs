@@ -2,6 +2,7 @@ pub mod aircraft;
 pub mod archive;
 pub mod audio;
 pub mod data;
+mod date_search;
 pub mod demo;
 pub mod geo;
 pub mod index;
@@ -37,6 +38,7 @@ pub struct Job {
     pub analysis_method: AnalysisMethod,
     pub timing_options: timing::Options,
     pub media: PathBuf,
+    pub offline: bool,
     pub tracks: PathBuf,
     pub archive: Option<archive::ArchiveRequest>,
     pub terrain: Option<PathBuf>,
@@ -70,6 +72,7 @@ impl Default for Job {
             analysis_method: AnalysisMethod::default(),
             timing_options: timing::Options::default(),
             media: PathBuf::new(),
+            offline: false,
             tracks: PathBuf::new(),
             archive: None,
             terrain: None,
@@ -194,8 +197,24 @@ impl Job {
 #[derive(Clone, Default)]
 pub struct Control {
     pub cancel: Arc<AtomicBool>,
+    pub offline: bool,
 }
 impl Control {
+    pub fn require_network(&self, resource: &str) -> Result<()> {
+        self.check()?;
+        if self.offline {
+            bail!(
+                "Offline mode: missing or invalid cached data: {resource}. Prepare this data while online, then retry."
+            );
+        }
+        Ok(())
+    }
+    pub fn with_offline(&self, offline: bool) -> Self {
+        Self {
+            cancel: self.cancel.clone(),
+            offline: self.offline || offline,
+        }
+    }
     pub fn check(&self) -> Result<()> {
         if self.cancel.load(Ordering::Relaxed) {
             bail!("Cancelled");
@@ -231,6 +250,8 @@ pub struct Report {
     pub terrain_sources: Vec<terrain_archive::TileRecord>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub timing: Option<timing::Assessment>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub date_search: Option<date_search::Coverage>,
 }
 
 impl Report {
@@ -255,6 +276,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
             effective.type_catalog = Some(path);
         }
     }
+    let control = &control.with_offline(effective.offline);
     let job = &effective;
     job.validate()?;
     control.check()?;
@@ -271,10 +293,11 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
             (vec![], Some(timing::detect(&samples, control)?))
         }
     };
+    drop(samples);
     let mut report = Report { version: env!("CARGO_PKG_VERSION").into(), status: "insufficient_evidence".into(),
         media: job.media.clone(), job: job.clone(), duration_s, track_count: 0, events,
         candidates: vec![], warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
-        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![],timing:None };
+        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![],timing:None,date_search:None };
     if let Some(peaks) = &timing_peaks
         && (peaks.len() < 6 || duration_s < 480.)
     {
@@ -292,6 +315,12 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     if report.events.len() == 1 && job.start_utc.is_none() {
         report.warnings.push("Only one flyover and no known clock: time and location can be ambiguous, especially on straight flight paths.".into());
     }
+    if let Some(request) = &job.archive {
+        let dates = request.dates()?;
+        if dates.len() > 1 {
+            return date_search::run(job, report, timing_peaks, &dates, control, progress);
+        }
+    }
     let sources = if let Some(request) = &job.archive {
         if let Some(site) = request.provider.webtrak_site() {
             report.warnings.push(format!("{} public airport data covers its local radar area. Altitudes are converted from MSL to WGS84 using EGM96; their original sensor/pressure provenance is unknown. Recorded coverage does not establish that every flight is present.",site.name()));
@@ -300,12 +329,33 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     } else {
         vec![job.tracks.clone()]
     };
+    analyze_sources(
+        job,
+        report,
+        timing_peaks,
+        &sources,
+        false,
+        control,
+        progress,
+    )
+}
+
+pub(crate) fn analyze_sources(
+    job: &Job,
+    mut report: Report,
+    timing_peaks: Option<Vec<timing::Peak>>,
+    sources: &[PathBuf],
+    all_controls: bool,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<Report> {
+    let duration_s = report.duration_s;
     if let Some(site) = job
         .archive
         .as_ref()
         .and_then(|request| request.provider.webtrak_site())
     {
-        for path in &sources {
+        for path in sources {
             if let Some(warning) = webtrak::coverage_warning(site, path)? {
                 report.warnings.push(warning);
             }
@@ -317,7 +367,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         .as_ref()
         .is_some_and(|r| r.provider == archive::ArchiveProvider::AdsbExchangeSample)
     {
-        for path in &sources {
+        for path in sources {
             report
                 .warnings
                 .push(sample_archive::coverage_warning(path)?);
@@ -332,9 +382,16 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     }
     let job = &prepared;
     report.job = job.clone();
-    report.reference_sources = sources.clone();
+    report.reference_sources = sources.to_vec();
     progress("Reading historical flight paths", 0.36);
-    let dataset = data::load_for_job_sources(job, &sources, duration_s, control)?;
+    let dataset = match data::load_for_job_sources(job, sources, duration_s, control) {
+        Ok(data) => data,
+        Err(error) if all_controls && error.is::<data::EmptyFlightData>() => {
+            report.warnings.push(error.to_string());
+            return Ok(report);
+        }
+        Err(error) => return Err(error),
+    };
     report.track_count = dataset.tracks.len();
     report.warnings.extend(dataset.warnings);
     if job.download_terrain {
@@ -350,7 +407,12 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     }
     let mut terrain = geo::Terrain::with_datum(job.terrain.clone(), job.ground_m, job.ground_datum);
     if let Some(peaks) = timing_peaks {
-        let assessment = timing::assess(
+        let assess = if all_controls {
+            timing::assess_all_controls
+        } else {
+            timing::assess
+        };
+        let assessment = assess(
             job,
             peaks,
             duration_s,
@@ -399,6 +461,16 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     report.hypotheses = result.hypotheses;
     report.candidates = result.candidates;
     report.warnings.extend(result.warnings);
+    set_doppler_status(&mut report);
+    if terrain.missing > 0 {
+        report.warnings.push(format!("Missing/void terrain used the configured fallback height of {} m ({:?}). Candidate heights are WGS84 ellipsoid heights.", job.ground_m, job.ground_datum));
+    }
+    report.warnings.push("Wind, variable engine pitch, moving microphones, edited audio, sparse flight coverage, and altitude error can invalidate matches. Quiet-gap constraints depend on an explicit audibility assumption.".into());
+    progress("Analysis complete", 1.0);
+    Ok(report)
+}
+
+pub(crate) fn set_doppler_status(report: &mut Report) {
     if !report.candidates.is_empty() {
         let provisional_clock = report.candidates[0].clock_fit_is_provisional();
         if provisional_clock {
@@ -417,12 +489,48 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         }
         .into();
     }
-    if terrain.missing > 0 {
-        report.warnings.push(format!("Missing/void terrain used the configured fallback height of {} m ({:?}). Candidate heights are WGS84 ellipsoid heights.", job.ground_m, job.ground_datum));
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct PreparedData {
+    pub flight_sources: Vec<PathBuf>,
+    pub terrain_sources: Vec<terrain_archive::TileRecord>,
+}
+
+pub fn prepare_data(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<PreparedData> {
+    let control = &control.with_offline(job.offline);
+    control.check()?;
+    if let Some(bounds) = job.bounds {
+        bounds.validate()?;
     }
-    report.warnings.push("Wind, variable engine pitch, moving microphones, edited audio, sparse flight coverage, and altitude error can invalidate matches. Quiet-gap constraints depend on an explicit audibility assumption.".into());
-    progress("Analysis complete", 1.0);
-    Ok(report)
+    let terrain = if job.download_terrain {
+        let bounds = job.bounds.context("Set search bounds to prepare terrain")?;
+        terrain_archive::tiles(bounds)?;
+        Some((
+            bounds,
+            job.terrain
+                .as_ref()
+                .context("Choose a terrain cache folder")?,
+        ))
+    } else {
+        None
+    };
+    let request = job
+        .archive
+        .as_ref()
+        .context("Select a flight provider and cache folder")?;
+    let flight_sources =
+        request.ensure_for_bounds(job.bounds, control, &|m, p| progress(m, p * 0.9))?;
+    let terrain_sources = if let Some((bounds, folder)) = terrain {
+        terrain_archive::ensure(bounds, folder, control, &|m, p| progress(m, 0.9 + p * 0.1))?
+    } else {
+        vec![]
+    };
+    progress("Data ready for offline analysis", 1.);
+    Ok(PreparedData {
+        flight_sources,
+        terrain_sources,
+    })
 }
 
 pub fn save_report(report: &Report, path: &std::path::Path) -> Result<()> {

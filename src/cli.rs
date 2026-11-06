@@ -14,6 +14,9 @@ struct Args {
     /// Suppress progress and success messages; errors and JSON output remain.
     #[arg(long, short, global = true)]
     quiet: bool,
+    /// Use cached data with networking disabled.
+    #[arg(long, global = true)]
+    offline: bool,
     #[command(subcommand)]
     command: Option<Commands>,
 }
@@ -32,7 +35,7 @@ enum Commands {
         #[arg(long, required_unless_present = "config")]
         input: Option<PathBuf>,
         /// Flight data path; overrides the configuration's tracks path.
-        #[arg(long, required_unless_present_any = ["config", "date"])]
+        #[arg(long, required_unless_present_any = ["config", "date", "cache"])]
         tracks: Option<PathBuf>,
         /// Download/reuse the full UTC day's flight data; recording time stays unknown.
         #[arg(long)]
@@ -41,10 +44,10 @@ enum Commands {
         #[arg(long, requires = "date")]
         date_to: Option<String>,
         /// Cache directory for automatically fetched flight archives.
-        #[arg(long, requires = "date")]
+        #[arg(long)]
         cache: Option<PathBuf>,
         /// Free flight source. Airport replay covers the selected local radar area.
-        #[arg(long, requires = "date")]
+        #[arg(long)]
         provider: Option<ArchiveProvider>,
         /// Download/reuse free terrain for the configured search area in this folder.
         #[arg(long)]
@@ -62,7 +65,6 @@ enum Commands {
         #[arg(long)]
         require_match: bool,
         /// Require candidates_found: exit 3 for no candidate, or 4 for ambiguity.
-        /// This checks the model status, not real-world location accuracy.
         #[arg(long)]
         require_unambiguous: bool,
     },
@@ -71,10 +73,16 @@ enum Commands {
         #[arg(long, default_value = "demo")]
         output: PathBuf,
     },
-    /// Fetch a full UTC day from a free source; verified data is cached.
+    /// Prepare flight data and optional terrain for later offline analysis.
     Download {
         #[arg(long)]
         date: String,
+        /// Last date to prepare, inclusive.
+        #[arg(long)]
+        date_to: Option<String>,
+        /// Prepare terrain for the same bounds in this folder.
+        #[arg(long)]
+        terrain_cache: Option<PathBuf>,
         #[arg(long, default_value = "cache")]
         output: PathBuf,
         #[arg(long, default_value = "adsb-lol")]
@@ -123,6 +131,7 @@ pub fn entry(desktop_default: bool) -> std::process::ExitCode {
 }
 
 fn run(args: Args) -> Result<u8> {
+    let control = Control::default().with_offline(args.offline);
     let progress = |message: &str, fraction: f32| {
         if !args.quiet {
             eprintln!("{:3.0}% {message}", fraction * 100.);
@@ -144,7 +153,7 @@ fn run(args: Args) -> Result<u8> {
                     east,
                 },
                 &output,
-                &Control::default(),
+                &control,
                 &progress,
             )?;
             if !args.quiet {
@@ -156,6 +165,7 @@ fn run(args: Args) -> Result<u8> {
             }
         }
         Some(Commands::Catalog { output }) => {
+            control.require_network(&output.display().to_string())?;
             soundgeo::aircraft::download(&output)?;
             if !args.quiet {
                 println!("Aircraft catalog: {}", output.display());
@@ -228,17 +238,26 @@ fn run(args: Args) -> Result<u8> {
                 job.tracks = tracks;
                 job.archive = None;
             }
-            if let Some(date_from) = date {
-                let provider = provider.unwrap_or_else(|| {
-                    job.archive.as_ref().map(|r| r.provider).unwrap_or_default()
+            if date.is_some() || cache.is_some() || provider.is_some() {
+                let mut request = job.archive.clone().unwrap_or(ArchiveRequest {
+                    date_from: String::new(),
+                    date_to: None,
+                    cache: "flight-cache".into(),
+                    provider: Default::default(),
                 });
-                job.archive = Some(soundgeo::archive::ArchiveRequest {
-                    date_from,
-                    date_to,
-                    cache: cache.unwrap_or_else(|| PathBuf::from("flight-cache")),
-                    provider,
-                });
+                if let Some(from) = date {
+                    request.date_from = from;
+                    request.date_to = date_to;
+                }
+                if let Some(cache) = cache {
+                    request.cache = cache;
+                }
+                if let Some(provider) = provider {
+                    request.provider = provider;
+                }
+                job.archive = Some(request);
             }
+            job.offline |= args.offline;
             if let Some(limit) = max_hypotheses {
                 // Clap limits this to 100 million, which also fits 32-bit usize.
                 job.max_hypotheses = limit as usize;
@@ -250,7 +269,7 @@ fn run(args: Args) -> Result<u8> {
                 job.terrain = Some(path);
                 job.download_terrain = true;
             }
-            let report = soundgeo::analyze(&job, &Control::default(), &progress)?;
+            let report = soundgeo::analyze(&job, &control, &progress)?;
             if output == std::path::Path::new("-") {
                 use std::io::Write;
                 let mut stdout = std::io::stdout().lock();
@@ -283,6 +302,8 @@ fn run(args: Args) -> Result<u8> {
         }
         Some(Commands::Download {
             date,
+            date_to,
+            terrain_cache,
             output,
             provider,
             south,
@@ -299,13 +320,21 @@ fn run(args: Args) -> Result<u8> {
             if let Some(bounds) = bounds {
                 bounds.validate()?;
             }
-            let paths = ArchiveRequest {
-                date_from: date,
-                date_to: None,
-                cache: output,
-                provider,
-            }
-            .ensure_for_bounds(bounds, &Control::default(), &progress)?;
+            let job = Job {
+                archive: Some(ArchiveRequest {
+                    date_from: date,
+                    date_to,
+                    cache: output,
+                    provider,
+                }),
+                bounds,
+                download_terrain: terrain_cache.is_some(),
+                terrain: terrain_cache,
+                offline: args.offline,
+                ..Default::default()
+            };
+            let prepared = soundgeo::prepare_data(&job, &control, &progress)?;
+            let paths = prepared.flight_sources;
             if !args.quiet {
                 for path in paths {
                     println!("Archive: {}", path.display());
