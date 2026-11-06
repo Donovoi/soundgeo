@@ -1593,7 +1593,7 @@ replays, not proof of general accuracy. See
 Two recordings from November 4 were reserved before the continuous November 3
 follow-up finished. Their intervals were selected using source timestamps,
 without location-search results. Five visible clocks and all fragment times
-were checked in each recording. They will use the original frozen `4681a84`
+were checked in each recording. They used the original frozen `4681a84`
 build, the same broad area, a 1 km aircraft distance, and no recording clock.
 The complete free flight download saved 1,051,893 positions. All 2,880 parts
 were online. The manifest, CSV hash, row count, and cached CLI reuse passed
@@ -1630,6 +1630,18 @@ position along the flight path. That clock cannot be treated as the camera's
 clock. A follow-up timing search using the inferred clock did not produce a
 qualifying 1 km region. See
 [additional-audio-diagnostics.json](additional-audio-diagnostics.json).
+
+A lower sound band, from 80 to 250 Hz, was checked in nine recordings with
+two sound-peak width limits. One LAX result was 559 m from the hotel. Another
+gave a stronger score and a compact region 3.57 km from the hotel. A successful
+Midway case also became wrong. These research searches did not run the shuffled
+controls. Neither change was added to the app.
+
+In the closer LAX result, 33 of 34 matched aircraft segments were less than
+30 m above the model's ground height. Most accelerated. These are computed
+heights, not observed ground labels. The wrong result had only three such
+segments. Removing low segments does not resolve both failures. See
+[low-band-diagnostics.json](low-band-diagnostics.json).
 
 The older, separate Midway Doppler retry also finished. It evaluated
 63,003,202 hypotheses and ranked a point 178 m from the reference first.
