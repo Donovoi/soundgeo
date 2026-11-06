@@ -1,6 +1,6 @@
 # Real-video validation
 
-This is a failing acceptance benchmark, not a claim of reliable geolocation.
+The acceptance benchmark remains incomplete. See [limitations](../docs/limitations.md) for current coverage and model constraints.
 
 The current location target is within 1 km.
 The original 250 m plans and results below remain unchanged.
@@ -49,7 +49,7 @@ Ten recordings from three public cameras were captured locally on 2026-11-04.
 The known UTC reference day and an approximately 40 km regional search box are
 provided; the recording clock, camera coordinates, aircraft identities, tone
 bands and flyover intervals are not supplied to the application. Every solver
-job has `start_utc: null`. This is not an unrestricted worldwide/date-unknown test.
+job has `start_utc: null`. The search covers predefined dates and regions.
 
 ## Sources and integrity
 
@@ -66,10 +66,9 @@ job has `start_utc: null`. This is not an unrestricted worldwide/date-unknown te
   and is not redistributed in this repository.
 - Stream timestamps are not independently accurate recording clocks: one
   Midway visible clock differed from the manifest-derived timestamp by about
-  50 seconds. Exact inferred-clock accuracy therefore is not an acceptance claim.
+  50 seconds. The inferred recording clocks remain unverified.
 - `midway-holdout` was first evaluated after the short-pass detector was developed
-  on the other recordings. It is a single same-site holdout, not independent
-  validation across additional locations. Later development runs are not new holdouts.
+  on the other recordings. It is a single same-site holdout. Later development runs reuse that recording.
 
 ## Reference data
 
@@ -113,7 +112,7 @@ counted as corroboration.
 Automatic archive retrieval is available in both the GUI and CLI. It verifies
 cached parts, fetches missing/corrupt parts, supports an inclusive date range,
 works offline with a complete pinned cache, and fails if any requested day is
-unavailable. It does not imply that all aircraft were received by that network.
+unavailable.
 
 ## Reproduction and acceptance
 
@@ -121,7 +120,7 @@ unavailable. It does not imply that all aircraft were received by that network.
 hashes, constructs solver jobs without clock/ground-truth fields, downloads or
 reuses full-day flight data, and evaluates coordinates only after the solver has
 finished. It exits 1 if any case lacks an unambiguous top result within 250 m.
-This threshold defines the evaluation; it is not an estimated accuracy radius.
+This threshold defines the evaluation.
 
 ```powershell
 python validation/run.py --cli target/release/soundgeo-cli.exe `
@@ -147,7 +146,7 @@ All four final consensus runs returned `insufficient_evidence`, with no candidat
 | midway-arrivals | 20 | 5 | 4947 | 2281111 | insufficient_evidence |
 | midway-holdout | 30 | 4 | 4947 | 1344934 | insufficient_evidence |
 
-Software checks: all 25 deterministic tests, strict Clippy, formatting and release compilation pass locally on Windows. Desktop checks covered automatic-download/date-range controls, manual import, partial-match counts, and correct event-to-curve association in a clearly labelled synthetic UI fixture. These checks do not establish real-video accuracy.
+Software checks: all 25 deterministic tests, strict Clippy, formatting and release compilation pass locally on Windows. Desktop checks covered automatic-download/date-range controls, manual import, partial-match counts, and correct event-to-curve association in a clearly labelled synthetic UI fixture.
 
 ## Free November 1 reference data
 
@@ -165,8 +164,7 @@ full-day traces. An audit preserving non-ICAO `~` prefixes found 4,483 identifie
 or substituted identities. Flights entirely between discovery snapshots may
 still be absent. Reference coverage is therefore not claimed complete.
 
-The complete cache is a root folder containing `traces/` and `supplement/`; both
-must be supplied, not just the first directory. Pass this root as `--sample-cache`
+The complete cache is a root folder containing `traces/` and `supplement/`; supply both directories. Pass this root as `--sample-cache`
 to `run.py` when reproducing November 1 cases. The application imported these
 readsb files. At that revision, the integrated downloader retrieved ADSB.lol.
 This sample download was a separate validation operation. The native sample
@@ -201,10 +199,8 @@ replaces iterative bisection; an independent bisection regression verifies it.
 With the height/noise fixes, a **diagnostic** search restricted to a known
 2.2 × 2.5 km region returned an ambiguous candidate 88.2 m from the Midway camera,
 matching three of 17 detections. The recording clock was absent, but the small
-region was chosen using ground truth. This is not a successful blind benchmark
-and is not included in the acceptance count. Only the original broad-region
+region was chosen using ground truth. This known-area diagnostic is excluded from the acceptance count. Only the original broad-region
 jobs qualify in `results.json`.
-
 
 ## Full-region rerun after propagation and search fixes
 
@@ -234,8 +230,7 @@ they have been inspected repeatedly.
 The parallel corridor implementation produced the same first-Midway candidate
 as the serial implementations. Windows and Ubuntu passed all 30 software tests,
 formatting, strict Clippy and release compilation at commit
-`3707cee64e28e0ffcbf90aa69685842d81ca4791`. This is software validation, not
-successful real-video acceptance.
+`3707cee64e28e0ffcbf90aa69685842d81ca4791`. These checks validate software behavior.
 
 ## Wider-band development
 
@@ -248,7 +243,6 @@ additional matches now must also preserve the joint error limit. All original
 coverage and error thresholds remain unchanged. Real-video reruns of these
 changes are tracked separately from the preceding 4 kHz results.
 
-
 ## Completed 8 kHz run, including Lake Hood
 
 All eight cases used their original broad region and `start_utc: null`.
@@ -257,7 +251,7 @@ matched flights out of 19 detections, and 0.730% joint fit error. Its second
 candidate was 385.129 m away. Both remained ambiguous. Lake Hood was added from
 [the public camera](https://www.youtube.com/watch?v=61pi8UjLOlo) at the Alaska
 Aviation Museum, using [the owner's map pin](https://goo.gl/maps/cKpcc57ES22d2cwn6)
-(61.179633, -149.9719665, not a survey). A full hour from November 3 was evaluated;
+(61.179633, -149.9719665). A full hour from November 3 was evaluated;
 the complete daily ADSB.lol archive was verified and loaded automatically.
 
 Lake Hood's top candidate was **wrong by 3133.306 m**, with five other wrong
@@ -301,7 +295,6 @@ All nine curvature runs are complete: the first Midway November 1 result remains
 Coordinate hits: **1/9**. Accepted locations: **0/9**. Rejecting incorrect candidates
 does not satisfy real-location acceptance. No acceptance threshold was relaxed.
 
-
 ## Second Lake Hood reference day and media clock regression
 
 A ninth case, `lake-hood-nov1`, retains a separate 60-minute public-camera capture
@@ -318,8 +311,7 @@ the camera.
 
 A diagnostic at the known Midway camera found that three later flyovers fit
 one shared clock-rate correction of about +2078 ppm with 0.788% joint error.
-That diagnostic used the known location and clock, so it is not an acceptance
-result. A regression based on independently synthesized emission-phase audio
+That diagnostic used the known location and clock. It is excluded from acceptance results. A regression based on independently synthesized emission-phase audio
 reproduced failure of the fixed-rate solver over an 86-minute recording. The
 bounded affine clock now recovers it, while rejecting an inconsistent flight
 time and preserving fixed-rate operation when disabled. Real runs of this
@@ -344,9 +336,7 @@ progress; this change has not yet established real-world accuracy.
 Additional free-source checks found that [ADSBiq's published archive](https://github.com/Sky-Power-Services/adsbiq-data) ends on
 2026-10-10, before these cases. Direct historical requests to ADSB.fi and
 Airplanes.live did not yield usable public traces (403); TheAirTraffic returned
-non-JSON content. These probes do not establish that those services lack data,
-and no access restrictions were bypassed.
-
+non-JSON content. The probes ended without usable data.
 
 ## Completed affine-clock run and earlier scoring
 
@@ -370,7 +360,6 @@ for pressure-altitude fallbacks improved one clear event but did not establish
 three jointly consistent flyovers. It used the known location/time for diagnosis,
 is excluded from acceptance, and has not changed the production weather model.
 
-
 ## Fresh Lake Hood capture and coarse clock profiling
 
 A tenth case, `lake-hood-nov1-later`, is a separate 60-minute November 1 capture
@@ -389,7 +378,7 @@ The full nine-case diversity run at
 cases failed: arrivals' top candidate was 27,613.271 m away; seven cases returned
 no candidate. `results.json` now explicitly records per-case latest revisions
 and how many cases have been tested against the newest evaluated revision;
-its combined latest-case totals do not imply a complete run of one executable.
+its combined latest-case totals span several executables.
 
 A further regression reproduced an inconsistent model between stages: early
 beam ranking assumed unit clock rate even when final refinement allowed drift.
@@ -407,8 +396,7 @@ November 1 ADSB.lol `prod-0` archive: **3,118,588,416 bytes**, two parts. Its
 original Lake Hood regional export contains 1,046 segments / 178,704 points,
 compared with 1,040 segments / 156,362 points from the free ADS-B Exchange sample.
 Across that entire regional day, 456 ADSB.lol positions have no Exchange position
-for the same aircraft within 30 seconds. This comparison does not establish
-complete coverage or identify which aircraft produced the sounds.
+for the same aircraft within 30 seconds. This comparison checks agreement between the two position sources.
 
 Both Lake Hood November 1 clips were rerun against the alternate archive, still
 with their original bounds and no recording clock. Both failed: the earlier
@@ -465,8 +453,7 @@ miss; the improvement was not obtained by supplying the correct aircraft or a
 smaller search area. Nevertheless, the overall result is **2/10 coordinate
 hits, 0/10 accepted unambiguous locations**. Both hits are from the same camera.
 The other locations and the two additional free-provider Lake Hood experiments
-remain unsuccessful. Real-world reliability is not established; acceptance and
-release readiness remain unmet.
+remain unsuccessful. Acceptance and release readiness remain unmet.
 
 ## Later Lake Hood development result
 
@@ -491,7 +478,7 @@ Separate diagnostics used the known camera area to inspect missed sound curves.
 One spectral diagnostic also used the known recording clock.
 These diagnostics are excluded from acceptance results.
 The full-day known-area tests recovered three matched flights with two free providers.
-They helped identify detector and search failures; they do not establish automatic location accuracy.
+They helped identify detector and search failures.
 
 The latest revisions have not completed another full ten-case benchmark.
 `results.json` records each evaluated revision and marks the current mixed development results.
@@ -525,7 +512,6 @@ The longer-curve regression also caught a short-window selection problem; suppor
 All 54 software tests, formatting, strict Clippy, and release compilation pass locally with these changes.
 Real-location acceptance is still unmet. These checks do not replace the original broad, unknown-clock tests.
 
-
 ## Alternative sound observations
 
 An improved fit recovered the earlier Lake Hood curves in a known-area diagnostic.
@@ -541,14 +527,13 @@ The failing quiet-gap test passes after that fix.
 All **56** software tests, formatting, strict Clippy, and release compilation pass locally.
 The new real-recording diagnostics and negative controls are recorded separately from location acceptance.
 
-
 The two Lake Hood known-area diagnostics now each match five flight segments.
 Their first candidates are 17.19 m and 209.31 m from the published camera pin.
 Both results remain ambiguous. The supplied camera area makes these diagnostics unsuitable as location-accuracy tests.
 The earlier Lake Hood report is exactly unchanged after the regional time-index optimization.
 
 Twelve independent ten-minute generated-noise controls produce no detections at the 8 dB default.
-This totals two hours of noise. It does not measure false alarms on real traffic or aircraft recordings.
+This totals two hours of noise.
 The control summaries, input hashes, and diagnostic limitations are in [observation-controls.json](observation-controls.json).
 To reproduce a full control, use `python validation/generate_noise_fixture.py --seed 731 --full-control --output control.wav`.
 The selected 30-second regression and the full seed-731 WAV both reproduce their recorded hashes.
@@ -558,7 +543,7 @@ All 56 release software tests and required local checks pass on `e1aa6bc03295aca
 The original ten broad-area cases are running on that executable.
 The older 52-test benchmark stopped after eight completed cases; two slow Midway runs were cancelled to free CPU time.
 The old, unindexed main-Midway known-area diagnostic was also cancelled and replaced by a run on the current executable.
-Cancelled runs are incomplete. Their logs and metadata remain available; they do not count as completed tests.
+Cancelled runs are incomplete. Their logs and metadata remain available. They are excluded from completed test counts.
 
 ## Additional free airport sources
 
@@ -601,7 +586,7 @@ Serial and parallel scoring produce bit-for-bit equal values in the regression
 test. A separate real-recording comparison also preserves every event,
 candidate, score, clock, match, and hypothesis count. It examines 319,745
 hypotheses in a known-area corridor search. Runtime fell from 163.1 s to 94.4 s.
-This is one timing sample with other searches active, not a controlled benchmark.
+This timing sample was taken while other searches were active.
 All 63 software tests, formatting, strict Clippy, and both release builds pass
 locally and in [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41952966274).
 
@@ -636,13 +621,11 @@ from the camera. The report status was `candidates_found`.
 
 With the clock rate fixed to 1, the same recording, full-day references, and
 original broad area produce no candidate. The recording start time remains
-unknown in both runs. This is evidence of a false match; it does not prove
-that every false match requires clock drift.
+unknown in both runs. This run produced a false match.
 
 A fitted rate supported by only three sounds now keeps an ambiguity flag.
 Three sounds are the minimum fitting consensus. Additional independent support
-is required before that flag can be removed. This guard does not change the
-location estimate and does not establish the accuracy of four-sound results.
+is required before that flag can be removed. This guard preserves the location estimate.
 The three- and four-flight synthetic controls preserve clock-rate recovery.
 Evidence is in [clock-support-diagnostic.json](clock-support-diagnostic.json).
 
@@ -669,7 +652,7 @@ run and logs are retained. A larger search budget must be recorded as a new run.
 The broad November 3 Chicago airport-source run also reached its original
 20-million-hypothesis limit. It stopped after 5,921.6 seconds with no report.
 It used the original search area, the full reference day, and no recording
-start time. This is a failed search, not an accuracy result. Its source and
+start time. The search failed before producing a location. Its source and
 failure record are in [airport-source-diagnostics.json](airport-source-diagnostics.json).
 
 ## Conservative distance filter
@@ -683,8 +666,7 @@ and nearby queries that share a cache entry.
 The Midway known-area corridor diagnostic keeps every compared event,
 candidate, score, clock, and hypothesis count unchanged. It still examines
 319,745 hypotheses. Runtime changed from 94.41 seconds to 64.60 seconds in
-these two runs. Other searches were active; this is not a controlled timing
-test or evidence of improved location accuracy. See
+these two runs. Other searches were active during both runs. See
 [index-envelope-diagnostic.json](index-envelope-diagnostic.json).
 All 65 software tests, formatting, strict Clippy, and both release builds
 pass locally and in [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41962057606).
@@ -711,8 +693,7 @@ unambiguous-result requirement. The correct location survived the broad search;
 this case does not support changing pruning to fix a missing location.
 
 The development record now contains three coordinate hits from two cameras,
-with zero accepted unambiguous results. These are mixed development revisions,
-not a completed benchmark of the latest code. The complete result and hashes
+with zero accepted unambiguous results. These results span several development revisions. The complete result and hashes
 are summarized in [results.json](results.json). A replay with the faster index
 retains the original job and 20-million-hypothesis budget.
 
@@ -729,10 +710,8 @@ adjusts the inferred clock while holding the flight associations and observation
 variants fixed. Some sampled points retain all five matches at one clock setting
 but lose a curvature check at a setting with lower numerical error.
 
-This is a conditional diagnostic, not another blind location test. Sparse local
-sampling cannot bound the full uncertainty region. The app can also select
-alternative observations, so these fixed-variant results alone do not establish
-a refinement bug. Evidence is in [lake-hood-sensitivity.json](lake-hood-sensitivity.json).
+This diagnostic uses fixed observation variants. Sparse local
+sampling cannot bound the full uncertainty region. The app can also select alternative observations. The cause remains unresolved. Evidence is in [lake-hood-sensitivity.json](lake-hood-sensitivity.json).
 The diagnostic can be reproduced with `cargo run --release --example profile_candidate -- report.json sensitivity.json`
 when the report's original reference data is available.
 
@@ -745,7 +724,7 @@ start time. The explicit resource limit was 50 million hypotheses; the failed
 camera with five matches from six detected groups. The next candidate has four
 matches. The result remains ambiguous and does not pass full acceptance.
 
-This run gives another coordinate hit, but does not establish reliability.
+This run gives another coordinate hit.
 The result is recorded in
 [results.json](results.json) and [airport-source-diagnostics.json](airport-source-diagnostics.json).
 
@@ -760,7 +739,7 @@ matches. The first was **24,606.237 m** from the camera.
 The earlier 26.67 m result did not survive this later run. It remains in the
 history, but the latest completed result for this case is a failure. The mixed
 development record now has three coordinate hits and zero accepted results
-across ten recordings. This is not a completed benchmark of one revision.
+across ten recordings. These results span several revisions.
 
 ## Support lost during refinement
 
@@ -788,14 +767,13 @@ accuracy still requires validation. See
 Revision `22393e3` passed all 66 release software tests, formatting, strict
 Clippy, documentation tests, and both release builds locally.
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41970417866)
-also passed. Software checks do not establish location accuracy.
+also passed.
 
 The full Midway, Midway holdout, and November 1 Southampton controls returned
 exactly the same candidates, status, detections, and hypothesis counts as their
 preceding runs. The two Midway controls returned no candidates. Southampton
 still returned the wrong ambiguous candidate 7.6 km away. The known-area
-Chicago corridor comparison also preserved its results exactly. These are
-regression checks, not additional accuracy cases.
+Chicago corridor comparison also preserved its results exactly. These regression checks reuse the existing cases.
 
 The separate Lake Hood replay on `c5c9f59` reproduced all ten candidates and
 19,814,757 hypotheses exactly. Its first result remains 45.749 m from the camera
@@ -840,7 +818,7 @@ The clock search had a separate problem. It refined only the best coarse clock
 choice. A narrow interval with a better fit could start with a worse coarse
 score and never receive refinement. Refining each coarse start separately
 recovered the prior three-flight fit at the center point. The joint error fell
-to about 0.68%. This was a seeded diagnostic, not a new location test.
+to about 0.68%. This diagnostic used a seeded location.
 
 A synthetic regression uses three close flyovers and three slightly wider
 decoy tracks. The old search selects the decoy clock rate and fails the test.
@@ -860,7 +838,7 @@ controls returned no candidates. Southampton still returned an ambiguous
 candidate 7.6 km away. The known-area Chicago check kept its four candidate
 locations and matches; one clock rate changed by one floating-point rounding
 step. It took 137.84 seconds, compared with 78.55 seconds for the preceding build.
-Other searches were active, so this is not a controlled speed test. See
+Other searches were active during the run. See
 [clock-corridor-comparison.json](clock-corridor-comparison.json).
 
 The larger searches have not finished with this revision. Two further hour-long
@@ -898,14 +876,14 @@ strict Clippy, documentation tests, and both release builds pass locally.
 The cached Chicago diagnostic exactly preserves its job, sounds, candidates,
 status, track count, and hypothesis count. It took 267.49 seconds. An adjacent
 baseline repeat took 334.50 seconds; an earlier baseline took 137.84 seconds.
-Other searches were active, so these times do not establish a general speedup.
+Other searches were active during the runs.
 See [clock-cache-comparison.json](clock-cache-comparison.json).
 
 Revision `e947120` also passes
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41979243404).
 The November 4 Chicago download completed with 575,365 positions. All 2,880
 requested parts were saved and parsed; 43 parts were not marked online by the
-source. Complete file coverage does not establish complete flight observations.
+source.
 The two preselected recordings are running on the planned `2988d77` build.
 
 Further Lake Hood diagnostics use the prior known-area candidate as an explicit
@@ -915,8 +893,7 @@ produced a proposal about 30 m from that prior app estimate. Profiling nearby
 proposals gave at most four valid matches. Passing those 363 nearby proposals
 to the unchanged final refinement step recovered three five-match candidates.
 
-This supports a proposal-selection problem. It does not prove which pruning
-stage caused the full-search failure. The latest build must complete the broad
+This supports a proposal-selection problem. The pruning stage responsible for the full-search failure remains unresolved. The latest build must complete the broad
 case before another selection change is justified. That retry is queued after
 the native Chicago holdout, with the same media, broad bounds, full reference
 day, and unknown recording clock. Its resource limit is explicitly 50 million.
@@ -934,8 +911,7 @@ The independent Python decoder also checked the complete November 4 Chicago
 archive. All 575,365 positions and all nine compared fields matched exactly.
 The check includes file hashes for all 2,880 source parts and confirms the 43
 parts that were not marked online. See
-[airport-source-diagnostics.json](airport-source-diagnostics.json). This checks
-the downloader and parser, not location accuracy.
+[airport-source-diagnostics.json](airport-source-diagnostics.json). This checks the downloader and parser.
 
 ## Reuse of travel-time calculations
 
@@ -951,8 +927,7 @@ including all candidate values. It took 235.66 seconds, compared with 267.49
 seconds for the preceding cache build. An alternating comparison in one
 process also checks ten real-data proposals. All six paired rounds gave the
 same fits and a lower runtime for the prepared travel-time calculations.
-Other searches were active. The routine timing does not establish a general
-end-to-end speedup. See [arrival-cache-evidence.json](arrival-cache-evidence.json).
+Other searches were active. See [arrival-cache-evidence.json](arrival-cache-evidence.json).
 
 Revision `a25bd0d` also passes all 69 tests in
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/41983866778).
@@ -977,15 +952,14 @@ Both new one-hour Midway recordings finished on their planned revision,
 `2988d77`, without a recording start time. They used the original broad box,
 the complete downloaded Chicago reference day, and a 50-million-hypothesis
 limit. Both returned `insufficient_evidence`, with no candidates. Acceptance
-is **0/2**, with no coordinate hits. A complete download does not establish
-that every audible aircraft has complete position data.
+is **0/2**, with no coordinate hits.
 
 | Recording | Detected events | Hypotheses | Runtime | Candidates |
 | --- | ---: | ---: | ---: | ---: |
 | midway-nov4-a | 9 | 19,227,476 | 6,389.21 s | 0 |
 | midway-nov4-b | 4 | 7,964,629 | 710.46 s | 0 |
 
-These are new recordings from the existing camera, not a new location.
+These are new recordings from the existing camera.
 Their plan, source files, dates, bounds and executable were fixed before
 evaluation. The second run finished before the combined results were reviewed.
 See [fresh-cases-results.json](fresh-cases-results.json). These failed results
@@ -997,7 +971,7 @@ The Midway November 1 holdout finished on `a25bd0d` with the original broad
 area, complete regional reference, no recording clock and an explicit
 50-million-hypothesis limit. Its first candidate is **28.393 m** from the
 camera. All five returned candidates have three supporting sounds; the app
-still reports `ambiguous`. This is a coordinate hit, not an acceptance pass.
+still reports `ambiguous`. The result failed acceptance because it remained ambiguous.
 
 The run examined 23,596,939 hypotheses and took 6,586.9 seconds while other
 searches were active. Four of the original ten cases have now completed on
@@ -1010,7 +984,7 @@ preserved earlier failures.
 
 The two Midway audio channels are almost identical. Mixing them to mono does
 not cancel the sound. Checks also found no source-offline flags during either
-recording. These checks do not establish complete coverage of each aircraft.
+recording.
 
 A separate experiment used the times of loud broadband sounds. It searched
 the full regional area and reference day without the camera position or
@@ -1052,8 +1026,7 @@ and a first candidate 13,621.587 m away.
 Midway arrivals returned a first candidate 26,658.142 m away, with three
 matches. This run used the original ADSB.lol reference data. The earlier
 236 m result used Chicago airport replay data and a different build.
-Both results remain ambiguous. The earlier result is preserved; it does not
-replace this failure. Two separate comparisons now use the current main
+Both results remain ambiguous. The history preserves both results. Two separate comparisons now use the current main
 build and Chicago data, with the original regions and no recording clocks.
 
 This fixed-build benchmark has two coordinate hits and zero accepted results.
@@ -1068,7 +1041,7 @@ A separate experiment used broadband sound peaks to propose a location and
 clock for the existing Doppler search. The input was the original broad
 region, full reference day and audio. No camera position or recording clock
 was supplied. The follow-up searches used only proposals computed from those
-inputs. This Python experiment is not a feature of the Rust application.
+inputs. This experiment runs in a separate Python script.
 
 The first November 1 Midway recording produced two qualifying proposals.
 Their follow-up searches returned first candidates 19.741 m and 38.573 m from
@@ -1097,16 +1070,14 @@ documentation tests and both release builds also pass. The same code passes
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42017950114).
 The two complete-area controls preserve all compared report fields exactly.
 They still return no candidate for the Midway holdout and an ambiguous wrong
-candidate for Southampton. This change improves reuse of calculations; it
-does not establish location accuracy. The running benchmark keeps its original
+candidate for Southampton. This change improves reuse of calculations. The running benchmark keeps its original
 executable. See [segment-cache-evidence.json](segment-cache-evidence.json).
 
 ## Fitting all accepted curves together
 
 A further experiment refined every accepted curve together, while keeping
 the original observations, flight assignments and acceptance checks. It kept
-the original candidates as alternatives. This code is on a separate branch
-at `6ce0753`; it is not part of the main application.
+the original candidates as alternatives. This experimental code is on a separate branch at `6ce0753`.
 
 Its 74 local software tests and Windows and Ubuntu CI checks pass. The two
 complete-area controls remain exactly unchanged. Three further diagnostics
@@ -1135,7 +1106,7 @@ Its first candidate is **82.787 m** from the camera, with five matching sounds.
 The previous first candidate was 5,215.866 m away, with four matches.
 The experimental search preserves that previous candidate as its third choice.
 The new second choice is 479.261 m away and also has five matches.
-The report remains `ambiguous`. This is a coordinate hit, not an acceptance pass.
+The report remains `ambiguous`. The result failed acceptance because it remained ambiguous.
 
 The three control cases remain unchanged. The two preselected November 4
 Lake Hood recordings have started on the same frozen experimental executable.
@@ -1166,8 +1137,7 @@ At the descriptive 0.5 threshold, both volume settings gave aircraft scores
 above that threshold for eight of 11 observations in the first Midway clip
 and six of 11 in the second. None of the ten model-selected Lake Hood
 observations reached it. Neither reported flyover from the source recording
-reached it. These comparisons are not independent audio labels; they do not
-measure classification accuracy.
+reached it. These comparisons use unlabelled audio. Classification accuracy remains unmeasured.
 
 The classifier could remove useful quiet observations. It was not added to
 the app. No detection, ranking or acceptance rule changed. See
@@ -1177,8 +1147,7 @@ the app. No detection, ranking or acceptance rule changed. See
 
 Revision `2a0952e` adds `--require-unambiguous`. It saves the report before
 returning code 3 for no candidates or code 4 for an ambiguous result.
-The existing `--require-match` behavior remains available. This is a status
-check for scripts, not proof of a correct location.
+The existing `--require-match` behavior remains available. Scripts can use this option to check the report status.
 
 The new regression runs real CLI processes on generated audio. It checks
 an empty result, a one-flyover ambiguous result, and the two-flyover demo.
@@ -1226,8 +1195,7 @@ This comparison does not replace the ten-case benchmark. See
 A fixed diagnostic compared the existing constant-height model with free
 Mapzen Skadi terrain. The test boxes and clock intervals came from all
 maximum-match candidates in the prior reports. They did not use the camera
-coordinates or an external recording clock. The checks are local diagnostics,
-not broad-area acceptance tests. Both versions used the same events and data.
+coordinates or an external recording clock. The checks evaluate local refinements. Both versions used the same events and data.
 
 The Lake Hood first choice stayed 108.563 m away. Its second choice moved
 from 473.175 m to 346.097 m. The Chicago first choice moved from 248.298 m
@@ -1277,15 +1245,13 @@ The `a5e0a99` build used the original broad bounds, full free ADSB.lol day,
 and no recording clock. Its first choice is 8,560.765 m from the camera.
 All five returned candidates have three matches. The result is ambiguous
 and fails the 250 m target. The second preselected recording is still running.
-The failed run remains part of the test set. The earlier 83 m improvement
-does not establish reliability. See [fresh-lake-cases-results.json](fresh-lake-cases-results.json).
+The failed run remains part of the test set. The earlier 83 m improvement was limited to one case. See [fresh-lake-cases-results.json](fresh-lake-cases-results.json).
 
 ## Further checks on the failed November 4 Lake Hood recording
 
 A diagnostic searched a small area around the known camera position, without
 its recording clock. It used the same frozen experimental build and detected
-sounds as the failed broad-area run. It returned no candidates. This check
-uses the answer position, so it is not an acceptance test. See
+sounds as the failed broad-area run. It returned no candidates. This diagnostic uses the answer position and is excluded from acceptance tests. See
 [fresh-lake-a-point-diagnostic.json](fresh-lake-a-point-diagnostic.json).
 
 A separate check used both the known position and the visible camera clock.
@@ -1309,7 +1275,7 @@ limit. It now stopped in 87.71 seconds, before matching. The original attempt
 took 21,838.6 seconds. Both failures remain recorded. Two completed real-recording
 controls produced identical events, candidates, status, hypotheses, flight counts,
 search settings, duration, and warnings. The budget count matched each report.
-These are software checks, not new location-accuracy passes. See
+These checks compare software outputs. See
 [budget-precheck-evidence.json](budget-precheck-evidence.json).
 
 All 76 local tests pass. The extended regressions check exact budget limits,
@@ -1361,7 +1327,6 @@ The complete original Midway area was searched at 300 m spacing. Each of two
 development recordings used 18,090 positions and the full free reference day.
 No camera position or recording time entered the search. The first locations
 were 546.45 m and 254.85 m from the camera. Other locations remain in the report.
-The likelihood scores do not establish a calibrated accuracy radius.
 
 Six fixed controls shuffled the sounds in 120-second blocks. Their strongest
 scores ranged from 10.565 to 13.077. The real recordings scored 35.143 and
@@ -1412,8 +1377,7 @@ The development screens require six matched peaks and a score above all 19
 distinct shuffled controls. They also check competing locations more than 1 km
 away. All evaluated grid positions retain their best score, even when nearby
 candidates fill the detailed report. A likelihood factor of 100 defines the
-competitive score range. This is a screening rule, not a calibrated accuracy
-radius. See [passage-timing-screen-spec.json](passage-timing-screen-spec.json).
+competitive score range. The screening rule compares candidate scores. See [passage-timing-screen-spec.json](passage-timing-screen-spec.json).
 
 All 91 local software tests and required checks pass. Tests cover the unknown
 clock, one-to-one matching, numerical fits, distinct controls, retained spatial
@@ -1443,13 +1407,11 @@ worldwide search or an unrestricted recording date.
 The six returned locations are all from Midway. Their errors range from 98.83 m
 to 546.45 m. Only E and F were prospective tests of the new screens. E returned
 a location 98.83 m from the camera. F ranked a point 384.25 m away first, but
-reported competing locations and returned strict exit code 4. It is not an
-accepted location. All other cases were already development recordings.
+reported competing locations and returned strict exit code 4. It failed acceptance. All other cases were already development recordings.
 
 All five Lake Hood recordings and both Southampton recordings returned
 insufficient evidence. Their diagnostic coordinates remain in the reports but
-do not count as location matches. Withholding those results prevents a false
-location claim; it does not establish useful coverage at those sites. The
+do not count as location matches. The
 returned-location coverage is 6 of 18 recordings. No calibrated confidence or
 accuracy radius is claimed. See
 [passage-timing-integrated-results.json](passage-timing-integrated-results.json)
@@ -1468,14 +1430,12 @@ comparison. The fourth had fewer than six matched peaks. The default range was
 not changed. See [lake-timing-range-diagnostic.json](lake-timing-range-diagnostic.json).
 
 Two public O'Hare clips returned insufficient evidence with strict exit code 3.
-Their source includes air traffic control audio. The exact microphone location
-is not independently verified, so these are diagnostics rather than accuracy
-tests. See [ohare-timing-diagnostic.json](ohare-timing-diagnostic.json).
+Their source includes air traffic control audio. The exact microphone location remains unverified. These clips are used for source diagnostics. See [ohare-timing-diagnostic.json](ohare-timing-diagnostic.json).
 
 Two LAX clips were selected before solver evaluation. Their plan uses a full
 free LAX radar day, broad bounds, and no recording clock. The publisher and
 airport sources identify the north-side parking garage at building level.
-The reference remains an inference, not a surveyed microphone position.
+The reference is inferred from the building location.
 The planned evaluator checks the distance to the whole building footprint.
 The two clips are now prepared, but their source has unresolved limitations.
 The first visible clock advances about 65 minutes in 60 minutes of video.
@@ -1500,8 +1460,7 @@ Revision `38ff00e` passed all 92 software tests on Windows and Ubuntu.
 The cached search reproduced both the Midway A report and the Lake Hood
 2 km range diagnostic exactly. It preserved every compared search result,
 control score, warning, and status. The observed times were 73 s and 792 s,
-compared with 96 s and 841 s in the earlier runs. Host load differed, so these
-are not controlled speed measurements. No accuracy rule changed.
+compared with 96 s and 841 s in the earlier runs. Host load differed between the runs. No accuracy rule changed.
 See [timing-geometry-verification.json](timing-geometry-verification.json).
 
 ## LAX download and completed diagnostics
@@ -1522,7 +1481,7 @@ retained before the full field comparison passed. See
 All four one-hour LAX runs are complete. Two were ambiguous and two returned
 insufficient evidence. Broadcast B ranked a point within 724 m of every garage
 vertex, but competing locations were over 23 km away. Neither fixed-camera clip
-found a useful location. These remain source diagnostics, not accepted locations.
+found a useful location. Both source diagnostics failed acceptance.
 See [lax-timing-diagnostics.json](lax-timing-diagnostics.json).
 
 A separate two-hour fixed-camera clip used the native LAX provider with no
@@ -1613,8 +1572,7 @@ Midway result. Its center was 89 m from the reference, and all 17 competitive
 grid points were within 959 m of that center. The 18-case totals are seven
 locations within 1 km, two ambiguous results, and nine insufficient results.
 No screened location was outside 1 km. All seven successes came from the same
-Midway camera. The extra LAX case stayed ambiguous. These are development
-replays, not proof of general accuracy. See
+Midway camera. The extra LAX case stayed ambiguous. These are repeated development tests. See
 [timing-region-results.json](timing-region-results.json).
 
 Two recordings from November 4 were reserved before the continuous November 3
@@ -1665,8 +1623,7 @@ Midway case also became wrong. These research searches did not run the shuffled
 controls. Neither change was added to the app.
 
 In the closer LAX result, 33 of 34 matched aircraft segments were less than
-30 m above the model's ground height. Most accelerated. These are computed
-heights, not observed ground labels. The wrong result had only three such
+30 m above the model's ground height. Most accelerated. These heights are computed from the flight and terrain models. The wrong result had only three such
 segments. Removing low segments does not resolve both failures. See
 [low-band-diagnostics.json](low-band-diagnostics.json).
 
@@ -1693,7 +1650,7 @@ between snapshots and gaps in receiver coverage can still be absent.
 The unchanged `d6e9418` CLI returned a location for recording B. Its point was
 350 m from the reference pin, or 550 m with the planned allowance. It matched
 15 flights and exceeded all 19 shuffled controls. Recording A ranked the same
-point first, but kept competing locations about 3.8 km apart. It was not a pass.
+point first, but kept competing locations about 3.8 km apart. It failed acceptance.
 
 The November 4 free archive had only 145 regional positions, all above 10 km.
 Recording B passed source checks, but the app reported insufficient evidence.
