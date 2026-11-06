@@ -1,0 +1,103 @@
+{
+  "run_url": "https://github.com/Donovoi/soundgeo/actions/runs/42156168484",
+  "head": "80d33f24c4ae9aad7b4944a0b9f982ae60212269",
+  "ci_checkout_merge": "f54e072dfa86ea3c2b5a3298c07f00ef5021a2f4",
+  "head_and_ci_checkout_tree": "a1511ad1dbc6a4c0a0894efba2914c047da11a09",
+  "artifact": "soundgeo-windows",
+  "files": {
+    "soundgeo-cli.exe": "cba67cc2d3f4883632141d04847448d1876534f11a695f29a1dfb60c051f9d9f",
+    "soundgeo.exe": "e4311c7042b9738cf04163ceea753d5e57ce34aaef2f92713f1199851c8cefff"
+  },
+  "cases": [
+    {
+      "case": "maho-nov1-b",
+      "evaluation": {
+        "case": "maho-nov1-b",
+        "accepted": true,
+        "screened": true,
+        "job_sha256": "f8daa80aedc266be8e1866073d70d4c4e9af437b922cef4ff33933132c18daea",
+        "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+        "exit_code": 0,
+        "report_sha256": "92c89cddcb55176c723918e13239c00995397325dfa4b657203f6423355a6b00",
+        "status": "candidates_found",
+        "sound_peaks": 117,
+        "track_count": 382,
+        "region": {
+          "latitude": 18.04328859060403,
+          "longitude": -63.121830985915494,
+          "enclosing_radius_m": 0.0,
+          "competitive_points": 1
+        },
+        "error_m": 549.649056637247,
+        "matched_flights": 16,
+        "score": 31.0335629455301,
+        "controls": 19,
+        "elapsed_s": 15.086486299987882
+      },
+      "native_analysis_identical_to_local_build": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_permutation_seeds": true,
+        "region": true
+      }
+    },
+    {
+      "case": "midway-arrivals",
+      "evaluation": {
+        "case": "midway-arrivals",
+        "accepted": true,
+        "screened": true,
+        "job_sha256": "dcdb7fa872a064b1162ff69732666260475935789968b3f21e43c2e5a18f1d0a",
+        "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+        "exit_code": 0,
+        "report_sha256": "fc365afa454fb31315aee6222db5ac810ba0429bf8f32a8622793131dfa72b36",
+        "status": "candidates_found",
+        "sound_peaks": 27,
+        "track_count": 4556,
+        "region": {
+          "latitude": 41.778955223880594,
+          "longitude": -87.7436090225564,
+          "enclosing_radius_m": 958.5739426682562,
+          "competitive_points": 17
+        },
+        "error_m": 89.42959383692278,
+        "matched_flights": 15,
+        "score": 28.94719376656073,
+        "controls": 19,
+        "elapsed_s": 52.323737300001085
+      },
+      "native_analysis_identical_to_local_build": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_permutation_seeds": true,
+        "region": true
+      }
+    },
+    {
+      "case": "maho-nov1-a",
+      "evaluation": {
+        "case": "maho-nov1-a",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "fa8d451848581e126b8fd540304e749faa879a300e14dc1938e30ef1dad005b0",
+        "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+        "exit_code": 4,
+        "report_sha256": "800122be5469f4b7e653bd2304cc749833a6e8db7edf78a83f3aa762fa83951d",
+        "status": "ambiguous",
+        "sound_peaks": 86,
+        "track_count": 382,
+        "elapsed_s": 15.17362110002432
+      },
+      "native_analysis_identical_to_local_build": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_permutation_seeds": true,
+        "region": true
+      }
+    }
+  ],
+  "not_new_independent_location_tests": true
+}
