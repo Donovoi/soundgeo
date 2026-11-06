@@ -31,17 +31,18 @@ validation job. Keep failed attempts and their original inputs.
 
 The current real-video target is a location within a 1 km radius.
 Preserve the original 250 m benchmark and fixed plans. Record the 1 km
-evaluation separately. A close coordinate alone does not remove competing
-locations or establish a calibrated accuracy radius.
+evaluation separately. Record competing locations and evaluate position error.
 Use free reference sources. Tests without recording times must not receive
 the camera position or its recording clock. A possible date and the original
 broad region are allowed by the current benchmark. Record those inputs.
 
 Keep computed-proposal and known-position diagnostics separate from broad-area
-acceptance tests. Software tests, a successful download, and a coordinate hit
-do not establish reliable geolocation. Describe remaining ambiguity and errors
-in the README and validation record.
+acceptance tests. Evaluate location accuracy against independently known positions.
+Record each test's scope and results in the validation record.
 
 Write documentation in simple English. Keep the source YouTube reference.
+State facts directly. Avoid contrastive disclaimers and repeated caveats.
+Put limitations in `docs/limitations.md` and link to it from the README.
+Keep the README focused on purpose, setup, and use.
 Keep documentation and validation records focused on the project. Do not include
 personal details, conversation history, or local account paths.
