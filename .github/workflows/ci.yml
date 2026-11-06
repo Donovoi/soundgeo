@@ -21,7 +21,21 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Linux dependencies
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg libx11-dev libxkbcommon-dev libwayland-dev libgl1-mesa-dev libudev-dev pkg-config
+        timeout-minutes: 10
+        env:
+          DEBIAN_FRONTEND: noninteractive
+        run: |
+          # The Azure mirror took over 26 minutes to download 73 packages.
+          # Use Ubuntu's public mirror and bound network and lock waits.
+          for source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
+            if [ -f "$source" ]; then
+              sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|https://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' "$source"
+            fi
+          done
+          apt_options=(-o Acquire::Retries=2 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o DPkg::Lock::Timeout=60)
+          sudo apt-get "${apt_options[@]}" update
+          sudo apt-get "${apt_options[@]}" install -y --no-install-recommends ffmpeg libx11-dev libxkbcommon-dev libwayland-dev libgl1-mesa-dev libudev-dev pkg-config
+          ffmpeg -version
       - name: Windows FFmpeg
         if: runner.os == 'Windows'
         shell: pwsh
