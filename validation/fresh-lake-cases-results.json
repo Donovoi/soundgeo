@@ -1,0 +1,136 @@
+{
+  "plan_sha256": "51d182145667a8bc40a99c7336a814677b54adacdd2d99e405399d00ec821e8d",
+  "build": "a5e0a99e45ccc8c1d503388e0e8c826e63a95cb1",
+  "cli_sha256": "c169be656fcddf456dea05696a3266232045aa3a9907489d0efb240b31324fc0",
+  "accuracy_target_m": 250,
+  "recording_clock_supplied": false,
+  "original_broad_bounds": true,
+  "experimental_build_not_merged": true,
+  "original_ten_case_benchmark_unchanged": true,
+  "cases": [
+    {
+      "case": "lake-hood-nov4-a",
+      "state": "terminal",
+      "accepted": false,
+      "run": {
+        "case": "lake-hood-nov4-a",
+        "code_commit": "a5e0a99e45ccc8c1d503388e0e8c826e63a95cb1",
+        "cli_sha256": "c169be656fcddf456dea05696a3266232045aa3a9907489d0efb240b31324fc0",
+        "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+        "job_sha256": "b206f208299fbf4c1e348957f9e492c81ff35a507a6941fa2a3ab2af24f9078c",
+        "reference_parts": [
+          {
+            "file": "v2026.11.04-planes-readsb-prod-0.tar.aa",
+            "sha256": "e1e2d5875b79548737e28e7d92ff38023608ca98c8021ffb1cb77adac1aec823",
+            "bytes": 2000000000
+          },
+          {
+            "file": "v2026.11.04-planes-readsb-prod-0.tar.ab",
+            "sha256": "03aad9dd521014848ddf94e5380d83e665b03fc2dcae5bbe7db87a2291f13b6d",
+            "bytes": 1618676224
+          }
+        ],
+        "recording_clock_supplied": false,
+        "utc_day": "2026-11-04",
+        "original_broad_bounds": true,
+        "planned_max_hypotheses": 50000000,
+        "accuracy_target_m": 250,
+        "started_unix": 1793883855.4839652,
+        "coordinate_hit": false,
+        "accepted": false,
+        "new_recording_same_camera": true,
+        "parallel_cases": 2,
+        "exit_code": 0,
+        "elapsed_s": 6316.75,
+        "status": "ambiguous",
+        "events": 24,
+        "hypotheses": 17419953,
+        "candidates": 5,
+        "matches": [
+          3,
+          3,
+          3,
+          3,
+          3
+        ],
+        "candidate_errors_m": [
+          8560.765,
+          8730.345,
+          8967.706,
+          9115.997,
+          8848.527
+        ]
+      },
+      "run_sha256": "9fa57d09948bacbb53c0bb8802864a26289a02fe8048a8a08cecde0dc1121b5a",
+      "report_sha256": "323640c5878eab9bab61e50384bd658988fe2391f3e102e783318d5cbb9c74b8"
+    },
+    {
+      "case": "lake-hood-nov4-b",
+      "state": "terminal",
+      "accepted": false,
+      "run": {
+        "case": "lake-hood-nov4-b",
+        "code_commit": "a5e0a99e45ccc8c1d503388e0e8c826e63a95cb1",
+        "cli_sha256": "c169be656fcddf456dea05696a3266232045aa3a9907489d0efb240b31324fc0",
+        "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+        "job_sha256": "09fbe56db35398023b8d8b2086c8884195d81d4c5f10aa692c547d099ae7866b",
+        "reference_parts": [
+          {
+            "file": "v2026.11.04-planes-readsb-prod-0.tar.aa",
+            "sha256": "e1e2d5875b79548737e28e7d92ff38023608ca98c8021ffb1cb77adac1aec823",
+            "bytes": 2000000000
+          },
+          {
+            "file": "v2026.11.04-planes-readsb-prod-0.tar.ab",
+            "sha256": "03aad9dd521014848ddf94e5380d83e665b03fc2dcae5bbe7db87a2291f13b6d",
+            "bytes": 1618676224
+          }
+        ],
+        "recording_clock_supplied": false,
+        "utc_day": "2026-11-04",
+        "original_broad_bounds": true,
+        "planned_max_hypotheses": 50000000,
+        "accuracy_target_m": 250,
+        "started_unix": 1793883855.4830647,
+        "coordinate_hit": false,
+        "accepted": false,
+        "new_recording_same_camera": true,
+        "parallel_cases": 2,
+        "exit_code": 0,
+        "elapsed_s": 15878.74,
+        "status": "ambiguous",
+        "events": 24,
+        "hypotheses": 31504132,
+        "candidates": 10,
+        "matches": [
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5,
+          5
+        ],
+        "candidate_errors_m": [
+          9381.221,
+          9640.198,
+          9743.061,
+          8451.958,
+          9482.164,
+          7658.894,
+          7744.321,
+          8144.456,
+          9203.382,
+          7731.061
+        ]
+      },
+      "run_sha256": "a96869f010a2a42d896a83c627288b88f9b56ce4397ee8f82e241bf70bcd71c0",
+      "report_sha256": "2d635949f14ac1e5c1f6ba73a9337ec6c303dc98925c0b1aeed68f4280c07c25"
+    }
+  ],
+  "terminal_cases": 2,
+  "accepted_cases": 0
+}

@@ -1,0 +1,93 @@
+{
+  "plan": {
+    "started_utc": "2026-11-05T07:13:56.4987949Z",
+    "code_commit": "a25bd0d5dd20b8c883a3b7e384d20f971f7cbe44",
+    "cli_sha256": "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975",
+    "ci_run": 41983866778,
+    "full_controls_exactly_equal": true,
+    "replacement_cases": [
+      "lake-hood-nov1-later",
+      "midway-nov1",
+      "midway-nov1-holdout",
+      "lake-hood",
+      "lake-hood-nov1",
+      "midway-arrivals",
+      "southampton"
+    ],
+    "replacement_stage": "arrival-cache-expanded",
+    "workers": 4,
+    "max_hypotheses": 50000000,
+    "recording_clock_supplied": false,
+    "fresh_preselected_build_preserved": true,
+    "reason": "Consolidate development acceptance on one qualified revision; superseded attempts are not passes."
+  },
+  "stopped_attempts": [
+    {
+      "case": "lake-hood",
+      "stage": "time-index",
+      "exit_code": 4294967295,
+      "elapsed_s": 16246.2,
+      "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb",
+      "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+      "reason": "Consolidate development acceptance on one qualified revision; superseded attempts are not passes.",
+      "last_progress": [
+        " 60% Indexed flight corridors: anchor 5/8, track 993/1430, 16111047 hypotheses",
+        " 60% Indexed flight corridors: anchor 5/8, track 1025/1430, 16177871 hypotheses",
+        " 60% Indexed flight corridors: anchor 5/8, track 1057/1430, 16253428 hypotheses"
+      ],
+      "cancellation_sha256": "365590d41b56a3d492651b6d85228e6cfa38ece4720cbd8af81462e6978d8494",
+      "counts_as_pass": false
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "stage": "clock-basins-expanded",
+      "exit_code": 4294967295,
+      "elapsed_s": 5577.0,
+      "code_commit": "2988d7703885b46dc4971a1c37e2a347af18e43f",
+      "cli_sha256": "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308",
+      "reason": "Consolidate development acceptance on one qualified revision; superseded attempts are not passes.",
+      "last_progress": [
+        " 53% Indexed flight corridors: anchor 3/8, track 4865/5381, 6642445 hypotheses",
+        " 53% Indexed flight corridors: anchor 3/8, track 4897/5381, 6662914 hypotheses",
+        " 53% Indexed flight corridors: anchor 3/8, track 4929/5381, 6683871 hypotheses"
+      ],
+      "cancellation_sha256": "da73f4df8a61d895cff367691bc73f836f73db19b945b2ad3043c0268fa47494",
+      "counts_as_pass": false
+    },
+    {
+      "case": "lake-hood-nov1",
+      "stage": "clock-basins",
+      "exit_code": 4294967295,
+      "elapsed_s": 3970.2,
+      "code_commit": "2988d7703885b46dc4971a1c37e2a347af18e43f",
+      "cli_sha256": "bf7181421b4b82a05d41b229086bf8760dce1ac95b77d39bfbf7deb7a3a05308",
+      "reason": "Consolidate development acceptance on one qualified revision; superseded attempts are not passes.",
+      "last_progress": [
+        " 50% Indexed flight corridors: anchor 3/8, track 65/1040, 2985779 hypotheses",
+        " 50% Indexed flight corridors: anchor 3/8, track 97/1040, 3078149 hypotheses",
+        " 50% Indexed flight corridors: anchor 3/8, track 129/1040, 3162586 hypotheses"
+      ],
+      "cancellation_sha256": "664385d9f29d6f17c72cfe96c71b9dfed0d385c446e9bf757e6c7de261ea0408",
+      "counts_as_pass": false
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "stage": "clock-cache-expanded",
+      "exit_code": 4294967295,
+      "elapsed_s": 1908.0,
+      "code_commit": "e947120b862558720b70d78e3aa8abffdf58674e",
+      "cli_sha256": "585e0a73f777d1e269119b9cf529f658d547c6a9b44b4a35b1805a9d8e61eaa7",
+      "reason": "Consolidate development acceptance on one qualified revision; superseded attempts are not passes.",
+      "last_progress": [
+        " 48% Indexed flight corridors: anchor 2/8, track 513/1040, 2018686 hypotheses",
+        " 48% Indexed flight corridors: anchor 2/8, track 545/1040, 2147263 hypotheses",
+        " 48% Indexed flight corridors: anchor 2/8, track 577/1040, 2297269 hypotheses"
+      ],
+      "cancellation_sha256": "2e682dcbb59cf2a68b0cdbdd198fdda2cd22fec76c4abcd560df8fbe61d6d494",
+      "counts_as_pass": false
+    }
+  ],
+  "qualification": "69 local software tests, required checks, Windows and Ubuntu CI; exact parity on three full-area controls",
+  "not_accuracy_acceptance": true,
+  "limitations": "Replacement analysis is still running. Stopped attempts are not successful results. The fresh preselected recordings keep their original build."
+}

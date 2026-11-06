@@ -1,0 +1,89 @@
+{
+  "not_location_acceptance": true,
+  "ground_truth_supplied": false,
+  "external_recording_clock_supplied": false,
+  "inferred_app_candidate_used": true,
+  "conditional_on_app_selected_flight_associations": true,
+  "all_observation_variants_considered": true,
+  "diagnostic_kind": "Fixed-position clock refinement using the actual exact_score function",
+  "model_source_revision": "8a9b637a95e36401423ed9be23ff0e40f3438de1",
+  "source_report_sha256": "303638852c7a1fb7e211b985958dbf18b476898be822672a1be604a81fb68004",
+  "temporary_diagnostic_source_sha256": "2aebfff4492ba9d824ac2331c039e97c935262a8975cd005aae57c83d18aaf24",
+  "raw_output_sha256": "4003f7177a7510a37d7f9b56dbe52fea8041a46d57adfc71824028d6e354087a",
+  "points": [
+    {
+      "final": {
+        "core_objective_percent": 0.2673513807444946,
+        "matches_passing_curve_checks": 5,
+        "matched_curve_error_percent": 0.7257289783154982
+      },
+      "final_rate": 1.0006835937499998,
+      "final_start": 1793563195.032876,
+      "initial": {
+        "core_objective_percent": 0.31042613926541984,
+        "matches_passing_curve_checks": 5,
+        "matched_curve_error_percent": 0.4898405713283616
+      },
+      "offset_m": 0.0,
+      "strongest_rate": 1.00009765625,
+      "strongest_start": 1793563196.3351169,
+      "strongest_valid_count": 5,
+      "strongest_valid_error": 0.4898405713283616
+    },
+    {
+      "final": {
+        "core_objective_percent": 0.2730832809408619,
+        "matches_passing_curve_checks": 5,
+        "matched_curve_error_percent": 0.47660247255988375
+      },
+      "final_rate": 0.9996289062499999,
+      "final_start": 1793563197.5491526,
+      "initial": {
+        "core_objective_percent": 0.3357554238304559,
+        "matches_passing_curve_checks": 5,
+        "matched_curve_error_percent": 0.43257792092340214
+      },
+      "offset_m": 100.0,
+      "strongest_rate": 0.99994140625,
+      "strongest_start": 1793563196.9254572,
+      "strongest_valid_count": 5,
+      "strongest_valid_error": 0.42991508290312247
+    },
+    {
+      "final": {
+        "core_objective_percent": 0.3172919493041652,
+        "matches_passing_curve_checks": 3,
+        "matched_curve_error_percent": 0.5768371034375802
+      },
+      "final_rate": 0.9983789062500003,
+      "final_start": 1793563201.1799617,
+      "initial": {
+        "core_objective_percent": 0.52749651365102,
+        "matches_passing_curve_checks": 5,
+        "matched_curve_error_percent": 0.7916067289616774
+      },
+      "offset_m": 250.0,
+      "strongest_rate": 0.9996289062500002,
+      "strongest_start": 1793563198.4351811,
+      "strongest_valid_count": 5,
+      "strongest_valid_error": 0.7916067209892061
+    }
+  ],
+  "synthetic_control": {
+    "generated_curves": true,
+    "known_clock_only_to_isolate_spatial_refinement": true,
+    "first_position_matches": 4,
+    "first_position_core_error_percent": 0.17584058632793906,
+    "first_position_matched_error_percent": 0.25745752681686884,
+    "shifted_position_offset_m": 500,
+    "shifted_position_matches": 3,
+    "production_retention_disabled_first_result_matches": 3,
+    "production_retention_enabled_first_result_matches": 4,
+    "enabled_first_position_asserted_within_m": 250,
+    "disabled_regression_failed_as_expected": true,
+    "enabled_focused_regression_passed": true,
+    "red_log_sha256": "d2a7b617f6be2a8912a58a623471d1521d58814b3d36253352305b874c1bfc20",
+    "green_log_sha256": "b28295c17631c81dd29f5eb09cd4faa389839f55086416fd90a16342b38f5025"
+  },
+  "limitations": "Conditional fitting-stage and synthetic controls. Neither establishes accuracy on a new recording or a confidence radius. Broad real-video validation of the change is still required."
+}

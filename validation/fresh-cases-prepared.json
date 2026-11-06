@@ -1,0 +1,50 @@
+{
+  "plan_sha256": "daed10799cc606d7a45d1b77e1f92c0a704a182e20046053b2e7355fae39de5f",
+  "accuracy_target_m": 250,
+  "separate_from_original_ten_development_cases": true,
+  "same_camera_new_day": true,
+  "cases": [
+    {
+      "case": "midway-nov4-a",
+      "sha256": "5ef6d2dacfa386ee62644d594994842c2d3863b40d40a047a2a66d3f1f23c8df",
+      "duration_s": 3600.0,
+      "utc_day": "2026-11-04",
+      "clock_supplied": false,
+      "bounds": {
+        "south": 41.65,
+        "north": 42.01,
+        "west": -87.98,
+        "east": -87.5
+      },
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209
+      },
+      "job_sha256": "93ae1f06bfacac7309a2e6660fe6b3ec9c20beb9b776c0c1b335297bf8e1e517",
+      "status": "pending",
+      "date_verified": true,
+      "preselected_before_capture": true
+    },
+    {
+      "case": "midway-nov4-b",
+      "sha256": "4be21eaaa6a3569efdc2b486037b6871b2c72d4f514ea9bf510db89ffd166eb4",
+      "duration_s": 3600.0,
+      "utc_day": "2026-11-04",
+      "clock_supplied": false,
+      "bounds": {
+        "south": 41.65,
+        "north": 42.01,
+        "west": -87.98,
+        "east": -87.5
+      },
+      "ground_truth": {
+        "latitude": 41.77844250226028,
+        "longitude": -87.74277810405209
+      },
+      "job_sha256": "87c36c1e5656bad3d95495222590fc952882441b72f746a17728a81ce0e94c6a",
+      "status": "pending",
+      "date_verified": true,
+      "preselected_before_capture": true
+    }
+  ]
+}

@@ -1,0 +1,442 @@
+{
+  "not_location_acceptance": true,
+  "observation_code_commit": "a9ccb09ffd60143a99e897c8fac1b5e845d30335",
+  "known_area_diagnostics": [
+    {
+      "case": "lake-hood-nov1",
+      "known_area_diagnostic_only": true,
+      "recording_clock_supplied": false,
+      "cli_sha256": "21592572ef1fcb8f7c7efb78583c8fdbf00e64da418b192e9a0b000f2858930b",
+      "exit_code": 0,
+      "elapsed_s": 542.81,
+      "status": "ambiguous",
+      "events": 24,
+      "candidates": 10,
+      "matches": [
+        5,
+        4,
+        4,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "variants": [
+        3,
+        2,
+        4,
+        4,
+        4,
+        4,
+        2,
+        4,
+        1,
+        1,
+        1,
+        2,
+        4,
+        2,
+        3,
+        3,
+        2,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        4
+      ],
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "report_sha256": "9c84f7d3f5914bb5fe32bd1d78790a3480385a7db05051a495f2d1a26f63335e",
+      "diagnostic_bounds": {
+        "south": 61.175141444125046,
+        "north": 61.18412455587496,
+        "west": -149.98128382135653,
+        "east": -149.9626491786435
+      },
+      "candidate_errors_m": [
+        17.194,
+        175.917,
+        283.833,
+        250.313,
+        467.983,
+        145.635,
+        540.628,
+        404.546,
+        665.675,
+        198.311
+      ],
+      "top_inferred_start_utc": "2026-11-01T19:59:56.691+00:00"
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "known_area_diagnostic_only": true,
+      "recording_clock_supplied": false,
+      "cli_sha256": "21592572ef1fcb8f7c7efb78583c8fdbf00e64da418b192e9a0b000f2858930b",
+      "exit_code": 0,
+      "elapsed_s": 453.06,
+      "status": "ambiguous",
+      "events": 16,
+      "candidates": 10,
+      "matches": [
+        5,
+        5,
+        5,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        3
+      ],
+      "variants": [
+        2,
+        1,
+        3,
+        1,
+        1,
+        1,
+        3,
+        4,
+        4,
+        2,
+        1,
+        4,
+        1,
+        1,
+        4,
+        4
+      ],
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "report_sha256": "e91554c8feebab5c355243b89ccc8cc6d5d2a7b60765662c03a491ed29b44770",
+      "diagnostic_bounds": {
+        "south": 61.175141444125046,
+        "north": 61.18412455587496,
+        "west": -149.98128382135653,
+        "east": -149.9626491786435
+      },
+      "candidate_errors_m": [
+        209.305,
+        450.95,
+        478.067,
+        477.609,
+        307.793,
+        499.639,
+        323.298,
+        441.568,
+        578.979,
+        214.749
+      ],
+      "top_inferred_start_utc": "2026-11-01T21:30:02.114+00:00"
+    },
+    {
+      "case": "midway-nov1",
+      "known_area_diagnostic_only": true,
+      "recording_clock_supplied": false,
+      "cli_sha256": "21592572ef1fcb8f7c7efb78583c8fdbf00e64da418b192e9a0b000f2858930b",
+      "exit_code": 4294967295,
+      "elapsed_s": 1119.22,
+      "cancelled": true,
+      "cancellation_reason": "Superseded by the tested e1aa6bc03295aca469aa35667e49393fa5c743fb executable; stopped to free CPU time. No completed result is implied.",
+      "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810"
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "known_area_diagnostic_only": true,
+      "recording_clock_supplied": false,
+      "cli_sha256": "21592572ef1fcb8f7c7efb78583c8fdbf00e64da418b192e9a0b000f2858930b",
+      "exit_code": 0,
+      "elapsed_s": 650.54,
+      "status": "ambiguous",
+      "events": 11,
+      "candidates": 1,
+      "matches": [
+        3
+      ],
+      "variants": [
+        1,
+        1,
+        1,
+        1,
+        3,
+        1,
+        3,
+        1,
+        1,
+        2,
+        2
+      ],
+      "media_sha256": "915c8ccfe6e7af52920567c602b5dbacfaedc2973ce14b540b7d3367dacdb62f",
+      "report_sha256": "e1ef3b47b2fcfa2e8dc5efac6b6a7b5510f9e7b945628edaa5e5414769c6e2a3",
+      "diagnostic_bounds": {
+        "south": 41.77395094638533,
+        "north": 41.78293405813524,
+        "west": -87.74880116276583,
+        "east": -87.73675504533836
+      },
+      "candidate_errors_m": [
+        107.656
+      ],
+      "top_inferred_start_utc": "2026-11-01T19:57:44.606+00:00"
+    }
+  ],
+  "generated_noise": {
+    "diagnostic_only": true,
+    "contains_no_aircraft": true,
+    "results": [
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 1985,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 7.68,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 731,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 7.04,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 42,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 6.9,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 19,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 6.93,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 2973,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 7.08,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 6021,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 6.9,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 107,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 6.84,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 809,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 6.79,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 2027,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 6.54,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 6181,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 6.39,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 9001,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 6.24,
+        "events": 0,
+        "contrasts_db": []
+      },
+      {
+        "cli_sha256": "925a314f67a7d0ef83ececc3cb2f879ad644650a9fa73e9707267afc5e0e2d46",
+        "seed": 55123,
+        "duration_s": 600,
+        "threshold_db": 8.0,
+        "exit_code": 0,
+        "elapsed_s": 6.28,
+        "events": 0,
+        "contrasts_db": []
+      }
+    ]
+  },
+  "regional_time_index_check": {
+    "code_commit": "e1aa6bc03295aca469aa35667e49393fa5c743fb",
+    "case": "lake-hood-nov1",
+    "known_area_only": true,
+    "exactly_equal_fields": [
+      "events",
+      "candidates",
+      "hypotheses",
+      "status",
+      "track_count",
+      "search_method"
+    ],
+    "before_cli_sha256": "21592572ef1fcb8f7c7efb78583c8fdbf00e64da418b192e9a0b000f2858930b",
+    "after_cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f"
+  },
+  "regional_time_index_diagnostics": [
+    {
+      "case": "lake-hood-nov1",
+      "known_area_diagnostic_only": true,
+      "recording_clock_supplied": false,
+      "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+      "exit_code": 0,
+      "elapsed_s": 296.66,
+      "status": "ambiguous",
+      "events": 24,
+      "candidates": 10,
+      "matches": [
+        5,
+        4,
+        4,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "variants": [
+        3,
+        2,
+        4,
+        4,
+        4,
+        4,
+        2,
+        4,
+        1,
+        1,
+        1,
+        2,
+        4,
+        2,
+        3,
+        3,
+        2,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        4
+      ],
+      "report_sha256": "1fbe692d45ecf0a2750b7d140f28c77cd87223bd21468e5e8b8f60012ddac656",
+      "candidate_errors_m": [
+        17.194,
+        175.917,
+        283.833,
+        250.313,
+        467.983,
+        145.635,
+        540.628,
+        404.546,
+        665.675,
+        198.311
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "known_area_diagnostic_only": true,
+      "recording_clock_supplied": false,
+      "cli_sha256": "6138fec111806dab65a2cf486eb014342cedbb72e9e0161250b57f9e1caceb3f",
+      "exit_code": 0,
+      "elapsed_s": 203.93,
+      "status": "ambiguous",
+      "events": 11,
+      "candidates": 10,
+      "matches": [
+        5,
+        5,
+        4,
+        4,
+        4,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "variants": [
+        1,
+        3,
+        4,
+        3,
+        1,
+        2,
+        4,
+        1,
+        3,
+        3,
+        2
+      ],
+      "report_sha256": "4f5339932839222c2b3ff31eb5bc29fdf63ae952973f1608535412ad9d1b5c8b",
+      "candidate_errors_m": [
+        42.397,
+        326.17,
+        435.754,
+        459.867,
+        208.424,
+        101.328,
+        169.257,
+        399.836,
+        100.34,
+        181.458
+      ]
+    }
+  ]
+}

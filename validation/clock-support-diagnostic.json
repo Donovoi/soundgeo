@@ -1,0 +1,42 @@
+{
+  "case": "southampton-nov1",
+  "source": "https://www.youtube.com/watch?v=QO-hO_kwwmY",
+  "media_sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f",
+  "code_commit": "163c76f223daf48cc1dca5963a97f67033662cad",
+  "recording_clock_supplied": false,
+  "original_broad_bounds": true,
+  "full_reference_day": "2026-11-01",
+  "comparisons": [
+    {
+      "report_sha256": "e14bd64b99bf8116c1b0a98746ddd445aa71663905a614c101c4869c258e5a9a",
+      "max_clock_drift_ppm": 5000.0,
+      "status": "candidates_found",
+      "events": 3,
+      "tracks": 4134,
+      "candidates": 1,
+      "hypotheses": 1821202,
+      "first_candidate_error_m": 7576.121798319973,
+      "matched_sounds": 3,
+      "clock_rate": 1.004296875,
+      "relative_error_percent": 0.7575288076451784
+    },
+    {
+      "report_sha256": "8efe6ef8847f4d6f5bff1a304c13aacec0f21f0f8c95c32ae9ce32b939b8b5fc",
+      "max_clock_drift_ppm": 0.0,
+      "status": "insufficient_evidence",
+      "events": 3,
+      "tracks": 4134,
+      "candidates": 0,
+      "hypotheses": 1821202
+    }
+  ],
+  "limitation": "A shared clock-rate fit and three independent matches did not establish the correct location. The fixed-rate control has no candidate. This control does not establish that all false matches need clock drift.",
+  "guard_replay": {
+    "status": "ambiguous",
+    "candidates_unchanged": true,
+    "code_commit": "35ba97d9157bb1b051a83b3af0b8d59e93985ab3",
+    "cli_sha256": "5d5286d8b60930bc2109ba1424967ea98bc3f2f7378924c19ca5f9b14081f499",
+    "report_sha256": "b7d58c9b335749a145b4b53bcb01553119c6e57edec977e3e09bcdc8f485ecdf",
+    "location_accuracy_fixed": false
+  }
+}

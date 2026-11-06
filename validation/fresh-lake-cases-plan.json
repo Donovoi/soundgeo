@@ -1,0 +1,24 @@
+{
+  "purpose": "New recordings from the existing Lake Hood public camera; not a new location or replacement of failures",
+  "selected_before_capture_and_solver_results": true,
+  "source": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+  "utc_day": "2026-11-04",
+  "clips": [
+    {"id": "lake-hood-nov4-a", "requested_utc": "2026-11-04T19:00:00+00:00", "duration_s": 3600},
+    {"id": "lake-hood-nov4-b", "requested_utc": "2026-11-04T21:00:00+00:00", "duration_s": 3600}
+  ],
+  "reference_provider": "adsb-lol",
+  "reference_scope": "Full UTC day, production archive, original broad region; no clock or selected-aircraft filtering",
+  "bounds": {"south": 61.0, "north": 61.36, "west": -150.36, "east": -149.62},
+  "ground_m": 27,
+  "ground_datum": "egm96",
+  "recording_clock_supplied_to_app": false,
+  "accuracy_target_m": 250,
+  "max_hypotheses": 50000000,
+  "candidate_build": "a5e0a99e45ccc8c1d503388e0e8c826e63a95cb1",
+  "cli_sha256": "c169be656fcddf456dea05696a3266232045aa3a9907489d0efb240b31324fc0",
+  "ground_truth": {"latitude": 61.179633, "longitude": -149.9719665, "basis": "Previously verified owner map pin; not a survey"},
+  "acceptance": "First candidate within 250 m and unambiguous. Preserve all failures and data/capture errors. Verify the source date separately; do not supply the recording clock, camera coordinates or aircraft identities to the app.",
+  "execution": "Use the fixed experimental executable after the current full Lake experiment finishes; do not replace its binary or tune parameters from fresh results.",
+  "redistribute_media": false
+}

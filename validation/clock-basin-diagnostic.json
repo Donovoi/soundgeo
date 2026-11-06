@@ -1,0 +1,370 @@
+{
+  "not_location_acceptance": true,
+  "ground_truth_supplied": false,
+  "external_recording_clock_supplied": false,
+  "previous_app_candidate_used": true,
+  "full_reference_used": true,
+  "baseline_revision": "c16c428baccdaeac5735eab7b9e554752ef7a5fd",
+  "construction_fix_changed_local_proposals": 0,
+  "local_proposals_checked": 15,
+  "raw_sha256": "a00381a3668afc2930595b124348acba02fe4ce2c7c2f5134e92f7832f9a8f8b",
+  "diagnostic_source_sha256": "b7938f34971b831a02049322095be71e30f4adfb2b2f2e638119299973bacd60",
+  "points": [
+    {
+      "north_m": 0.0,
+      "east_m": 0.0,
+      "anchor": 4,
+      "earlier_sampled_error_percent": 1.053347689651956,
+      "earlier_accepted_error_percent": 0.9295222082893179,
+      "multiple_start_sampled_error_percent": 0.7917449469297724,
+      "multiple_start_accepted_error_percent": 0.6828198435635118,
+      "final_matches": [
+        {
+          "aircraft": "ac3eba/2",
+          "event": 4
+        },
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "ac6227/3",
+          "event": 9
+        }
+      ]
+    },
+    {
+      "north_m": 0.0,
+      "east_m": 0.0,
+      "anchor": 6,
+      "earlier_sampled_error_percent": 1.1542735752151017,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 0.7917449469297724,
+      "multiple_start_accepted_error_percent": 0.6828198435635118,
+      "final_matches": [
+        {
+          "aircraft": "ac3eba/2",
+          "event": 4
+        },
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "ac6227/3",
+          "event": 9
+        }
+      ]
+    },
+    {
+      "north_m": 0.0,
+      "east_m": 0.0,
+      "anchor": 9,
+      "earlier_sampled_error_percent": 1.1571681693210796,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 0.7817035459193563,
+      "multiple_start_accepted_error_percent": 0.6693328488829147,
+      "final_matches": [
+        {
+          "aircraft": "ac3eba/2",
+          "event": 4
+        },
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "ac6227/3",
+          "event": 9
+        }
+      ]
+    },
+    {
+      "north_m": 100.0,
+      "east_m": 0.0,
+      "anchor": 4,
+      "earlier_sampled_error_percent": 1.4414385375937435,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.4414385375937435,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": 100.0,
+      "east_m": 0.0,
+      "anchor": 6,
+      "earlier_sampled_error_percent": 1.4451182280223829,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.4451182280223829,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": 100.0,
+      "east_m": 0.0,
+      "anchor": 9,
+      "earlier_sampled_error_percent": 1.4601764073613341,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.4601764073613341,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": -100.0,
+      "east_m": 0.0,
+      "anchor": 4,
+      "earlier_sampled_error_percent": 1.2110489392917916,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.2110489392917916,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": -100.0,
+      "east_m": 0.0,
+      "anchor": 6,
+      "earlier_sampled_error_percent": 1.1412474156700496,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.1412474156700496,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": -100.0,
+      "east_m": 0.0,
+      "anchor": 9,
+      "earlier_sampled_error_percent": 2.772288588634388,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 2.687240230171904,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": []
+    },
+    {
+      "north_m": 0.0,
+      "east_m": 100.0,
+      "anchor": 4,
+      "earlier_sampled_error_percent": 1.1874886311031,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.1874886311031,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": 0.0,
+      "east_m": 100.0,
+      "anchor": 6,
+      "earlier_sampled_error_percent": 1.4193799140302013,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.4193799140302013,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": 0.0,
+      "east_m": 100.0,
+      "anchor": 9,
+      "earlier_sampled_error_percent": 2.2075171536748477,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 2.2075171536748477,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": 0.0,
+      "east_m": -100.0,
+      "anchor": 4,
+      "earlier_sampled_error_percent": 1.5758836756752883,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.5758836756752883,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": 0.0,
+      "east_m": -100.0,
+      "anchor": 6,
+      "earlier_sampled_error_percent": 1.5497328073407657,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.5497328073407657,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "abb930/2",
+          "event": 7
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    },
+    {
+      "north_m": 0.0,
+      "east_m": -100.0,
+      "anchor": 9,
+      "earlier_sampled_error_percent": 1.5974988158771335,
+      "earlier_accepted_error_percent": null,
+      "multiple_start_sampled_error_percent": 1.5974988158771335,
+      "multiple_start_accepted_error_percent": null,
+      "final_matches": [
+        {
+          "aircraft": "ac3eba/2",
+          "event": 4
+        },
+        {
+          "aircraft": "ac9cb1/3",
+          "event": 6
+        },
+        {
+          "aircraft": "a7130c/1",
+          "event": 8
+        }
+      ]
+    }
+  ],
+  "synthetic_regression": {
+    "name": "clock_profile_does_not_commit_to_the_best_coarse_basin",
+    "true_rate": 1.00207,
+    "decoy_rate": 1.00375,
+    "old_selected_rate": 1.00376953125,
+    "corrected_rate_absolute_error_less_than": 5e-05,
+    "corrected_true_associations_checked": true,
+    "red_log_sha256": "20841d79bf675257fad993558b1e9abd2bde5dce5fc4bc074eb19c9b90ba4e7b",
+    "green_log_sha256": "a851637c27b3d077eb1d65d0faf59ab7d87f67e7016045f435d390baca402b91"
+  },
+  "limitations": "Local proposals centered on a previous app result, not a blind search. Three center proposals recover a better accepted fit; the offset samples do not establish a confidence radius. Broad real-video effects and runtime require separate evaluation.",
+  "production_comparison": {
+    "revision": "2988d7703885b46dc4971a1c37e2a347af18e43f",
+    "proposals_checked": 15,
+    "all_compared_fields_exactly_equal": true,
+    "fields": [
+      "sampled_error",
+      "accepted_error",
+      "matches"
+    ],
+    "report_sha256": "08540454d4f23aa4afe1c0c9f5d041ca5fcdd81f194f56ab5beeab500aeef1a0",
+    "diagnostic_source_sha256": "559f3187cf09010c5579ae1ac2ec983156928e719941986a570b901c099566f1",
+    "not_location_acceptance": true
+  }
+}

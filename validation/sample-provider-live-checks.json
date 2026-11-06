@@ -1,0 +1,111 @@
+{
+  "source_commit": "67482a4526e1030fa7e33af99f16dd3fc3e24a17",
+  "cli_sha256": "afbd8a1aa618d2cc7d735c98330614581aa2c6e622f9dc28962e3f4bae98f120",
+  "download": {
+    "exit_code": 0,
+    "elapsed_s": 151.16793919994961
+  },
+  "reuse": {
+    "exit_code": 0,
+    "elapsed_s": 0.34887759992852807
+  },
+  "recovery": {
+    "exit_code": 0,
+    "elapsed_s": 31.568249400006607
+  },
+  "snapshots_equal_to_independent_reader": 288,
+  "traces_equal_to_independent_reader": 97,
+  "unavailable_traces": 0,
+  "manifest_sha256": "083a06ea7eaf789413df519110b18b7ec278509eafd1c98cdfd4d523effe2f25",
+  "missing_trace_recovered": {
+    "file": "trace_full_0c2073.json.gz",
+    "sha256": "95ab25dc24c41fe9f92cc6ed66aaba0b22d3afc92713afb18e479155f54d835a",
+    "bytes": 74389
+  },
+  "cases": [
+    {
+      "case": "a",
+      "exit_code": 4,
+      "elapsed_s": 11.64250059996266,
+      "status": "ambiguous",
+      "report_sha256": "5502f2b0cfa7980fa0667d1ed39bf6a96f13b13414ac723f1f00b46b2e2c3180",
+      "job_sha256": "fdb706e11a00df1c60aa5819bb250b6585257de572411904595b040138bfa566",
+      "unchanged_search_controls_and_region": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true,
+        "region": true
+      },
+      "original_evaluation": {
+        "case": "maho-nov1-a",
+        "exit_code": 4,
+        "elapsed_s": 12.367833299911581,
+        "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+        "cli_sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f",
+        "job_sha256": "752dd2dd85e30883679d80ff151043540833bb633578dbaa43d3a99f97674335",
+        "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+        "recording_clock_supplied": false,
+        "screened": false,
+        "accepted": false,
+        "status": "ambiguous",
+        "report_sha256": "c8b829e41ecf5b54c99ebad798daa88b9871fb72e74eefad9ebae29c93c4e772",
+        "sound_peaks": 86,
+        "controls": 19,
+        "region": null,
+        "first_error_to_pin_m": 349.64905663724693,
+        "first_score": 13.881781909946067,
+        "first_matches": 6
+      },
+      "automatic_download_used": true,
+      "recording_clock_supplied": false
+    },
+    {
+      "case": "b",
+      "exit_code": 0,
+      "elapsed_s": 12.115258399979211,
+      "status": "candidates_found",
+      "report_sha256": "780bb95c33254577f6fb946fa6bcf74f02178185cbf8a15810076346e8a0b514",
+      "job_sha256": "b472ea8f245bed98b925cea328282649fd3d686766bdda83032625657ca3435e",
+      "unchanged_search_controls_and_region": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true,
+        "region": true
+      },
+      "original_evaluation": {
+        "case": "maho-nov1-b",
+        "exit_code": 0,
+        "elapsed_s": 15.705170199973509,
+        "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+        "cli_sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f",
+        "job_sha256": "6e55ab1141164ebfbf4c4bd0726aa934cb259f56c3f347635c2cf769c88a7498",
+        "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+        "recording_clock_supplied": false,
+        "screened": true,
+        "accepted": true,
+        "status": "candidates_found",
+        "report_sha256": "a7173e59b6acdb6ece41a1097a3810b85318564d6801e49161c63946edff6b6d",
+        "sound_peaks": 117,
+        "controls": 19,
+        "region": {
+          "latitude": 18.04328859060403,
+          "longitude": -63.121830985915494,
+          "enclosing_radius_m": 0.0,
+          "competitive_points": 1
+        },
+        "first_error_to_pin_m": 349.64905663724693,
+        "first_score": 28.822567668414784,
+        "first_matches": 15,
+        "error_with_reference_allowance_m": 549.649056637247
+      },
+      "automatic_download_used": true,
+      "recording_clock_supplied": false
+    }
+  ],
+  "not_general_accuracy": true,
+  "plan_sha256": "f6954eba722d17f00ab49f7fe4cf186cb3d14ba759db09b432dbeca6444ad7b5"
+}

@@ -1,0 +1,84 @@
+{
+  "reference_parts": [
+    {
+      "name": "v2026.11.01-planes-readsb-prod-0.tar.aa",
+      "bytes": 2000000000,
+      "sha256": "62813665a44851df60676e2449435001cf1acbb5768b0f7fe756fc8145ae9aa3"
+    },
+    {
+      "name": "v2026.11.01-planes-readsb-prod-0.tar.ab",
+      "bytes": 1118588416,
+      "sha256": "e083915f63d0f42fedb3af7ea1ab61b970d76265c1663af09ae8c4cf28e19179"
+    }
+  ],
+  "comparison": {
+    "exchange_aircraft": 518,
+    "adsblol_aircraft": 534,
+    "common_aircraft": 513,
+    "paired_points_within_1s": 92928,
+    "adsblol_points_without_exchange_within_30s": 456,
+    "horizontal_difference_m_percentiles_50_90_99": [
+      7.579345208049045,
+      80.1754957902438,
+      169.52010821456963
+    ],
+    "altitude_difference_m_percentiles_50_90_99": [
+      0.0,
+      7.6200000000000045,
+      30.480000000000018
+    ]
+  },
+  "cases": [
+    {
+      "case": "lake-hood-nov1",
+      "provider": "ADSB.lol prod-0",
+      "date": "2026-11-01",
+      "clock_supplied": false,
+      "date_and_broad_region_supplied": true,
+      "evaluated_code_commit": "38f7713c5c82db78876cc18c8b25f8a8e062916b",
+      "cli_sha256": "902716cae1f1b207ab21bfb24b78954093907158d83c2045789433aab742e4cf",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "report_sha256": "0db0e859d2b04fbdf736becd3d48f88fb3c4655faac8f5d317b5f038b5c0df13",
+      "status": "ambiguous",
+      "events": 24,
+      "flight_segments": 1046,
+      "candidates": 3,
+      "candidate_errors_m": [
+        10782.065,
+        10610.117,
+        10934.454
+      ],
+      "coordinate_hit": false,
+      "passed": false
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "provider": "ADSB.lol prod-0",
+      "date": "2026-11-01",
+      "clock_supplied": false,
+      "date_and_broad_region_supplied": true,
+      "evaluated_code_commit": "38f7713c5c82db78876cc18c8b25f8a8e062916b",
+      "cli_sha256": "902716cae1f1b207ab21bfb24b78954093907158d83c2045789433aab742e4cf",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "report_sha256": "2c28567a83e518e0bd66d30d8a3c80a3242e60384c84fdbe1a45076f9ce2b998",
+      "status": "ambiguous",
+      "events": 17,
+      "flight_segments": 1046,
+      "candidates": 10,
+      "candidate_errors_m": [
+        4948.46,
+        4004.438,
+        3637.415,
+        3860.281,
+        11579.063,
+        6588.698,
+        4832.117,
+        4784.291,
+        4731.672,
+        4936.508
+      ],
+      "coordinate_hit": false,
+      "passed": false
+    }
+  ]
+}

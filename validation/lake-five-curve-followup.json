@@ -1,0 +1,129 @@
+{
+  "plan": {
+    "diagnostic_not_broad_area_acceptance": true,
+    "original_and_fresh_tests_unchanged": true,
+    "selection": "All maximum-support candidates from the completed a5 full-region run; no camera position or external clock used.",
+    "origin_report_sha256": "538a35f322bfbb182613f75078894f75400c7d9df6085a290efeb072320fb73c",
+    "selected_candidate_indices": [
+      0,
+      1
+    ],
+    "matched_curves": 5,
+    "spatial_padding_m": 500,
+    "time_padding_s": 20,
+    "job_sha256": "e112380382baa5b8d25694065c1feaf91adba2af87726912859fd38881c389e2",
+    "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+    "baseline": {
+      "commit": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+      "cli_sha256": "c37bb556329863b59c0ad6ebd0ecc28aa112828b5afb94d45ef87a4ca29b6319",
+      "binary": "soundgeo-cli-segment-cache.exe"
+    },
+    "refined": {
+      "commit": "6ce075348af53a5071d6570c634b6ba2501ae62d",
+      "cli_sha256": "656b1e9aefca2cd505e52eddbd116bbf58e272ae40807c6ae46ede3a59efc8a9",
+      "binary": "soundgeo-cli-full-consensus.exe"
+    }
+  },
+  "plan_sha256": "202fdace6c7442dca84b945ce215c97c4ee0d654ff57b6bf2536b89b3911a541",
+  "counts_as_acceptance": false,
+  "events_and_jobs_identical": true,
+  "runs": [
+    {
+      "variant": "baseline",
+      "run": {
+        "exit_code": 0,
+        "elapsed_s": 85.38344949996099,
+        "counts_as_acceptance": false,
+        "commit": "505e7a0fffb6f2972ef4153bfc36744b8f3ba090",
+        "cli_sha256": "c37bb556329863b59c0ad6ebd0ecc28aa112828b5afb94d45ef87a4ca29b6319"
+      },
+      "report_sha256": "2fe2bb0da7edf24dc90a26d59c880f110e8fa009905b5960e5433f9aae223462",
+      "status": "ambiguous",
+      "candidate_errors_m": [
+        108.563,
+        473.175,
+        308.858,
+        232.663,
+        158.285,
+        569.897,
+        474.929,
+        466.814,
+        551.536,
+        373.787
+      ],
+      "matches": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        4,
+        4,
+        4
+      ],
+      "relative_curve_errors": [
+        0.7932088655357039,
+        0.8184303441430666,
+        0.8271785528846259,
+        0.8559548241650833,
+        0.8729715008542667,
+        0.8775339848443836,
+        0.896221063623997,
+        0.6107467062910491,
+        0.6178886247464599,
+        0.6257058021904998
+      ]
+    },
+    {
+      "variant": "refined",
+      "run": {
+        "exit_code": 0,
+        "elapsed_s": 93.61186689999886,
+        "counts_as_acceptance": false,
+        "commit": "6ce075348af53a5071d6570c634b6ba2501ae62d",
+        "cli_sha256": "656b1e9aefca2cd505e52eddbd116bbf58e272ae40807c6ae46ede3a59efc8a9"
+      },
+      "report_sha256": "07a0bd86364e2f57431819883fb42b6c9bf6136cf1428bcb9d653241a3c40e66",
+      "status": "ambiguous",
+      "candidate_errors_m": [
+        83.034,
+        303.134,
+        276.005,
+        257.07,
+        542.268,
+        558.504,
+        198.295,
+        466.396,
+        561.908,
+        411.33
+      ],
+      "matches": [
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        5,
+        4,
+        4,
+        4
+      ],
+      "relative_curve_errors": [
+        0.78894792273249,
+        0.802827249088327,
+        0.8109934154041829,
+        0.8513464832592113,
+        0.8569947966162235,
+        0.874539392871859,
+        0.8839057774306966,
+        0.6098160474796595,
+        0.6176296694473111,
+        0.6580138010822532
+      ]
+    }
+  ],
+  "interpretation": "Joint fitting improves the first local candidate but retains alternatives beyond 250 m. Both reports remain ambiguous. This uses a computed region/clock and is not an additional blind test."
+}

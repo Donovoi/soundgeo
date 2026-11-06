@@ -1,0 +1,115 @@
+{
+  "plan": {
+    "source": "https://www.youtube.com/watch?v=dPKvy4eHdR8",
+    "purpose": "Prospective new-site test of the frozen main CLI. Verify the microphone position independently before claiming an accuracy pass.",
+    "clips": [
+      {
+        "id": "a",
+        "start_s": 600,
+        "duration_s": 3600
+      },
+      {
+        "id": "b",
+        "start_s": 7800,
+        "duration_s": 3600
+      }
+    ],
+    "utc_day": "2026-11-03",
+    "date_basis": "Publisher title and release date; visible clock inspected separately.",
+    "bounds": {
+      "south": 33.76,
+      "north": 34.12,
+      "west": -118.65,
+      "east": -118.15
+    },
+    "ground_m": 38,
+    "ground_datum": "egm96",
+    "supplied_recording_clock": false,
+    "supplied_camera_position": false,
+    "redistribute_media": false,
+    "format_ids": [
+      "243",
+      "251"
+    ],
+    "created_unix": 1793918054.5553653,
+    "source_build": "f8f17352fa98a4961fbeb1202b4bdaa413c2af39",
+    "first_method": "passage_timing",
+    "maximum_passage_distance_m": 500,
+    "accuracy_target_m": 1000
+  },
+  "plan_sha256": "e38c4cb831d86dab8918055e5908ecaacb8efd6baa58401f82051ee50c51be60",
+  "reference_location": {
+    "not_supplied_to_app": true,
+    "not_a_survey": true,
+    "basis": "Publisher FAQ identifies its north-side garage as Economy Parking. The recording introduction identifies the north-side parking garage; its rooftop view is consistent with that site. The airport gives the address as 6100 W 94th St. The OpenStreetMap footprint at that address supplies the coordinate region. This is an inferred building-level reference, not an exact microphone coordinate.",
+    "sources": [
+      "https://www.airlinevideos.com/faq",
+      "https://www.youtube.com/watch?v=dPKvy4eHdR8",
+      "https://www.flylax.com/parking-at-lax",
+      "https://www.openstreetmap.org/way/983655045"
+    ],
+    "centroid": {
+      "latitude": 33.95064633076923,
+      "longitude": -118.38995712307693
+    },
+    "maximum_footprint_radius_m": 179.2595826367519,
+    "footprint_lat_lon": [
+      [
+        33.9504354,
+        -118.3916034
+      ],
+      [
+        33.9497863,
+        -118.3916009
+      ],
+      [
+        33.9497945,
+        -118.3884146
+      ],
+      [
+        33.9498009,
+        -118.3884146
+      ],
+      [
+        33.9511047,
+        -118.3884195
+      ],
+      [
+        33.9511044,
+        -118.3885299
+      ],
+      [
+        33.9511026,
+        -118.3892135
+      ],
+      [
+        33.9511023,
+        -118.3893512
+      ],
+      [
+        33.9511019,
+        -118.3896156
+      ],
+      [
+        33.951101,
+        -118.389866
+      ],
+      [
+        33.951097,
+        -118.3914062
+      ],
+      [
+        33.9504359,
+        -118.3914038
+      ],
+      [
+        33.9504354,
+        -118.3916034
+      ]
+    ],
+    "evaluation_rule": "Report distance to the center and the maximum distance to every footprint vertex. Count a 1 km coordinate pass only if the maximum is at most 1000 m. Do not supply this reference to the solver. Require the usual timing screens separately. If later visual evidence contradicts the garage identification, mark accuracy unverified.",
+    "map_sha256": "ade6abdfc393bce21cc2291b437c5552257e86fd1f5c35b14340d42be571ef6e"
+  },
+  "status": "media preparation and full-day free LAX reference download pending; solver has not run",
+  "provider_native": false
+}

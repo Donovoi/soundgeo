@@ -1,0 +1,80 @@
+{
+  "not_location_acceptance": true,
+  "known_area_diagnostic_only": true,
+  "recording_clock_supplied": false,
+  "local_software_tests_passed": 69,
+  "required_local_checks_passed": [
+    "formatting",
+    "release all-targets tests",
+    "documentation tests",
+    "strict Clippy",
+    "both release binaries"
+  ],
+  "exact_real_report_fields": {
+    "job": true,
+    "events": true,
+    "status": true,
+    "hypotheses": true,
+    "track_count": true,
+    "search_method": true,
+    "candidates": true
+  },
+  "cli_sha256": [
+    "585e0a73f777d1e269119b9cf529f658d547c6a9b44b4a35b1805a9d8e61eaa7",
+    "762ede621630c254b70282f1a2d58f326a8bf0fbe4b43149a8ae593b25bef975"
+  ],
+  "elapsed_s": [
+    267.49,
+    235.66
+  ],
+  "source_sha256": {
+    "model": "47a8087982147d0a2df8b9f2267aba3502f5526ec1454cdf7a9e9986ce233c60",
+    "search": "74656370d37078c995095b33cefe35dd20c9b2613a14d9b2e1b259b0af5eec6a"
+  },
+  "kernel": {
+    "exact_output_parity": true,
+    "known_area_report_used": true,
+    "limitations": "Single host with other searches active. Kernel timing is not an end-to-end speedup estimate.",
+    "not_location_acceptance": true,
+    "proposal_count": 10,
+    "repeats_per_round": 40,
+    "rounds": [
+      {
+        "prepared_first": false,
+        "prepared_s": 0.5509662,
+        "unprepared_s": 1.025264
+      },
+      {
+        "prepared_first": true,
+        "prepared_s": 0.5772826,
+        "unprepared_s": 1.084401
+      },
+      {
+        "prepared_first": false,
+        "prepared_s": 0.4971528,
+        "unprepared_s": 1.038934
+      },
+      {
+        "prepared_first": true,
+        "prepared_s": 0.4735428,
+        "unprepared_s": 1.040508
+      },
+      {
+        "prepared_first": false,
+        "prepared_s": 0.6910819,
+        "unprepared_s": 1.517074
+      },
+      {
+        "prepared_first": true,
+        "prepared_s": 0.7853651,
+        "unprepared_s": 1.5952867
+      }
+    ],
+    "same_process_alternating_order": true
+  },
+  "median_kernel_s": {
+    "unprepared_s": 1.0624544999999999,
+    "prepared_s": 0.5641244
+  },
+  "limitations": "Other searches were active. The paired measurement covers only clock fitting on ten real-data proposals, not general end-to-end runtime or location accuracy."
+}

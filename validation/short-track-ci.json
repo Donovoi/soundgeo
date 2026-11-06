@@ -1,0 +1,18 @@
+{
+  "head": "80d33f24c4ae9aad7b4944a0b9f982ae60212269",
+  "url": "https://github.com/Donovoi/soundgeo/actions/runs/42156168484",
+  "counts": {
+    "windows-latest": [
+      108,
+      0,
+      0
+    ],
+    "ubuntu-latest": [
+      108,
+      0,
+      0
+    ]
+  },
+  "all_required_checks_passed": true,
+  "log_sha256": "7d994a60c878a6d42dcdf23b094f57e724a1e3881ecc566b17d48840d7181397"
+}

@@ -1,0 +1,64 @@
+{
+  "created_utc": "2026-11-06T00:20:02.898101+00:00",
+  "source": "https://www.youtube.com/watch?v=n4I0d44oBEs",
+  "purpose": "Preselect two further recordings from another date before the current continuous-development result. Choose intervals using source continuity only, never solver results.",
+  "source_date": "2026-11-04",
+  "windows": [
+    {
+      "id": "a",
+      "requested_start_utc": "2026-11-04T16:00:00+00:00",
+      "requested_end_utc": "2026-11-04T20:00:00+00:00"
+    },
+    {
+      "id": "b",
+      "requested_start_utc": "2026-11-04T20:00:00+00:00",
+      "requested_end_utc": "2026-11-05T00:00:00+00:00"
+    }
+  ],
+  "selection": "Earliest 1440 consecutive audio fragments in each window with every start-time step within 5 +/- 0.1 s and total first-to-last span within 7195 +/- 0.1 s. If none exists, record a source-qualification failure for that window. Check corresponding video timestamps and five visible clocks before analysis.",
+  "analysis_duration_s": 7199,
+  "method": "passage_timing",
+  "timing_options": {
+    "maximum_passage_distance_m": 1000
+  },
+  "bounds": {
+    "south": 33.76,
+    "north": 34.12,
+    "west": -118.65,
+    "east": -118.15
+  },
+  "ground_m": 38,
+  "ground_datum": "egm96",
+  "start_utc": null,
+  "camera_position_supplied_to_app": false,
+  "recording_clock_supplied_to_app": false,
+  "build": {
+    "commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
+    "tests": 93,
+    "failed": 0,
+    "ignored": 0,
+    "required_local_checks_passed": true,
+    "ci": "pending",
+    "not_qualified_location_release": true,
+    "created_utc": "2026-11-05T23:07:24.914084+00:00",
+    "cli": {
+      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-lax-4681a84.exe",
+      "sha256": "d792b2ed46b2d3cbdb717698a77f0ea23fad943f3dead13ed1bcd58eba7e1d24"
+    },
+    "gui": {
+      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-lax-4681a84.exe",
+      "sha256": "e5811420a63e1c06c978c58e19c7f67f80d6aadd0f8f3bacc4ece907794e3b4e"
+    }
+  },
+  "detector_and_all_19_controls_unchanged": true,
+  "independent_location_error_target_m": 1000,
+  "reference_file_sha256": "e5b15f7dc817534be2d301a05623e1f40945855f327841f39a67366bf8990936",
+  "limits": [
+    "The site and one preceding date have already been used for development.",
+    "The publisher identifies the camera building; the microphone position has not been independently surveyed.",
+    "Passing these cases would not establish reliability for arbitrary videos or locations."
+  ],
+  "current_development_result_exists_at_plan_time": false,
+  "free_data_only": true,
+  "redistribute_media": false
+}

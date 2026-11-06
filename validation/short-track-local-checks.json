@@ -1,0 +1,84 @@
+{
+  "completed_utc": "2026-11-06T03:21:30.082618+00:00",
+  "required_checks": [
+    {
+      "check": "fmt",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "check": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--release",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "sha256": "4de3f07d30511ccc9da200a388dee48f620cfd1f727b4f13e005a0527f2a18e8"
+    },
+    {
+      "check": "tests",
+      "command": [
+        "cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--all-targets"
+      ],
+      "exit_code": 0,
+      "sha256": "37878a67c98428b3dc378f3a449ed46dcae1c07dd884cbd59ab45893878fc45a"
+    },
+    {
+      "check": "doc",
+      "command": [
+        "cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--doc"
+      ],
+      "exit_code": 0,
+      "sha256": "4bcbd136ef112bec97269a7ee03ad70a3b10d4b3795d943a03a4f0caeacf2d97"
+    },
+    {
+      "check": "build",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--bins"
+      ],
+      "exit_code": 0,
+      "sha256": "06cce7c9562f940ba22ad519500e8b51c5ac32322f9cff1254eefe7de641f38c"
+    }
+  ],
+  "tests": {
+    "passed": 108,
+    "failed": 0,
+    "ignored": 0
+  },
+  "source_files": {
+    "src/data.rs": "0f6b96629ce8f09934fcb3075afce665a943c1a7ef1c875006f7e6e66f6c30b6",
+    "tests/timing_short_tracks.rs": "4a655df24a48098ee9ca08ed1b3787b5a96fcdc55a156838c6cd6f7424ffe714"
+  },
+  "binaries": {
+    "soundgeo.exe": "ae116619d6add3a1c8d171bfefd92f374ebab04b155aa41170ec5ff990628afd",
+    "soundgeo-cli.exe": "e8c4f1da9e2cfc391dd20f5d496d1e7881b9c0353d72fb7d1a7a62a234193e11"
+  },
+  "real_video_validation": "Pending frozen-build replays",
+  "ci": "Pending",
+  "changes": "Passage timing retains three to seven recorded positions. Doppler and the legacy load API keep the eight-position minimum. No fit or acceptance threshold changes."
+}

@@ -1,0 +1,586 @@
+{
+  "not_acceptance": true,
+  "production_change": false,
+  "no_recording_clock_or_camera_position_inputs": true,
+  "shuffled_controls_run": false,
+  "plan": {
+    "build": {
+      "commit": "71d05e320de0f1e00852d7ba76640706ec6eebb4",
+      "executable": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-options-71d05e3.exe",
+      "sha256": "884a685ce71e106dcee893712fe917fdfe2dea7c4d802e8a473d5f41dd1f3585",
+      "tests": 93,
+      "failed": 0,
+      "ignored": 0,
+      "all_required_local_checks_passed": true,
+      "ci": "pending",
+      "research_only": true
+    },
+    "reports": {
+      "lax-fixed-a": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-a-1000\\report.json",
+        "sha256": "7be8f602295681c73c0dfd36958b264a0d1d3cf46790fe27c1f05919197f26d4"
+      },
+      "lax-fixed-b": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-b-1000\\report.json",
+        "sha256": "aa827675a1142125e74631c2fbd35d3ba23eea7cb38b45b06023875f0f931efe"
+      },
+      "lax-continuous": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-continuous-followup\\report.json",
+        "sha256": "cfbaa4730533778b2f4527f43801d9ae7f0e74371502be7620d39b8019221477"
+      },
+      "lax-nov4-a": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-nov4-reserved\\a\\report.json",
+        "sha256": "3a38af4f42534aedd8de1a0486470f0b8b99a2c3698d71665129ee71289811fa"
+      },
+      "lax-nov4-b": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-nov4-reserved\\b\\report.json",
+        "sha256": "35739b49d987aa8ab19c13078118d83f1b5eb400fbf0387fa3cdf69c5e8553d8"
+      },
+      "lax-broadcast-b": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\broadcast-b\\report.json",
+        "sha256": "c804a11a756c02a0f6d0ab13da67064033ac7ea10fbfb6a6e6eaf01af3ad52b2"
+      },
+      "midway-a": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-validation\\midway-nov4-a\\report.json",
+        "sha256": "026e898313c46f9d46c580b38630d2a54106d057d152d75b803148c973a1071f"
+      },
+      "midway-f": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-validation\\midway-nov4-f\\report.json",
+        "sha256": "5a916ff37c09313430e72d636ad330bc736ba7b2e81db130db0989bda8929aa3"
+      },
+      "lake-a": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-validation\\lake-hood-nov4-a\\report.json",
+        "sha256": "5411e2f952cf666f443b67fec9ef9736fdb534f9ff90a79c6cd84fbb1e9caf53"
+      }
+    },
+    "filter_hz": [
+      80,
+      250
+    ],
+    "filter_order": 4,
+    "sample_rate_hz": 8000,
+    "width_ranges_s": [
+      [
+        0.5,
+        20
+      ],
+      [
+        0.5,
+        120
+      ]
+    ],
+    "unchanged_detector_parameters": {
+      "power_bin_s": 0.1,
+      "gaussian_sigma_s": 0.3,
+      "background_window_s": 60.1,
+      "height_db": 6,
+      "prominence_db": 6,
+      "minimum_separation_s": 15
+    },
+    "purpose": "Test whether lower sound frequencies give useful aircraft-passage peaks where speech contaminated earlier recordings. Test both the original peak-width cap and a wider cap.",
+    "all_cases_are_development": true,
+    "not_acceptance": true,
+    "production_change": false,
+    "no_recording_clock_or_camera_position_inputs": true,
+    "keep_each_original_broad_area_reference_day_and_flight_distance": true,
+    "controls": "This initial screen ranks raw proposals only. Any useful variant still needs all 19 controls and further fixed-plan recordings."
+  },
+  "plan_sha256": "18f5b579a9628cf1a004dfa6286e7533e7e00cb80dbf3c3743dd48bb724d3f80",
+  "results_sha256": "546cbb565a7b809f401cac5bc1f8e00f47c9d42c7a20616eb1dbc8d9ab1e08c4",
+  "cases": [
+    {
+      "case": "lax-fixed-a",
+      "maximum_width_s": 20,
+      "peaks": 35,
+      "duration_s": 3597.676625,
+      "job_sha256": "47cd02c4dea6c76a383b83ec0978de6b63a233f43a6e2f8f47a94196d9454554",
+      "peaks_sha256": "d2c6ba945fb664c2c141f90c346691171ec37a41a44a3fba113e007d9cedfa5c",
+      "original_peaks": 79,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 33.29421700001694,
+      "report_sha256": "7cf536845db842ae4b1a5a2b53eb5fb818650abd774821e6cc38eb03b7cdd861",
+      "candidates": 256,
+      "first_score": 16.188441828880194,
+      "first_matches": 11,
+      "first_error_m": 5518.226679717715,
+      "computed_center": {
+        "latitude": 33.88089552238806,
+        "longitude": -118.33506493506493
+      },
+      "center_error_m": 9030.375311793028,
+      "enclosing_radius_m": 17312.73183225599,
+      "competitive_points": 35
+    },
+    {
+      "case": "lax-fixed-a",
+      "maximum_width_s": 120,
+      "peaks": 35,
+      "duration_s": 3597.676625,
+      "job_sha256": "47cd02c4dea6c76a383b83ec0978de6b63a233f43a6e2f8f47a94196d9454554",
+      "peaks_sha256": "d2c6ba945fb664c2c141f90c346691171ec37a41a44a3fba113e007d9cedfa5c",
+      "original_peaks": 79,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 33.358070000074804,
+      "report_sha256": "d0288c171ac6056f4af61bb79bf1e42320df1696702730c1af78007156d56c23",
+      "candidates": 256,
+      "first_score": 16.188441828880194,
+      "first_matches": 11,
+      "first_error_m": 5518.226679717715,
+      "computed_center": {
+        "latitude": 33.88089552238806,
+        "longitude": -118.33506493506493
+      },
+      "center_error_m": 9030.375311793028,
+      "enclosing_radius_m": 17312.73183225599,
+      "competitive_points": 35
+    },
+    {
+      "case": "lax-fixed-b",
+      "maximum_width_s": 120,
+      "peaks": 61,
+      "duration_s": 3599.998625,
+      "job_sha256": "eec81c197759124283b28aa33e1b8cfc627d827206998d9d7ae93cc1aebe73bb",
+      "peaks_sha256": "a272c3cff4214559afa0bce1279840140a7906536a9450b792883f9dcae7eebc",
+      "original_peaks": 80,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 33.920278200064786,
+      "report_sha256": "5887574431f81c466ae96a7394ca46525e45bead6e1890730ce2c126fcc0d368",
+      "candidates": 256,
+      "first_score": 21.041726520509982,
+      "first_matches": 20,
+      "first_error_m": 2479.996382812161,
+      "computed_center": {
+        "latitude": 33.94940298507463,
+        "longitude": -118.40811688311689
+      },
+      "center_error_m": 1487.8598504093961,
+      "enclosing_radius_m": 1287.06075813815,
+      "competitive_points": 17
+    },
+    {
+      "case": "lax-fixed-b",
+      "maximum_width_s": 20,
+      "peaks": 61,
+      "duration_s": 3599.998625,
+      "job_sha256": "eec81c197759124283b28aa33e1b8cfc627d827206998d9d7ae93cc1aebe73bb",
+      "peaks_sha256": "a272c3cff4214559afa0bce1279840140a7906536a9450b792883f9dcae7eebc",
+      "original_peaks": 80,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 34.005683200084604,
+      "report_sha256": "26b48dc73df8fd0b674a0a21f8513200fc8d16fd73b0b55e8453d95c5dc37292",
+      "candidates": 256,
+      "first_score": 21.041726520509982,
+      "first_matches": 20,
+      "first_error_m": 2479.996382812161,
+      "computed_center": {
+        "latitude": 33.94940298507463,
+        "longitude": -118.40811688311689
+      },
+      "center_error_m": 1487.8598504093961,
+      "enclosing_radius_m": 1287.06075813815,
+      "competitive_points": 17
+    },
+    {
+      "case": "lax-continuous",
+      "maximum_width_s": 120,
+      "peaks": 119,
+      "duration_s": 7199.0,
+      "job_sha256": "f99243a3c1ce08498aca6d5bb69555db70ac212619bc0969795018595c4df4c5",
+      "peaks_sha256": "625e66dccde392fe3b089c1e03ffb4547c1ae3b99807988913f7a9835a21f78b",
+      "original_peaks": 170,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 37.14903900003992,
+      "report_sha256": "f74e356c53e42fd4908ca5d57dbc2b90a8f5be3fd171eefb58a68900d2db4a82",
+      "candidates": 256,
+      "first_score": 31.536437439852612,
+      "first_matches": 33,
+      "first_error_m": 2066.584713748367,
+      "computed_center": {
+        "latitude": 33.950746268656715,
+        "longitude": -118.40811688311689
+      },
+      "center_error_m": 1536.0635248512824,
+      "enclosing_radius_m": 1206.515703896462,
+      "competitive_points": 13
+    },
+    {
+      "case": "lax-continuous",
+      "maximum_width_s": 20,
+      "peaks": 117,
+      "duration_s": 7199.0,
+      "job_sha256": "f99243a3c1ce08498aca6d5bb69555db70ac212619bc0969795018595c4df4c5",
+      "peaks_sha256": "aea8b6fc78ae4d5b56cfbf522de0fda26602393c2dd8b6911b6c7bcecbdd2b78",
+      "original_peaks": 170,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 37.197828999953344,
+      "report_sha256": "7749ba7fee5ba541e079a8c800a5f37d95424b2ba3b914d62120bd44042e8c82",
+      "candidates": 256,
+      "first_score": 29.99590227491982,
+      "first_matches": 36,
+      "first_error_m": 2180.8421032023325,
+      "computed_center": {
+        "latitude": 33.950746268656715,
+        "longitude": -118.40811688311689
+      },
+      "center_error_m": 1536.0635248512824,
+      "enclosing_radius_m": 1206.515703896462,
+      "competitive_points": 14
+    },
+    {
+      "case": "lax-nov4-a",
+      "maximum_width_s": 120,
+      "peaks": 48,
+      "duration_s": 7199.0,
+      "job_sha256": "bd7df1643727fb6ffafec6b9ff95245c77d6463e46c28d11d3796f5fc6410e39",
+      "peaks_sha256": "76d54d771d80796d338579d0f8fc3ce0cd9269a6b669acc553b37375885af653",
+      "original_peaks": 178,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 38.41254119994119,
+      "report_sha256": "e521a9dce3049defb1afb5f559ddc7f4af997eeee39963b1ab7af697cc704cc3",
+      "candidates": 256,
+      "first_score": 60.024584044043195,
+      "first_matches": 28,
+      "first_error_m": 3569.6180614457717,
+      "computed_center": {
+        "latitude": 33.950746268656715,
+        "longitude": -118.43084415584417
+      },
+      "center_error_m": 3570.2879435277296,
+      "enclosing_radius_m": 615.9451978930451,
+      "competitive_points": 3
+    },
+    {
+      "case": "lax-nov4-a",
+      "maximum_width_s": 20,
+      "peaks": 47,
+      "duration_s": 7199.0,
+      "job_sha256": "bd7df1643727fb6ffafec6b9ff95245c77d6463e46c28d11d3796f5fc6410e39",
+      "peaks_sha256": "cef94e6e8f8264f0c96536fbd8625865498fcf30bf7b1d7dd1c8e73ce32d37d0",
+      "original_peaks": 178,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 38.650203999946825,
+      "report_sha256": "3bee91b31cb933fbf78fd623a3a69066eda00ca4a0a87b9c67236e69e7303b86",
+      "candidates": 256,
+      "first_score": 60.86968405908665,
+      "first_matches": 28,
+      "first_error_m": 3569.6180614457717,
+      "computed_center": {
+        "latitude": 33.950746268656715,
+        "longitude": -118.43084415584417
+      },
+      "center_error_m": 3570.2879435277296,
+      "enclosing_radius_m": 615.9451978930451,
+      "competitive_points": 3
+    },
+    {
+      "case": "lax-nov4-b",
+      "maximum_width_s": 20,
+      "peaks": 60,
+      "duration_s": 7199.0,
+      "job_sha256": "fa7cc37696c485bc24638ed1b25c350ba25cc60b7a02d86c71a7ef4becee20ba",
+      "peaks_sha256": "8542d3a68ac44cdde1cc50b1f4df600471ac7fb3f085745ed1b03ce8ca9fa028",
+      "original_peaks": 164,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 40.41872690001037,
+      "report_sha256": "43fff9a04900a398e2213015dc609ea01f376a991ef45ec9856e66357db9b621",
+      "candidates": 256,
+      "first_score": 41.85523943826791,
+      "first_matches": 34,
+      "first_error_m": 559.1619725648644,
+      "computed_center": {
+        "latitude": 33.94268656716417,
+        "longitude": -118.39675324675325
+      },
+      "center_error_m": 559.1619725648644,
+      "enclosing_radius_m": 0.0,
+      "competitive_points": 1
+    },
+    {
+      "case": "lax-nov4-b",
+      "maximum_width_s": 120,
+      "peaks": 62,
+      "duration_s": 7199.0,
+      "job_sha256": "fa7cc37696c485bc24638ed1b25c350ba25cc60b7a02d86c71a7ef4becee20ba",
+      "peaks_sha256": "60a909e56d38e0d84adbdabf255cb58ee82c4f3d371f0285c218f7fe990afb57",
+      "original_peaks": 164,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 40.709979499923065,
+      "report_sha256": "ef4880b9a14e6a5680773b350fe1913fba356897ddb7d28e0a02e22528b84760",
+      "candidates": 256,
+      "first_score": 41.528719781424385,
+      "first_matches": 35,
+      "first_error_m": 559.1619725648644,
+      "computed_center": {
+        "latitude": 33.94402985074626,
+        "longitude": -118.4
+      },
+      "center_error_m": 728.4933501768206,
+      "enclosing_radius_m": 334.6808021184155,
+      "competitive_points": 3
+    },
+    {
+      "case": "lax-broadcast-b",
+      "maximum_width_s": 20,
+      "peaks": 36,
+      "duration_s": 3600.0,
+      "job_sha256": "aac4376bea74b9efa2ca6ad6b34981b36ce03239bb22d871ba24c3a30e4090de",
+      "peaks_sha256": "85ecf39faad5e3604aa8d1c51857c464ea8a3ab1ab7ad5678113f2b2e29eb744",
+      "original_peaks": 38,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 10.824837199994363,
+      "report_sha256": "420fecf45d591eb6b70e79062dda2297b9bb2b7695d062479de53be2217732ea",
+      "candidates": 256,
+      "first_score": 11.852885069471071,
+      "first_matches": 5,
+      "first_error_m": 9664.003768969216,
+      "computed_center": {
+        "latitude": 33.92791044776119,
+        "longitude": -118.3172077922078
+      },
+      "center_error_m": 7314.308413612116,
+      "enclosing_radius_m": 23063.723387527385,
+      "competitive_points": 475
+    },
+    {
+      "case": "lax-broadcast-b",
+      "maximum_width_s": 120,
+      "peaks": 36,
+      "duration_s": 3600.0,
+      "job_sha256": "aac4376bea74b9efa2ca6ad6b34981b36ce03239bb22d871ba24c3a30e4090de",
+      "peaks_sha256": "85ecf39faad5e3604aa8d1c51857c464ea8a3ab1ab7ad5678113f2b2e29eb744",
+      "original_peaks": 38,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 10.681926400051452,
+      "report_sha256": "01bea190b42b968b7aed396a5be5d383ccb6ed7952ebfb83f284d0b68a3359b0",
+      "candidates": 256,
+      "first_score": 11.852885069471071,
+      "first_matches": 5,
+      "first_error_m": 9664.003768969216,
+      "computed_center": {
+        "latitude": 33.92791044776119,
+        "longitude": -118.3172077922078
+      },
+      "center_error_m": 7314.308413612116,
+      "enclosing_radius_m": 23063.723387527385,
+      "competitive_points": 475
+    },
+    {
+      "case": "midway-a",
+      "maximum_width_s": 20,
+      "peaks": 123,
+      "duration_s": 3599.998625,
+      "job_sha256": "e2ebac72eb0930a2915afa02a451e35ddee3029b8cac1c52afe310e59f8d216c",
+      "peaks_sha256": "0a2c1606aaef226092341065f273e6300bc97f4cb5e01fb019e184172a3ecdfd",
+      "original_peaks": 69,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 4.907822799985297,
+      "report_sha256": "a7107339298d40da6164ebc51b64cf76eaad52113b96401c518cb69dee25ed39",
+      "candidates": 256,
+      "first_score": 11.41550824604434,
+      "first_matches": 28,
+      "first_error_m": 24706.94804754183,
+      "computed_center": {
+        "latitude": 41.8689552238806,
+        "longitude": -87.82842105263158
+      },
+      "center_error_m": 12314.918258617163,
+      "enclosing_radius_m": 19863.72194956688,
+      "competitive_points": 362
+    },
+    {
+      "case": "midway-a",
+      "maximum_width_s": 120,
+      "peaks": 125,
+      "duration_s": 3599.998625,
+      "job_sha256": "e2ebac72eb0930a2915afa02a451e35ddee3029b8cac1c52afe310e59f8d216c",
+      "peaks_sha256": "91e7670227b8bb433237fee708f823f7db34a3048f37c238131b74f5d75a40d5",
+      "original_peaks": 69,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 4.922626000014134,
+      "report_sha256": "9c8b8b648c6a65df44e925daa19561ad9adce39596d2ddc57ce1ade3558e3376",
+      "candidates": 256,
+      "first_score": 11.097555344093458,
+      "first_matches": 28,
+      "first_error_m": 24706.94804754183,
+      "computed_center": {
+        "latitude": 41.8689552238806,
+        "longitude": -87.82661654135339
+      },
+      "center_error_m": 12229.362738530015,
+      "enclosing_radius_m": 19958.67721490922,
+      "competitive_points": 446
+    },
+    {
+      "case": "midway-f",
+      "maximum_width_s": 20,
+      "peaks": 101,
+      "duration_s": 3599.998625,
+      "job_sha256": "0fee3b88c29e95920ec74370c75385170d49b1383e98a694797b70ee2f83d00c",
+      "peaks_sha256": "6b17a5a0d9177ac427b9c065db71a415cf98876899b1641b68f96217a92b9b06",
+      "original_peaks": 72,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 4.739628600073047,
+      "report_sha256": "633823da847c9b67551fd06cf338fb5ca8804fd10f51e74f830972b30471e366",
+      "candidates": 256,
+      "first_score": 15.449631187656877,
+      "first_matches": 11,
+      "first_error_m": 546.4508786068188,
+      "computed_center": {
+        "latitude": 41.777611940298506,
+        "longitude": -87.74000000000001
+      },
+      "center_error_m": 248.1882252921734,
+      "enclosing_radius_m": 634.2862955304258,
+      "competitive_points": 11
+    },
+    {
+      "case": "midway-f",
+      "maximum_width_s": 120,
+      "peaks": 102,
+      "duration_s": 3599.998625,
+      "job_sha256": "0fee3b88c29e95920ec74370c75385170d49b1383e98a694797b70ee2f83d00c",
+      "peaks_sha256": "7a3cbc1fca36d3ca2c5e967a1296d17a3e07df14993addf206659c74162cca63",
+      "original_peaks": 72,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 4.696771599934436,
+      "report_sha256": "5606cbc9b16f4a5295760a971df52b1b2bf81e41f2376670c0e45c31eac930b6",
+      "candidates": 256,
+      "first_score": 15.347638765453665,
+      "first_matches": 11,
+      "first_error_m": 546.4508786068188,
+      "computed_center": {
+        "latitude": 41.777611940298506,
+        "longitude": -87.74000000000001
+      },
+      "center_error_m": 248.1882252921734,
+      "enclosing_radius_m": 634.2862955304258,
+      "competitive_points": 11
+    },
+    {
+      "case": "lake-a",
+      "maximum_width_s": 120,
+      "peaks": 56,
+      "duration_s": 3599.998625,
+      "job_sha256": "14238f63c68f4e9c4fdf5f1269ae86959cb44b376da89cde62b0e4ea1145aaab",
+      "peaks_sha256": "735305bf8646f7d594621f74e98ed63b2db8d8b28c4993611c3baee0f84ad68f",
+      "original_peaks": 22,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 238.3727307000663,
+      "report_sha256": "7db6495706ec1c8e6d233b9eb3a56c70219cf0f2e619dfab8c83f2d34c71a883",
+      "candidates": 256,
+      "first_score": 11.320388321398198,
+      "first_matches": 8,
+      "first_error_m": 12239.839798828094,
+      "computed_center": {
+        "latitude": 61.21358208955224,
+        "longitude": -149.9427067669173
+      },
+      "center_error_m": 4087.5048005413373,
+      "enclosing_radius_m": 17388.6783551383,
+      "competitive_points": 336
+    },
+    {
+      "case": "lake-a",
+      "maximum_width_s": 20,
+      "peaks": 56,
+      "duration_s": 3599.998625,
+      "job_sha256": "14238f63c68f4e9c4fdf5f1269ae86959cb44b376da89cde62b0e4ea1145aaab",
+      "peaks_sha256": "735305bf8646f7d594621f74e98ed63b2db8d8b28c4993611c3baee0f84ad68f",
+      "original_peaks": 22,
+      "not_acceptance": true,
+      "exit_code": 0,
+      "elapsed_s": 240.20004380005412,
+      "report_sha256": "a67ea2f7653cf6b7e86dae554c1720c2460ccd5674e025aceb76943df45f9098",
+      "candidates": 256,
+      "first_score": 11.320388321398198,
+      "first_matches": 8,
+      "first_error_m": 12239.839798828094,
+      "computed_center": {
+        "latitude": 61.21358208955224,
+        "longitude": -149.9427067669173
+      },
+      "center_error_m": 4087.5048005413373,
+      "enclosing_radius_m": 17388.6783551383,
+      "competitive_points": 336
+    }
+  ],
+  "flight_stage_audit": {
+    "plan_sha256": "5b4941e8292c3a91037b0080877ae15579ab8f9ef2ef0de002466cde02b72c84",
+    "results_sha256": "192366f563b7c1c0a90710a7e6d5757ab1e93192b16d2077a4749022318ae45e",
+    "reference_sha256": "f0c6a9c366ee12197acfab0277f41ec09e03f38ef59317a49e9c0c5b188e3f66",
+    "cases": [
+      {
+        "case": "a",
+        "matched_flights": 28,
+        "below_30_m_model_ground": 3,
+        "height_quantiles_m": [
+          3.2441593375950175,
+          50.88458543431295,
+          95.82973700686453,
+          148.08163969870446,
+          204.23198612629471
+        ],
+        "speed_quantiles_m_s": [
+          77.37362990680167,
+          88.47466023778783,
+          96.2120111732124
+        ],
+        "acceleration_quantiles_m_s2": [
+          -0.08582591894777813,
+          0.12903346214511435,
+          0.3565478684544736,
+          0.578682271204086,
+          1.1639912946149131
+        ]
+      },
+      {
+        "case": "b",
+        "matched_flights": 34,
+        "below_30_m_model_ground": 33,
+        "height_quantiles_m": [
+          -0.025848886663774273,
+          3.0132317159036424,
+          3.01780864239999,
+          3.020570463036499,
+          48.46575005934406
+        ],
+        "speed_quantiles_m_s": [
+          25.14414437269239,
+          30.034261181412536,
+          87.8207754732006
+        ],
+        "acceleration_quantiles_m_s2": [
+          -2.03547864199042,
+          1.4824894807768947,
+          1.635849071270892,
+          1.881042351119735,
+          2.309843320892715
+        ]
+      }
+    ],
+    "heights_are_relative_to_model_ground_not_observed_ground_labels": true,
+    "preserved_failed_wrappers": [
+      "low-band-flight-stage",
+      "low-band-flight-stage-v2"
+    ]
+  },
+  "decision": "Do not adopt either low-band variant. LAX November 4 B has a close first point, but A gives a stronger, compact result 3.57 km away. The original successful Midway A case also becomes wrong. No low-band result passed the full acceptance checks.",
+  "flight_stage_interpretation": "In November 4 B, 33 of 34 matched segments are below 30 m above model ground and most accelerate. This does not establish a flyover location. The wrong A result has only 3 of 28 segments below 30 m, so removing low segments does not resolve the failure."
+}

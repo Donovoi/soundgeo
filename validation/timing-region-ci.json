@@ -1,0 +1,31 @@
+{
+  "run": {
+    "conclusion": "success",
+    "event": "pull_request",
+    "headSha": "81e6a38b46225ec1779a211fc79cfd1819a7e03f",
+    "status": "completed",
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42140628938"
+  },
+  "ci_log_sha256": "fdb716579d4c678692c56aa2fd47e7d831643d89c979e1264254119ddcf24e69",
+  "counts": {
+    "windows-latest": {
+      "passed": 97,
+      "failed": 0,
+      "ignored": 0
+    },
+    "ubuntu-latest": {
+      "passed": 97,
+      "failed": 0,
+      "ignored": 0
+    }
+  },
+  "all_required_checks_passed_on_both_platforms": true,
+  "frozen_application_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+  "only_changes_to_ci_commit": [
+    ".github/workflows/ci.yml",
+    "validation/ci-ffmpeg-setup-checks.json"
+  ],
+  "cli_sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f",
+  "gui_sha256": "980e454ec95643b04401b606a8fa442a0e6a184ac073c55d51708a160799c49f",
+  "prior_windows_failure_preserved": "ci-ffmpeg-setup-checks.json"
+}

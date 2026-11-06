@@ -1,0 +1,45 @@
+{
+  "build": {
+    "commit": "8781fe3f58784955d8a488427c1aadaced8bb3b6",
+    "tests_passed": 76,
+    "tests_failed": 0,
+    "tests_ignored": 0,
+    "bins": {
+      "soundgeo-cli": {
+        "file": "soundgeo-cli-terrain-guard.exe",
+        "sha256": "f816d3e42088f93b9053522fa5f5e10588ee28f7ffa25f61649346c0261df2c0"
+      },
+      "soundgeo": {
+        "file": "soundgeo-terrain-guard.exe",
+        "sha256": "61379ad9f5425d5c5ebf74700e5156cd18264e90659a2907ded7f37c8aee5baa"
+      }
+    },
+    "logs": {
+      "terrain-guard-fmt.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "terrain-guard-clippy.log": "2e4344cf770a6faa6da19a0620ef4a25b604c80152ed214735f012fc1aed1711",
+      "terrain-guard-tests.log": "6784057fc4fd7aea5b41332181d4c9f79d66d09ad16787cd2964b58b0ca639ff",
+      "terrain-guard-docs.log": "586a5ae93ae5024ceefe7e825d6caac386f3c860ac297e4eaa4f58d724072efb",
+      "terrain-guard-build.log": "3d09cd488f5a2e1895c3990919202fddf30b5bab9d2acf7c14da138f36a04e73"
+    }
+  },
+  "ci": {
+    "head": "8781fe3f58784955d8a488427c1aadaced8bb3b6",
+    "status": "success",
+    "platforms": {
+      "windows-latest": {
+        "passed": 76,
+        "expected_names": true,
+        "no_experimental_test": true
+      },
+      "ubuntu-latest": {
+        "passed": 76,
+        "expected_names": true,
+        "no_experimental_test": true
+      }
+    }
+  },
+  "ci_run": 42056753302,
+  "ci_log_sha256": "ad0e4a8a214f08e4f4f7565592ba4119139eae1f0eaab6ee09368cc63aa0eda9",
+  "change": "Protect terrain tiles, cache metadata, and provider credits from report-output overwrite.",
+  "location_search_unchanged": true
+}

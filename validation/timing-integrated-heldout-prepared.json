@@ -1,0 +1,25 @@
+{
+  "plan_sha256": "4a5ad79c26346924192dcdc2a1f64d6ea93cc107fc6aa09ddd6eb5b13672fb4b",
+  "cases": [
+    {
+      "case": "midway-nov4-e",
+      "media_sha256": "58077f7254407a6bbe1afd8f36e09dc1b5ca93de70b928485d469c1a9503a69d",
+      "duration_s": 3600.0,
+      "job_sha256": "bcf233577a14436e5477ccac3153d2ce2a20270a663484153fe68051605786f4",
+      "date_verified": true,
+      "recording_clock_supplied": false,
+      "camera_position_supplied": false,
+      "model_evaluation": "not_started; wait for frozen integrated executable"
+    },
+    {
+      "case": "midway-nov4-f",
+      "media_sha256": "17bfd9100c38ecc14d0dd1988eccabf2c7fa7eb250b69345ba1a72da6a0b3471",
+      "duration_s": 3600.0,
+      "job_sha256": "93a24d3d3896084b7cb93e92af547338fa42a1771239253c36974234a1201af6",
+      "date_verified": true,
+      "recording_clock_supplied": false,
+      "camera_position_supplied": false,
+      "model_evaluation": "not_started; wait for frozen integrated executable"
+    }
+  ]
+}

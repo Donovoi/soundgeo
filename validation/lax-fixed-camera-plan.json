@@ -1,0 +1,198 @@
+{
+  "plan": {
+    "source": "https://www.youtube.com/watch?v=n4I0d44oBEs",
+    "site": "LAX H Hotel north-side fixed camera, as identified by its publisher",
+    "clips": [
+      {
+        "id": "a",
+        "requested_utc": "2026-11-03T18:00:00+00:00",
+        "duration_s": 3600
+      },
+      {
+        "id": "b",
+        "requested_utc": "2026-11-03T22:00:00+00:00",
+        "duration_s": 3600
+      }
+    ],
+    "utc_day": "2026-11-03",
+    "bounds": {
+      "south": 33.76,
+      "north": 34.12,
+      "west": -118.65,
+      "east": -118.15
+    },
+    "ground_m": 38,
+    "ground_datum": "egm96",
+    "start_utc": null,
+    "analysis_method": "passage_timing",
+    "frozen_build": "f8f17352fa98a4961fbeb1202b4bdaa413c2af39",
+    "maximum_passage_distance_m": 500,
+    "accuracy_target_m": 1000,
+    "created_utc": "2026-11-05T22:49:59.986970+00:00",
+    "planned_before_capture_or_analysis": true,
+    "redistribute_media": false,
+    "reference_location": "Verify H Hotel building footprint independently; do not supply coordinates to app.",
+    "source_caution": "Title identifies ATC audio. Local microphone presence and date continuity must be checked; cannot assume all audio originated at the camera."
+  },
+  "reference": {
+    "kind": "building-level reference inferred from publisher, hotel address and map; microphone position not surveyed",
+    "publisher_source": "https://www.youtube.com/watch?v=n4I0d44oBEs",
+    "address_source": "https://hhotellosangeles.com/",
+    "address": "6151 West Century Boulevard, Los Angeles",
+    "map_source": "https://www.openstreetmap.org/node/9774638782",
+    "map_sha256": "fdacbe8ea8b7769a8bd6b32f90fb94146ede31d8cd79d79762364d680a3efc2a",
+    "building": {
+      "id": "413226781",
+      "tags": {
+        "building": "commercial",
+        "ele": "29",
+        "height": "50.0",
+        "lacounty:ain": "4124030029",
+        "lacounty:bld_id": "442524802974",
+        "start_date": "1963"
+      },
+      "points": [
+        [
+          33.9456855,
+          -118.3926219
+        ],
+        [
+          33.9456861,
+          -118.392963
+        ],
+        [
+          33.9457671,
+          -118.392962
+        ],
+        [
+          33.9457672,
+          -118.3929423
+        ],
+        [
+          33.9458068,
+          -118.3929423
+        ],
+        [
+          33.9458067,
+          -118.3929664
+        ],
+        [
+          33.9462213,
+          -118.3929669
+        ],
+        [
+          33.9462939,
+          -118.3929672
+        ],
+        [
+          33.9463661,
+          -118.3929673
+        ],
+        [
+          33.9463664,
+          -118.3926219
+        ],
+        [
+          33.9458053,
+          -118.3926212
+        ],
+        [
+          33.9458053,
+          -118.3926444
+        ],
+        [
+          33.9457684,
+          -118.3926444
+        ],
+        [
+          33.9457685,
+          -118.392624
+        ],
+        [
+          33.9456855,
+          -118.3926219
+        ]
+      ]
+    },
+    "center": {
+      "lat": 33.945922471428574,
+      "lon": -118.39281822857143
+    },
+    "maximum_footprint_distance_from_center_m": 52.57982335286623,
+    "evaluation_rule": "All building vertices must be within 1000 m of returned location. This metric is diagnostic until source audio and recording date are independently checked.",
+    "not_supplied_to_app": true
+  },
+  "prepared": [
+    {
+      "source": "https://www.youtube.com/watch?v=n4I0d44oBEs",
+      "plan_sha256": "0cfcba16c9e89661f6497da5583e2fd24f8bc52205ea8e8bd6a93ac6447f870a",
+      "requested_utc": "2026-11-03T18:00:00+00:00",
+      "anchor": {
+        "status": 200,
+        "first_sequence": 1673368,
+        "anchor_seq": 1710689,
+        "anchor_utc": "2026-11-05T21:50:00.032000+00:00",
+        "segment_duration_s": 5.0,
+        "requested_utc": "2026-11-03T18:00:00+00:00",
+        "bytes": 275116
+      },
+      "first_sequence": 1673368,
+      "count": 720,
+      "nominal_duration_s": 3600.0,
+      "media_sha256": "96f6ca531aa521c6fa837103483a53b804825e049856ae0c3960f4ef370a1b0c",
+      "job_sha256": "13976501ace9e1414e110d9c5e8fe355740930097ef04c590b1ac78d2cd25966",
+      "date_verification_pending": true,
+      "audio_source_verification_pending": true,
+      "redistribute_media": false
+    },
+    {
+      "source": "https://www.youtube.com/watch?v=n4I0d44oBEs",
+      "plan_sha256": "0cfcba16c9e89661f6497da5583e2fd24f8bc52205ea8e8bd6a93ac6447f870a",
+      "requested_utc": "2026-11-03T22:00:00+00:00",
+      "anchor": {
+        "status": 200,
+        "first_sequence": 1673368,
+        "anchor_seq": 1710689,
+        "anchor_utc": "2026-11-05T21:50:00.032000+00:00",
+        "segment_duration_s": 5.0,
+        "requested_utc": "2026-11-03T18:00:00+00:00",
+        "bytes": 275116
+      },
+      "first_sequence": 1676248,
+      "count": 720,
+      "nominal_duration_s": 3600.0,
+      "media_sha256": "f7866bf3fa86c685c8670deb60c5b31c794e214793f42798f762841609fa25c4",
+      "job_sha256": "ca7cb2c71d355ae36cbe73da0e95c7c9fe33fbd13752dbe51528c006912e9a6e",
+      "date_verification_pending": true,
+      "audio_source_verification_pending": true,
+      "redistribute_media": false
+    }
+  ],
+  "source_quality": {
+    "first_last_visible_clock": {
+      "a": [
+        "09:45",
+        "10:45"
+      ],
+      "b": [
+        "13:52",
+        "14:52"
+      ]
+    },
+    "actual_duration_s": {
+      "a": 3597.676553,
+      "b": 3600
+    },
+    "date_mapping": "The HLS anchor gives a possible UTC date of November 3. It differs from the visible clocks by about 15 min for A and 8 min for B. The calendar date has not been independently confirmed.",
+    "audio": "The title identifies ATC audio. Local microphone position and continuity are not independently verified.",
+    "sample_diagnostic": {
+      "samples": 24,
+      "report_sha256": "74548aee56ee548cecd354e535bb1590ee341a6b65f39f8a2ce89c1dd50f58fc",
+      "model_revision": "f826b80d28226b62986cc218e5cec390b1096902",
+      "predictions_are_not_ground_truth": true,
+      "no_production_filtering": true
+    }
+  },
+  "status": "prepared diagnostics; solver has not started",
+  "accuracy_claim": false
+}

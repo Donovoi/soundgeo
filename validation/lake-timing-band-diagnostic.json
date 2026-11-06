@@ -1,0 +1,103 @@
+{
+  "plan_sha256": "5a627d63000491e63a27558592885de38728f58d57bf50bcfe555af2e79468a9",
+  "cases": [
+    {
+      "case": "lake-hood-nov1",
+      "band_hz": [
+        60,
+        500
+      ],
+      "peaks": 29,
+      "duration_s": 3599.998625,
+      "exit_code": 0,
+      "elapsed_s": 6.355172300012782,
+      "not_acceptance": true,
+      "report_sha256": "4f8ea260a20951821577362c0909f34006e645b09990075084559ff8b2c64c99",
+      "error_m": 7814.964238319807,
+      "score": 11.91814696132956,
+      "matches": 6
+    },
+    {
+      "case": "lake-hood-nov1",
+      "band_hz": [
+        250,
+        1500
+      ],
+      "peaks": 29,
+      "duration_s": 3599.998625,
+      "exit_code": 0,
+      "elapsed_s": 6.084212000016123,
+      "not_acceptance": true,
+      "report_sha256": "f4509f55f088b00713402dff84b2a7666774f331d941b526ad4493bcfed065cc",
+      "error_m": 1951.6782305166942,
+      "score": 10.578415786523081,
+      "matches": 5
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "band_hz": [
+        60,
+        500
+      ],
+      "peaks": 66,
+      "duration_s": 3599.998625,
+      "exit_code": 0,
+      "elapsed_s": 6.186973199946806,
+      "not_acceptance": true,
+      "report_sha256": "9cacc001c2b098473e22c6a4916dc6d092ea2fe7594aceda691b16f36dc56b93",
+      "error_m": 4479.425166664628,
+      "score": 14.308435173995901,
+      "matches": 7
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "band_hz": [
+        250,
+        1500
+      ],
+      "peaks": 45,
+      "duration_s": 3599.998625,
+      "exit_code": 0,
+      "elapsed_s": 6.012222299934365,
+      "not_acceptance": true,
+      "report_sha256": "57759ae7f7e4a7b38473b0894172562153804a1eb7a889680c12f649f5ced8c2",
+      "error_m": 8626.38464468611,
+      "score": 11.083406832497431,
+      "matches": 8
+    }
+  ],
+  "plan": {
+    "purpose": "Check lower-frequency peaks for propeller recordings. This is a raw-ranking development diagnostic, with no acceptance or negative-control claim.",
+    "build": {
+      "commit": "72d4658b0aa7456d0d74be9bea554a24d75c463a",
+      "executable": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-search-72d4658.exe",
+      "sha256": "f30ba71ab36e4d7db5a9b6fd257e816740c312e29257467b27f1ea528ff2732b",
+      "required_local_checks_passed": true,
+      "tests": 86,
+      "ignored": 0,
+      "ci": "pending",
+      "created_utc": "2026-11-05T21:23:53.461868+00:00",
+      "development_not_release": true,
+      "original_clock_and_position_not_inputs": true
+    },
+    "cases": [
+      "lake-hood-nov1",
+      "lake-hood-nov1-later"
+    ],
+    "bands_hz": [
+      [
+        60,
+        500
+      ],
+      [
+        250,
+        1500
+      ]
+    ],
+    "passage_range_m": 500,
+    "detector_other_settings": "Unchanged: 0.1s power bins, Gaussian sigma 0.3s, 60s median background, 6dB height/prominence, 15s separation, 0.5-20s width.",
+    "supplied_recording_clock": false,
+    "supplied_camera_position": false
+  },
+  "interpretation": "Neither lower-frequency band recovered either Lake Hood development location within 1 km. No settings were promoted; these raw searches did not run negative controls."
+}

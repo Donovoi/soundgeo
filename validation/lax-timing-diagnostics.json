@@ -1,0 +1,341 @@
+{
+  "plan": {
+    "created_utc": "2026-11-05T23:03:40.192228+00:00",
+    "build": {
+      "commit": "f8f17352fa98a4961fbeb1202b4bdaa413c2af39",
+      "required_local_checks_passed": true,
+      "tests": 91,
+      "ignored": 0,
+      "ci": "pending",
+      "created_utc": "2026-11-05T22:06:00.119215+00:00",
+      "not_qualified_location_release": true,
+      "cli": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-timing-f8f1735.exe",
+        "sha256": "faf943fa3860114d95e61e20d2887180aae27c1cefc32d7dd816b11884c282b7"
+      },
+      "gui": {
+        "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-timing-f8f1735.exe",
+        "sha256": "b72ecc8820e78b767f1afdb64b15292880da590d2399271e8c1a22fff2bdd478"
+      }
+    },
+    "cases": [
+      {
+        "case": "broadcast-a",
+        "job_sha256": "b9a250c94a60312730caf5dec9fdff93bfb0cd4b4b329dfbdcc55a597b66b17f",
+        "media_sha256": "e7ffaaf7663b4d8cd543acbc9b23b8538a9ef2f147b590ae3e91a3b6b1a8eaa5",
+        "source_job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\a\\job-exact.json",
+        "bounds": {
+          "south": 33.76,
+          "north": 34.12,
+          "west": -118.65,
+          "east": -118.15
+        },
+        "reference_location_file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\location-reference.json",
+        "classification": "source diagnostic; no clean accuracy claim",
+        "reference_location_sha256": "609206e813383331cd5769f9a80f1d392a21f8cf7eac5a1f5ee3a428235d547c"
+      },
+      {
+        "case": "broadcast-b",
+        "job_sha256": "9eeef506b1889b1f0e5e980201af2d99eed7e76de9778944cb454f622b934538",
+        "media_sha256": "f00ba7eeb9229d5f4404378f6d7ccb31034ea3190f96f013fbae53807d2a5701",
+        "source_job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\b\\job-exact.json",
+        "bounds": {
+          "south": 33.76,
+          "north": 34.12,
+          "west": -118.65,
+          "east": -118.15
+        },
+        "reference_location_file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\location-reference.json",
+        "classification": "source diagnostic; no clean accuracy claim",
+        "reference_location_sha256": "609206e813383331cd5769f9a80f1d392a21f8cf7eac5a1f5ee3a428235d547c"
+      },
+      {
+        "case": "fixed-a",
+        "job_sha256": "13976501ace9e1414e110d9c5e8fe355740930097ef04c590b1ac78d2cd25966",
+        "media_sha256": "96f6ca531aa521c6fa837103483a53b804825e049856ae0c3960f4ef370a1b0c",
+        "source_job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\a\\job.json",
+        "bounds": {
+          "south": 33.76,
+          "north": 34.12,
+          "west": -118.65,
+          "east": -118.15
+        },
+        "reference_location_file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\location-reference.json",
+        "classification": "source diagnostic; no clean accuracy claim",
+        "reference_location_sha256": "e5b15f7dc817534be2d301a05623e1f40945855f327841f39a67366bf8990936"
+      },
+      {
+        "case": "fixed-b",
+        "job_sha256": "ca7cb2c71d355ae36cbe73da0e95c7c9fe33fbd13752dbe51528c006912e9a6e",
+        "media_sha256": "f7866bf3fa86c685c8670deb60c5b31c794e214793f42798f762841609fa25c4",
+        "source_job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\b\\job.json",
+        "bounds": {
+          "south": 33.76,
+          "north": 34.12,
+          "west": -118.65,
+          "east": -118.15
+        },
+        "reference_location_file": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\location-reference.json",
+        "classification": "source diagnostic; no clean accuracy claim",
+        "reference_location_sha256": "e5b15f7dc817534be2d301a05623e1f40945855f327841f39a67366bf8990936"
+      }
+    ],
+    "recording_clock_supplied": false,
+    "camera_position_supplied": false,
+    "possible_date": "2026-11-03",
+    "maximum_passage_distance_m": 500,
+    "source_limitations": {
+      "broadcast-a": "Clock advances about 65 min in 60 min video. Cause unverified.",
+      "broadcast-b": "Includes camera cutaway; microphone continuity unverified.",
+      "fixed-a": "Date inferred from HLS sequence clock, which is about 15 min ahead of visible clock. Local microphone presence unverified.",
+      "fixed-b": "Date inferred from HLS sequence clock, which is about 8 min ahead of visible clock. Local microphone presence unverified."
+    },
+    "frozen_rules_unchanged": true,
+    "no_accuracy_acceptance_from_these_diagnostics": true
+  },
+  "result": {
+    "plan_sha256": "f2a6e44fe8d3405bd338878f5a3ad778997f4ac527c3733e258cc55bc62c81e7",
+    "cases": [
+      {
+        "case": "broadcast-b",
+        "exit_code": 4,
+        "elapsed_s": 270.14047430001665,
+        "classification": "source diagnostic; no clean accuracy claim",
+        "accuracy_accepted": false,
+        "report_exists": true,
+        "status": "ambiguous",
+        "screen": "ambiguous",
+        "peaks": 38,
+        "controls": 19,
+        "control_max": 13.826176015333008,
+        "report_sha256": "c804a11a756c02a0f6d0ab13da67064033ac7ea10fbfb6a6e6eaf01af3ad52b2",
+        "score_gap_beyond_1km": 2.2789881889533277,
+        "competitive_location_spread_m": 23614.652604190047,
+        "explanation": "The timing signal has competing locations more than 1 km apart. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.",
+        "first_score": 15.8599293913882,
+        "matches": 8,
+        "diagnostic_center_error_m": 609.2176093613269,
+        "diagnostic_maximum_footprint_error_m": 723.5957373660923,
+        "diagnostic_coordinate_within_1km": true
+      },
+      {
+        "case": "broadcast-a",
+        "exit_code": 3,
+        "elapsed_s": 270.64425189991016,
+        "classification": "source diagnostic; no clean accuracy claim",
+        "accuracy_accepted": false,
+        "report_exists": true,
+        "status": "insufficient_evidence",
+        "screen": "insufficient_evidence",
+        "peaks": 26,
+        "controls": 19,
+        "control_max": 14.982511692656722,
+        "report_sha256": "0a8c900bd08073c33decc84a1a0103839de349e14ed5fd6e35239967d9bcaf49",
+        "score_gap_beyond_1km": null,
+        "competitive_location_spread_m": null,
+        "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established.",
+        "first_score": 12.993935657444638,
+        "matches": 10,
+        "diagnostic_center_error_m": 1228.2594270661164,
+        "diagnostic_maximum_footprint_error_m": 1320.9416592913408,
+        "diagnostic_coordinate_within_1km": false
+      },
+      {
+        "case": "fixed-a",
+        "exit_code": 4,
+        "elapsed_s": 272.54326359997503,
+        "classification": "source diagnostic; no clean accuracy claim",
+        "accuracy_accepted": false,
+        "report_exists": true,
+        "status": "ambiguous",
+        "screen": "ambiguous",
+        "peaks": 79,
+        "controls": 19,
+        "control_max": 12.693813652827364,
+        "report_sha256": "70218241e198615bf1b6f8f6ae47a99836082dcf358b3222749bad0a909acb28",
+        "score_gap_beyond_1km": 0.7012656492575733,
+        "competitive_location_spread_m": 28423.2544450647,
+        "explanation": "The timing signal has competing locations more than 1 km apart. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.",
+        "first_score": 12.969965335230263,
+        "matches": 10,
+        "diagnostic_center_error_m": 25376.484948027613,
+        "diagnostic_maximum_footprint_error_m": 25417.63414780593,
+        "diagnostic_coordinate_within_1km": false
+      },
+      {
+        "case": "fixed-b",
+        "exit_code": 3,
+        "elapsed_s": 272.41592599998694,
+        "classification": "source diagnostic; no clean accuracy claim",
+        "accuracy_accepted": false,
+        "report_exists": true,
+        "status": "insufficient_evidence",
+        "screen": "insufficient_evidence",
+        "peaks": 80,
+        "controls": 19,
+        "control_max": 12.672940119446404,
+        "report_sha256": "c95556427e1a509c4b1e805b0ab503d87e50aa25ca2fe65854560208de865fb4",
+        "score_gap_beyond_1km": null,
+        "competitive_location_spread_m": null,
+        "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established.",
+        "first_score": 11.140128792360843,
+        "matches": 7,
+        "diagnostic_center_error_m": 25982.200622045104,
+        "diagnostic_maximum_footprint_error_m": 26023.682555790736,
+        "diagnostic_coordinate_within_1km": false
+      }
+    ],
+    "completed_cases": 4,
+    "planned_cases": 4,
+    "accuracy_claim": false
+  },
+  "reference": {
+    "manifest_sha256": "f29d8e08288d94d3a90bf4963e091e19f719fcf1fa9f9b217a9966f05ea3b686",
+    "csv_sha256": "b8a29a3bf9ebae519d064eac9e5f5337804e38aa43e5902115db3192967cc0f1",
+    "checked_chunks": 2880,
+    "all_raw_hashes_match": true,
+    "rows": 996783,
+    "unique_tracks": 5231,
+    "status_counts": {
+      "online": 2880
+    }
+  },
+  "source_checks": {
+    "higher_resolution_flight_labels": {
+      "source_day": "2026-11-03",
+      "visible_labels": {
+        "APZ102": {
+          "frame": "a first",
+          "visible_clock": "09:45"
+        },
+        "WJA1020": {
+          "frame": "a last",
+          "visible_clock": "10:45"
+        },
+        "JBU1200": {
+          "frame": "b first",
+          "visible_clock": "13:52"
+        },
+        "SKW4122": {
+          "frame": "b last",
+          "visible_clock": "14:52"
+        }
+      },
+      "matches": {
+        "APZ102": {
+          "lax4:102463296": {
+            "first": "2026-11-03T18:02:47Z",
+            "last": "2026-11-03T18:10:05Z",
+            "count": 111,
+            "type_code": "B789",
+            "registration": "HL8516"
+          }
+        },
+        "WJA1020": {
+          "lax4:102464390": {
+            "first": "2026-11-03T18:51:40Z",
+            "last": "2026-11-03T19:06:40Z",
+            "count": 226,
+            "type_code": "B38M",
+            "registration": "CGFJD"
+          }
+        },
+        "JBU1200": {
+          "lax4:102467912": {
+            "first": "2026-11-03T22:09:40Z",
+            "last": "2026-11-03T22:20:26Z",
+            "count": 163,
+            "type_code": "A21N",
+            "registration": "N2165J"
+          }
+        },
+        "SKW4122": {
+          "lax4:102456839": {
+            "first": "2026-11-03T01:23:35Z",
+            "last": "2026-11-03T01:34:28Z",
+            "count": 165,
+            "type_code": "E75L",
+            "registration": "N313SY"
+          },
+          "lax4:102468566": {
+            "first": "2026-11-03T23:23:57Z",
+            "last": "2026-11-03T23:34:26Z",
+            "count": 159,
+            "type_code": "E75L",
+            "registration": "N293SY"
+          }
+        }
+      },
+      "not_supplied_to_app": true,
+      "correction": "Read 720p frames: three labels were misread in the initial 360p review. Original audit retained.",
+      "interpretation": "Same-day flight labels are supporting evidence, not proof of the recording calendar date. Flight numbers can recur on other days."
+    },
+    "stream_clock_header": {
+      "checked_utc": "2026-11-05T23:17:48.783478+00:00",
+      "requested_seq": 1673368,
+      "http_status": 200,
+      "headers": {
+        "Content-Type": "video/mp4",
+        "Date": "Thu, 05 Nov 2026 23:17:54 GMT",
+        "X-Walltime-Ms": "1793920674198",
+        "X-Sequence-Num": "1673368",
+        "X-Head-Time-Sec": "8558551",
+        "X-Head-Time-Millis": "8558551866",
+        "X-Head-Seqnum": "1711742",
+        "X-Content-Type-Options": "nosniff"
+      }
+    },
+    "audio_overlap": {
+      "plan": {
+        "sources": {
+          "broadcast": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-diagnostic\\b\\recording-exact.mkv",
+          "fixed": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-fixed-camera\\b\\recording.mp4"
+        },
+        "rate_hz": 4000,
+        "envelope_hz": 10,
+        "minimum_overlap_s": 600,
+        "purpose": "Source diagnostic: test shared audio in the two preselected B clips. No recording clock or derived offset goes into the geolocation app. Correlation alone does not prove microphone location."
+      },
+      "best_envelope_correlation": 0.18064071605017867,
+      "broadcast_minus_fixed_offset_s": -2945.2,
+      "overlap_s": 654.7,
+      "waveform_checks": [
+        {
+          "broadcast_s": 65.4,
+          "fixed_nominal_s": 3010.6,
+          "maximum_absolute_waveform_correlation": 0.021409419426109307,
+          "fine_shift_s": -0.1
+        },
+        {
+          "broadcast_s": 196.4,
+          "fixed_nominal_s": 3141.6,
+          "maximum_absolute_waveform_correlation": 0.02206498508165414,
+          "fine_shift_s": 0.08
+        },
+        {
+          "broadcast_s": 327.3,
+          "fixed_nominal_s": 3272.5,
+          "maximum_absolute_waveform_correlation": 0.01995639193422504,
+          "fine_shift_s": 0.07875
+        },
+        {
+          "broadcast_s": 458.2,
+          "fixed_nominal_s": 3403.4,
+          "maximum_absolute_waveform_correlation": 0.017382884631303618,
+          "fine_shift_s": -0.04775
+        },
+        {
+          "broadcast_s": 589.2,
+          "fixed_nominal_s": 3534.4,
+          "maximum_absolute_waveform_correlation": 0.02806630095373545,
+          "fine_shift_s": 0.0955
+        }
+      ],
+      "not_a_recording_location_proof": true,
+      "not_supplied_to_solver": true
+    }
+  },
+  "interpretation": "Two ambiguous and two insufficient-evidence outcomes. Broadcast B ranks a coordinate within 1 km of the whole garage footprint, but distant alternatives remain. The other raw first choices miss 1 km. None is an accepted location. All source limitations and original outcomes are retained.",
+  "all_recording_clocks_null": true,
+  "no_accuracy_claim": true
+}

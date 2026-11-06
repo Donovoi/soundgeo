@@ -1,0 +1,181 @@
+{
+  "plan_sha256": "3b3b8043e90a34db207c89c815ae893ec9b0fd8446537d2dfbb6137d2dac96ce",
+  "results_sha256": "2b321ed362487e7e337d587a2da821034d651dce184ebd99fe7c69c14aa5b227",
+  "diagnostic_only": true,
+  "production_changes": false,
+  "ground_truth_used_only_after_scoring": true,
+  "threshold_or_probability_calibrated": false,
+  "cases": [
+    {
+      "case": "lake-hood-nov1-later",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "report_sha256": "538a35f322bfbb182613f75078894f75400c7d9df6085a290efeb072320fb73c",
+      "original_first_error_m": 82.787,
+      "spectral_first_error_m": 479.261,
+      "spectral_first_original_index": 1,
+      "original_status": "ambiguous",
+      "candidate_errors_m": [
+        82.787,
+        479.261,
+        5215.866,
+        5384.709,
+        8146.757,
+        8105.573,
+        8674.628,
+        8649.932,
+        9093.306,
+        8517.595
+      ],
+      "spectral_candidate_order": [
+        1,
+        0,
+        3,
+        2,
+        4,
+        5,
+        8,
+        9,
+        7,
+        6
+      ],
+      "candidate_scores": [
+        {
+          "candidate_index": 0,
+          "matches": 5,
+          "mean_score_db": 13.033765092343248
+        },
+        {
+          "candidate_index": 1,
+          "matches": 5,
+          "mean_score_db": 13.120761491533562
+        },
+        {
+          "candidate_index": 2,
+          "matches": 4,
+          "mean_score_db": 17.305849062170335
+        },
+        {
+          "candidate_index": 3,
+          "matches": 4,
+          "mean_score_db": 18.394936536370604
+        },
+        {
+          "candidate_index": 4,
+          "matches": 4,
+          "mean_score_db": 16.58188825573916
+        },
+        {
+          "candidate_index": 5,
+          "matches": 4,
+          "mean_score_db": 11.311129173111896
+        },
+        {
+          "candidate_index": 6,
+          "matches": 4,
+          "mean_score_db": 7.511387779907295
+        },
+        {
+          "candidate_index": 7,
+          "matches": 4,
+          "mean_score_db": 7.667993896976662
+        },
+        {
+          "candidate_index": 8,
+          "matches": 4,
+          "mean_score_db": 9.564958644770622
+        },
+        {
+          "candidate_index": 9,
+          "matches": 4,
+          "mean_score_db": 9.03003334659755
+        }
+      ]
+    },
+    {
+      "case": "lake-hood-nov1",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "report_sha256": "12318722e786235ab384d1767f46b79345f938bb6fffd120bb163f5d077d97cc",
+      "original_first_error_m": 45.749,
+      "spectral_first_error_m": 45.749,
+      "spectral_first_original_index": 0,
+      "original_status": "ambiguous",
+      "candidate_errors_m": [
+        45.749,
+        5838.974,
+        6756.566,
+        8056.15,
+        9785.049,
+        13104.684,
+        248.129,
+        307.186,
+        525.757,
+        19918.724
+      ],
+      "spectral_candidate_order": [
+        0,
+        3,
+        1,
+        2,
+        4,
+        8,
+        7,
+        6,
+        5,
+        9
+      ],
+      "candidate_scores": [
+        {
+          "candidate_index": 0,
+          "matches": 5,
+          "mean_score_db": 14.963725009503145
+        },
+        {
+          "candidate_index": 1,
+          "matches": 4,
+          "mean_score_db": 8.541559689731962
+        },
+        {
+          "candidate_index": 2,
+          "matches": 4,
+          "mean_score_db": 6.934939003141997
+        },
+        {
+          "candidate_index": 3,
+          "matches": 4,
+          "mean_score_db": 12.95912027672291
+        },
+        {
+          "candidate_index": 4,
+          "matches": 4,
+          "mean_score_db": 4.801889104825841
+        },
+        {
+          "candidate_index": 5,
+          "matches": 3,
+          "mean_score_db": 14.33772715388369
+        },
+        {
+          "candidate_index": 6,
+          "matches": 3,
+          "mean_score_db": 15.57737212678854
+        },
+        {
+          "candidate_index": 7,
+          "matches": 3,
+          "mean_score_db": 16.253032278532817
+        },
+        {
+          "candidate_index": 8,
+          "matches": 3,
+          "mean_score_db": 18.273562811198556
+        },
+        {
+          "candidate_index": 9,
+          "matches": 3,
+          "mean_score_db": 13.430419752060104
+        }
+      ]
+    }
+  ],
+  "interpretation": "Spectral support makes the later Lake Hood first choice worse, replacing 82.787 m with 479.261 m. It was not adopted. The earlier first choice stays 45.749 m. These reports remain ambiguous."
+}

@@ -1,0 +1,51 @@
+{
+  "kind": "native-heldout-evaluation-extension",
+  "created_utc": "2026-11-05T21:20:58.546274+00:00",
+  "before_first_native_analysis": true,
+  "original_plan": "timing-heldout-plan.json",
+  "cases": [
+    "midway-nov4-c",
+    "midway-nov4-d"
+  ],
+  "method_options": {
+    "grid_m": 300,
+    "maximum_grid_points": 50000,
+    "maximum_passage_distance_m": 500,
+    "retained_candidates": 256
+  },
+  "required_before_analysis": "All required local checks pass; source committed; executable copied to immutable path with commit and SHA-256 receipt.",
+  "full_region_and_day": true,
+  "no_supplied_recording_time_or_camera_location": true,
+  "free_reference": "webtrak-chicago full 2026-11-04 UTC day via native archive ensure and verified cache",
+  "null_controls": {
+    "count_per_clip": 19,
+    "seeds": [
+      202611090,
+      202611091,
+      202611092,
+      202611093,
+      202611094,
+      202611095,
+      202611096,
+      202611097,
+      202611098,
+      202611099,
+      202611100,
+      202611101,
+      202611102,
+      202611103,
+      202611104,
+      202611105,
+      202611106,
+      202611107,
+      202611108
+    ],
+    "method": "NumPy default_rng(seed).permutation(30) over 120-second blocks; preserve within-block times and counts; complete original spatial/clock search for each control."
+  },
+  "evaluation": [
+    "First candidate error against independently recorded camera coordinates, after search only; coordinate target1000m.",
+    "Record every failure and competing location; no location-confidence claim from the likelihood.",
+    "Report rank of real maximum among all 19 null maxima. This is a shuffled-control diagnostic, not calibrated location accuracy."
+  ],
+  "old_attempts_unchanged": true
+}

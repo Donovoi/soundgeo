@@ -1,0 +1,321 @@
+{
+  "not_acceptance": true,
+  "method": "Density-corrected acoustic passage timing",
+  "ground_truth_or_recording_clock_supplied": false,
+  "current_target_m": 1000,
+  "earlier_250m_benchmark_unchanged": true,
+  "full_area_plan": {
+    "goal": "Verify the density-corrected timing search over the whole original area, including fixed negative controls.",
+    "not_acceptance": true,
+    "ground_truth_or_recording_clock_supplied": false,
+    "production_change": false,
+    "bounds": {
+      "south": 41.65,
+      "north": 42.01,
+      "west": -87.98,
+      "east": -87.5
+    },
+    "grid_m": 300,
+    "maximum_passage_distance_m": 500,
+    "duration_s": 3600,
+    "sigma_s": 1,
+    "offset_proposals_per_point": "Four strongest raw timing votes and four strongest density-standardized votes, separated by 15 seconds.",
+    "score": "Optimized Poisson background plus Gaussian passage density, relative to a constant-rate null.",
+    "cases": {
+      "midway-nov4-a": {
+        "kind": "real",
+        "source": "midway-nov4-a"
+      },
+      "midway-nov4-a-blocks-20261106": {
+        "kind": "null",
+        "source": "midway-nov4-a",
+        "seed": 20261106,
+        "transform": "Permute 120-second blocks; preserve event count and within-block spacings."
+      },
+      "midway-nov4-a-blocks-20261107": {
+        "kind": "null",
+        "source": "midway-nov4-a",
+        "seed": 20261107,
+        "transform": "Permute 120-second blocks; preserve event count and within-block spacings."
+      },
+      "midway-nov4-a-blocks-20261108": {
+        "kind": "null",
+        "source": "midway-nov4-a",
+        "seed": 20261108,
+        "transform": "Permute 120-second blocks; preserve event count and within-block spacings."
+      },
+      "midway-nov4-b": {
+        "kind": "real",
+        "source": "midway-nov4-b"
+      },
+      "midway-nov4-b-blocks-20261106": {
+        "kind": "null",
+        "source": "midway-nov4-b",
+        "seed": 20261106,
+        "transform": "Permute 120-second blocks; preserve event count and within-block spacings."
+      },
+      "midway-nov4-b-blocks-20261107": {
+        "kind": "null",
+        "source": "midway-nov4-b",
+        "seed": 20261107,
+        "transform": "Permute 120-second blocks; preserve event count and within-block spacings."
+      },
+      "midway-nov4-b-blocks-20261108": {
+        "kind": "null",
+        "source": "midway-nov4-b",
+        "seed": 20261108,
+        "transform": "Permute 120-second blocks; preserve event count and within-block spacings."
+      }
+    },
+    "source_sha256": "4ec69e032b2b8f7144f2b6f11822fdc593aa8eb24d25d3f5cadda9e867f7e9e2",
+    "peaks_sha256": "49da7c261331a039aad99c0638a99afd5920c714addc81d5d43dc726c7387d22",
+    "job_sha256": "93ae1f06bfacac7309a2e6660fe6b3ec9c20beb9b776c0c1b335297bf8e1e517",
+    "script_sha256": "cddff0a77fdaf7bf0ddabbc5e6c01dae995db285e849a4fff29887c1eaa792c3",
+    "likelihood_helper_sha256": "07f0ac968774cebae23200acc9c1352164ddaee452bcb13d89ec2de3bf6c3d1e",
+    "independent_optimizer_check": {
+      "cases": 320,
+      "seed": 20261106,
+      "max_score_difference": 9.985203774931506e-10,
+      "tolerance": 1e-05
+    },
+    "current_user_accuracy_target_m": 1000,
+    "original_250m_records_unchanged": true
+  },
+  "native_development_build": {
+    "not_acceptance": true,
+    "purpose": "Verify native/reference equivalence on two development clips and six pre-existing null controls; reserved clips excluded.",
+    "executable_sha256": "bbcdd80d4f5e1dc0eb560cc69a257471e9fe72554cc34bfc1b53eb1f2d55a779",
+    "base_commit": "c4b142d84b47993443a8dd8dbe97b21b1d8e68b5",
+    "source_files": {
+      "src\\lib.rs": "b9e6514fc5f82beac13a2721039c6f8687460ed9d46b84cdf9bcf43348065ec9",
+      "examples\\inspect_timing_search.rs": "553fb9c91e11302baf3956d53b38e7c9b57e8b820d76583839130d37fdc4a120",
+      "src\\timing\\assignment.rs": "d30bdccd1ca8c339e175878cbf953c777a3a5daa038db99e383da9423ca1619b",
+      "src\\timing\\audio.rs": "6fd110f6fbd5e0e454b73de65f7cbc84e4aab6e5132a3cd4158936f7e715c294",
+      "src\\timing\\likelihood.rs": "c587aa6647225d783c03ed310892316e102787123f4647ae5bad634c3e817770",
+      "src\\timing\\mod.rs": "12dd1ae59dc1877d9a5aba0b4d39e7536c592f1d9e29ac4c826916c442ec3f00",
+      "src\\timing\\reference.rs": "04b5f2ac5cabc8ff29268724460000835141fe675aee57a70080f7fcce799d04",
+      "src\\timing\\search.rs": "718a7e0c80853e18c07b2d2e47422ce292ca93318a6e3313427bfbac2a9b30b7"
+    },
+    "prototype_results_sha256": "559fc980926c278d84a57acaf87e098fd32072f496d39fce25f92d6b5d87935a"
+  },
+  "native_audio_equivalence": [
+    {
+      "case": "midway-nov4-a",
+      "peaks": 69,
+      "maximum_difference": {
+        "time_s": 0.0,
+        "excess_db": 1.4210854715202004e-14,
+        "width_s": 6.217248937900877e-15
+      }
+    },
+    {
+      "case": "midway-nov4-b",
+      "peaks": 96,
+      "maximum_difference": {
+        "time_s": 0.0,
+        "excess_db": 1.4210854715202004e-14,
+        "width_s": 0.0
+      }
+    }
+  ],
+  "native_search_equivalence": [
+    {
+      "case": "midway-nov4-a",
+      "exit_code": 0,
+      "elapsed_s": 4.9933219000231475,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 7255,
+      "maximum_coordinate_difference": 0.0,
+      "clock_difference_s": 0.0,
+      "score_difference": 2.842170943040401e-14,
+      "native_score": 35.143481932399936,
+      "native_pairs": 17,
+      "expected_pairs": 17,
+      "top_candidate_equivalent": true,
+      "all_256_candidate_multisets_equal_at_recorded_precision": true
+    },
+    {
+      "case": "midway-nov4-a-blocks-20261106",
+      "exit_code": 0,
+      "elapsed_s": 4.942366799921729,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 7308,
+      "maximum_coordinate_difference": 0.0,
+      "clock_difference_s": 0.0,
+      "score_difference": 8.526512829121202e-14,
+      "native_score": 12.208374792743639,
+      "native_pairs": 13,
+      "expected_pairs": 13,
+      "top_candidate_equivalent": true,
+      "all_256_candidate_multisets_equal_at_recorded_precision": true
+    },
+    {
+      "case": "midway-nov4-a-blocks-20261107",
+      "exit_code": 0,
+      "elapsed_s": 4.946842000004835,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 7195,
+      "maximum_coordinate_difference": 0.0,
+      "clock_difference_s": 0.0,
+      "score_difference": 0.0,
+      "native_score": 11.19815433286001,
+      "native_pairs": 11,
+      "expected_pairs": 11,
+      "top_candidate_equivalent": true,
+      "all_256_candidate_multisets_equal_at_recorded_precision": true
+    },
+    {
+      "case": "midway-nov4-a-blocks-20261108",
+      "exit_code": 0,
+      "elapsed_s": 4.9663122000638396,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 7339,
+      "maximum_coordinate_difference": 0.0,
+      "clock_difference_s": 0.0,
+      "score_difference": 1.4210854715202004e-14,
+      "native_score": 13.077196115123929,
+      "native_pairs": 21,
+      "expected_pairs": 21,
+      "top_candidate_equivalent": true,
+      "all_256_candidate_multisets_equal_at_recorded_precision": true
+    },
+    {
+      "case": "midway-nov4-b",
+      "exit_code": 0,
+      "elapsed_s": 5.5575785000110045,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 7063,
+      "maximum_coordinate_difference": 0.0,
+      "clock_difference_s": 0.0,
+      "score_difference": 3.126388037344441e-13,
+      "native_score": 42.35213922852523,
+      "native_pairs": 27,
+      "expected_pairs": 27,
+      "top_candidate_equivalent": true,
+      "all_256_candidate_multisets_equal_at_recorded_precision": true
+    },
+    {
+      "case": "midway-nov4-b-blocks-20261106",
+      "exit_code": 0,
+      "elapsed_s": 5.256235299981199,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 7180,
+      "maximum_coordinate_difference": 0.0,
+      "clock_difference_s": 0.0,
+      "score_difference": 1.4210854715202004e-14,
+      "native_score": 12.253773286618083,
+      "native_pairs": 18,
+      "expected_pairs": 18,
+      "top_candidate_equivalent": true,
+      "all_256_candidate_multisets_equal_at_recorded_precision": true
+    },
+    {
+      "case": "midway-nov4-b-blocks-20261107",
+      "exit_code": 0,
+      "elapsed_s": 5.3759960000170395,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 7244,
+      "maximum_coordinate_difference": 0.0,
+      "clock_difference_s": 0.0,
+      "score_difference": 4.263256414560601e-14,
+      "native_score": 11.852092691259488,
+      "native_pairs": 15,
+      "expected_pairs": 15,
+      "top_candidate_equivalent": true,
+      "all_256_candidate_multisets_equal_at_recorded_precision": true
+    },
+    {
+      "case": "midway-nov4-b-blocks-20261108",
+      "exit_code": 0,
+      "elapsed_s": 5.636102800024673,
+      "points": 18090,
+      "eligible_points": 1069,
+      "evaluations": 7297,
+      "maximum_coordinate_difference": 0.0,
+      "clock_difference_s": 0.0,
+      "score_difference": 8.526512829121202e-14,
+      "native_score": 10.565425033985582,
+      "native_pairs": 15,
+      "expected_pairs": 15,
+      "top_candidate_equivalent": true,
+      "all_256_candidate_multisets_equal_at_recorded_precision": true
+    }
+  ],
+  "evaluation": {
+    "not_acceptance": true,
+    "truth_used_only_after_complete_search": true,
+    "radius_target_m": 1000,
+    "cases": [
+      {
+        "case": "midway-nov4-a",
+        "kind": "real",
+        "best_llr": 35.143,
+        "matches": 17,
+        "error_m": 546.45,
+        "score_gap_to_alternative_over_1km": 8.071,
+        "all_saved_candidates_within_1km": false
+      },
+      {
+        "case": "midway-nov4-a-blocks-20261106",
+        "kind": "null",
+        "best_llr": 12.208,
+        "matches": 13
+      },
+      {
+        "case": "midway-nov4-a-blocks-20261107",
+        "kind": "null",
+        "best_llr": 11.198,
+        "matches": 11
+      },
+      {
+        "case": "midway-nov4-a-blocks-20261108",
+        "kind": "null",
+        "best_llr": 13.077,
+        "matches": 21
+      },
+      {
+        "case": "midway-nov4-b",
+        "kind": "real",
+        "best_llr": 42.352,
+        "matches": 27,
+        "error_m": 254.85,
+        "score_gap_to_alternative_over_1km": 17.412,
+        "all_saved_candidates_within_1km": false
+      },
+      {
+        "case": "midway-nov4-b-blocks-20261106",
+        "kind": "null",
+        "best_llr": 12.254,
+        "matches": 18
+      },
+      {
+        "case": "midway-nov4-b-blocks-20261107",
+        "kind": "null",
+        "best_llr": 11.852,
+        "matches": 15
+      },
+      {
+        "case": "midway-nov4-b-blocks-20261108",
+        "kind": "null",
+        "best_llr": 10.565,
+        "matches": 15
+      }
+    ]
+  },
+  "prototype_total_evaluations": 57881,
+  "native_total_evaluations": 57881,
+  "limits": [
+    "Two development recordings from the same camera are not independent location validation.",
+    "Six null controls do not establish a calibrated false-positive rate.",
+    "Likelihood score is not a location probability or accuracy radius.",
+    "The native module is not yet connected to the desktop or production analysis CLI.",
+    "Reserved clips must be tested only after the native implementation is qualified and frozen."
+  ]
+}

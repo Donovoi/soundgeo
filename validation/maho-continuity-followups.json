@@ -1,0 +1,454 @@
+{
+  "original_plan": {
+    "created_utc": "2026-11-06T02:34:26.389265+00:00",
+    "source": "https://www.youtube.com/watch?v=iSeH45R-8R0",
+    "source_date": "2026-11-01",
+    "source_metadata_sha256": "9671c531b239cf291ff13e39a2498c95dd22874218f9804cdbbdca56040cf957",
+    "ambient_sound_source": "https://www.visitstmaarten.com/sound-added-to-st-maarten-maho-webcam/",
+    "owner_camera_location": "Tortuga Maho Beach Cafe",
+    "host_location_source": "https://tortugamaho.com/",
+    "host_map_link": "https://www.google.com/maps/place/Tortuga+Maho/@18.0402897,-63.1230251,17z/data=!3m1!4b1!4m5!3m4!1s0x8c0e69457fab9471:0x3637a7ca749bde62!8m2!3d18.0402897!4d-63.1208364",
+    "reference_position": {
+      "latitude": 18.0402897,
+      "longitude": -63.1208364
+    },
+    "reference_allowance_m": 200,
+    "reference_limit": "Host map pin plus a predeclared 200 m allowance. The microphone has not been surveyed.",
+    "acceptance_rule": "App must report a screened region after all 19 shuffled controls, and distance from its center to the host pin plus the 200 m allowance must be at most 1000 m.",
+    "cli": {
+      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-region-d6e9418.exe",
+      "sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f"
+    },
+    "source_commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+    "bounds": {
+      "south": 17.85,
+      "north": 18.25,
+      "west": -63.35,
+      "east": -62.95
+    },
+    "ground_m": 0,
+    "ground_datum": "egm96",
+    "method": "passage_timing",
+    "timing_options": {
+      "maximum_passage_distance_m": 500
+    },
+    "source_selection": "Two additional fixed two-hour intervals from the same camera, selected after original B passed. These are prospective same-site follow-ups, not unseen-site tests. No replacement after an unsuccessful location result.",
+    "windows": [
+      {
+        "id": "c",
+        "start_utc": "2026-11-01T14:00:00+00:00"
+      },
+      {
+        "id": "d",
+        "start_utc": "2026-11-01T18:00:00+00:00"
+      }
+    ],
+    "continuity_rule": "All 1440 fragment starts in both streams must advance by 5 seconds within 0.1 seconds. Check five visible clocks before analysis. Preserve and reject a broken interval.",
+    "recording_clock_or_camera_position_given_to_app": false,
+    "redistribute_media": false
+  },
+  "original_plan_sha256": "0fee00fbcee4fb9cb90a9e0c8d76b4c110759306006a139569ed43783a23c150",
+  "original_cases": [
+    {
+      "case": "c",
+      "status": "rejected_source",
+      "analysis_run": false,
+      "timestamp_audit": {
+        "streams": {
+          "140": {
+            "ordered_content_sha256": "a4e2eb4c9ad7b306b13412fb186666b27eaf18022d7bf66dda7cf93e29878dfd",
+            "first_to_last_start_s": 7195.028027210385,
+            "anomalies": [
+              {
+                "sequence": 3583964,
+                "delta_s": 5.1316099762916565
+              },
+              {
+                "sequence": 3583966,
+                "delta_s": 5.1316099762916565
+              },
+              {
+                "sequence": 3583967,
+                "delta_s": 5.131609980016947
+              },
+              {
+                "sequence": 3583969,
+                "delta_s": 5.1316099762916565
+              },
+              {
+                "sequence": 3583970,
+                "delta_s": 5.1548299342393875
+              },
+              {
+                "sequence": 3583972,
+                "delta_s": 5.1316099762916565
+              },
+              {
+                "sequence": 3584483,
+                "delta_s": 5.1316099762916565
+              },
+              {
+                "sequence": 3584485,
+                "delta_s": 5.1316099762916565
+              },
+              {
+                "sequence": 3584486,
+                "delta_s": 5.1316099762916565
+              },
+              {
+                "sequence": 3584498,
+                "delta_s": 5.1316099762916565
+              }
+            ]
+          },
+          "160": {
+            "ordered_content_sha256": "687dd289f2f00cb241f3283e33519fc1fa38e2563682cc018fe96bf3b8fb5dc9",
+            "first_to_last_start_s": 7195.0,
+            "anomalies": [
+              {
+                "sequence": 3583964,
+                "delta_s": 5.133333332836628
+              },
+              {
+                "sequence": 3583966,
+                "delta_s": 5.133333332836628
+              },
+              {
+                "sequence": 3583967,
+                "delta_s": 5.133333332836628
+              },
+              {
+                "sequence": 3583969,
+                "delta_s": 5.133333332836628
+              },
+              {
+                "sequence": 3583970,
+                "delta_s": 5.133333336561918
+              },
+              {
+                "sequence": 3583972,
+                "delta_s": 5.133333336561918
+              },
+              {
+                "sequence": 3584483,
+                "delta_s": 5.133333332836628
+              },
+              {
+                "sequence": 3584485,
+                "delta_s": 5.133333332836628
+              },
+              {
+                "sequence": 3584486,
+                "delta_s": 5.133333332836628
+              },
+              {
+                "sequence": 3584498,
+                "delta_s": 5.133333332836628
+              }
+            ]
+          }
+        },
+        "maximum_audio_video_difference_s": 0.016235828399658203
+      },
+      "timestamp_audit_sha256": "a283a4de8b5902a58301a17dfc7f68cd7ea0844943d62fc942ea831bd2546473"
+    },
+    {
+      "case": "d",
+      "status": "rejected_source",
+      "analysis_run": false,
+      "timestamp_audit": {
+        "streams": {
+          "140": {
+            "ordered_content_sha256": "ec3aa79563069cfe2f7f6b49d63e523d015463ba5f19ee87a76ef80a75a1762f",
+            "first_to_last_start_s": 7193.983129251748,
+            "anomalies": [
+              {
+                "sequence": 3586792,
+                "delta_s": 5.1316099762916565
+              }
+            ]
+          },
+          "160": {
+            "ordered_content_sha256": "beb0ddba8b05597935a5ddbcbea282372d7b334a8618a944a12eefd913bca245",
+            "first_to_last_start_s": 7194.0,
+            "anomalies": [
+              {
+                "sequence": 3586792,
+                "delta_s": 5.133333332836628
+              }
+            ]
+          }
+        },
+        "maximum_audio_video_difference_s": 0.02231292426586151
+      },
+      "timestamp_audit_sha256": "61e3628c178b4b920da5e3e3e7f7bd4e98c84c92c47a5ca75d81327507d48104"
+    }
+  ],
+  "separate_followup_plan": {
+    "created_utc": "2026-11-06T03:00:27.272929+00:00",
+    "original_plan_sha256": "0fee00fbcee4fb9cb90a9e0c8d76b4c110759306006a139569ed43783a23c150",
+    "original_cases": "Both complete two-hour cases failed their fixed source rule. They remain rejected.",
+    "selection_rule": "Split each original interval at every start delta outside 5 +/- 0.1 s in either stream. Take its longest run, with the earlier run winning ties. Remove 24 fragments (120 s) from each end. Do not join runs. Reject a result shorter than eight minutes. Check every remaining fragment and five evenly spaced visible clocks before location analysis.",
+    "not_independent_site": true,
+    "not_original_plan_pass": true,
+    "no_location_result_used_for_selection": true,
+    "source_commit": "67482a4526e1030fa7e33af99f16dd3fc3e24a17",
+    "cli": {
+      "path": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-sample-67482a4.exe",
+      "sha256": "afbd8a1aa618d2cc7d735c98330614581aa2c6e622f9dc28962e3f4bae98f120"
+    },
+    "source": "https://www.youtube.com/watch?v=iSeH45R-8R0",
+    "source_date": "2026-11-01",
+    "bounds": {
+      "south": 17.85,
+      "north": 18.25,
+      "west": -63.35,
+      "east": -62.95
+    },
+    "reference_position": {
+      "latitude": 18.0402897,
+      "longitude": -63.1208364
+    },
+    "reference_allowance_m": 200,
+    "acceptance_rule": "App must report a screened region after all 19 shuffled controls, and distance from its center to the host pin plus the 200 m allowance must be at most 1000 m.",
+    "recording_clock_or_camera_position_given_to_app": false,
+    "method": "passage_timing",
+    "timing_options": {
+      "maximum_passage_distance_m": 500
+    },
+    "automatic_flight_download": true,
+    "provider": "adsb_exchange_sample",
+    "cache": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\sample-native-validation\\cache"
+  },
+  "followup_plan_sha256": "e20b77ffc1a1f85b0627e2d6f80b7639e84575fcfe80c0aef72cc66b2e1a5a41",
+  "followup_cases": [
+    {
+      "case": "c",
+      "prepared": {
+        "plan_sha256": "e20b77ffc1a1f85b0627e2d6f80b7639e84575fcfe80c0aef72cc66b2e1a5a41",
+        "original_audit_sha256": "a283a4de8b5902a58301a17dfc7f68cd7ea0844943d62fc942ea831bd2546473",
+        "all_continuous_runs": [
+          [
+            3583600,
+            3583964
+          ],
+          [
+            3583964,
+            3583966
+          ],
+          [
+            3583966,
+            3583967
+          ],
+          [
+            3583967,
+            3583969
+          ],
+          [
+            3583969,
+            3583970
+          ],
+          [
+            3583970,
+            3583972
+          ],
+          [
+            3583972,
+            3584483
+          ],
+          [
+            3584483,
+            3584485
+          ],
+          [
+            3584485,
+            3584486
+          ],
+          [
+            3584486,
+            3584498
+          ],
+          [
+            3584498,
+            3585040
+          ]
+        ],
+        "first_sequence": 3584522,
+        "last_sequence": 3585015,
+        "fragment_count": 494,
+        "duration_cap_s": 2469,
+        "audio_video_maximum_start_difference_s": 0.014603175222873688,
+        "ordered_stream_hashes": {
+          "140": "66f47ed16a714ac189191affe945935dec3aca2ddec4b4e09747bb1742a730a2",
+          "160": "223a70be0af90b5d8ee38f97ef06c2335c88a961e183d58b54b24a8222e7af62"
+        },
+        "frames": [
+          {
+            "sequence": 3584522,
+            "offset_s": 0,
+            "sha256": "bb8f13c122fbf96d458067b1930a05609e67037ef5907c6ec88f790e2ecc63a5"
+          },
+          {
+            "sequence": 3584645,
+            "offset_s": 615,
+            "sha256": "55dd40f3d884b9b9aa2d3134df1f4d8d42a93c31e2b4f561df893180cbb9175e"
+          },
+          {
+            "sequence": 3584768,
+            "offset_s": 1230,
+            "sha256": "cf4972dc3513e207800d48298888bb72f0e75b7c968a9c1697aeceeb05814587"
+          },
+          {
+            "sequence": 3584892,
+            "offset_s": 1850,
+            "sha256": "bd04f2d2b712bb42d62709feb7088463819272aa858fbd861b7994cbd672b472"
+          },
+          {
+            "sequence": 3585015,
+            "offset_s": 2465,
+            "sha256": "60dea4a394fd8ca3a848f239e38c313582b1a86d0742bbcf9ba0735dbb022292"
+          }
+        ],
+        "media_sha256": "75c0e04d7940f3b855ec598018861866b0ac40f07351e18eb400adaa94d30795",
+        "job_sha256": "b248114af63113e69328ff1056575b0166ee9ba699e50b790efbaa0be4a26b57",
+        "visible_clock_check_pending": true
+      },
+      "source_qualification": {
+        "passed": true,
+        "inspection": "Five original 480p source frames and all retained audio/video fragment starts checked before analysis.",
+        "visible_local_clocks": [
+          "2026-11-01T11:13:52",
+          "2026-11-01T11:24:07",
+          "2026-11-01T11:34:22",
+          "2026-11-01T11:44:42",
+          "2026-11-01T11:54:57"
+        ],
+        "nominal_frame_offsets_s": [
+          0,
+          615,
+          1230,
+          1850,
+          2465
+        ],
+        "clock_elapsed_errors_s": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "not_passed_to_app": true,
+        "original_two_hour_case_remains_rejected": true
+      },
+      "source_qualification_sha256": "31c44c4e8ff45db501ef56792d6bc314f0179563b38649ee6b9492c0b8267580",
+      "evaluation": {
+        "case": "maho-continuous-followup-c",
+        "exit_code": 3,
+        "elapsed_s": 7.732628699974157,
+        "source_commit": "67482a4526e1030fa7e33af99f16dd3fc3e24a17",
+        "cli_sha256": "afbd8a1aa618d2cc7d735c98330614581aa2c6e622f9dc28962e3f4bae98f120",
+        "job_sha256": "b248114af63113e69328ff1056575b0166ee9ba699e50b790efbaa0be4a26b57",
+        "media_sha256": "75c0e04d7940f3b855ec598018861866b0ac40f07351e18eb400adaa94d30795",
+        "recording_clock_supplied": false,
+        "screened": false,
+        "accepted": false,
+        "status": "insufficient_evidence",
+        "report_sha256": "e41b44239afe1bb045a2ad474947c34c56eb7dce0a5f478e7a4d58adf719d2b2",
+        "sound_peaks": 42,
+        "controls": 19,
+        "region": null,
+        "first_error_to_pin_m": 1423.5739395206272,
+        "first_score": 10.10103430605761,
+        "first_matches": 6
+      }
+    },
+    {
+      "case": "d",
+      "prepared": {
+        "plan_sha256": "e20b77ffc1a1f85b0627e2d6f80b7639e84575fcfe80c0aef72cc66b2e1a5a41",
+        "original_audit_sha256": "61e3628c178b4b920da5e3e3e7f7bd4e98c84c92c47a5ca75d81327507d48104",
+        "all_continuous_runs": [
+          [
+            3586480,
+            3586792
+          ],
+          [
+            3586792,
+            3587920
+          ]
+        ],
+        "first_sequence": 3586816,
+        "last_sequence": 3587895,
+        "fragment_count": 1080,
+        "duration_cap_s": 5399,
+        "audio_video_maximum_start_difference_s": 0.02231292426586151,
+        "ordered_stream_hashes": {
+          "140": "140a21c9405743bc25a44af38b39c641be96494eb7ae80f4a400aee1d31a5457",
+          "160": "4b7648867694431b6aaa7056e79bd2eb543b5772b81afbe1201eaaf99a1ed64e"
+        },
+        "frames": [
+          {
+            "sequence": 3586816,
+            "offset_s": 0,
+            "sha256": "89057c9742226975ab70d9d3356338812dc6aa17a1330329d9e9e9738700017d"
+          },
+          {
+            "sequence": 3587086,
+            "offset_s": 1350,
+            "sha256": "15c1f3f21662e6a542ed66802fc4db30287cb247440b4e8f41224ef341acbc67"
+          },
+          {
+            "sequence": 3587356,
+            "offset_s": 2700,
+            "sha256": "d5bac27a62b8df5eba19d6691c669deb41cf6d68e539284fff3ee04504425f4c"
+          },
+          {
+            "sequence": 3587625,
+            "offset_s": 4045,
+            "sha256": "733809c2eff727cc7024e1437dedf9c20d0b01be28c7aae655af603ebdd3a916"
+          },
+          {
+            "sequence": 3587895,
+            "offset_s": 5395,
+            "sha256": "ebb53a9a85778d84bc0dbc5136091b02cd74c2c137cdf4ef06d609fcb2c94459"
+          }
+        ],
+        "media_sha256": "a721cec85ef7bc79f20f11f1cf80f33d4512bccce9e8ac013df41d0e46051ba2",
+        "job_sha256": "de0b90d0ff5c68e0e7b575fbb33c497c8c0a2661770d3c132c94cc69990992f8",
+        "visible_clock_check_pending": true
+      },
+      "source_qualification": {
+        "passed": false,
+        "inspection": "Five original 480p source frames and all retained audio/video fragment starts checked before analysis.",
+        "visible_local_clocks": [
+          "2026-11-01T14:25:12",
+          "2026-11-01T14:47:42",
+          "2026-11-01T15:10:17",
+          "2026-11-01T15:32:42",
+          "2026-11-01T15:55:12"
+        ],
+        "nominal_frame_offsets_s": [
+          0,
+          1350,
+          2700,
+          4045,
+          5395
+        ],
+        "clock_elapsed_errors_s": [
+          0.0,
+          0.0,
+          5.0,
+          5.0,
+          5.0
+        ],
+        "not_passed_to_app": true,
+        "original_two_hour_case_remains_rejected": true
+      },
+      "source_qualification_sha256": "1f01be6e39b898b778a4e97199059403df443458143d1d3d6075fe1707648743",
+      "analysis_run": false
+    }
+  ],
+  "production_changes": false,
+  "not_new_successful_cases": true,
+  "interpretation": "Both fixed two-hour intervals remain rejected. A separate quality-only rule selected the longest continuous runs and removed two minutes from each end. The 41-minute C segment passed the five clock checks but returned insufficient evidence after all 19 shuffled controls. D had a five-second visible-clock jump and was rejected before analysis. The follow-up does not add an accepted location or justify a detector change."
+}

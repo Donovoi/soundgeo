@@ -1,0 +1,22 @@
+{
+  "commit": "f8f17352fa98a4961fbeb1202b4bdaa413c2af39",
+  "run_id": 42118493834,
+  "conclusion": "success",
+  "platforms": {
+    "windows-latest": {
+      "tests": 91,
+      "failed": 0,
+      "ignored": 0,
+      "new_assessment_tests_present": true,
+      "unexpected_experimental_test": false
+    },
+    "ubuntu-latest": {
+      "tests": 91,
+      "failed": 0,
+      "ignored": 0,
+      "new_assessment_tests_present": true,
+      "unexpected_experimental_test": false
+    }
+  },
+  "log_sha256": "8e68459eda1a5eebabe0d37b32ca11d79e3019df34c0ce5bede3d43f92c5fd85"
+}

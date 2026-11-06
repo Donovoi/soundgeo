@@ -1,0 +1,138 @@
+{
+  "plan": {
+    "build": {
+      "commit": "72d4658b0aa7456d0d74be9bea554a24d75c463a",
+      "executable": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-timing-search-72d4658.exe",
+      "sha256": "f30ba71ab36e4d7db5a9b6fd257e816740c312e29257467b27f1ea528ff2732b",
+      "required_local_checks_passed": true,
+      "tests": 86,
+      "ignored": 0,
+      "ci": "pending",
+      "created_utc": "2026-11-05T21:23:53.461868+00:00",
+      "development_not_release": true,
+      "original_clock_and_position_not_inputs": true
+    },
+    "cases": [
+      {
+        "case": "lax-broadcast-a",
+        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\broadcast-a\\job.json"
+      },
+      {
+        "case": "lax-broadcast-b",
+        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\broadcast-b\\job.json"
+      },
+      {
+        "case": "lax-fixed-a",
+        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\fixed-a\\job.json"
+      },
+      {
+        "case": "lax-fixed-b",
+        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-frozen-diagnostics\\fixed-b\\job.json"
+      },
+      {
+        "case": "midway-nov4-a",
+        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-integrated-validation\\midway-nov4-a\\job.json"
+      },
+      {
+        "case": "lake-hood-nov1-later",
+        "job": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\timing-existing-cases\\lake-hood-nov1-later\\job.json"
+      }
+    ],
+    "band_hz": [
+      4000,
+      7000
+    ],
+    "sample_rate_hz": 16000,
+    "purpose": "Check whether higher-frequency sound peaks reduce speech/radio interference. This is a development raw-ranking diagnostic, not an acceptance test. No production settings change.",
+    "other_settings": "Unchanged: 0.1s power bins, Gaussian sigma 0.3s, 60s median background, 6dB height/prominence, 15s separation, 0.5-20s width. Passage range 500m.",
+    "supplied_recording_clock": false,
+    "supplied_camera_position": false,
+    "negative_controls": false
+  },
+  "results": {
+    "plan_sha256": "b213e53228ed1c1848776764f9ec13bf11e3b6e53a57163a9665416fa2bc677b",
+    "cases": [
+      {
+        "case": "lax-broadcast-a",
+        "exit_code": 0,
+        "elapsed_s": 12.647023899946362,
+        "peaks": 99,
+        "duration_s": 3600.0,
+        "not_acceptance": true,
+        "report_sha256": "605eb677f46ba9ce121c1542f100bb72b2f58c6cebbda1b06890284220ff967f",
+        "score": 10.8700316211777,
+        "matches": 15,
+        "maximum_footprint_error_m": 845.6976334416007,
+        "raw_coordinate_within_1km": true
+      },
+      {
+        "case": "lax-broadcast-b",
+        "exit_code": 0,
+        "elapsed_s": 12.43161810003221,
+        "peaks": 89,
+        "duration_s": 3600.0,
+        "not_acceptance": true,
+        "report_sha256": "6114118b650ab18105b77c7e94b627c1fd9a575a956ecfc94356e8df12e3d595",
+        "score": 11.316484340746287,
+        "matches": 14,
+        "maximum_footprint_error_m": 26683.15348025635,
+        "raw_coordinate_within_1km": false
+      },
+      {
+        "case": "lax-fixed-a",
+        "exit_code": 0,
+        "elapsed_s": 13.001142699969932,
+        "peaks": 92,
+        "duration_s": 3597.6765625,
+        "not_acceptance": true,
+        "report_sha256": "e0117c4552a5afcdf7d001a78dd570857487f6f1d24cea718d0711fab363c1ce",
+        "score": 11.20405003335794,
+        "matches": 14,
+        "maximum_footprint_error_m": 1307.926609930395,
+        "raw_coordinate_within_1km": false
+      },
+      {
+        "case": "lax-fixed-b",
+        "exit_code": 0,
+        "elapsed_s": 12.43342809996102,
+        "peaks": 93,
+        "duration_s": 3599.9985625,
+        "not_acceptance": true,
+        "report_sha256": "448b310cbeb43f1eccf4efe801c02d9641fa03a5f87564eb8aad77a6acfeeff8",
+        "score": 12.488084314705771,
+        "matches": 16,
+        "maximum_footprint_error_m": 1306.5024895006402,
+        "raw_coordinate_within_1km": false
+      },
+      {
+        "case": "midway-nov4-a",
+        "exit_code": 0,
+        "elapsed_s": 4.872670300072059,
+        "peaks": 69,
+        "duration_s": 3599.9985625,
+        "not_acceptance": true,
+        "report_sha256": "ad240b8775805ca2121c1a72ce54773e06b85413a8edb214d99d805b08d858fc",
+        "score": 28.031215160600567,
+        "matches": 17,
+        "error_m": 546.4508786068188,
+        "raw_coordinate_within_1km": true
+      },
+      {
+        "case": "lake-hood-nov1-later",
+        "exit_code": 0,
+        "elapsed_s": 6.119641900062561,
+        "peaks": 48,
+        "duration_s": 3599.9985625,
+        "not_acceptance": true,
+        "report_sha256": "cac6db40fa6ffbc42551f0215673e60f61c82e5aad34d1c1a75286243e3b2623",
+        "score": 15.81883830441552,
+        "matches": 9,
+        "error_m": 7229.6047989641265,
+        "raw_coordinate_within_1km": false
+      }
+    ],
+    "planned_cases": 6,
+    "not_acceptance": true
+  },
+  "interpretation": "Only LAX broadcast A and the Midway development clip had raw coordinates within 1 km. Both fixed-camera LAX clips missed by about 1.31 km. Lake Hood missed by about 7.23 km. No shuffled controls were run and no result is an accepted location. The production detector is unchanged."
+}

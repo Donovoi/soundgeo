@@ -1,0 +1,63 @@
+{
+  "code_commit": "2a0952e89f6b08af24ac65589ed5bd47defed755",
+  "search_code_unchanged_from": "0c2565cc666c9bb6ca6820ec2ac43c7492c1ae4e",
+  "tests_passed": 71,
+  "tests_ignored": 0,
+  "local_qualification_exit_code": 0,
+  "executables": {
+    "soundgeo-cli": {
+      "path": "soundgeo-cli-strict-status.exe",
+      "sha256": "de95f8bebd93f5a76bec7b8db9abff04af531ad5b4c86850460c72557000296d"
+    },
+    "soundgeo": {
+      "path": "soundgeo-strict-status.exe",
+      "sha256": "a423a1c9cbfbc2420ee7d03529bccf0c555a5c63f5fdf1550a9c02f4861002dc"
+    }
+  },
+  "logs": {
+    "all-tests": "43c666baf7dae30c4c2ee7cb84aa36b64187d6a8b34c653acdbf56d41b0a5ee3",
+    "doc-tests": "bf96c09a5e5bd07276e1d1c53c8196b5bcbb23dc2639da0814dd869bea0ad525",
+    "clippy": "4a54fbad15153d79f95c524d1786c08d367cb05feca2e88dea67512e9f47fb90",
+    "fmt": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "build": "c85e239c4f23271889eb87d7d2ccd43c1ef7be941c622710dae0c3e5d7c3f1b6"
+  },
+  "cache_correction": {
+    "discarded_all_target_run_sha256": "38362dd721bd49fa74adab0204ab6a74d7133e9228a324699809dd2b80cf6253",
+    "discarded_test_count": 75,
+    "reason": "Shared target directory reused experimental-branch artifacts. Cleared only package release artifacts and rebuilt; the clean run has the expected source test names and 71 tests.",
+    "clean_log_sha256": "41fc8c729db51eccd9ad2256db9c2e5d7fe382011c67fa8342d51d109f7dc392",
+    "running_frozen_executables_unchanged": true
+  },
+  "real_accuracy_established": false,
+  "ci": {
+    "conclusion": "success",
+    "headSha": "2a0952e89f6b08af24ac65589ed5bd47defed755",
+    "jobs": [
+      {
+        "conclusion": "success",
+        "name": "check (ubuntu-latest)",
+        "status": "completed"
+      },
+      {
+        "conclusion": "success",
+        "name": "check (windows-latest)",
+        "status": "completed"
+      }
+    ],
+    "status": "completed"
+  },
+  "ci_run": "https://github.com/Donovoi/soundgeo/actions/runs/42035476858",
+  "ci_test_totals": {
+    "ubuntu-latest": [
+      71,
+      0,
+      0
+    ],
+    "windows-latest": [
+      71,
+      0,
+      0
+    ]
+  },
+  "ci_log_sha256": "5a254e13e4ed18126bafafe3fbcae3773df2ec8749ec09460f4fb690c0c55296"
+}

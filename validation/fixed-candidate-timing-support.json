@@ -1,0 +1,805 @@
+{
+  "diagnostic_not_acceptance": true,
+  "camera_or_clock_truth_supplied": false,
+  "candidate_position_clock_and_rate_not_refitted": true,
+  "timing_parameters_unchanged": true,
+  "source_sha256": "72d85e3e43bd8c3a601fb9becc22065145eeb30326de42f7cf19c61a97a6122d",
+  "cases": [
+    {
+      "case": "midway-nov1",
+      "selected_number": 1,
+      "candidates": [
+        {
+          "candidate_rank": 1,
+          "doppler_matches": 5,
+          "timing_matches": 12,
+          "timing_score": 7.1722798661158045,
+          "median_abs_residual_s": 1.0057686567306519,
+          "pairs": [
+            {
+              "peak": 1,
+              "track": "aab364/1",
+              "residual_s": -0.6327083110809326
+            },
+            {
+              "peak": 3,
+              "track": "a418b2/1",
+              "residual_s": -0.28119564056396484
+            },
+            {
+              "peak": 7,
+              "track": "a2f0d9/0",
+              "residual_s": -0.9755463600158691
+            },
+            {
+              "peak": 9,
+              "track": "ac3338/1",
+              "residual_s": -1.023421049118042
+            },
+            {
+              "peak": 11,
+              "track": "a62f3f/0",
+              "residual_s": -1.8373517990112305
+            },
+            {
+              "peak": 12,
+              "track": "abd7b4/1",
+              "residual_s": -0.7938845157623291
+            },
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": -0.9881162643432617
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": -1.1490304470062256
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -1.1708056926727295
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -0.952838659286499
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -1.2985632419586182
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -1.0697824954986572
+            }
+          ]
+        },
+        {
+          "candidate_rank": 2,
+          "doppler_matches": 4,
+          "timing_matches": 12,
+          "timing_score": 8.053400454637623,
+          "median_abs_residual_s": 0.9774783849716187,
+          "pairs": [
+            {
+              "peak": 1,
+              "track": "aab364/1",
+              "residual_s": -0.20337843894958496
+            },
+            {
+              "peak": 3,
+              "track": "a418b2/1",
+              "residual_s": -0.22565436363220215
+            },
+            {
+              "peak": 7,
+              "track": "a2f0d9/0",
+              "residual_s": -0.6968050003051758
+            },
+            {
+              "peak": 9,
+              "track": "ac3338/1",
+              "residual_s": -1.0315675735473633
+            },
+            {
+              "peak": 11,
+              "track": "a62f3f/0",
+              "residual_s": -1.7897090911865234
+            },
+            {
+              "peak": 12,
+              "track": "abd7b4/1",
+              "residual_s": -0.22737383842468262
+            },
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": -0.8989603519439697
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": -1.0917000770568848
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -1.1220967769622803
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -1.0557136535644531
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -1.0538153648376465
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -0.923389196395874
+            }
+          ]
+        },
+        {
+          "candidate_rank": 3,
+          "doppler_matches": 3,
+          "timing_matches": 12,
+          "timing_score": 8.296706532333816,
+          "median_abs_residual_s": 0.8774676322937012,
+          "pairs": [
+            {
+              "peak": 1,
+              "track": "aab364/1",
+              "residual_s": 0.42227840423583984
+            },
+            {
+              "peak": 3,
+              "track": "a418b2/1",
+              "residual_s": 0.02820420265197754
+            },
+            {
+              "peak": 7,
+              "track": "a2f0d9/0",
+              "residual_s": -0.36457204818725586
+            },
+            {
+              "peak": 9,
+              "track": "ac3338/1",
+              "residual_s": -1.006521224975586
+            },
+            {
+              "peak": 11,
+              "track": "a62f3f/0",
+              "residual_s": -1.5965204238891602
+            },
+            {
+              "peak": 12,
+              "track": "abd7b4/1",
+              "residual_s": 0.30536675453186035
+            },
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": -0.8475124835968018
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": -1.0718016624450684
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -1.1761257648468018
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -1.2145330905914307
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -0.8323967456817627
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -0.9074227809906006
+            }
+          ]
+        },
+        {
+          "candidate_rank": 4,
+          "doppler_matches": 3,
+          "timing_matches": 14,
+          "timing_score": 4.889004263940228,
+          "median_abs_residual_s": 1.4390084743499756,
+          "pairs": [
+            {
+              "peak": 9,
+              "track": "ac3338/1",
+              "residual_s": 2.538058042526245
+            },
+            {
+              "peak": 11,
+              "track": "a62f3f/0",
+              "residual_s": 1.3900856971740723
+            },
+            {
+              "peak": 12,
+              "track": "abd7b4/1",
+              "residual_s": 2.8725173473358154
+            },
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": 1.113856554031372
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": 0.661893367767334
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -0.6000220775604248
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -0.9890553951263428
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -0.9146847724914551
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -1.076758623123169
+            },
+            {
+              "peak": 25,
+              "track": "ad694c/2",
+              "residual_s": 2.8175861835479736
+            },
+            {
+              "peak": 26,
+              "track": "a50c15/1",
+              "residual_s": 1.487931251525879
+            },
+            {
+              "peak": 27,
+              "track": "ad3098/1",
+              "residual_s": 2.720395803451538
+            },
+            {
+              "peak": 28,
+              "track": "abbb5a/0",
+              "residual_s": 2.5202698707580566
+            },
+            {
+              "peak": 29,
+              "track": "a1dcf2/1",
+              "residual_s": 2.6637041568756104
+            }
+          ]
+        },
+        {
+          "candidate_rank": 5,
+          "doppler_matches": 3,
+          "timing_matches": 12,
+          "timing_score": 7.625291573986897,
+          "median_abs_residual_s": 0.8446513414382935,
+          "pairs": [
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": 2.3313755989074707
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": 1.8092474937438965
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -0.31221938133239746
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -1.031062126159668
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -0.673426628112793
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -1.0609581470489502
+            },
+            {
+              "peak": 24,
+              "track": "ac011d/1",
+              "residual_s": 1.5793650150299072
+            },
+            {
+              "peak": 25,
+              "track": "ad694c/2",
+              "residual_s": 0.896794319152832
+            },
+            {
+              "peak": 26,
+              "track": "a50c15/1",
+              "residual_s": -0.7925083637237549
+            },
+            {
+              "peak": 27,
+              "track": "ad3098/1",
+              "residual_s": 0.4293222427368164
+            },
+            {
+              "peak": 28,
+              "track": "abbb5a/0",
+              "residual_s": 0.46849727630615234
+            },
+            {
+              "peak": 29,
+              "track": "a1dcf2/1",
+              "residual_s": 0.27434659004211426
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "case": "midway-nov1",
+      "selected_number": 2,
+      "candidates": [
+        {
+          "candidate_rank": 1,
+          "doppler_matches": 5,
+          "timing_matches": 12,
+          "timing_score": 6.922947415276697,
+          "median_abs_residual_s": 1.0238686800003052,
+          "pairs": [
+            {
+              "peak": 1,
+              "track": "aab364/1",
+              "residual_s": -0.6991796493530273
+            },
+            {
+              "peak": 3,
+              "track": "a418b2/1",
+              "residual_s": -0.27878832817077637
+            },
+            {
+              "peak": 7,
+              "track": "a2f0d9/0",
+              "residual_s": -1.0227200984954834
+            },
+            {
+              "peak": 9,
+              "track": "ac3338/1",
+              "residual_s": -1.025017261505127
+            },
+            {
+              "peak": 11,
+              "track": "a62f3f/0",
+              "residual_s": -1.8629367351531982
+            },
+            {
+              "peak": 12,
+              "track": "abd7b4/1",
+              "residual_s": -0.8949382305145264
+            },
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": -1.005955457687378
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": -1.2037396430969238
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -1.1763100624084473
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -0.9776337146759033
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -1.3539440631866455
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -1.111262321472168
+            }
+          ]
+        },
+        {
+          "candidate_rank": 2,
+          "doppler_matches": 5,
+          "timing_matches": 12,
+          "timing_score": 7.931693281230014,
+          "median_abs_residual_s": 1.006300687789917,
+          "pairs": [
+            {
+              "peak": 1,
+              "track": "aab364/1",
+              "residual_s": -0.12714123725891113
+            },
+            {
+              "peak": 3,
+              "track": "a418b2/1",
+              "residual_s": -0.1872704029083252
+            },
+            {
+              "peak": 7,
+              "track": "a2f0d9/0",
+              "residual_s": -0.6532657146453857
+            },
+            {
+              "peak": 9,
+              "track": "ac3338/1",
+              "residual_s": -1.0308327674865723
+            },
+            {
+              "peak": 11,
+              "track": "a62f3f/0",
+              "residual_s": -1.7737181186676025
+            },
+            {
+              "peak": 12,
+              "track": "abd7b4/1",
+              "residual_s": -0.15208959579467773
+            },
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": -0.926943302154541
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": -1.157738447189331
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -1.2342753410339355
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -1.1192348003387451
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -1.0369133949279785
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -0.9817686080932617
+            }
+          ]
+        },
+        {
+          "candidate_rank": 3,
+          "doppler_matches": 3,
+          "timing_matches": 13,
+          "timing_score": 6.871688620109969,
+          "median_abs_residual_s": 1.0135338306427002,
+          "pairs": [
+            {
+              "peak": 11,
+              "track": "a62f3f/0",
+              "residual_s": 2.8454842567443848
+            },
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": 2.0606436729431152
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": 1.5150022506713867
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -0.32319211959838867
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -0.9217369556427002
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -0.9495768547058105
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -1.17572021484375
+            },
+            {
+              "peak": 24,
+              "track": "ac011d/1",
+              "residual_s": 1.8515105247497559
+            },
+            {
+              "peak": 25,
+              "track": "ad694c/2",
+              "residual_s": 1.3260993957519531
+            },
+            {
+              "peak": 26,
+              "track": "a50c15/1",
+              "residual_s": -0.13711762428283691
+            },
+            {
+              "peak": 27,
+              "track": "ad3098/1",
+              "residual_s": 1.0135338306427002
+            },
+            {
+              "peak": 28,
+              "track": "abbb5a/0",
+              "residual_s": 0.717747688293457
+            },
+            {
+              "peak": 29,
+              "track": "a1dcf2/1",
+              "residual_s": 0.8122992515563965
+            }
+          ]
+        },
+        {
+          "candidate_rank": 4,
+          "doppler_matches": 3,
+          "timing_matches": 12,
+          "timing_score": 7.651816930770609,
+          "median_abs_residual_s": 0.8538970947265625,
+          "pairs": [
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": 2.3390893936157227
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": 1.828751802444458
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -0.31772327423095703
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -1.05926513671875
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -0.6374812126159668
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -1.0361411571502686
+            },
+            {
+              "peak": 24,
+              "track": "ac011d/1",
+              "residual_s": 1.560786485671997
+            },
+            {
+              "peak": 25,
+              "track": "ad694c/2",
+              "residual_s": 0.8760826587677002
+            },
+            {
+              "peak": 26,
+              "track": "a50c15/1",
+              "residual_s": -0.8317115306854248
+            },
+            {
+              "peak": 27,
+              "track": "ad3098/1",
+              "residual_s": 0.397078275680542
+            },
+            {
+              "peak": 28,
+              "track": "abbb5a/0",
+              "residual_s": 0.46781325340270996
+            },
+            {
+              "peak": 29,
+              "track": "a1dcf2/1",
+              "residual_s": 0.23949646949768066
+            }
+          ]
+        },
+        {
+          "candidate_rank": 5,
+          "doppler_matches": 3,
+          "timing_matches": 13,
+          "timing_score": 6.951292709126193,
+          "median_abs_residual_s": 0.9946281909942627,
+          "pairs": [
+            {
+              "peak": 11,
+              "track": "a62f3f/0",
+              "residual_s": 2.9819982051849365
+            },
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": 2.139669179916382
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": 1.6206915378570557
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -0.28716540336608887
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -0.9946281909942627
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -0.7722940444946289
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -1.1217186450958252
+            },
+            {
+              "peak": 24,
+              "track": "ac011d/1",
+              "residual_s": 1.847179651260376
+            },
+            {
+              "peak": 25,
+              "track": "ad694c/2",
+              "residual_s": 1.2723078727722168
+            },
+            {
+              "peak": 26,
+              "track": "a50c15/1",
+              "residual_s": -0.3193941116333008
+            },
+            {
+              "peak": 27,
+              "track": "ad3098/1",
+              "residual_s": 0.8905565738677979
+            },
+            {
+              "peak": 28,
+              "track": "abbb5a/0",
+              "residual_s": 0.8168745040893555
+            },
+            {
+              "peak": 29,
+              "track": "a1dcf2/1",
+              "residual_s": 0.743070125579834
+            }
+          ]
+        },
+        {
+          "candidate_rank": 6,
+          "doppler_matches": 3,
+          "timing_matches": 13,
+          "timing_score": 6.365561234989961,
+          "median_abs_residual_s": 1.201833724975586,
+          "pairs": [
+            {
+              "peak": 11,
+              "track": "a62f3f/0",
+              "residual_s": 2.537151575088501
+            },
+            {
+              "peak": 13,
+              "track": "abdd4a/1",
+              "residual_s": 1.900482416152954
+            },
+            {
+              "peak": 15,
+              "track": "ac3d16/1",
+              "residual_s": 1.4142944812774658
+            },
+            {
+              "peak": 18,
+              "track": "a399b9/1",
+              "residual_s": -0.34694743156433105
+            },
+            {
+              "peak": 20,
+              "track": "ac2f83/1",
+              "residual_s": -0.9405834674835205
+            },
+            {
+              "peak": 21,
+              "track": "a292ff/1",
+              "residual_s": -1.111861228942871
+            },
+            {
+              "peak": 22,
+              "track": "a46ab3/1",
+              "residual_s": -1.2234551906585693
+            },
+            {
+              "peak": 24,
+              "track": "ac011d/1",
+              "residual_s": 2.006500005722046
+            },
+            {
+              "peak": 25,
+              "track": "ad694c/2",
+              "residual_s": 1.5586678981781006
+            },
+            {
+              "peak": 26,
+              "track": "a50c15/1",
+              "residual_s": 0.12593531608581543
+            },
+            {
+              "peak": 27,
+              "track": "ad3098/1",
+              "residual_s": 1.201833724975586
+            },
+            {
+              "peak": 28,
+              "track": "abbb5a/0",
+              "residual_s": 0.8982512950897217
+            },
+            {
+              "peak": 29,
+              "track": "a1dcf2/1",
+              "residual_s": 0.9761128425598145
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

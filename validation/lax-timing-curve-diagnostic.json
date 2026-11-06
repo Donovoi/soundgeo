@@ -1,0 +1,329 @@
+{
+  "result": {
+    "plan": {
+      "commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
+      "exporter_sha256": "2440a1ba0c125f078637d0b71f2ecea95c05404940740848c6a904ff1886e7ee",
+      "pure_function_source_sha256": "af735608ec5c06b5879385d187321d6866646ed3f0125484ff9b4e8df103606a",
+      "functions": [
+        "ecef",
+        "prepared",
+        "factors",
+        "fit_rows"
+      ],
+      "cases": [
+        "broadcast-b",
+        "fixed-b"
+      ],
+      "bands": [
+        "default",
+        "high_band"
+      ],
+      "shared_clock_offsets_s": [
+        -15.0,
+        -14.0,
+        -13.0,
+        -12.0,
+        -11.0,
+        -10.0,
+        -9.0,
+        -8.0,
+        -7.0,
+        -6.0,
+        -5.0,
+        -4.0,
+        -3.0,
+        -2.0,
+        -1.0,
+        0.0,
+        1.0,
+        2.0,
+        3.0,
+        4.0,
+        5.0,
+        6.0,
+        7.0,
+        8.0,
+        9.0,
+        10.0,
+        11.0,
+        12.0,
+        13.0,
+        14.0,
+        15.0
+      ],
+      "criteria": {
+        "minimum_coverage": 0.9,
+        "maximum_relative_error_percent": 1.5,
+        "maximum_mse_to_linear_baseline_ratio": 0.5
+      },
+      "no_camera_position_or_recording_clock_inputs": true,
+      "not_acceptance": true,
+      "production_changes": false,
+      "bisection_sanity_passed": true
+    },
+    "reference_sha256": "e5fd9015341303ce63f6942cb9e945fce0e017a3226b868db4a4a0e4df16682d",
+    "summary": [
+      {
+        "case": "broadcast-b",
+        "band": "default",
+        "maximum_distinct_supported_curves": 1,
+        "candidate_index": 3,
+        "first_candidate_supported_curves": 0,
+        "candidates_with_three_curves": 0
+      },
+      {
+        "case": "broadcast-b",
+        "band": "high_band",
+        "maximum_distinct_supported_curves": 1,
+        "candidate_index": 3,
+        "first_candidate_supported_curves": 0,
+        "candidates_with_three_curves": 0
+      },
+      {
+        "case": "fixed-b",
+        "band": "default",
+        "maximum_distinct_supported_curves": 0,
+        "candidate_index": 0,
+        "first_candidate_supported_curves": 0,
+        "candidates_with_three_curves": 0
+      },
+      {
+        "case": "fixed-b",
+        "band": "high_band",
+        "maximum_distinct_supported_curves": 0,
+        "candidate_index": 0,
+        "first_candidate_supported_curves": 0,
+        "candidates_with_three_curves": 0
+      }
+    ],
+    "not_acceptance": true
+  },
+  "event_detection": {
+    "plan": {
+      "commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
+      "executable": "C:\\Users\\toor\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\inspect-audio-lax-4681a84.exe",
+      "sha256": "00fb483b780590a394dce0aee60ea3a4015356cb7633ab94c8c19645ea1ffc15",
+      "cases": [
+        "broadcast-b",
+        "fixed-b"
+      ],
+      "purpose": "Read default Doppler events from two development LAX recordings. Check whether timing matches can be supported by measured frequency curves. No production change or acceptance claim."
+    },
+    "cases": [
+      {
+        "case": "broadcast-b",
+        "exit_code": 0,
+        "elapsed_s": 41.040590499993414,
+        "events": 9,
+        "events_sha256": "23f521f1e50cd249af96073d2711ed91f308004910a6dffdbac5f6d74d70a46a",
+        "intervals": [
+          {
+            "start_s": 80.114,
+            "end_s": 89.914,
+            "ridge_points": 337
+          },
+          {
+            "start_s": 280.139,
+            "end_s": 299.989,
+            "ridge_points": 685
+          },
+          {
+            "start_s": 711.014,
+            "end_s": 719.789,
+            "ridge_points": 256
+          },
+          {
+            "start_s": 1490.139,
+            "end_s": 1499.964,
+            "ridge_points": 333
+          },
+          {
+            "start_s": 1791.189,
+            "end_s": 1799.989,
+            "ridge_points": 260
+          },
+          {
+            "start_s": 2580.564,
+            "end_s": 2589.989,
+            "ridge_points": 336
+          },
+          {
+            "start_s": 2870.114,
+            "end_s": 2879.914,
+            "ridge_points": 291
+          },
+          {
+            "start_s": 2880.289,
+            "end_s": 2899.989,
+            "ridge_points": 636
+          },
+          {
+            "start_s": 3190.214,
+            "end_s": 3209.364,
+            "ridge_points": 607
+          }
+        ]
+      },
+      {
+        "case": "fixed-b",
+        "exit_code": 0,
+        "elapsed_s": 42.65470900002401,
+        "events": 21,
+        "events_sha256": "faf2d2e79f06e8e881fa9873e9eb38eb643fa1856b829a26346e6c2d3a40e8c2",
+        "intervals": [
+          {
+            "start_s": 100.489,
+            "end_s": 109.814,
+            "ridge_points": 264
+          },
+          {
+            "start_s": 190.989,
+            "end_s": 199.789,
+            "ridge_points": 258
+          },
+          {
+            "start_s": 517.024,
+            "end_s": 561.024,
+            "ridge_points": 67
+          },
+          {
+            "start_s": 920.114,
+            "end_s": 929.914,
+            "ridge_points": 339
+          },
+          {
+            "start_s": 1120.664,
+            "end_s": 1129.539,
+            "ridge_points": 268
+          },
+          {
+            "start_s": 1380.964,
+            "end_s": 1389.589,
+            "ridge_points": 252
+          },
+          {
+            "start_s": 1670.614,
+            "end_s": 1689.989,
+            "ridge_points": 660
+          },
+          {
+            "start_s": 1705.564,
+            "end_s": 1714.214,
+            "ridge_points": 254
+          },
+          {
+            "start_s": 1865.114,
+            "end_s": 1874.689,
+            "ridge_points": 314
+          },
+          {
+            "start_s": 1945.689,
+            "end_s": 1954.414,
+            "ridge_points": 251
+          },
+          {
+            "start_s": 2120.364,
+            "end_s": 2129.714,
+            "ridge_points": 290
+          },
+          {
+            "start_s": 2310.189,
+            "end_s": 2319.989,
+            "ridge_points": 349
+          },
+          {
+            "start_s": 2345.114,
+            "end_s": 2353.964,
+            "ridge_points": 257
+          },
+          {
+            "start_s": 2410.564,
+            "end_s": 2429.989,
+            "ridge_points": 579
+          },
+          {
+            "start_s": 2595.114,
+            "end_s": 2604.989,
+            "ridge_points": 286
+          },
+          {
+            "start_s": 2845.339,
+            "end_s": 2854.989,
+            "ridge_points": 352
+          },
+          {
+            "start_s": 2860.114,
+            "end_s": 2869.589,
+            "ridge_points": 290
+          },
+          {
+            "start_s": 3025.114,
+            "end_s": 3034.564,
+            "ridge_points": 323
+          },
+          {
+            "start_s": 3242.524,
+            "end_s": 3294.524,
+            "ridge_points": 77
+          },
+          {
+            "start_s": 3440.114,
+            "end_s": 3449.964,
+            "ridge_points": 329
+          },
+          {
+            "start_s": 3535.239,
+            "end_s": 3544.989,
+            "ridge_points": 315
+          }
+        ]
+      }
+    ],
+    "not_acceptance": true
+  },
+  "overlap_summary": [
+    {
+      "case": "broadcast-b",
+      "peak_band": "default",
+      "events": 9,
+      "candidates": 256,
+      "maximum_distinct_overlapping_events": 2,
+      "candidate_with_most_overlaps": 16,
+      "first_candidate_overlaps": 1
+    },
+    {
+      "case": "broadcast-b",
+      "peak_band": "high_band",
+      "events": 9,
+      "candidates": 256,
+      "maximum_distinct_overlapping_events": 2,
+      "candidate_with_most_overlaps": 43,
+      "first_candidate_overlaps": 0
+    },
+    {
+      "case": "fixed-b",
+      "peak_band": "default",
+      "events": 21,
+      "candidates": 256,
+      "maximum_distinct_overlapping_events": 2,
+      "candidate_with_most_overlaps": 29,
+      "first_candidate_overlaps": 1
+    },
+    {
+      "case": "fixed-b",
+      "peak_band": "high_band",
+      "events": 21,
+      "candidates": 256,
+      "maximum_distinct_overlapping_events": 3,
+      "candidate_with_most_overlaps": 54,
+      "first_candidate_overlaps": 1
+    }
+  ],
+  "result_hashes": {
+    "broadcast-b-default": "5bcb88c3b86e4ceede67c095dbdf391c27e190557724c245fe4a705acbef49f1",
+    "broadcast-b-high_band": "d15d3614a8e0c52dfa81c3157bab732022ce021afd5915af191b1cc4b8ee29fb",
+    "fixed-b-default": "bf193aad202ace08b1244ea480e952597e648d690261c613014c9857d7c69e97",
+    "fixed-b-high_band": "041ac6fe613645f06c81b3705bf964570760f7c6af4216f622b9fb34438c5bbc"
+  },
+  "interpretation": "The tested timing proposals had at most one supporting Doppler curve in broadcast B and none in fixed B. These finite checks do not rule out other joint search methods. No location was accepted and the app was not changed."
+}
