@@ -1648,3 +1648,55 @@ The older, separate Midway Doppler retry also finished. It evaluated
 Competing points were about 25 km away, so the result remained ambiguous.
 The earlier interrupted attempt remains saved. See
 [native-budget-followup.json](native-budget-followup.json).
+
+## Maho Beach: a second successful site
+
+The camera owner places this stream at Tortuga Maho Beach Cafe. The local
+tourism association documents its ambient sound. The host's own map link gives
+the reference pin. The plan adds a 200 m allowance because the microphone was
+not surveyed. The app did not receive that pin or the recording clock.
+
+Two fixed two-hour recordings from November 1 were selected before either
+location result. All fragment times and five visible clocks passed checks in
+each recording. The free ADS-B Exchange sample supplied 97 full-day aircraft
+traces. All 288 five-minute discovery snapshots were checked in a broad region.
+The native reader retained 336 segments and 22,688 positions. Short flights
+between snapshots and gaps in receiver coverage can still be absent.
+
+The unchanged `d6e9418` CLI returned a location for recording B. Its point was
+350 m from the reference pin, or 550 m with the planned allowance. It matched
+15 flights and exceeded all 19 shuffled controls. Recording A ranked the same
+point first, but kept competing locations about 3.8 km apart. It was not a pass.
+
+The November 4 free archive had only 145 regional positions, all above 10 km.
+Recording B passed source checks, but the app reported insufficient evidence.
+Recording A failed the fixed continuity rule. Its visible clocks also gained
+about 32 seconds relative to media time. It was preserved and not analyzed.
+
+A separate 200 m grid check kept November 1 B within 1 km, but A failed its
+shuffled controls. The Doppler method left both recordings ambiguous. An
+enclosing-circle diagnostic also failed to resolve earlier spatial ambiguity.
+These checks did not change the production detector or spatial thresholds.
+See [maho-results.json](maho-results.json). Two more same-camera intervals were
+selected afterward; they are separate follow-ups, not unseen-site tests.
+
+The Linux package download at `3373361` was stopped after more than 26 minutes.
+Revision `6ba1a72` uses Ubuntu's public mirror and bounds installation waits.
+All 97 tests and required checks then passed on Windows and Ubuntu. See
+[ci-linux-setup-checks.json](ci-linux-setup-checks.json) and
+[ci-linux-setup-result.json](ci-linux-setup-result.json).
+
+## Native free sample download
+
+The Rust CLI and desktop app now offer the documented ADS-B Exchange free
+evaluation sample. It accepts first-of-month dates and requires search bounds.
+It checks all 288 discovery snapshots and downloads the selected full-day traces.
+It preserves non-ICAO identifiers, checks source dates and identities, verifies
+cached file hashes, and saves rejected cache bytes before repair. Missing traces
+are recorded. A missing discovery snapshot stops the operation. No private
+account or paid bucket is used.
+
+All 105 local tests, formatting, strict Clippy, documentation tests, and both
+release builds pass. The new tests cover public-request signing, cache reuse
+and repair, missing data, cancellation, and CLI validation. The live-source and
+CI checks are separate. See [sample-provider-local-checks.json](sample-provider-local-checks.json).

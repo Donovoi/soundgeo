@@ -7,6 +7,7 @@ pub mod geo;
 pub mod index;
 pub mod model;
 mod network;
+pub mod sample_archive;
 pub mod search;
 pub mod terrain_archive;
 pub mod timing;
@@ -108,7 +109,12 @@ impl Job {
             bail!("Choose an existing video or audio file.");
         }
         if let Some(request) = &self.archive {
-            request.dates()?;
+            let dates = request.dates()?;
+            if request.provider == archive::ArchiveProvider::AdsbExchangeSample {
+                for date in dates {
+                    sample_archive::validate(&date, self.bounds)?;
+                }
+            }
         } else if !self.tracks.exists() {
             bail!("Choose a flight CSV, readsb trace, or archive folder.");
         }
@@ -290,7 +296,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         if let Some(site) = request.provider.webtrak_site() {
             report.warnings.push(format!("{} public airport data covers its local radar area. Altitudes are converted from MSL to WGS84 using EGM96; their original sensor/pressure provenance is unknown. Recorded coverage does not establish that every flight is present.",site.name()));
         }
-        request.ensure(control, &|m, p| progress(m, 0.34 + p * 0.02))?
+        request.ensure_for_bounds(job.bounds, control, &|m, p| progress(m, 0.34 + p * 0.02))?
     } else {
         vec![job.tracks.clone()]
     };
@@ -306,6 +312,17 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         }
     }
     let mut prepared = job.clone();
+    if job
+        .archive
+        .as_ref()
+        .is_some_and(|r| r.provider == archive::ArchiveProvider::AdsbExchangeSample)
+    {
+        for path in &sources {
+            report
+                .warnings
+                .push(sample_archive::coverage_warning(path)?);
+        }
+    }
     if prepared.type_catalog.is_none() {
         prepared.type_catalog = sources
             .iter()

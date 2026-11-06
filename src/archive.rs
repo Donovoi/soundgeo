@@ -10,6 +10,7 @@ use std::path::PathBuf;
 pub enum ArchiveProvider {
     #[default]
     AdsbLol,
+    AdsbExchangeSample,
     WebtrakChicago,
     WebtrakLax,
 }
@@ -17,7 +18,7 @@ pub enum ArchiveProvider {
 impl ArchiveProvider {
     pub fn webtrak_site(self) -> Option<crate::webtrak::Site> {
         match self {
-            Self::AdsbLol => None,
+            Self::AdsbLol | Self::AdsbExchangeSample => None,
             Self::WebtrakChicago => Some(crate::webtrak::Site::Chicago),
             Self::WebtrakLax => Some(crate::webtrak::Site::Lax),
         }
@@ -68,7 +69,21 @@ impl ArchiveRequest {
     }
 
     pub fn ensure(&self, control: &Control, progress: &Progress<'_>) -> Result<Vec<PathBuf>> {
+        self.ensure_for_bounds(None, control, progress)
+    }
+
+    pub fn ensure_for_bounds(
+        &self,
+        bounds: Option<crate::geo::Bounds>,
+        control: &Control,
+        progress: &Progress<'_>,
+    ) -> Result<Vec<PathBuf>> {
         let dates = self.dates()?;
+        if self.provider == ArchiveProvider::AdsbExchangeSample {
+            for date in &dates {
+                crate::sample_archive::validate(date, bounds)?;
+            }
+        }
         let mut paths = Vec::with_capacity(dates.len());
         for (i, date) in dates.iter().enumerate() {
             control.check()?;
@@ -84,6 +99,13 @@ impl ArchiveRequest {
                     ArchiveProvider::AdsbLol => {
                         crate::data::download_day(date, &self.cache, control, &day_progress)
                     }
+                    ArchiveProvider::AdsbExchangeSample => crate::sample_archive::download_day(
+                        date,
+                        &self.cache,
+                        bounds,
+                        control,
+                        &day_progress,
+                    ),
                     ArchiveProvider::WebtrakChicago => crate::webtrak::download_day(
                         crate::webtrak::Site::Chicago,
                         date,

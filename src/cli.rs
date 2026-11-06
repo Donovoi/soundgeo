@@ -79,6 +79,15 @@ enum Commands {
         output: PathBuf,
         #[arg(long, default_value = "adsb-lol")]
         provider: ArchiveProvider,
+        /// Required with the free first-of-month sample source.
+        #[arg(long, allow_hyphen_values = true, requires_all = ["north", "west", "east"])]
+        south: Option<f64>,
+        #[arg(long, allow_hyphen_values = true, requires = "south")]
+        north: Option<f64>,
+        #[arg(long, allow_hyphen_values = true, requires = "south")]
+        west: Option<f64>,
+        #[arg(long, allow_hyphen_values = true, requires = "south")]
+        east: Option<f64>,
     },
     /// Download free terrain for a region before analysis (at most 64 tiles).
     Terrain {
@@ -276,14 +285,27 @@ fn run(args: Args) -> Result<u8> {
             date,
             output,
             provider,
+            south,
+            north,
+            west,
+            east,
         }) => {
+            let bounds = south.map(|south| soundgeo::geo::Bounds {
+                south,
+                north: north.unwrap(),
+                west: west.unwrap(),
+                east: east.unwrap(),
+            });
+            if let Some(bounds) = bounds {
+                bounds.validate()?;
+            }
             let paths = ArchiveRequest {
                 date_from: date,
                 date_to: None,
                 cache: output,
                 provider,
             }
-            .ensure(&Control::default(), &progress)?;
+            .ensure_for_bounds(bounds, &Control::default(), &progress)?;
             if !args.quiet {
                 for path in paths {
                     println!("Archive: {}", path.display());
