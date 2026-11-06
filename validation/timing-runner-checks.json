@@ -1,0 +1,57 @@
+{
+  "local_guard_tests": 6,
+  "command": "python -m unittest discover -s validation -p test_run_timing.py",
+  "source_sha256": {
+    "run_timing.py": "450af5b6cad3d56f3692eaf31fe376ff4fb19292bc6c6cb5604a7ea9f6f5b3c5",
+    "test_run_timing.py": "45a3f76232910030ff7f94f45ab2ec625b237b1ab05a9e4b901bfc2f3520fcee",
+    "timing-cases.json": "4aa04e2ab2bd7f8a9de0faf9b0554c11e553b588c4cce0bc5b7db948279f2ba1"
+  },
+  "preservation_and_integrity_checks": {
+    "existing_output_rejected": true,
+    "existing_report_sha256_unchanged": "92c89cddcb55176c723918e13239c00995397325dfa4b657203f6423355a6b00",
+    "changed_media_rejected_before_analysis_or_download": true,
+    "new_output_not_created": true,
+    "native_analysis_invoked_for_bad_input": false
+  },
+  "positive_case": {
+    "case": "maho-nov1-b",
+    "accepted": true,
+    "screened": true,
+    "job_sha256": "f8daa80aedc266be8e1866073d70d4c4e9af437b922cef4ff33933132c18daea",
+    "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+    "exit_code": 0,
+    "report_sha256": "fea4f73bc7c8415d5208d2187bb511fc8ba9218df1c8c3a8a2c92d6b642c6a6e",
+    "status": "candidates_found",
+    "sound_peaks": 117,
+    "track_count": 382,
+    "region": {
+      "latitude": 18.04328859060403,
+      "longitude": -63.121830985915494,
+      "enclosing_radius_m": 0.0,
+      "competitive_points": 1
+    },
+    "error_m": 549.649056637247,
+    "matched_flights": 16,
+    "score": 31.0335629455301,
+    "controls": 19,
+    "elapsed_s": 15.36518540000543
+  },
+  "negative_case": {
+    "case": "maho-nov1-a",
+    "accepted": false,
+    "screened": false,
+    "job_sha256": "fa8d451848581e126b8fd540304e749faa879a300e14dc1938e30ef1dad005b0",
+    "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+    "exit_code": 4,
+    "report_sha256": "1003d24229cec05f0f66e735ee10f3747f487a9e507906ac47b532e16bf591bc",
+    "status": "ambiguous",
+    "sound_peaks": 86,
+    "track_count": 382,
+    "elapsed_s": 14.761137200053781
+  },
+  "positive_runner_exit_code": 0,
+  "negative_runner_exit_code": 1,
+  "native_search_controls_and_regions_matched_original_replays": true,
+  "ci_artifact_checks": "short-track-artifact-checks.json",
+  "real_benchmark_is_not_passing": true
+}

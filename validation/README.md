@@ -6,6 +6,28 @@ The user changed the current target to 1 km on November 6, 2026.
 The original 250 m plans and results below remain unchanged.
 New results must state which target they use.
 
+To repeat the current 1 km timing benchmark, run this command from the repository:
+
+```powershell
+python validation/run_timing.py --cli target/release/soundgeo-cli.exe --data-root .. --output ../timing-verification
+```
+
+The [timing manifest](timing-cases.json) lists 25 preserved recordings and their
+file hashes. `--data-root` must contain the original local media and reference
+folders. The media is not redistributed. Use `--case maho-nov1-b` to run one
+case. Use a new output folder for each run. The default time limit is one hour
+per case, including downloads; `--timeout` changes this limit in seconds.
+
+The runner uses the broad search areas and possible dates from the fixed cases.
+It does not give the app a recording clock or a reference position. It checks
+the returned area center against the reference only after the app exits.
+The Maho check includes the planned 200 m allowance for the unsurveyed microphone.
+It returns code 0 only if every selected recording passes. An ambiguous,
+insufficient, wrong, or failed result returns code 1. Existing failed recordings
+remain in the manifest. This benchmark is expected to fail until they pass.
+The six fast Python tests in CI check the runner's safeguards. They do not run
+the real media benchmark or establish location accuracy.
+
 The completed fixed-build benchmark has nine reports and one search-limit error.
 Two first choices are within 250 m. Both remain ambiguous. Acceptance is **0/10**.
 The failure does not inherit an older successful coordinate result. See
@@ -1727,3 +1749,36 @@ ambiguous. B stayed within 550 m, including the planned reference allowance.
 These checks prove download and replay behavior on those inputs. They do not
 add independent location tests. See
 [sample-provider-live-checks.json](sample-provider-live-checks.json).
+
+## Short flight segments and the completed 25-case replay
+
+Revision `80d33f2` keeps three to seven recorded positions for passage timing.
+Doppler matching and the general import API still require eight. The importer
+keeps its duplicate, two-second thinning, gap, and speed checks. It does not
+invent positions. The new tests check these boundaries and recover an unknown
+clock after importing three-position flights. All 108 Rust tests and all five
+required checks passed locally, on Windows, and on Ubuntu. See
+[short-track-local-checks.json](short-track-local-checks.json) and
+[short-track-ci.json](short-track-ci.json).
+
+All 25 fixed replays completed. Eight returned locations within 1 km, five
+remained ambiguous, and twelve had insufficient evidence. No previous success
+was lost, and no wrong screened result was returned. The successful Maho result
+now matches 16 distinct aircraft instead of 15. The added segment contains seven
+recorded positions. Its sound peak also coincides with a visible passing aircraft;
+the frame does not independently identify that aircraft's registration.
+No additional recording passed. See [short-track-results.json](short-track-results.json),
+[short-reference-audit.json](short-reference-audit.json), and
+[short-track-support-check.json](short-track-support-check.json).
+
+The first support-only export used a stale standalone example executable.
+That failed diagnostic is preserved. An explicit rebuild and separate repeat
+verified the seven positions. The frozen CLI runs were not affected.
+
+The Windows CI artifact reproduced the local search, controls, and regions in
+two successful cases and one ambiguous case. Its CI checkout tree matched the
+tested source tree. The portable 1 km runner also passed six guard tests,
+rejected changed media before analysis, and preserved an existing report.
+Its real positive case returned code 0; its ambiguous case returned code 1.
+See [short-track-artifact-checks.json](short-track-artifact-checks.json) and
+[timing-runner-checks.json](timing-runner-checks.json).

@@ -22,58 +22,44 @@ SoundGeo is an independent implementation. It does not contain the creator's ori
 **The program is not complete. It does not yet find real locations reliably.**
 
 The current location target is within 1 km. The user changed this target on November 6, 2026.
-The earlier 250 m test results remain in the validation record.
+The original 250 m plans and results remain in the validation record.
 
-The CLI replay at revision `d6e9418` used flight passage timing on 18 public-camera recordings.
-Each test used a known possible date, a broad search area, and no recording start time.
-The app used free Chicago airport data for Midway and free flight archives for the other sites.
+Revision `80d33f2` replayed 25 recordings with flight passage timing.
+Each job used a possible date, a broad search area, free flight data, and no recording start time.
 
 | Result | Recordings |
 | --- | ---: |
-| Returned a location within 1 km | 7 |
-| Reported competing locations | 2 |
-| Reported insufficient evidence | 9 |
+| Returned a location within 1 km | 8 |
+| Reported competing locations | 5 |
+| Reported insufficient evidence | 12 |
 | Returned a location outside 1 km | 0 |
 
-All seven returned locations came from the same Midway camera. Their errors were 89 to 547 m.
-These are replays of the earlier benchmark. The original `f8f1735` results remain in the validation record.
-The new region check added one result. Its sound scores and shuffled checks did not change.
-One clip was reserved before the earlier screening rules were tested.
-A second reserved clip still ranked a point 384 m away first, but reported competing locations.
-The replays do not measure performance on unseen locations.
-Lake Hood and Southampton still returned no useful location.
-Withholding a weak result does not prove that the app can find every location.
+Seven accepted locations came from one Midway camera. Their errors were 89 to 547 m.
+The eighth came from Maho Beach. Its error was within 550 m, including a planned
+200 m allowance for the unsurveyed microphone. These are repeated development
+tests at two successful sites. They do not measure general accuracy.
 
-A later test used two new recordings from Maho Beach, with a full day of free
-ADS-B Exchange sample data and no recording start time. One returned a point
-350 m from the host's map pin. It stayed within 550 m after adding the planned
-200 m allowance for the unsurveyed microphone. It matched 15 flights and passed
-all 19 shuffled checks. The other recording ranked the same point first, but
-reported competing locations. This adds a second successful site. It does not
-establish general accuracy. A different Maho date had too few nearby flights
-in the free archive and did not return a location. A further 41-minute segment
-passed source checks but returned insufficient evidence. Other follow-ups had
-breaks in their source timing and were rejected before location analysis.
-
-The older Doppler tests and failed experiments remain in the validation record.
-An experimental Lake Hood search found one first choice within 83 m, but failed on two later clips.
-An earlier Southampton test returned a wrong location with a positive model status.
+The latest change lets passage timing use flight segments with three to seven
+recorded positions. It added one aircraft match to the successful Maho result
+and preserved all eight accepted locations. It did not add a successful recording.
+Lake Hood, Southampton, and LAX still returned no accepted location.
+Other Maho source intervals had timing breaks and were rejected before analysis.
+Failed tests and older wrong Doppler results remain in the validation record.
 A positive model status is not proof that the location is correct.
 
-Revision `67482a4` passed all 105 software tests locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42152162231).
+All 108 Rust tests passed locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42156168484).
 Formatting, strict Clippy, documentation tests, and both release builds also passed.
-The LAX downloader recovered a missing part and matched all 996,783 positions
-from an independent reader. A second full-day download saved 1,051,893 positions
-and passed cache checks. LAX follow-up tests have not established a reliable location.
-Both reserved recordings from the second day failed to give a useful location.
-One reported insufficient evidence. The other reported widely separated choices.
+The downloaded Windows CI executable reproduced the Midway and Maho results and
+kept an ambiguous Maho result. These are repeat checks of the same recordings.
+Six separate Python tests check the real-video benchmark runner.
 Software checks do not establish location accuracy.
+
 The free sample downloader retrieved all 288 snapshots and 97 Maho traces.
 Every file matched an independent download. Cache reuse and recovery of a
-missing trace also passed. Automatic-download replays kept both original Maho
-results unchanged. These are repeat checks of the same recordings.
-See the [validation record](validation/README.md) for builds, results, data sources, and failures.
+missing trace also passed. The free LAX downloader passed full-day download,
+cache reuse, and missing-part recovery checks. Downloaded data can still have gaps.
+See the [validation record](validation/README.md) for builds, sources, results, and failures.
 
 ## Requirements
 
@@ -267,6 +253,7 @@ For example, save this as `region.json` for an unknown start time near Chicago M
 ```json
 {
   "media": "recording.mp4",
+  "analysis_method": "passage_timing",
   "start_utc": null,
   "bounds": {"south": 41.65, "north": 42.01, "west": -87.98, "east": -87.5},
   "ground_m": 180,
