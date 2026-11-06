@@ -1,0 +1,191 @@
+{
+  "not_location_acceptance": true,
+  "production_defaults_unchanged": true,
+  "range_diagnostic": {
+    "plan_sha256": "9ded4decedc0d7caef2c25cf63f3af988d1c1d1974864a64665db6eaaaf14f78",
+    "results_sha256": "be7e880e0e4493a72dfb0397c2c163dea420ee08f835352960fabcff758b55ed",
+    "build_commit": "4681a841863f6fb4810065f7445f5cabce3940c3",
+    "cases": [
+      {
+        "case": "fixed-a",
+        "range_m": 1000,
+        "folder": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-a-1000",
+        "source_job_sha256": "13976501ace9e1414e110d9c5e8fe355740930097ef04c590b1ac78d2cd25966",
+        "job_sha256": "f512e691f516dba2fe0f8a12af406f5d77a6528a2084d506b9c06c983c8d2c42",
+        "media_sha256": "96f6ca531aa521c6fa837103483a53b804825e049856ae0c3960f4ef370a1b0c",
+        "exit_code": 3,
+        "elapsed_s": 782.7562452000566,
+        "status": "insufficient_evidence",
+        "report_sha256": "7be8f602295681c73c0dfd36958b264a0d1d3cf46790fe27c1f05919197f26d4",
+        "controls": 19,
+        "null_max": 13.39937495175814,
+        "spread_m": null,
+        "maximum_footprint_error_m": 25417.66925613751,
+        "score": 12.438680382462216,
+        "matches": 10,
+        "raw_coordinate_within_1km": false
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 1000,
+        "folder": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-b-1000",
+        "source_job_sha256": "ca7cb2c71d355ae36cbe73da0e95c7c9fe33fbd13752dbe51528c006912e9a6e",
+        "job_sha256": "2a242f25990bb7c453b0ac7684a8aed2e363ad55a80cd92d0e98a45ce528edf5",
+        "media_sha256": "f7866bf3fa86c685c8670deb60c5b31c794e214793f42798f762841609fa25c4",
+        "exit_code": 3,
+        "elapsed_s": 784.0166083000368,
+        "status": "insufficient_evidence",
+        "report_sha256": "aa827675a1142125e74631c2fbd35d3ba23eea7cb38b45b06023875f0f931efe",
+        "controls": 19,
+        "null_max": 15.154363260498497,
+        "spread_m": null,
+        "maximum_footprint_error_m": 568.6174764518872,
+        "score": 13.257549597183191,
+        "matches": 17,
+        "raw_coordinate_within_1km": true
+      },
+      {
+        "case": "fixed-a",
+        "range_m": 2000,
+        "folder": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-a-2000",
+        "source_job_sha256": "13976501ace9e1414e110d9c5e8fe355740930097ef04c590b1ac78d2cd25966",
+        "job_sha256": "005b1bc61be498eedc1ba6864f16864615910b1e4d5dea8e382d294c7cf4d8d9",
+        "media_sha256": "96f6ca531aa521c6fa837103483a53b804825e049856ae0c3960f4ef370a1b0c",
+        "exit_code": 3,
+        "elapsed_s": 1535.8566635999596,
+        "status": "insufficient_evidence",
+        "report_sha256": "428f9615d2a07abd1b9fa20e7276862ab863f6c5e5d097fb635f35a7a81a9712",
+        "controls": 19,
+        "null_max": 15.280450202755357,
+        "spread_m": null,
+        "maximum_footprint_error_m": 25417.66925613751,
+        "score": 13.200328604901863,
+        "matches": 12,
+        "raw_coordinate_within_1km": false
+      },
+      {
+        "case": "fixed-b",
+        "range_m": 2000,
+        "folder": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\lax-range-diagnostic\\fixed-b-2000",
+        "source_job_sha256": "ca7cb2c71d355ae36cbe73da0e95c7c9fe33fbd13752dbe51528c006912e9a6e",
+        "job_sha256": "4d78f25faa1499d68c835406b9686b6d36d0a3a05370aad75a328010a8ebd868",
+        "media_sha256": "f7866bf3fa86c685c8670deb60c5b31c794e214793f42798f762841609fa25c4",
+        "exit_code": 3,
+        "elapsed_s": 1538.501951299957,
+        "status": "insufficient_evidence",
+        "report_sha256": "70f99db9cc21b8ec9386b5ac5b5eb8ee2901771b92b1c268d1a0d82c2f50e55e",
+        "controls": 19,
+        "null_max": 15.062711506262968,
+        "spread_m": null,
+        "maximum_footprint_error_m": 25360.544123213345,
+        "score": 13.964214849932691,
+        "matches": 20,
+        "raw_coordinate_within_1km": false
+      }
+    ],
+    "conclusion": "All four wider-range runs failed the 19 shuffled controls. One first point was within 569 m, with an inferred clock consistent with the video overlay; it was correctly withheld."
+  },
+  "initial_two_hour_extension": {
+    "plan_sha256": "de1cab543ca5471f62ec7f98da8e0ebdcad7935901e508b0896b4d90485185a2",
+    "prepared": {
+      "plan_sha256": "de1cab543ca5471f62ec7f98da8e0ebdcad7935901e508b0896b4d90485185a2",
+      "media_sha256": "ab3a550934899170acd6891024502297196e6bbe25345a8110d4a52cae08d97f",
+      "job_sha256": "d24ef5259c8585a0ef1c129cd57da997ea5ed0db2e1ae0a469e61703ae13e0f7",
+      "probe": {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "flac",
+            "codec_type": "audio"
+          },
+          {
+            "codec_name": "h264",
+            "codec_type": "video"
+          }
+        ],
+        "format": {
+          "duration": "7196.600000"
+        }
+      },
+      "source_quality_verification_pending": true
+    },
+    "visible_clocks_at_nominal_minutes": {
+      "0": "13:52",
+      "30": "14:22",
+      "60": "14:52",
+      "90": "15:28",
+      "119.92": "15:58"
+    },
+    "timestamp_audit_sha256": "74318ac9dfba41ea6480c12096d071910dc3a5687f37a855589d3302f601fa15",
+    "anomaly_counts": {
+      "140": 31,
+      "160": 31
+    },
+    "not_analyzed": true,
+    "reason": "A six-minute visible-clock jump and irregular fragment timing. The capture also wrote invalid archive field names; that original job was preserved and never sent to the app."
+  },
+  "continuous_followup": {
+    "plan_sha256": "efa9dca83cf6eb58ab3cbaf18b94c5e3d166796f7cbfe56b5e0bab05c060969f",
+    "prepared": {
+      "plan_sha256": "efa9dca83cf6eb58ab3cbaf18b94c5e3d166796f7cbfe56b5e0bab05c060969f",
+      "media_sha256": "7ea6f46155f3cdc900b8da26f9c4bc2c07c43b7c760d43cfe71a4434e9dd1606",
+      "job_sha256": "153b4698a6080093c3c6637863b8b03f1ee146abd6d859978c854de6777df340",
+      "probe": {
+        "format": {
+          "duration": "7199.000000"
+        }
+      },
+      "source_clock_check_pending": true
+    },
+    "source_quality": {
+      "actual_duration_s": 7199,
+      "observed_before_solver": true,
+      "visible_clocks_at_nominal_minutes": {
+        "0": "13:02",
+        "30": "13:32",
+        "60": "14:02",
+        "90": "14:32",
+        "119.92": "15:02"
+      },
+      "timestamp_check": "Both streams contain 1440 ordered fragments, no adjacent start-time difference outside 5 +/- 0.1 seconds, and a 7195-second first-to-last interval.",
+      "clocks_supplied_to_app": false,
+      "microphone_position_not_independently_surveyed": true,
+      "limitation": "The interval was selected after reviewing earlier results and source interruptions. It is a development follow-up, not an independent held-out test. Five images support continuity but do not independently verify the entire audio source."
+    },
+    "timestamp_audit": {
+      "140": {
+        "time_base": "1/44100",
+        "ordered_content_manifest_sha256": "248d8974d4204e6ed1c3fd857025a43706f6740fcf2076f7db589fd064f1c7b7",
+        "first_to_last_start_s": 7195.004807256236,
+        "anomalies": []
+      },
+      "160": {
+        "time_base": "1/90000",
+        "ordered_content_manifest_sha256": "662569c2a53232ee2986dd4192d6949768ef0f290f4a782d725b949aed6d4b1b",
+        "first_to_last_start_s": 7195.0,
+        "anomalies": []
+      }
+    },
+    "result": {
+      "exit_code": 4,
+      "elapsed_s": 902.8835009000031,
+      "development_followup_not_heldout": true,
+      "status": "ambiguous",
+      "screen": "ambiguous",
+      "peaks": 170,
+      "controls": 19,
+      "control_max": 15.753093413062563,
+      "report_sha256": "cfbaa4730533778b2f4527f43801d9ae7f0e74371502be7620d39b8019221477",
+      "score_gap_beyond_1km": 3.565657038619001,
+      "competitive_location_spread_m": 1614.6411077942041,
+      "explanation": "The timing signal has competing locations more than 1 km apart. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location.",
+      "first_score": 20.601586556418276,
+      "matches": 35,
+      "maximum_footprint_error_m": 1798.70362062086,
+      "raw_coordinate_within_1km": false,
+      "screened_coordinate_within_1km": false
+    },
+    "conclusion": "The sound score exceeded all controls, but the location remained ambiguous. The first point was outside 1 km."
+  }
+}

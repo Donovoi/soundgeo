@@ -6,6 +6,6 @@ pub mod likelihood;
 mod reference;
 mod search;
 
-pub use assessment::{Assessment, Screen, assess};
+pub use assessment::{Assessment, LocationRegion, Screen, assess};
 pub use audio::{Peak, detect};
 pub use search::{Candidate, LocationScore, Options, Pair, SearchResult, locate};

@@ -1515,3 +1515,67 @@ bands. Each test used one shared clock adjustment and separate flights and
 sounds. No tested proposal had three supporting curves. This finite diagnostic
 does not rule out other ways to combine the two methods. The app was not changed.
 See [lax-timing-curve-diagnostic.json](lax-timing-curve-diagnostic.json).
+
+## LAX flight distance and source continuity
+
+A diagnostic used the known hotel building center to check flight coverage.
+No reference flight passed within 500 m at the previous 38 m ground setting.
+There were 1,085 passages within 1 km. This explains a structural exclusion
+in the earlier hotel searches. The building coordinate was used for this
+diagnostic only. It was not supplied to the broad searches.
+
+Four main CLI runs then used the original broad area, unknown clock, and
+aircraft distances of 1 km and 2 km. All four failed the 19 shuffled controls.
+One first point was within 569 m of the hotel footprint. Its inferred clock
+also agreed with the visible clock, but its sound score was too weak to accept.
+
+An attempted two-hour extension showed a six-minute jump in the visible clock.
+Its container timestamps also became irregular. That full capture was saved
+and was not analyzed. A different two-hour interval had regular timestamps
+and five visible clocks that advanced with the video. It scored 20.60 against
+a maximum shuffled score of 15.75. It still returned ambiguity, with its first
+point about 1.80 km from the hotel footprint. See
+[lax-range-and-continuity.json](lax-range-and-continuity.json).
+
+Wider sound peaks and a fixed speech-exclusion rule did not establish another
+usable location. The speech model removed 64 of 79 peaks in hotel A and 62 of
+80 in hotel B. Their new first points were still wrong. It kept all 69 peaks
+in the Midway control. The production detector is unchanged. See
+[lax-audio-source-followups.json](lax-audio-source-followups.json).
+
+The research command now reads the timing options from the job. Revision
+`71d05e3` passed all 93 local, Windows CI, and Ubuntu CI tests. Default-option
+research output kept all 256 Midway position/clock choices in the same order.
+Reloading the peaks from JSON produced score differences below 1e-12; the
+complete reports were not bit-identical. See
+[timing-research-options-checks.json](timing-research-options-checks.json).
+
+## Candidate regions within 1 km
+
+The earlier spatial check measured every competitive point from the leading
+candidate. That can reject a compact region when the leading point is near
+its edge. The new check first keeps the existing center when it passes.
+Otherwise, it checks the midpoint of the competitive latitude and longitude
+bounds. Every competitive point must be within 1 km of the reported center.
+This is a conservative enclosing-region check. It does not claim to find the
+smallest possible circle or to give a calibrated location error bound.
+
+The sound scores, six-match minimum, and all 19 shuffled controls are unchanged.
+The report adds `timing.region` after the checks pass. Individual candidates
+remain in the report. The desktop app shows the area center and has a separate
+button to copy it. Old reports do not gain a region when they are loaded.
+
+All 97 local tests pass, with no ignored tests. Formatting, strict Clippy,
+documentation tests, and both release builds pass. The four added tests check
+an edge-leading candidate, the date line, invalid or wide regions, and older
+report loading. CI and complete CLI reruns are pending. See
+[timing-region-local-checks.json](timing-region-local-checks.json).
+
+Two recordings from November 4 were reserved before the continuous November 3
+follow-up finished. Their intervals were selected using source timestamps,
+without location-search results. Five visible clocks and all fragment times
+were checked in each recording. They will use the original frozen `4681a84`
+build, the same broad area, a 1 km aircraft distance, and no recording clock.
+The complete free flight download is running. These cases do not yet have
+location results. See [the plan](lax-next-date-plan.json) and
+[the prepared recordings](lax-next-date-prepared.json).
