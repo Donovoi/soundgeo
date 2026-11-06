@@ -51,26 +51,28 @@ ADS-B Exchange sample data and no recording start time. One returned a point
 all 19 shuffled checks. The other recording ranked the same point first, but
 reported competing locations. This adds a second successful site. It does not
 establish general accuracy. A different Maho date had too few nearby flights
-in the free archive and did not return a location.
+in the free archive and did not return a location. A further 41-minute segment
+passed source checks but returned insufficient evidence. Other follow-ups had
+breaks in their source timing and were rejected before location analysis.
 
 The older Doppler tests and failed experiments remain in the validation record.
 An experimental Lake Hood search found one first choice within 83 m, but failed on two later clips.
 An earlier Southampton test returned a wrong location with a positive model status.
 A positive model status is not proof that the location is correct.
 
-Revision `81e6a38` passed all 97 software tests locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42140628938).
+Revision `67482a4` passed all 105 software tests locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42152162231).
 Formatting, strict Clippy, documentation tests, and both release builds also passed.
-This revision fixes CI setup. Its application code and saved binaries match `d6e9418`.
 The LAX downloader recovered a missing part and matched all 996,783 positions
 from an independent reader. A second full-day download saved 1,051,893 positions
 and passed cache checks. LAX follow-up tests have not established a reliable location.
 Both reserved recordings from the second day failed to give a useful location.
 One reported insufficient evidence. The other reported widely separated choices.
 Software checks do not establish location accuracy.
-The added free sample downloader passes all 105 software tests locally, plus
-formatting, strict Clippy, documentation tests, and both release builds.
-Its live-download and CI results are recorded separately from the older build.
+The free sample downloader retrieved all 288 snapshots and 97 Maho traces.
+Every file matched an independent download. Cache reuse and recovery of a
+missing trace also passed. Automatic-download replays kept both original Maho
+results unchanged. These are repeat checks of the same recordings.
 See the [validation record](validation/README.md) for builds, results, data sources, and failures.
 
 ## Requirements
@@ -112,7 +114,7 @@ For a recording near Chicago, you can select **Chicago: public airport replay**.
 For a recording near Los Angeles, select **LAX: public airport replay**.
 The Chicago source contains local airport radar data. It keeps about 90 days of history.
 It can contain positions that are missing from the worldwide archive.
-It supplied the six locations within 1 km in the passage-timing tests above.
+It supplied the seven Midway locations within 1 km in the replay tests above.
 
 To use existing flight data, clear the automatic-download option. Then select the flight data file or folder.
 
@@ -344,7 +346,9 @@ A clock-rate fit with only three matched sounds remains provisional.
 
 ## Flight data
 
-Automatic downloads use the [free ADSB.lol archive](https://www.adsb.lol/docs/open-data/historical).
+The default download source is the [free ADSB.lol archive](https://www.adsb.lol/docs/open-data/historical).
+Other choices are the Chicago and LAX public airport replays, and the
+[ADS-B Exchange free evaluation sample](https://www.adsbexchange.com/data-products/sample-data/).
 The program can also read CSV files, readsb JSON files, compressed traces, and split TAR archives.
 Select the first `.tar.aa` file when you use a split archive.
 
@@ -365,8 +369,9 @@ A downloaded archive can still have gaps in its flight positions.
 A successful download does not prove that the data includes each audible aircraft.
 The program reports missing dates and damaged files. It can use a complete cache without an internet connection.
 
-The archive uses the [ODbL 1.0 licence](https://opendatacommons.org/licenses/odbl/1-0/).
-The downloader saves a licence notice. Follow the licence when you distribute flight data or derived databases.
+The ADSB.lol archive uses the [ODbL 1.0 licence](https://opendatacommons.org/licenses/odbl/1-0/).
+Other providers have separate terms. The downloader saves a source notice.
+Follow each source's terms when you use or distribute its data.
 
 See the [technical reference](docs/technical-reference.md) for format details, altitude rules, search limits, and the sound model.
 
@@ -394,10 +399,11 @@ Linux requires X11, Wayland, and OpenGL development libraries, plus a file dialo
 The [CI configuration](.github/workflows/ci.yml) lists the platform dependencies.
 
 ```powershell
-cargo build --release --locked
 cargo fmt --all -- --check
-cargo clippy --all-targets --locked -- -D warnings
-cargo test --release --locked
+cargo clippy --release --all-targets --locked -- -D warnings
+cargo test --release --locked --all-targets
+cargo test --release --locked --doc
+cargo build --release --locked --bins
 ```
 
 The build creates `soundgeo` and `soundgeo-cli` in `target/release`. Windows adds the `.exe` extension.
