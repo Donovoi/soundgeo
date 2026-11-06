@@ -88,7 +88,7 @@ against the original split archive, with the recording clock still absent.
 
 A known-position diagnostic was used to inspect the failure, never counted as
 blind geolocation. At a plausible shared clock, the original five short detected
-windows had only about 7–68% modeled flight coverage at the camera. Several
+windows had only about 7â€“68% modeled flight coverage at the camera. Several
 traces began after the audible pass had already started. The model deliberately
 does not invent positions beyond the recorded track. A separate historical
 provider's direct HTTP endpoint returned 403. Its documented free S3 sample
@@ -158,7 +158,7 @@ sample interface worked without a private account. No paid data was used.
 
 All 288 worldwide five-minute snapshots for November 1 were downloaded. Aircraft
 were discovered throughout the entire UTC day in broad regions (Midway:
-41.00–42.66, -88.9–-86.6; Southampton: 50.15–51.81, -2.6–-0.08), followed by their
+41.00â€“42.66, -88.9â€“-86.6; Southampton: 50.15â€“51.81, -2.6â€“-0.08), followed by their
 full-day traces. An audit preserving non-ICAO `~` prefixes found 4,483 identifiers:
 4,466 trace files were available and 17 returned `NoSuchKey`. There were no extra
 or substituted identities. Flights entirely between discovery snapshots may
@@ -197,7 +197,7 @@ refinement pool was expanded from 48 to 512, and an analytic propagation solutio
 replaces iterative bisection; an independent bisection regression verifies it.
 
 With the height/noise fixes, a **diagnostic** search restricted to a known
-2.2 × 2.5 km region returned an ambiguous candidate 88.2 m from the Midway camera,
+2.2 Ã— 2.5 km region returned an ambiguous candidate 88.2 m from the Midway camera,
 matching three of 17 detections. The recording clock was absent, but the small
 region was chosen using ground truth. This known-area diagnostic is excluded from the acceptance count. Only the original broad-region
 jobs qualify in `results.json`.
@@ -1223,15 +1223,15 @@ See [terrain-download-evidence.json](terrain-download-evidence.json).
 
 ## Whole-day temperature diagnostic
 
-The app uses 15 °C unless another value is supplied. A separate diagnostic
+The app uses 15 Â°C unless another value is supplied. A separate diagnostic
 downloaded free routine weather reports from the Iowa Environmental Mesonet.
 It used all stations within each original broad area and the whole UTC day.
 It calculated hourly station medians, daily station medians, and a median
 across stations. It used no camera position or recording clock to select weather.
 
-The Lake Hood reference was 1.389 °C. With that temperature, its local first
+The Lake Hood reference was 1.389 Â°C. With that temperature, its local first
 choice moved from 108.563 m to 233.326 m. Its next choice was 607.289 m away.
-The Chicago reference was 17.778 °C. Its first choice moved from 70.411 m to
+The Chicago reference was 17.778 Â°C. Its first choice moved from 70.411 m to
 69.059 m, with a competing choice 327.588 m away. Both remain ambiguous.
 Temperature changes also changed the fitted sound observations.
 Surface temperature is not the average temperature along the sound path.
@@ -1743,3 +1743,25 @@ rejected changed media before analysis, and preserved an existing report.
 Its real positive case returned code 0; its ambiguous case returned code 1.
 See [short-track-artifact-checks.json](short-track-artifact-checks.json) and
 [timing-runner-checks.json](timing-runner-checks.json).
+
+## Date search and offline analysis
+
+Revision `09995cf` removes the archive date-range cap. Wider searches use
+adjacent-day batches with overlap. Empty date fields select all dates found in
+the provider cache. Offline mode blocks network requests and external media
+requests through FFmpeg. The download command prepares a date range and optional
+terrain for later offline use.
+
+All 118 Rust tests, six Python tests, formatting, strict Clippy, documentation
+tests, and release builds passed locally. New checks cover 33 cached days without
+a supplied date, a midnight crossing, competing dates, blocked network requests,
+monthly samples, and an imported reference spanning 41 days.
+
+Two preserved real recordings were replayed offline with both date fields empty
+and `start_utc: null`. The original broad search areas and audio were retained.
+Maho Beach returned a location within 550 m, including its 200 m microphone
+allowance. Midway searched November 1, 3, and 4, selected November 3, and returned
+a location 89.43 m from the camera. Both passed the strict CLI status check.
+
+The executable hash, media hashes, report hashes, checked dates, and results are
+in [offline-date-search.json](offline-date-search.json).

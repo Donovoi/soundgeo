@@ -148,6 +148,7 @@ impl Client {
         })
     }
     async fn get(&self, key: &str, control: &Control) -> Result<Option<Vec<u8>>> {
+        control.require_network(key)?;
         let path = format!("/{BUCKET}/{key}");
         // Keys contain only validated dates, fixed names, hex digits and '~'.
         ensure!(
@@ -242,6 +243,34 @@ struct Manifest {
     traces: Vec<Object>,
     missing_aircraft: Vec<String>,
 }
+fn cached_aircraft_set_valid(manifest: &Manifest, allow_missing: bool) -> bool {
+    if !allow_missing && !manifest.missing_aircraft.is_empty() {
+        return false;
+    }
+    let aircraft: BTreeSet<_> = manifest.aircraft.iter().cloned().collect();
+    let missing: BTreeSet<_> = manifest.missing_aircraft.iter().cloned().collect();
+    let traced: Option<BTreeSet<String>> = manifest
+        .traces
+        .iter()
+        .map(|object| {
+            object
+                .file
+                .strip_prefix("trace_full_")
+                .and_then(|s| s.strip_suffix(".json.gz"))
+                .map(String::from)
+        })
+        .collect();
+    let Some(traced) = traced else {
+        return false;
+    };
+    aircraft.len() == manifest.aircraft.len()
+        && missing.len() == manifest.missing_aircraft.len()
+        && traced.len() == manifest.traces.len()
+        && aircraft.iter().all(|id| ident(id).as_deref() == Some(id))
+        && traced.is_disjoint(&missing)
+        && traced.union(&missing).cloned().collect::<BTreeSet<_>>() == aircraft
+}
+
 fn valid_object(path: &Path, object: &Object, control: &Control) -> bool {
     if control.check().is_err()
         || object.bytes > MAX_COMPRESSED
@@ -388,17 +417,7 @@ async fn download(
         && manifest.date == date
         && serde_json::to_vec(&manifest.bounds)? == serde_json::to_vec(&bounds)?
         && manifest.snapshots.len() == names.len()
-        && manifest
-            .aircraft
-            .iter()
-            .all(|id| ident(id).as_deref() == Some(id))
-        && manifest
-            .aircraft
-            .iter()
-            .map(|id| format!("trace_full_{id}.json.gz"))
-            .collect::<BTreeSet<_>>()
-            == manifest.traces.iter().map(|o| o.file.clone()).collect()
-        && manifest.aircraft.len() == manifest.traces.len()
+        && cached_aircraft_set_valid(&manifest, control.offline)
         && manifest
             .snapshots
             .iter()
@@ -412,7 +431,6 @@ async fn download(
             id.is_some_and(|id| ident(id).as_deref() == Some(id))
                 && valid_object(&traces.join(&o.file), o, control)
         })
-        && manifest.missing_aircraft.is_empty()
     {
         control.check()?;
         progress("Using verified full-day free sample cache", 1.);
@@ -810,6 +828,40 @@ mod tests {
         )
         .unwrap();
         assert_eq!(manifest.missing_aircraft, ["~abc123"]);
+        let calls = server.calls.load(Ordering::Relaxed);
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let offline = Control::default().with_offline(true);
+        let reused = runtime
+            .block_on(download(
+                &server.client(),
+                DAY,
+                dir.path(),
+                bounds(),
+                &offline,
+                &|_, _| {},
+            ))
+            .unwrap();
+        assert_eq!(reused, path);
+        assert_eq!(coverage_warning(&reused).unwrap(), warning);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        // A lost downloaded object remains a cache error even when another trace was unavailable upstream.
+        std::fs::remove_file(path.join(&manifest.traces[0].file)).unwrap();
+        let error = runtime
+            .block_on(download(
+                &server.client(),
+                DAY,
+                dir.path(),
+                bounds(),
+                &offline,
+                &|_, _| {},
+            ))
+            .unwrap_err();
+        assert!(format!("{error:#}").contains("Offline mode"));
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+
         let absent = Server::new(|_| (404, vec![], 0));
         let other = tempfile::tempdir().unwrap();
         assert!(

@@ -67,6 +67,36 @@ pub fn assess(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<Assessment> {
+    assess_inner(
+        job, peaks, duration, tracks, options, control, progress, false,
+    )
+}
+
+pub(crate) fn assess_all_controls(
+    job: &Job,
+    peaks: Vec<Peak>,
+    duration: f64,
+    tracks: &[Track],
+    options: &Options,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<Assessment> {
+    assess_inner(
+        job, peaks, duration, tracks, options, control, progress, true,
+    )
+}
+
+#[allow(clippy::too_many_arguments)]
+fn assess_inner(
+    job: &Job,
+    peaks: Vec<Peak>,
+    duration: f64,
+    tracks: &[Track],
+    options: &Options,
+    control: &Control,
+    progress: &Progress<'_>,
+    all_controls: bool,
+) -> Result<Assessment> {
     control.check()?;
     let mut result = Assessment::pending(peaks);
     if result.peaks.len() < MIN_MATCHES || duration < 480. {
@@ -81,7 +111,7 @@ pub fn assess(
         c.pairs.iter().filter(|p| p.residual_s.abs() <= 3.).count() >= MIN_MATCHES
     });
     result.search = Some(search);
-    if !sufficient {
+    if !sufficient && !all_controls {
         result.explanation = "No leading location has six sound peaks matched to separate flight passages. More recording time or better flight coverage is needed.".into();
         return Ok(result);
     }
@@ -109,7 +139,7 @@ pub fn assess(
     Ok(result)
 }
 
-fn apply_screen(result: &mut Assessment) {
+pub(crate) fn apply_screen(result: &mut Assessment) {
     result.region = None;
     result.screen = Screen::InsufficientEvidence;
     result.score_gap_beyond_1km = None;
@@ -120,6 +150,16 @@ fn apply_screen(result: &mut Assessment) {
     let Some(first) = search.candidates.first() else {
         return;
     };
+    if first
+        .pairs
+        .iter()
+        .filter(|p| p.residual_s.abs() <= 3.)
+        .count()
+        < MIN_MATCHES
+    {
+        result.explanation = "No leading location has six matched flight passages.".into();
+        return;
+    }
     if result.control_maximum_scores.len() != CONTROLS
         || result
             .control_maximum_scores
@@ -338,7 +378,13 @@ mod tests {
             reference_exposure: 20.,
             background_expected_events: 10.,
             detection_probability: 0.5,
-            pairs: vec![],
+            pairs: (0..6)
+                .map(|peak| super::super::Pair {
+                    peak,
+                    track: format!("test-{peak}"),
+                    residual_s: 0.,
+                })
+                .collect(),
         };
         let mut result = Assessment::pending(vec![]);
         result.search = Some(SearchResult {

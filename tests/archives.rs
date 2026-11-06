@@ -63,7 +63,9 @@ fn invalid_ranges_and_wrong_date_cache_are_rejected() {
     request.date_to = Some("2024-02-28".into());
     assert!(request.dates().is_err());
     request.date_to = Some("2024-04-02".into());
-    assert!(request.dates().is_err());
+    assert_eq!(request.dates().unwrap().len(), 33);
+    request.date_to = Some("2025-03-01".into());
+    assert_eq!(request.dates().unwrap().len(), 366);
     request.date_to = None;
     request.date_from = "2099-01-01".into();
     assert!(request.dates().is_err());
@@ -76,4 +78,34 @@ fn invalid_ranges_and_wrong_date_cache_are_rejected() {
     )
     .unwrap();
     assert!(request.ensure(&Control::default(), &|_, _| {}).is_err());
+}
+
+#[test]
+fn sample_ranges_select_available_months_and_cache_discovery_keeps_gaps() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut request = ArchiveRequest {
+        date_from: "2024-01-15".into(),
+        date_to: Some("2024-04-01".into()),
+        cache: dir.path().into(),
+        provider: soundgeo::archive::ArchiveProvider::AdsbExchangeSample,
+    };
+    assert_eq!(
+        request.dates().unwrap(),
+        ["2024-02-01", "2024-03-01", "2024-04-01"]
+    );
+    request.date_to = Some("2024-01-30".into());
+    assert!(request.dates().is_err());
+    for name in [
+        "2024-01-01",
+        "2024-03-01",
+        "webtrak-cda-2024-02-01",
+        "unrelated",
+        "2099-01-01",
+    ] {
+        std::fs::create_dir(dir.path().join(name)).unwrap();
+    }
+    request.provider = Default::default();
+    request.date_from.clear();
+    request.date_to = None;
+    assert_eq!(request.dates().unwrap(), ["2024-01-01", "2024-03-01"]);
 }

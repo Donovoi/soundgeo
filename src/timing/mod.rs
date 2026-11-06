@@ -9,3 +9,5 @@ mod search;
 pub use assessment::{Assessment, LocationRegion, Screen, assess};
 pub use audio::{Peak, detect};
 pub use search::{Candidate, LocationScore, Options, Pair, SearchResult, locate};
+
+pub(crate) use assessment::{apply_screen, assess_all_controls};
