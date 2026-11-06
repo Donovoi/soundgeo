@@ -15,6 +15,7 @@ enum Message {
     Demo(Box<Job>),
     Downloaded(PathBuf),
     Catalog(PathBuf),
+    Prepared(usize),
     Error(String),
 }
 pub struct App {
@@ -89,7 +90,7 @@ impl App {
     ) {
         self.error = None;
         self.progress = 0.;
-        self.control = Control::default();
+        self.control = Control::default().with_offline(self.job.offline);
         let control = self.control.clone();
         let (tx, rx) = mpsc::channel();
         let ctx = ctx.clone();
@@ -175,6 +176,11 @@ impl App {
                     self.status = "Synthetic demo loaded — click Analyze recording".into();
                     self.receiver = None;
                 }
+                Message::Prepared(days) => {
+                    self.status = format!("{days} flight archives ready for offline analysis");
+                    self.progress = 1.;
+                    self.receiver = None;
+                }
                 Message::Downloaded(path) => {
                     let catalog = path.parent().map(|p| p.join("aircraft-types.json"));
                     if catalog.as_ref().is_some_and(|p| p.is_file()) {
@@ -220,6 +226,7 @@ impl App {
             file_field(ui,&mut self.job.media,"Choose recording…",&["mp4","mov","mkv","webm","avi","wav","mp3","flac","m4a"]);
             ui.label(RichText::new("You can also drop a file into this window.").small().color(MUTED));
             ui.add_space(6.);ui.label(RichText::new("2  Historical flight data").strong());
+            ui.checkbox(&mut self.job.offline, "Offline mode: use cached data only");
             let mut automatic = self.job.archive.is_some();
             if ui.checkbox(&mut automatic,"Download missing flight data automatically").changed() {
                 self.job.archive = automatic.then(|| soundgeo::archive::ArchiveRequest {date_from:self.date.clone(),date_to:None,cache:PathBuf::from("flight-cache"),provider:Default::default()});
@@ -237,12 +244,12 @@ impl App {
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakChicago,"Chicago: public airport replay");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakLax,"LAX: public airport replay");
                 });
-                ui.label(RichText::new("Possible UTC date; exact recording time stays unknown. Worldwide archives can require several GB per day.").small().color(MUTED));
+                ui.label(RichText::new("Optional date range. Leave dates blank to search every cached date.").small().color(MUTED));
                 if request.provider == ArchiveProvider::AdsbExchangeSample {
                     ui.label(RichText::new("Use the first day of a month and set a search area below. This free sample is for testing and evaluation. It can miss flights between five-minute discovery snapshots.").small().color(MUTED));
                     ui.hyperlink_to("Free sample coverage and terms", "https://www.adsbexchange.com/data-products/sample-data/");
                 }
-                ui.add(egui::TextEdit::singleline(&mut request.date_from).hint_text("YYYY-MM-DD").desired_width(f32::INFINITY));
+                ui.add(egui::TextEdit::singleline(&mut request.date_from).hint_text("First date, or blank for all cached dates").desired_width(f32::INFINITY));
                 let mut several = request.date_to.is_some();
                 if ui.checkbox(&mut several,"Search several possible dates").changed(){request.date_to=several.then(String::new);}
                 if let Some(to)=&mut request.date_to{ui.add(egui::TextEdit::singleline(to).hint_text("Last date, inclusive (YYYY-MM-DD)").desired_width(f32::INFINITY));}
@@ -252,6 +259,15 @@ impl App {
             } else {
             file_field(ui,&mut self.job.tracks,"Choose flight data…",&["csv","json","gz","aa","tar"]);
             if ui.small_button("Or choose an archive folder").clicked()&& let Some(p)=rfd::FileDialog::new().pick_folder(){self.job.tracks=p;}
+            }
+            if self.job.archive.is_some() && ui.add_enabled(!self.job.offline, egui::Button::new("Prepare data for offline use")).clicked() {
+                let mut job = self.job.clone();
+                job.bounds = self.use_bounds.then_some(self.bounds);
+                self.status = "Preparing offline data".into();
+                self.worker(ctx, move |tx, control| {
+                    let result = soundgeo::prepare_data(&job, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
+                    let _ = tx.send(match result { Ok(data) => Message::Prepared(data.flight_sources.len()), Err(e) => Message::Error(format!("{e:#}")) });
+                });
             }
             ui.label(RichText::new("Searches all dates in the supplied data. The recording stays on your computer.").small().color(MUTED));
             egui::CollapsingHeader::new("Download a public flight archive").show(ui,|ui|{
@@ -386,7 +402,7 @@ impl App {
         {
             self.worker(ctx, move |tx, control| {
                 let result = control
-                    .check()
+                    .require_network(&path.display().to_string())
                     .and_then(|_| soundgeo::aircraft::download(&path));
                 let _ = tx.send(match result {
                     Ok(()) => Message::Catalog(path),

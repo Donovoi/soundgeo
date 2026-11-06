@@ -292,10 +292,7 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
         }
     }
     if tracks.is_empty() {
-        bail!(
-            "No usable flight segments after type/region/time filtering. Each needs at least {} valid airborne positions, at most 60 seconds apart.",
-            filter.minimum_positions
-        );
+        return Err(EmptyFlightData(filter.minimum_positions).into());
     }
     let mut warnings = vec![];
     let short = tracks
@@ -505,6 +502,7 @@ pub fn download_day(
         let url = format!(
             "https://api.github.com/repos/adsblol/globe_history_{year}/releases/tags/{tag}"
         );
+        control.require_network(&manifest.display().to_string())?;
         let response = client.get(url).send()?;
         if response.status() == reqwest::StatusCode::NOT_FOUND {
             continue;
@@ -572,7 +570,21 @@ pub fn download_day(
     control.check()?;
     let catalog = dir.join("aircraft-types.json");
     if !catalog.is_file() {
+        control.require_network(&catalog.display().to_string())?;
         crate::aircraft::download(&catalog).context("Flight archive is saved, but aircraft catalog download failed; retry or import the archive directly")?;
     }
     first.context("No archive parts")
 }
+
+#[derive(Debug)]
+pub(crate) struct EmptyFlightData(usize);
+impl std::fmt::Display for EmptyFlightData {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "No usable flight segments after type/region/time filtering. Each needs at least {} valid airborne positions, at most 60 seconds apart.",
+            self.0
+        )
+    }
+}
+impl std::error::Error for EmptyFlightData {}

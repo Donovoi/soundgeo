@@ -41,9 +41,15 @@ plans, failed tests, older wrong Doppler results, source records, and build chec
 - The decoder accepts recordings from 20 seconds to two hours long.
 - Passage timing needs at least eight minutes of continuous audio and six
   sound peaks. It requires a search area.
-- Automatic flight downloads require a possible date or date range. The desktop
-  app accepts ranges of up to 31 days. Date recovery from arbitrary uploads
-  remains unfinished.
+- Automatic downloads use a selected date range. Cached analysis can search all
+  dates available for the selected provider. Missing dates outside that cache
+  remain unsearched. A report records the dates covered by a batched search.
+- Wider ranges increase download size and total processing time. Analysis loads
+  overlapping daily batches and compares their results. Free sources can have
+  gaps or shorter retention periods. A missing required archive stops the run.
+- Offline analysis requires the complete selected flight cache, aircraft catalog
+  where used, and terrain cache where configured. SoundGeo and FFmpeg must also
+  be installed. Missing or damaged required files stop the offline run.
 - The current model fits one fixed recording location. Camera movement can
   invalidate that fit.
 - Edits that remove, repeat, or rearrange audio can break the shared timeline.

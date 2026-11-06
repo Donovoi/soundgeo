@@ -150,10 +150,7 @@ impl<'a> PreparedSearch<'a> {
             job.sound_speed(),
             control,
         )?;
-        ensure!(
-            reference.end_day - reference.start_day <= 32. * 86400.,
-            "Timing search supports at most 32 reference days per run"
-        );
+
         let mut terrain = Terrain::with_datum(job.terrain.clone(), job.ground_m, job.ground_datum);
         for point in &mut points {
             control.check()?;
@@ -311,10 +308,31 @@ fn propose(
     let first = ((reference[0].time - peaks[peaks.len() - 1]) * 2.).round_ties_even() as i64;
     let last = ((reference[reference.len() - 1].time - peaks[0]) * 2.).round_ties_even() as i64;
     let length = (last - first + 1) as usize;
-    ensure!(
-        length <= 33 * 172800,
-        "Timing histogram exceeds the supported reference span"
-    );
+    // Keep imported multi-month references bounded in memory as well as archive jobs.
+    // Each window covers one day of candidate start times plus the recording duration.
+    if length > 33 * 172800 {
+        let mut proposals = Vec::new();
+        let mut day = start;
+        while day < end {
+            control.check()?;
+            let window_end = (day + 86400. + duration).min(end);
+            let first = reference.partition_point(|p| p.time < day);
+            let last = reference.partition_point(|p| p.time <= window_end);
+            if last - first >= 3 {
+                proposals.extend(propose(
+                    peaks,
+                    &reference[first..last],
+                    duration,
+                    day,
+                    window_end,
+                    job,
+                    control,
+                )?);
+            }
+            day += 86400.;
+        }
+        return Ok(proposals);
+    }
     let mut histogram = vec![0u32; length];
     for (i, r) in reference.iter().enumerate() {
         if i.is_multiple_of(128) {
@@ -538,6 +556,35 @@ mod tests {
             })
             .collect();
         (job, tracks, peaks, truth, offset)
+    }
+
+    #[test]
+    fn imported_reference_spanning_months_is_searched_in_bounded_windows() {
+        let day = 1_704_067_200.;
+        let peaks = [30., 99., 180., 250., 390., 500.];
+        let starts = [day + 60., day + 40. * 86400. + 60.];
+        let reference: Vec<_> = starts
+            .iter()
+            .flat_map(|start| {
+                peaks.iter().enumerate().map(move |(track, time)| Passage {
+                    time: start + time,
+                    track,
+                })
+            })
+            .collect();
+        let proposals = propose(
+            &peaks,
+            &reference,
+            600.,
+            day,
+            day + 41. * 86400.,
+            &Job::default(),
+            &Control::default(),
+        )
+        .unwrap();
+        for start in starts {
+            assert!(proposals.iter().any(|p| (*p - start).abs() < 0.51));
+        }
     }
 
     #[test]

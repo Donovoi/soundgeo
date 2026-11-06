@@ -141,6 +141,7 @@ fn ensure_from(
             &format!("Downloading free terrain {tile}"),
             i as f32 / names.len() as f32,
         );
+        control.require_network(&root.join(format!("{tile}.hgt")).display().to_string())?;
         let compressed = runtime
             .block_on(async {
                 let mut response = cancelable(client.get(&url).send(), control)
@@ -306,7 +307,14 @@ mod tests {
         );
         // No server remains. Reuse must verify and read the local file offline.
         assert_eq!(
-            ensure_from(area(), dir.path(), &url, &Control::default(), &|_, _| {}).unwrap(),
+            ensure_from(
+                area(),
+                dir.path(),
+                &url,
+                &Control::default().with_offline(true),
+                &|_, _| {}
+            )
+            .unwrap(),
             records
         );
         let p = Point {

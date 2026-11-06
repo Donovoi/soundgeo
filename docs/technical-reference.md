@@ -25,7 +25,7 @@ References: [ADSB.lol historical archive](https://www.adsb.lol/docs/open-data/hi
 ## Method
 
 - FFmpeg decodes the first audio stream to 8 kHz mono. Input files are unchanged.
-- A Hann-window STFT (16384 samples, 0.5-second hop) exposes low-frequency tones. A second scale (1024 samples, 0.025-second hop, 500–3900 Hz) handles fast jet sweeps. The original 500–1900 Hz band and the 1400–3900 Hz extension have separate tracing budgets. Extended-band detections additionally need a corresponding harmonic across the moving frequency pattern. Local spectral-median subtraction reduces interference from bass/wind. Viterbi tracing searches overlapping 40/90-second windows for slow curves and 10/20-second windows for short passes. Sustained signal contrast, sweep shape and a propagation-aware flyover fit reject weak/noisy traces and stationary tones. A detected curve and each reported flight match must reduce squared error by at least half compared with a freely fitted straight frequency drift on the same samples; a descending line alone is insufficient timing evidence.
+- A Hann-window STFT (16384 samples, 0.5-second hop) exposes low-frequency tones. A second scale (1024 samples, 0.025-second hop, 500â€“3900 Hz) handles fast jet sweeps. The original 500â€“1900 Hz band and the 1400â€“3900 Hz extension have separate tracing budgets. Extended-band detections additionally need a corresponding harmonic across the moving frequency pattern. Local spectral-median subtraction reduces interference from bass/wind. Viterbi tracing searches overlapping 40/90-second windows for slow curves and 10/20-second windows for short passes. Sustained signal contrast, sweep shape and a propagation-aware flyover fit reject weak/noisy traces and stationary tones. A detected curve and each reported flight match must reduce squared error by at least half compared with a freely fitted straight frequency drift on the same samples; a descending line alone is insufficient timing evidence.
 - Overlapping ridges/harmonics count as one event. Up to 24 independent events are retained; the strongest eight seed the bounded search, and all retained events can corroborate them.
 - Regional searches use a spatial grid. Large-area searches index flight positions in time/ECEF buckets and generate observer hypotheses on both sides of aircraft corridors at a fixed spatial spacing, across several slant-distance estimates. Candidate flights for later events are retrieved from this index using both arrival-time and distance constraints. Corridor lookups use local time-window closest approaches for repeated passes. The recording time is fitted from the received closest approach.
 - For three or more detections, at least three distinct flight segments must fit; smaller recordings require every event. Coarse ranking and exact refinement use the same minimum consensus. Additional associations must preserve the joint error threshold and retain a passing three-flight core. Unmatched detections remain explicit outliers. Partial consensus is reported as ambiguous. All events use one recording clock.
@@ -35,7 +35,7 @@ References: [ADSB.lol historical archive](https://www.adsb.lol/docs/open-data/hi
 
 ## Terrain
 
-Optional SRTM `.hgt` tiles are 1201×1201 or 3601×3601, big-endian signed metres, named like `N35W110.hgt`. Nearest-neighbour terrain sampling is used. SRTM heights are converted from EGM96 to WGS84 ellipsoid heights using the bundled public-domain NGA geoid grid ([source and license](../assets/NOTICE.txt)). Missing/void tiles use the configured elevation and produce a warning. `ground_datum: "egm96"` converts a manual sea-level height; `"wgs84_ellipsoid"` preserves the original manual-height behavior and is the default for existing JSON jobs. New GUI jobs select EGM96. Candidate `ground_m` values are always WGS84 ellipsoid heights.
+Optional SRTM `.hgt` tiles are 1201Ã—1201 or 3601Ã—3601, big-endian signed metres, named like `N35W110.hgt`. Nearest-neighbour terrain sampling is used. SRTM heights are converted from EGM96 to WGS84 ellipsoid heights using the bundled public-domain NGA geoid grid ([source and license](../assets/NOTICE.txt)). Missing/void tiles use the configured elevation and produce a warning. `ground_datum: "egm96"` converts a manual sea-level height; `"wgs84_ellipsoid"` preserves the original manual-height behavior and is the default for existing JSON jobs. New GUI jobs select EGM96. Candidate `ground_m` values are always WGS84 ellipsoid heights.
 
 ## Cancellation
 
@@ -143,3 +143,28 @@ intervals whose radar status is offline.
 The public source provides about 90 days of replay. Older complete local caches
 remain usable. The downloader verifies the requested interval and file integrity.
 Source: [Chicago Department of Aviation flight tracker](https://www.flychicago.com/community/ordnoise/flighttracker/pages/default.aspx).
+
+## Date batches and offline analysis
+
+An archive request can contain any ordered date range supported by its source.
+An empty `date_from` and absent `date_to` select dates found in the provider's
+cache folders. Each selected cache is verified before analysis.
+
+Multi-date analysis decodes the media once. It searches pairs of adjacent days,
+with a one-day overlap between pairs. Isolated cached days form separate batches.
+Doppler candidates are ranked together and duplicate fits are removed. Passage
+timing runs the same 19 sound permutations for every batch, retains the maximum
+score for each control across batches, and checks all competitive locations.
+The final screen is applied after the batches are combined. Long imported
+reference files also split timing-histogram calculations into daily windows.
+
+Reports include `date_search.dates`, `completed_batches`, and `complete` for a
+batched run. Track counts include repeated tracks in overlapping batches.
+An error or cancellation stops the run before a completed report is returned.
+Verified downloads remain cached for the next attempt.
+
+Set `offline: true` in a job or pass `--offline` on the command line. The setting
+blocks archive, catalog, and terrain requests. FFmpeg is restricted to local
+file and pipe protocols. Cached files still undergo their integrity checks.
+The `download` command accepts `--date-to` and optional `--terrain-cache` with
+bounds to prepare data before disconnecting.
