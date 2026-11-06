@@ -1,0 +1,549 @@
+{
+  "plan_sha256": "1470c061aaa25905a9938e34039e274afd3ac1d05b80c54492d090a77485be58",
+  "build": {
+    "commit": "d6e9418dbedceea7a7630d282acc54caba7a3732",
+    "created_utc": "2026-11-06T00:45:54.408817+00:00",
+    "tests": {
+      "passed": 97,
+      "failed": 0,
+      "ignored": 0
+    },
+    "required_local_checks_passed": true,
+    "local_checks_sha256": "1f05f6f6477dfe3753643d1778c996e3522713b62b6a79b316ba04fb2d72c092",
+    "ci_run": 42138712076,
+    "ci": {
+      "verified_at_revision": "81e6a38b46225ec1779a211fc79cfd1819a7e03f",
+      "run_url": "https://github.com/Donovoi/soundgeo/actions/runs/42140628938",
+      "all_97_tests_passed_on_both_platforms": true,
+      "application_source_and_frozen_binaries_unchanged": true
+    },
+    "real_validation": "19 replays complete; seven screened locations within 1 km, all at one Midway camera",
+    "not_qualified_location_release": true,
+    "cli": {
+      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-cli-region-d6e9418.exe",
+      "sha256": "e498eb696b11ae638f50d921cdfbfd5510a0e1a6d54538d0c9c2b928986e788f"
+    },
+    "gui": {
+      "path": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\analysis-build\\soundgeo-region-d6e9418.exe",
+      "sha256": "980e454ec95643b04401b606a8fa442a0e6a184ac073c55d51708a160799c49f"
+    }
+  },
+  "cases": [
+    {
+      "case": "midway-arrivals",
+      "exit_code": 0,
+      "elapsed_s": 59.639031199971214,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "old_status": "ambiguous",
+      "report_sha256": "55ad85a92377c9d570b798fe7fb93f04519c04f7960148082aab302ff8d6b71d",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": {
+        "latitude": 41.778955223880594,
+        "longitude": -87.7436090225564,
+        "enclosing_radius_m": 958.5739426682562,
+        "competitive_points": 17
+      },
+      "controls": 19,
+      "screen": "timing_candidate",
+      "first_error_m": 868.0550641271241,
+      "score": 28.94719376656073,
+      "matches": 15,
+      "region_error_m": 89.42959383692278,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway-nov4-e",
+      "exit_code": 0,
+      "elapsed_s": 83.34434549999423,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "old_status": "candidates_found",
+      "report_sha256": "39adb99838743da3253d0ae5e569b0549f5b45b5302c9f049f3c956197bfc941",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": {
+        "latitude": 41.778955223880594,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 846.3387258073675,
+        "competitive_points": 10
+      },
+      "controls": 19,
+      "screen": "timing_candidate",
+      "first_error_m": 98.83265186868603,
+      "score": 44.08553361353242,
+      "matches": 24,
+      "region_error_m": 98.83265186868603,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway-nov4-f",
+      "exit_code": 4,
+      "elapsed_s": 87.68877979996614,
+      "screened_location": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "old_status": "ambiguous",
+      "report_sha256": "289cf0f32f2b0003bdcffd069b954e3e9683a69c8f252bfca3f9a79312641367",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 19,
+      "screen": "ambiguous",
+      "first_error_m": 384.2472669123515,
+      "score": 17.79429325169915,
+      "matches": 10,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "southampton",
+      "exit_code": 3,
+      "elapsed_s": 5.579323500045575,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "old_status": "insufficient_evidence",
+      "report_sha256": "3995e59aaa3515f5dd530d7fc7de59cd5b9d75e8c421c612739a74f90bdfb4e6",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 0,
+      "screen": "insufficient_evidence",
+      "first_error_m": 16501.651769219665,
+      "score": 10.614769893682038,
+      "matches": 3,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway-nov4-a",
+      "exit_code": 0,
+      "elapsed_s": 93.70552660000976,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "old_status": "candidates_found",
+      "report_sha256": "87d3708c3fb98f417c08d5bc4f9c2a505a1b83859756933d1cd697010e2eb65a",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": {
+        "latitude": 41.773582089552235,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 670.2141338399667,
+        "competitive_points": 6
+      },
+      "controls": 19,
+      "screen": "timing_candidate",
+      "first_error_m": 546.4508786068188,
+      "score": 35.14347574287635,
+      "matches": 17,
+      "region_error_m": 546.4508786068188,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway-nov4-b",
+      "exit_code": 0,
+      "elapsed_s": 99.2540435999399,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "old_status": "candidates_found",
+      "report_sha256": "231ede77b9d6c89240165d428cc3fb8753cd368df73ddbafaebfbb0be625b15a",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": {
+        "latitude": 41.77626865671642,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 423.16497321115145,
+        "competitive_points": 4
+      },
+      "controls": 19,
+      "screen": "timing_candidate",
+      "first_error_m": 254.84660469493025,
+      "score": 42.35212978648033,
+      "matches": 27,
+      "region_error_m": 254.84660469493025,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway-nov4-c",
+      "exit_code": 0,
+      "elapsed_s": 98.58840320003219,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "old_status": "candidates_found",
+      "report_sha256": "829544e5f69568caa23d1db38332bd009e3a66009970766e459a29bc65bd7963",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": {
+        "latitude": 41.773582089552235,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 895.1827198363367,
+        "competitive_points": 13
+      },
+      "controls": 19,
+      "screen": "timing_candidate",
+      "first_error_m": 546.4508786068188,
+      "score": 49.07396265350707,
+      "matches": 26,
+      "region_error_m": 546.4508786068188,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway-nov4-d",
+      "exit_code": 0,
+      "elapsed_s": 95.53944760002196,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "old_status": "candidates_found",
+      "report_sha256": "be73370694a74dd2f465d6bdb2b6b9606b86751fd2c8825adae35eec867778ba",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": {
+        "latitude": 41.773582089552235,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 670.2141338399667,
+        "competitive_points": 8
+      },
+      "controls": 19,
+      "screen": "timing_candidate",
+      "first_error_m": 546.4508786068188,
+      "score": 40.215357111484366,
+      "matches": 22,
+      "region_error_m": 546.4508786068188,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway",
+      "exit_code": 3,
+      "elapsed_s": 75.23352090001572,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "old_status": "insufficient_evidence",
+      "report_sha256": "8b409f1531008085a5e3a642269fe100c7a7c8930ddb925ce2b1553611db56e5",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 19,
+      "screen": "insufficient_evidence",
+      "first_error_m": 23950.293981678096,
+      "score": 9.349472720894365,
+      "matches": 23,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway-holdout",
+      "exit_code": 3,
+      "elapsed_s": 64.87073720002081,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "old_status": "insufficient_evidence",
+      "report_sha256": "e2169e4b0b5b861291f18a0b2115c1c594f8a70f9bb427888cabaa4b80d7b5b6",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 19,
+      "screen": "insufficient_evidence",
+      "first_error_m": 24096.114636521026,
+      "score": 11.117420666662532,
+      "matches": 19,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway-nov1",
+      "exit_code": 0,
+      "elapsed_s": 70.21683789999224,
+      "screened_location": true,
+      "accepted": true,
+      "status": "candidates_found",
+      "old_status": "candidates_found",
+      "report_sha256": "b38c1fc75b9f108a26a36806807c90113fc12780ce7976a6cffa738c0764c638",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": {
+        "latitude": 41.77626865671642,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 670.2141338402089,
+        "competitive_points": 11
+      },
+      "controls": 19,
+      "screen": "timing_candidate",
+      "first_error_m": 254.84660469493025,
+      "score": 32.915351271070186,
+      "matches": 13,
+      "region_error_m": 254.84660469493025,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "exit_code": 4,
+      "elapsed_s": 70.45989419997204,
+      "screened_location": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "old_status": "ambiguous",
+      "report_sha256": "bb20cb4dc1960af949882fab7f6ac7080cbb763d3d2d5c949af3e51c52a381bf",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 19,
+      "screen": "ambiguous",
+      "first_error_m": 720.9984525742753,
+      "score": 19.26221772390089,
+      "matches": 10,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "southampton-nov1",
+      "exit_code": 3,
+      "elapsed_s": 45.05478400003631,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "old_status": "insufficient_evidence",
+      "report_sha256": "5ef53987625673c39e3cb2229477190d4107e1d42a1304ca21447e55d93eb601",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 0,
+      "screen": "insufficient_evidence",
+      "first_error_m": 2053.4892391272415,
+      "score": 7.142669709840426,
+      "matches": 2,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "lake-hood",
+      "exit_code": 3,
+      "elapsed_s": 396.98781489999965,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "old_status": "insufficient_evidence",
+      "report_sha256": "ae2684c89419125ea3fd1f3b59695153adb28596835fe4475584a5c6b11dafbd",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 19,
+      "screen": "insufficient_evidence",
+      "first_error_m": 8089.300605675662,
+      "score": 10.286796649814466,
+      "matches": 7,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "lake-hood-nov1",
+      "exit_code": 3,
+      "elapsed_s": 77.06140010000672,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "old_status": "insufficient_evidence",
+      "report_sha256": "0a4a33d986551b4e777ceb9c344a12e350d9f46679f456a758e2e146edfbde43",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 19,
+      "screen": "insufficient_evidence",
+      "first_error_m": 6888.614368766376,
+      "score": 10.713717487314337,
+      "matches": 7,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "exit_code": 3,
+      "elapsed_s": 68.50690079992637,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "old_status": "insufficient_evidence",
+      "report_sha256": "e88c88495168bb5008f1f339d0f9977691162d68d425d53e30f616581a464619",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 19,
+      "screen": "insufficient_evidence",
+      "first_error_m": 6646.246556662788,
+      "score": 10.8800400254014,
+      "matches": 7,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "lake-hood-nov4-a",
+      "exit_code": 3,
+      "elapsed_s": 387.6294827000238,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "old_status": "insufficient_evidence",
+      "report_sha256": "73d8fd22996c85185d7f3a861f823ff51da99f2e7ae6e9598d793950b4bec3cd",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 19,
+      "screen": "insufficient_evidence",
+      "first_error_m": 2328.014200206221,
+      "score": 12.361644237707663,
+      "matches": 6,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "lake-hood-nov4-b",
+      "exit_code": 3,
+      "elapsed_s": 279.6939079000149,
+      "screened_location": false,
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "old_status": "insufficient_evidence",
+      "report_sha256": "0406e168feed3d509192ce43657645f1cda222d636a9d1203d25cb13abaac276",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 0,
+      "screen": "insufficient_evidence",
+      "first_error_m": 10225.817197127142,
+      "score": 10.476358420883928,
+      "matches": 4,
+      "unchanged_analysis": true
+    },
+    {
+      "case": "lax-continuous-development",
+      "exit_code": 4,
+      "elapsed_s": 676.874768699985,
+      "screened_location": false,
+      "accepted": false,
+      "status": "ambiguous",
+      "old_status": "ambiguous",
+      "report_sha256": "d13eef439c29ce649d3a867fe6fe0ffe5e437c6a7d99defdf35674e234b2ef69",
+      "unchanged_search_and_controls": {
+        "peaks": true,
+        "search": true,
+        "control_maximum_scores": true,
+        "control_likelihood_evaluations": true,
+        "control_permutation_seeds": true
+      },
+      "region": null,
+      "controls": 19,
+      "screen": "ambiguous",
+      "first_error_m": 1798.70362062086,
+      "score": 20.601586556418276,
+      "matches": 35,
+      "unchanged_analysis": true
+    }
+  ],
+  "completed_cases": 19,
+  "planned_cases": 19,
+  "screened_locations": 7,
+  "accepted_locations": 7,
+  "wrong_screened_locations": 0,
+  "not_general_accuracy_validation": true,
+  "scope": {
+    "original_18_case_benchmark": {
+      "locations_within_1km": 7,
+      "ambiguous": 2,
+      "insufficient_evidence": 9,
+      "wrong_screened_locations": 0
+    },
+    "extra_case": "The continuous LAX development clip remains ambiguous.",
+    "all_cases_are_replays": true,
+    "original_f8_results_preserved": true,
+    "not_general_reliability": true
+  }
+}

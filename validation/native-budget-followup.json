@@ -107,7 +107,57 @@
       "launcher": "Windows hidden independent process with file logs"
     },
     "plan_sha256": "272c146cedeb3271666b241d604310dc31b3b50e2f9583839c3de0a3e574a975",
-    "state": "pending",
-    "accepted": false
+    "state": "terminal",
+    "accepted": false,
+    "summary": {
+      "case": "midway-nov1",
+      "source": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-01\\flights.csv",
+      "reference_sha256": "1fc128b441c6a5bbfc1cd875d0002196767ba85bcd5901ea07d5aa89bb9a2aef",
+      "cli_sha256": "3b76f24ac3c2dcc581448a4ec2eb35a705cda9ee2306fc3dddcdffa29354345e",
+      "code_commit": "c29f6462f78bfc89e05e02c9a7beec989e4c7712",
+      "known_area_diagnostic_only": false,
+      "recording_clock_supplied": false,
+      "full_reference_day_requested": "2026-11-01",
+      "source_manifest": "%USERPROFILE%\\Documents\\Codex\\2026-11-04\\https-github-com-donovoi-soundgeo-https\\work\\free-airport-sources\\webtrak-cda-2026-11-01\\provider-manifest.json",
+      "started_utc": 1793911707.4219418,
+      "native_automatic_archive": true,
+      "baseline_max_hypotheses": 20000000,
+      "effective_max_hypotheses": 100000000,
+      "job_sha256": "5475a4d5f274440e1b7b42699113027f2541d4341ddc15cf288679a30b6b115c",
+      "exit_code": 0,
+      "elapsed_s": 14980.47,
+      "status": "ambiguous",
+      "events": 11,
+      "candidates": 10,
+      "tracks": 4429,
+      "matches": [
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4,
+        4
+      ],
+      "first_candidate_error_m": 178.21997510487944
+    },
+    "status": "ambiguous",
+    "candidate_errors_m": [
+      178.22022127263443,
+      25616.741045107203,
+      25461.371544455,
+      24843.66261192842,
+      170.83016287830247,
+      25410.166772444598,
+      24964.420461762747,
+      349.5311944742714,
+      375.0016778721518,
+      25657.245826315033
+    ],
+    "report_sha256": "df28c8d8ad4ea6ef74a4917607b01a9461d28aaacea50a655f7074bf0541dd6f",
+    "coordinate_hit_within_1km": true
   }
 }
