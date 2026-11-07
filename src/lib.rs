@@ -376,10 +376,21 @@ pub(crate) fn analyze_sources(
         .as_ref()
         .is_some_and(|r| r.provider == archive::ArchiveProvider::AdsbExchangeSample)
     {
+        let mut no_traces = !sources.is_empty();
         for path in sources {
-            report
-                .warnings
-                .push(sample_archive::coverage_warning(path)?);
+            let (warning, empty) = sample_archive::coverage(path)?;
+            report.warnings.push(warning);
+            no_traces &= empty;
+        }
+        if no_traces {
+            report.reference_sources = sources.to_vec();
+            // Empty date batches contribute no controls. The combined search
+            // creates a pending assessment if every batch is empty.
+            if !all_controls && let Some(peaks) = timing_peaks {
+                report.search_method = "passage_timing".into();
+                report.timing = Some(timing::Assessment::pending(peaks));
+            }
+            return Ok(report);
         }
     }
     if prepared.type_catalog.is_none() {

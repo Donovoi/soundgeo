@@ -64,7 +64,9 @@ pub(crate) fn run(
         combined.track_count += result.track_count;
         combined.hypotheses += result.hypotheses;
         combined.search_grid_m = combined.search_grid_m.max(result.search_grid_m);
-        combined.search_method = result.search_method;
+        if !result.search_method.is_empty() {
+            combined.search_method = result.search_method;
+        }
         combined.reference_sources.extend(result.reference_sources);
         combined.terrain_sources.extend(result.terrain_sources);
         let mut warnings = result.warnings;
