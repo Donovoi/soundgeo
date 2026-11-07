@@ -22,6 +22,54 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Commands {
+    /// Discover free flight archive dates without downloading flight files.
+    Dates {
+        #[arg(long, default_value = "adsb-lol")]
+        provider: ArchiveProvider,
+        #[arg(long, default_value = "flight-cache")]
+        cache: PathBuf,
+        /// Report file, or - for JSON on stdout.
+        #[arg(long, default_value = "-")]
+        output: PathBuf,
+    },
+    /// Prepare free GeoNames place data for optional offline video clues.
+    VideoData {
+        /// ALL, or a two-letter country code such as US.
+        #[arg(long, default_value = "ALL")]
+        country: String,
+        #[arg(long, default_value = "video-data")]
+        output: PathBuf,
+    },
+    /// Read visible place names and clocks locally. Produces a separate clue report.
+    VideoClues {
+        #[arg(long)]
+        input: PathBuf,
+        /// GeoNames country or worldwide .txt file.
+        #[arg(long)]
+        gazetteer: PathBuf,
+        #[arg(long)]
+        ffmpeg: Option<PathBuf>,
+        #[arg(long)]
+        tesseract: Option<PathBuf>,
+        #[arg(long)]
+        tessdata: Option<PathBuf>,
+        #[arg(long, default_value = "3", value_parser = clap::value_parser!(u8).range(1..=12))]
+        frames: u8,
+        #[arg(long, allow_hyphen_values = true, requires_all = ["north", "west", "east"])]
+        south: Option<f64>,
+        #[arg(long, allow_hyphen_values = true, requires = "south")]
+        north: Option<f64>,
+        #[arg(long, allow_hyphen_values = true, requires = "south")]
+        west: Option<f64>,
+        #[arg(long, allow_hyphen_values = true, requires = "south")]
+        east: Option<f64>,
+        /// Report file, or - for JSON on stdout.
+        #[arg(long)]
+        output: PathBuf,
+        /// Return exit code 3 when no place names match.
+        #[arg(long)]
+        require_match: bool,
+    },
     /// Download the small ICAO aircraft type catalog for propeller filtering.
     Catalog {
         #[arg(long, default_value = "aircraft-types.json")]
@@ -75,8 +123,9 @@ enum Commands {
     },
     /// Prepare flight data and optional terrain for later offline analysis.
     Download {
+        /// First date. Omit both dates to discover the provider's available days.
         #[arg(long)]
-        date: String,
+        date: Option<String>,
         /// Last date to prepare, inclusive.
         #[arg(long)]
         date_to: Option<String>,
@@ -138,6 +187,60 @@ fn run(args: Args) -> Result<u8> {
         }
     };
     match args.command {
+        Some(Commands::Dates {
+            provider,
+            cache,
+            output,
+        }) => {
+            let catalog = soundgeo::availability::discover(provider, &cache, &control, &progress)?;
+            soundgeo::availability::write_report(&catalog, &output, &cache)?;
+        }
+        Some(Commands::VideoData { country, output }) => {
+            let path = soundgeo::visual_data::prepare(&country, &output, &control, &progress)?;
+            if !args.quiet {
+                println!("Place data: {}", path.display());
+            }
+        }
+        Some(Commands::VideoClues {
+            input,
+            gazetteer,
+            ffmpeg,
+            tesseract,
+            tessdata,
+            frames,
+            south,
+            north,
+            west,
+            east,
+            output,
+            require_match,
+        }) => {
+            let options = soundgeo::visual::Options {
+                media: input,
+                gazetteer,
+                ffmpeg,
+                tesseract,
+                tessdata,
+                frames: frames as usize,
+                bounds: south.map(|south| soundgeo::geo::Bounds {
+                    south,
+                    north: north.unwrap(),
+                    west: west.unwrap(),
+                    east: east.unwrap(),
+                }),
+            };
+            let report = soundgeo::visual::analyze(&options, &control, &progress)?;
+            soundgeo::visual::write_report(
+                &report,
+                &output,
+                &[&options.media, &options.gazetteer],
+            )?;
+            return Ok(if require_match && report.places.is_empty() {
+                3
+            } else {
+                0
+            });
+        }
         Some(Commands::Terrain {
             south,
             north,
@@ -322,7 +425,7 @@ fn run(args: Args) -> Result<u8> {
             }
             let job = Job {
                 archive: Some(ArchiveRequest {
-                    date_from: date,
+                    date_from: date.unwrap_or_default(),
                     date_to,
                     cache: output,
                     provider,

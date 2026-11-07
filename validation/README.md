@@ -6,6 +6,129 @@ The current location target is within 1 km.
 The original 250 m plans and results below remain unchanged.
 New results must state which target they use.
 
+## Current checks
+
+[Automatic date discovery](automatic-date-discovery.json) found 1,327 ADSB.lol
+days, 125 first-of-month sample days, and 89 complete days for each airport
+provider on November 7, 2026. Each saved index replayed offline with identical
+output and no connection to the test proxy. These checks downloaded date
+metadata. Flight files are checked when they are prepared.
+
+The same build repeated three real audio searches offline. Maho passed at
+549.65 m and Midway at 254.85 m. Lake Hood remained ambiguous. All report fields
+except creation time matched the previous build. The full 89-day Chicago download
+for a wider offline Midway test remains incomplete.
+
+[Historical sample checks](empty-sample-date-validation.json) found and fixed
+two failures. Some 2016 discovery snapshots have timestamps slightly more than
+30 seconds after their filenames. The first fix accepted offsets below
+one minute and kept the original flight-trace times. A verified day with zero
+regional aircraft now stays in the coverage record while analysis continues
+through later days.
+
+All 288 snapshots from July 1, 2016 passed preparation and offline verification.
+That day contained no aircraft in the Maho region. A real Maho search across
+that day and the three prepared 2026 dates passed offline at 549.65 m. Its timing
+scores, controls, and location match the earlier three-date result. The test
+proxy received no connections. Code revision `d2366f4` passed all 139 Rust
+tests, nine Python tests, formatting, strict Clippy, doc tests, and both release
+builds. The record keeps the two failed attempts.
+
+[Further archive checks](sample-archive-compatibility.json) recovered a missing
+September 2016 snapshot from the preceding minute. The cache keeps the actual
+filename and records the replacement. Two legacy flight traces used `hex`
+identities and a time base at their first observation. Their downloaded bytes
+matched independent source copies. Their timestamps stayed unchanged.
+
+The full day passed offline verification. Maho then passed at 549.65 m across
+six prepared dates, with no recording date or clock supplied. The local
+build, `275b0f2`, passed 142 Rust tests, nine Python tests, and all required
+release checks. An offline regression also checks the dates inside older cache
+files whose stored checksums match.
+
+[Snapshot boundary checks](snapshot-boundary-validation.json) recovered a
+December 2016 snapshot timestamped exactly one minute after its filename.
+The nine-date Maho replay passed offline at 549.65 m, with no recording date or
+time supplied and no connections to the test proxy.
+
+[Historical overlap checks](historical-trace-overlap.json) then found January
+2017 snapshot delays up to 71.3 seconds. Seven traces also included positions
+from the preceding evening. Build `1c948eb` records these offsets and overlaps,
+preserves source bytes and times, and filters sample analysis to the selected
+archive dates. It passed all 144 Rust tests, nine Python tests, formatting,
+strict Clippy, doc tests, and both release builds. The repaired January download
+and ten-date real-video replay remain unverified on this build.
+
+Revision `99588f3` passed [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42364660722)
+with 142 Rust tests and nine Python tests on each platform.
+
+Revision `0dccdd9` passed [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42361118775)
+with 139 Rust tests on each platform. Its downloaded Windows executable repeated
+the earlier four-date Maho result. All report fields except creation time
+matched the local build.
+
+The wider preparation plans cover 89 Chicago days and 125 free sample dates.
+The first newly downloaded Chicago day contains 634,783 positions across all
+2,880 intervals. It passed offline verification with unchanged files and no
+proxy connections. The full-window location tests remain pending.
+
+The [unknown-date audio run](unknown-date-results.json) tested 27 recordings
+offline with no recording date or time supplied. Each case kept its broad search
+region and used all dates in its prepared provider cache. Eight recordings
+returned locations within 1 km. Five were ambiguous and 14 had insufficient
+evidence. No accepted result exceeded 1 km. All seven Lake Hood recordings
+failed location acceptance. The [27-case manifest](unknown-date-cases.json)
+preserves the inputs and reference positions used only by the evaluator.
+
+The Maho sample cache initially contained one date. A
+[separate expanded check](unknown-date-maho.json) prepared September 1,
+October 1, and November 1 from the free sample source. The same three recordings
+were searched offline without dates or times. One passed at 549.65 m, including
+the existing 200 m microphone allowance. One was ambiguous and one had
+insufficient evidence. The Windows CI executable reproduced the passing result.
+
+[Optional video text tests](optional-video-clues.json) used seven low-resolution
+Lake Hood files and two separate five-second 360p clips. The two 360p clips
+matched the visible name **Lake Hood Seaplane Base** to a GeoNames point 31.06 m
+from the camera reference. Both reports also kept a broad Anchorage metro-area
+clue. The seven low-resolution files returned no place matches. Earlier false
+matches and processing errors remain in the record. These are development
+tests of named-place clues. The clips were inspected before the OCR work.
+
+Code revision `eee5b0c` passed 130 Rust tests, nine Python tests,
+formatting, strict Clippy, documentation tests, and both release builds.
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42351026350)
+also passed. The downloaded Windows artifact produced the same Lake Hood text
+report as the local build. [Three audio replays](optional-video-audio-regression.json)
+kept the same peaks, scores, controls, regions, and status after the optional
+video path was added. The 27-case run used `dcd73cc`; its executable and report
+hashes remain in the record.
+
+[Compression and duration checks](unknown-date-audio-variants.json) used six
+copies of three existing recordings. Full-length mono Opus audio at 16 kbit/s
+passed for Maho at 549.65 m and Midway at 384.25 m. Compressed Lake Hood remained
+ambiguous. The first 15 minutes of each recording returned either an ambiguous
+result or insufficient evidence. All six runs used offline data with no supplied
+dates or times. No accepted result exceeded 1 km. These copies share their source
+recordings with the original benchmark.
+
+A [playback-speed diagnostic](unknown-date-playback-rates.json) searched five
+fixed rates for Lake Hood, LAX, and Midway. The unchanged rate had the highest
+score in all three cases. The alternative rates did not improve the selected
+Lake Hood or LAX result. These searches had no shuffled-control assessment.
+The app's timing model remains unchanged.
+
+The documentation revision `ce5e828` also passed
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42353809388).
+
+To repeat the 27-case run with retained media and prepared data:
+
+```powershell
+python validation/run_timing.py --cli target/release/soundgeo-cli.exe --manifest validation/unknown-date-cases.json --data-root .. --output ../unknown-date-check --unknown-date --offline
+```
+
+## Earlier checks and runner use
+
 Local artifact paths in published records are relative to the validation data folder.
 Original artifact hashes are retained. Where paths were normalized in a published
 record, its bytes can differ from the original retained artifact.
@@ -29,7 +152,21 @@ The Maho check includes the planned 200 m allowance for the unsurveyed microphon
 It returns code 0 only if every selected recording passes. An ambiguous,
 insufficient, wrong, or failed result returns code 1. Existing failed recordings
 remain in the manifest. This benchmark is expected to fail until they pass.
-The six fast Python tests in CI check the runner's safeguards. They do not run
+
+To test without a recording date or time, add `--unknown-date`. This searches
+all available dates for the selected provider. Add `--offline` to disable network
+access. Imported day-specific flight files require a prepared provider cache:
+
+```powershell
+python validation/run_timing.py --cli target/release/soundgeo-cli.exe --data-root .. --output ../lake-date-search --case lake-hood --case lake-hood-nov1 --unknown-date --offline --cache ../real-validation/flight-cache --provider adsb_lol
+```
+
+Repeat `--case` to select more recordings. Use `--manifest` for a separately
+prepared set of cases. The runner records the executable, manifest, and runner
+hashes. It checks that date-free reports contain no supplied archive date or
+day-specific import and that offline reports used offline mode. References
+enter only the evaluator after the app exits.
+The nine fast Python tests in CI check the runner's safeguards. They do not run
 the real media benchmark or establish location accuracy.
 
 The completed fixed-build benchmark has nine reports and one search-limit error.

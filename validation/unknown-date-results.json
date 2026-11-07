@@ -1,0 +1,933 @@
+{
+  "scope": "Audio-only passage timing in the original broad known regions. No recording date, time, reference coordinate, or video text was supplied. Analysis searched all dates present for each selected provider and ran offline. Coverage is finite and differs by case; the original Maho sample cache contained one date. A separate three-date Maho rerun is recorded in unknown-date-maho.json.",
+  "source_commit": "dcd73cc3b459b2bfb6b38db1acf6dc830c145162",
+  "cli_sha256": "9639bb5d87d8e84c159ac08728b6974cf76f78dfcef60daedcb0cf914e36d065",
+  "original_manifest_sha256": "f88cfe0286489c27690b27517a1e4a976d98eb353671bd177c9ef512d111bdee",
+  "published_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+  "manifest": "unknown-date-cases.json",
+  "target_error_m": 1000,
+  "plans": [
+    {
+      "cli_sha256": "9639bb5d87d8e84c159ac08728b6974cf76f78dfcef60daedcb0cf914e36d065",
+      "manifest_sha256": "f88cfe0286489c27690b27517a1e4a976d98eb353671bd177c9ef512d111bdee",
+      "runner_sha256": "1819fac35d2464d9c527bce26829408bd2c2cc42371e0498e2575f891785b907",
+      "target_error_m": 1000,
+      "selected_cases": [
+        "lake-hood",
+        "lake-hood-nov1",
+        "lake-hood-nov1-later",
+        "lake-hood-nov4-a",
+        "lake-hood-nov4-b",
+        "lake-new-a",
+        "lake-new-b"
+      ],
+      "all_cases_selected": false,
+      "workers": 1,
+      "timeout_s": 2400.0,
+      "recording_clock_supplied": false,
+      "recording_date_supplied": false,
+      "offline": true,
+      "archive_override": null,
+      "all_cases_are_replays": true
+    },
+    {
+      "cli_sha256": "9639bb5d87d8e84c159ac08728b6974cf76f78dfcef60daedcb0cf914e36d065",
+      "manifest_sha256": "f88cfe0286489c27690b27517a1e4a976d98eb353671bd177c9ef512d111bdee",
+      "runner_sha256": "1819fac35d2464d9c527bce26829408bd2c2cc42371e0498e2575f891785b907",
+      "target_error_m": 1000,
+      "selected_cases": [
+        "maho-nov1-a",
+        "maho-nov1-b",
+        "maho-continuous-c",
+        "midway-arrivals",
+        "midway-nov4-e",
+        "midway-nov4-f",
+        "southampton",
+        "midway-nov4-a",
+        "midway-nov4-b",
+        "midway-nov4-c",
+        "midway-nov4-d",
+        "midway",
+        "midway-holdout",
+        "midway-nov1",
+        "midway-nov1-holdout",
+        "southampton-nov1",
+        "lax-continuous-development",
+        "maho-nov4-b",
+        "lax-nov4-a",
+        "lax-nov4-b"
+      ],
+      "all_cases_selected": false,
+      "workers": 2,
+      "timeout_s": 2400.0,
+      "recording_clock_supplied": false,
+      "recording_date_supplied": false,
+      "offline": true,
+      "archive_override": null,
+      "all_cases_are_replays": true
+    }
+  ],
+  "cases": [
+    {
+      "case": "lake-hood",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "32d4d3f4209b57f71588a0f9c69227f768e954a56cd18348b60d0d37e7f3b072",
+      "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+      "exit_code": 3,
+      "report_sha256": "09f3b70d769d691fd7398b75f9d8bbbd3014cb0cb74b2a87dbb76175eb337be8",
+      "status": "insufficient_evidence",
+      "sound_peaks": 48,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 1348.8752167999046
+    },
+    {
+      "case": "lake-hood-nov1",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "b255780685937f0f83059d6f52e49f4ed94efea9925f6c04017e962093864bed",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "exit_code": 3,
+      "report_sha256": "83f538f25e3d9631a3995987731be793a49bc8faf6157b8faf1e64b6230ba002",
+      "status": "insufficient_evidence",
+      "sound_peaks": 56,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 381.6732296999544
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "34fc17252e699651f05b043d33067a1660fce52737e525c5d7d0f93002f68361",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "exit_code": 3,
+      "report_sha256": "aabb79b80bad02d15609c2e6aa68eb820066970c2e7eef519d67a1bbe8b1e780",
+      "status": "insufficient_evidence",
+      "sound_peaks": 40,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 368.06835349998437
+    },
+    {
+      "case": "lake-hood-nov4-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "5cac208681504f98be9a9c55c8903741ffc1325789311badbca67d246d9e4b02",
+      "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "exit_code": 3,
+      "report_sha256": "84c575ba806c059649608ba418fa32876423bfca254254d276c881cd73d2cbde",
+      "status": "insufficient_evidence",
+      "sound_peaks": 22,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 292.1485707999673
+    },
+    {
+      "case": "lake-hood-nov4-b",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "b11dfec9af65ba7918ab9a30227cc9a625af799cd6455ce6fe86b3b7cbab39f7",
+      "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+      "exit_code": 3,
+      "report_sha256": "284f30d9187f1c1511fa57dc95b6694b3f0b5b61b6133e97b7182fa627529bfd",
+      "status": "insufficient_evidence",
+      "sound_peaks": 26,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 359.0342256000731
+    },
+    {
+      "case": "lake-new-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "9e62166225927616076bde030469625c6ed39738d4b97b372fa7e1ae309af2d5",
+      "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+      "exit_code": 4,
+      "report_sha256": "d6d33c0bff12f026706c748f834e9bde11a55757f382407fabc80618f8acc514",
+      "status": "ambiguous",
+      "sound_peaks": 19,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 174.69629660004284
+    },
+    {
+      "case": "lake-new-b",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "e95166af52194b53cc7a2fa443119172fd281d8b9a0c6fee33f3fcb13108789d",
+      "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c",
+      "exit_code": 3,
+      "report_sha256": "1f9733d41cd1eb9e10508261a390e9283cfd953cbca877ddb7b40a5e7f177b03",
+      "status": "insufficient_evidence",
+      "sound_peaks": 25,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 205.73918040003628
+    },
+    {
+      "case": "lax-continuous-development",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "78ce24d265758b92b1ba0716d5c433f9912b0feb5bda46b52ad8942b5a5d2b99",
+      "media_sha256": "7ea6f46155f3cdc900b8da26f9c4bc2c07c43b7c760d43cfe71a4434e9dd1606",
+      "exit_code": 4,
+      "report_sha256": "83139790be5ceb2a7e0cb269826f1407b5caf5dcbaa73d31bf0bec3fee28476a",
+      "status": "ambiguous",
+      "sound_peaks": 170,
+      "track_count": 11505,
+      "date_search": {
+        "dates": [
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 1,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 2019.5602047999855
+    },
+    {
+      "case": "lax-nov4-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "19403835cf4601412831b8d440d8d98b11ace013c6b2be4718bdb80b57d84538",
+      "media_sha256": "879310e95fe3c697fa32ccf0258109ce64a86f09a5c9a8b69e66c26be013f025",
+      "exit_code": 3,
+      "report_sha256": "fe52ec6fdba11d6a2f7f240747fa122f847860816db35bed873649c28b43771c",
+      "status": "insufficient_evidence",
+      "sound_peaks": 178,
+      "track_count": 11505,
+      "date_search": {
+        "dates": [
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 1,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 1136.121403499972
+    },
+    {
+      "case": "lax-nov4-b",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "23f48b7188991e4a38c3e1d78629b9fd43b08c421ad24cdd21a67c44cc5b1377",
+      "media_sha256": "639c4e25d9a3a14e0d14c1f24c0bf05c66936547b8aab2740501a9abb7b9190b",
+      "exit_code": 3,
+      "report_sha256": "4fec16fd98f81567a9bb7f536f7cc93f687cc0e8bbaffa80757b099cc84e5144",
+      "status": "insufficient_evidence",
+      "sound_peaks": 164,
+      "track_count": 11505,
+      "date_search": {
+        "dates": [
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 1,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 1062.5308684000047
+    },
+    {
+      "case": "maho-continuous-c",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "ddc9ef11d1835a45139ab462adf48ca7e913a9710ef6f53dbaee5016160a0499",
+      "media_sha256": "75c0e04d7940f3b855ec598018861866b0ac40f07351e18eb400adaa94d30795",
+      "exit_code": 3,
+      "report_sha256": "45f1c93629c68a48e5b9326a021ddb4030f04b5cfb7820ef3a5f6b593cc59cc2",
+      "status": "insufficient_evidence",
+      "sound_peaks": 42,
+      "track_count": 382,
+      "date_search": null,
+      "elapsed_s": 14.921253800042905
+    },
+    {
+      "case": "maho-nov1-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "467bc1679cc9db83f4d92d414f787becebb96a44893eb94427f6fdcfb4af92f5",
+      "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+      "exit_code": 4,
+      "report_sha256": "8f356b67b3c8fcb013fa010ac8588d4ea2c74665468fc44090a93b20c12df2f3",
+      "status": "ambiguous",
+      "sound_peaks": 86,
+      "track_count": 382,
+      "date_search": null,
+      "elapsed_s": 26.470072100055404
+    },
+    {
+      "case": "maho-nov1-b",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "2bcf35f546d4a4b3fd44a2020ba41f2a4203219cdd330e3b1c9e37d88fd8f00b",
+      "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+      "exit_code": 0,
+      "report_sha256": "669bc90e765b065bd14e23034d80af3a1b38d78de47777fc4286bdb20375fac6",
+      "status": "candidates_found",
+      "sound_peaks": 117,
+      "track_count": 382,
+      "region": {
+        "latitude": 18.04328859060403,
+        "longitude": -63.121830985915494,
+        "enclosing_radius_m": 0.0,
+        "competitive_points": 1
+      },
+      "error_m": 549.649056637247,
+      "matched_flights": 16,
+      "score": 31.0335629455301,
+      "controls": 19,
+      "date_search": null,
+      "elapsed_s": 32.49503280001227
+    },
+    {
+      "case": "maho-nov4-b",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "8ad6d2b618f26ab090e31bfe0224545fd6a146640df281cdae4abe494ad7be4b",
+      "media_sha256": "66bff87e701936146f1c21f7cebdec1025a87b59b4244c0dbaf45d17455f05c4",
+      "exit_code": 3,
+      "report_sha256": "52e1deac9f7b0eaae8e14a71faa4a4a15f953276e157cd1490b37dbad3ea99b8",
+      "status": "insufficient_evidence",
+      "sound_peaks": 62,
+      "track_count": 121,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 903.7190536999842
+    },
+    {
+      "case": "midway",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "8a80b6055297df295fec34dee4f250e89a7ac83888c008d1fd4dd408fc127812",
+      "media_sha256": "38e22e7253db6eb19c1fb90d2d852ad6807467d3705f8d28e5635a2d6766b276",
+      "exit_code": 3,
+      "report_sha256": "295fba8b702dd0ecd4e952be4ce84d073b4dff5c009f4d04a76b72d20b40d7c7",
+      "status": "insufficient_evidence",
+      "sound_peaks": 65,
+      "track_count": 13476,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 254.451887800009
+    },
+    {
+      "case": "midway-arrivals",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "ba4ba6f24ad825e29b6eccda916736dc8ff98836fcee61cf9080c3b18a1d6b2d",
+      "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+      "exit_code": 0,
+      "report_sha256": "4e25d3221a1137099aff4a61d048d0a8abf435790ca4d43e26ceb19bd514653b",
+      "status": "candidates_found",
+      "sound_peaks": 27,
+      "track_count": 13476,
+      "region": {
+        "latitude": 41.778955223880594,
+        "longitude": -87.7436090225564,
+        "enclosing_radius_m": 958.5739426682562,
+        "competitive_points": 17
+      },
+      "error_m": 89.42959383692278,
+      "matched_flights": 15,
+      "score": 28.94719376656073,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 164.9379232999636
+    },
+    {
+      "case": "midway-holdout",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "2557b51c99a08be3425330ca2b24d56e1452aec1be2bef1835ff0c1dfeef4e40",
+      "media_sha256": "985b9035059956f43f989d8c14049d00d08679902e8b3d421fa7f1c9f63d6f04",
+      "exit_code": 3,
+      "report_sha256": "4390a527a163a695c1abc9cdb85b449d4b4bb62b464c14b8cca1a1e9ae94971f",
+      "status": "insufficient_evidence",
+      "sound_peaks": 52,
+      "track_count": 13476,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 334.3776509000454
+    },
+    {
+      "case": "midway-nov1",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "5c1e3e8015fa21923c89d7ca55cae1d7852c71ba81c0ececf8558b4fd2c4197c",
+      "media_sha256": "d10dcd2644fa982189e34f04ba87249ceff99c853f41d364ed55c74f4c259810",
+      "exit_code": 0,
+      "report_sha256": "01e3478e6c09ca4c6ba21567261852f93205e83947150e9a526ddec420302d40",
+      "status": "candidates_found",
+      "sound_peaks": 30,
+      "track_count": 13476,
+      "region": {
+        "latitude": 41.77626865671642,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 670.2141338402089,
+        "competitive_points": 11
+      },
+      "error_m": 254.84660469493025,
+      "matched_flights": 13,
+      "score": 32.915351271070186,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 287.96749840001576
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "c502adbcc83a1cfe29c4afd3abe8281a9681b8ca917aeed17247fccdbe5addd1",
+      "media_sha256": "915c8ccfe6e7af52920567c602b5dbacfaedc2973ce14b540b7d3367dacdb62f",
+      "exit_code": 4,
+      "report_sha256": "d1cb04eb99abf710bd2ae4f9598a7041dedb11693416bd01786b16d8e0b8070e",
+      "status": "ambiguous",
+      "sound_peaks": 30,
+      "track_count": 13476,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 285.6778482000809
+    },
+    {
+      "case": "midway-nov4-a",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "182bf276e577b57e3226d00a3fcd63e674a6137bca637da84f687881f3377703",
+      "media_sha256": "5ef6d2dacfa386ee62644d594994842c2d3863b40d40a047a2a66d3f1f23c8df",
+      "exit_code": 0,
+      "report_sha256": "664ac75928c30a1c174d3a6f8f77adb269dcd8d518a51f313ebc5d3b6708d91d",
+      "status": "candidates_found",
+      "sound_peaks": 69,
+      "track_count": 13476,
+      "region": {
+        "latitude": 41.773582089552235,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 670.2141338399667,
+        "competitive_points": 6
+      },
+      "error_m": 546.4508786068188,
+      "matched_flights": 17,
+      "score": 35.14347574287635,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 205.94151170004625
+    },
+    {
+      "case": "midway-nov4-b",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "8ddddcd63445fc39e5db1c324828e0de98e1d64fd67e86af60dbb149561f50dc",
+      "media_sha256": "4be21eaaa6a3569efdc2b486037b6871b2c72d4f514ea9bf510db89ffd166eb4",
+      "exit_code": 0,
+      "report_sha256": "ce9770bf9e131848c075070c2e87926a80072ef50538e02b9040284d7ee7a480",
+      "status": "candidates_found",
+      "sound_peaks": 96,
+      "track_count": 13476,
+      "region": {
+        "latitude": 41.77626865671642,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 423.16497321115145,
+        "competitive_points": 4
+      },
+      "error_m": 254.84660469493025,
+      "matched_flights": 27,
+      "score": 42.35212978648033,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 256.874903799966
+    },
+    {
+      "case": "midway-nov4-c",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "dce4307dd0dc88d97ab0151b581828eee37cbe7840f192515f4635f94d8b97d0",
+      "media_sha256": "3b1c10792a8269ca98affd32288be89b2d5ae27a6ffb4f14488cb575abd11a1a",
+      "exit_code": 0,
+      "report_sha256": "d68312a3abd0bf500372d4e6825a4ffb7485b85e419ca3b9a097fbc6f6a2f816",
+      "status": "candidates_found",
+      "sound_peaks": 91,
+      "track_count": 13476,
+      "region": {
+        "latitude": 41.773582089552235,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 895.1827198363367,
+        "competitive_points": 13
+      },
+      "error_m": 546.4508786068188,
+      "matched_flights": 26,
+      "score": 49.07396265350707,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 243.46072239999194
+    },
+    {
+      "case": "midway-nov4-d",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "e0c6acbaa4bedb775fd70e18d5feca18b800e8714bdf607b2016eadc35cfd806",
+      "media_sha256": "9a459488df4fa077f9ab1147730d4d2607a340ac67c7a385032bc3d714085dc3",
+      "exit_code": 0,
+      "report_sha256": "8cae87a17bdcee0412beceeae75ff9035a77050ee3f5fd9bcde2abd6a1c1f5ce",
+      "status": "candidates_found",
+      "sound_peaks": 87,
+      "track_count": 13476,
+      "region": {
+        "latitude": 41.773582089552235,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 670.2141338399667,
+        "competitive_points": 8
+      },
+      "error_m": 546.4508786068188,
+      "matched_flights": 22,
+      "score": 40.215357111484366,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 260.4265572000295
+    },
+    {
+      "case": "midway-nov4-e",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "8480bb5fc06a84e50a0aac726bf482d831905ebc96a23e6557fc1436a24f2a90",
+      "media_sha256": "58077f7254407a6bbe1afd8f36e09dc1b5ca93de70b928485d469c1a9503a69d",
+      "exit_code": 0,
+      "report_sha256": "5e614306fccde4d919d17309b39e50a6d2f25d64b34b2e95a4526715f87071ca",
+      "status": "candidates_found",
+      "sound_peaks": 97,
+      "track_count": 13476,
+      "region": {
+        "latitude": 41.778955223880594,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 846.3387258073675,
+        "competitive_points": 10
+      },
+      "error_m": 98.83265186868603,
+      "matched_flights": 24,
+      "score": 44.08553361353242,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 250.69636429997627
+    },
+    {
+      "case": "midway-nov4-f",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "cc13e2d517b1bdc7b552575fa10b933348a2bbcb0949a3302085184bcbeb5ea4",
+      "media_sha256": "17bfd9100c38ecc14d0dd1988eccabf2c7fa7eb250b69345ba1a72da6a0b3471",
+      "exit_code": 4,
+      "report_sha256": "1553a020c9c07550adf5d79861d1b1e2a00b230d8d30534f80e8436106c9a0c2",
+      "status": "ambiguous",
+      "sound_peaks": 72,
+      "track_count": 13476,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 171.99215189996175
+    },
+    {
+      "case": "southampton",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "b466e27d8573a89385b992a1d7d25ecf5e4853b2aaf91a744e13067da6259493",
+      "media_sha256": "88fadc80a7209432e01350aec3adc901e296e3174ee1f469022d6ec47c1d7e30",
+      "exit_code": 3,
+      "report_sha256": "304a0ca5f9f30a6d22d849ab9e0afcefbfd7f8ddeae8b3e0d72af1cc0bd46880",
+      "status": "insufficient_evidence",
+      "sound_peaks": 13,
+      "track_count": 13581,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 875.3512514999602
+    },
+    {
+      "case": "southampton-nov1",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "be9326bbb69e24e97105fa6adf2303b0f9146e370fe9c3e33b7d57f9ce94c274",
+      "media_sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f",
+      "exit_code": 3,
+      "report_sha256": "5d3d1597f89894cfae7ece317ad395a0428f4441d8095158caec560eed5b1e00",
+      "status": "insufficient_evidence",
+      "sound_peaks": 11,
+      "track_count": 13581,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 1259.0617875000462
+    }
+  ],
+  "counts": {
+    "clips": 27,
+    "accepted_within_1km": 8,
+    "statuses": {
+      "insufficient_evidence": 14,
+      "ambiguous": 5,
+      "candidates_found": 8
+    },
+    "wrong_screened": 0,
+    "processing_errors": 0
+  },
+  "earlier_lake_baseline": {
+    "cli_sha256": "5814a78897d2ea8c0c007a55396c39c15486ca54f3fa4b8011d174e5e7ab1748",
+    "manifest_sha256": "4aa04e2ab2bd7f8a9de0faf9b0554c11e553b588c4cce0bc5b7db948279f2ba1",
+    "target_error_m": 1000,
+    "selected_cases": [
+      "lake-hood",
+      "lake-hood-nov1",
+      "lake-hood-nov1-later",
+      "lake-hood-nov4-a",
+      "lake-hood-nov4-b"
+    ],
+    "all_cases_selected": false,
+    "workers": 1,
+    "timeout_s": 1800.0,
+    "recording_clock_supplied": false,
+    "recording_date_supplied": false,
+    "offline": true,
+    "archive_override": {
+      "cache": "real-validation\\flight-cache",
+      "provider": "adsb_lol"
+    },
+    "all_cases_are_replays": true,
+    "completed_cases": 5,
+    "planned_cases": 5,
+    "accepted": 0,
+    "wrong_screened": 0,
+    "processing_errors": 0,
+    "cases": [
+      {
+        "case": "lake-hood",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "185f1b2d2f0d30020eaf3f4e1bcf0433077af9d76936b19fc40dba53b679bef5",
+        "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+        "exit_code": 3,
+        "report_sha256": "dd4cdb3273d297bcdc6420af3ee8b60268c525db6d99503ebddc733fb0698251",
+        "status": "insufficient_evidence",
+        "sound_peaks": 48,
+        "track_count": 4056,
+        "date_search": {
+          "dates": [
+            "2026-11-01",
+            "2026-11-03",
+            "2026-11-04"
+          ],
+          "completed_batches": 2,
+          "complete": true,
+          "track_count_includes_overlap": true
+        },
+        "elapsed_s": 898.0507997000823
+      },
+      {
+        "case": "lake-hood-nov1",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "c13ba3f522ff2a04966598b681325541e6b4cf1d664a8e6c7bb7f2a36201c6bd",
+        "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+        "exit_code": 3,
+        "report_sha256": "d9022cf851dc6d107d2a3456ea8f18a037e0a66049bd624ca71c3edbec1e7031",
+        "status": "insufficient_evidence",
+        "sound_peaks": 56,
+        "track_count": 4056,
+        "date_search": {
+          "dates": [
+            "2026-11-01",
+            "2026-11-03",
+            "2026-11-04"
+          ],
+          "completed_batches": 2,
+          "complete": true,
+          "track_count_includes_overlap": true
+        },
+        "elapsed_s": 1002.728578099981
+      },
+      {
+        "case": "lake-hood-nov1-later",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "8301a313930c9625d9fc6811b424448775bf16c8aa27516af81ef7783a0ea089",
+        "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+        "exit_code": 3,
+        "report_sha256": "96a7dacaf2a9be4784ba76700fa8b00266796b64113e0276ee84bf21c40b03e6",
+        "status": "insufficient_evidence",
+        "sound_peaks": 40,
+        "track_count": 4056,
+        "date_search": {
+          "dates": [
+            "2026-11-01",
+            "2026-11-03",
+            "2026-11-04"
+          ],
+          "completed_batches": 2,
+          "complete": true,
+          "track_count_includes_overlap": true
+        },
+        "elapsed_s": 1649.9606382000493
+      },
+      {
+        "case": "lake-hood-nov4-a",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "01efef497e6f6d858b59ace3f94df6924654aca27eeadb7b19eb26ca9172c145",
+        "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+        "exit_code": 3,
+        "report_sha256": "bbb51a24a7352bec8bde1e9c5308ba285b5cca528331dac91b585d176874aa55",
+        "status": "insufficient_evidence",
+        "sound_peaks": 22,
+        "track_count": 4056,
+        "date_search": {
+          "dates": [
+            "2026-11-01",
+            "2026-11-03",
+            "2026-11-04"
+          ],
+          "completed_batches": 2,
+          "complete": true,
+          "track_count_includes_overlap": true
+        },
+        "elapsed_s": 1772.3216138998978
+      },
+      {
+        "case": "lake-hood-nov4-b",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "c16134e9f666388bbb9eef1e802a595d479b7bc234ea90945430a2e823e3e395",
+        "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+        "exit_code": 3,
+        "report_sha256": "994e0f9f0fd19b28e3e418c0d9fddd4ae93038df72f6800fa80dfc8ca0a0a47e",
+        "status": "insufficient_evidence",
+        "sound_peaks": 26,
+        "track_count": 4056,
+        "date_search": {
+          "dates": [
+            "2026-11-01",
+            "2026-11-03",
+            "2026-11-04"
+          ],
+          "completed_batches": 2,
+          "complete": true,
+          "track_count_includes_overlap": true
+        },
+        "elapsed_s": 948.9856568999821
+      }
+    ]
+  },
+  "radius_diagnostic": {
+    "not_acceptance": true,
+    "cases": [
+      {
+        "case": "lake-new-a",
+        "exit_code": 0,
+        "elapsed_s": 218.07697369996458,
+        "report_sha256": "1cce27e17d2e7da6f6d44ca35c176cdf391c7cc4d877a3a9c32a17d1046d21f9",
+        "first_error_m": 2010.9102058255307,
+        "closest_top256_m": 989.1074129177481,
+        "score": 15.526703866787857,
+        "matches": 10
+      },
+      {
+        "case": "lake-new-b",
+        "exit_code": 0,
+        "elapsed_s": 240.33876870002132,
+        "report_sha256": "f22055475714a78511f3b67e7c85af4afacea56265132603e710a38ea2d7dc9b",
+        "first_error_m": 6796.043750029506,
+        "closest_top256_m": 1255.3481881194498,
+        "score": 17.347225486237917,
+        "matches": 7
+      }
+    ]
+  },
+  "radius_diagnostic_scope": "Two new Lake Hood clips; 5 km passage range; raw rankings without shuffled controls. All four cached dates were represented by 933,623 retained raw positions. First errors were 2010.91 m and 6796.04 m. Default passage distance remains 500 m.",
+  "later_code_checks": "optional-video-audio-regression.json"
+}

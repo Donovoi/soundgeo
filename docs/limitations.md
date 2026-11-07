@@ -3,17 +3,37 @@
 SoundGeo is in development. Reliable location recovery from varied internet
 samples remains unfinished. The current location target is within 1 km.
 
+## Video text clues
+
+Video text reading is optional. It needs Tesseract 5, English language data,
+FFmpeg, FFprobe, and a local GeoNames file. It samples frames across the video
+and reads the full image and the top and bottom edges. Text that appears briefly
+can fall between the sampled frames. Small, blurred, or compressed text can fail.
+
+Place matching uses complete names or aliases with two to twelve words.
+Names must contain at least two words with two letters each and five letters
+in total. Single-word names and short numeric aliases are excluded. All matching
+places remain in the report. The order favors longer names and more matching text samples.
+Different places can share a name. Signs, captions, and watermarks can describe
+places away from the camera. GeoNames coordinates identify a named feature;
+they do not establish the camera position or a location error radius.
+
+Visible dates and times remain text clues. SoundGeo does not infer a timezone
+or pass them into an audio search. Video clues have separate reports and
+validation results. The audio-only benchmark does not use OCR.
+
 ## Real-video results
 
-Revision `80d33f2` replayed 25 recordings with flight passage timing.
-Each job used a possible date, a broad search area, free flight data, and an
-unknown recording start time.
+The latest full audio run replayed 27 recordings with flight passage timing.
+Each job used a broad search area and prepared free flight data. No recording
+date or start time was supplied. All analysis ran offline. The available dates
+differed by cache; the test covered a finite set of days.
 
 | Result | Recordings |
 | --- | ---: |
 | Returned a location within 1 km | 8 |
 | Reported competing locations | 5 |
-| Reported insufficient evidence | 12 |
+| Reported insufficient evidence | 14 |
 | Returned a location outside 1 km | 0 |
 
 Seven accepted locations came from one Midway camera, with errors of 89 to 547 m.
@@ -21,29 +41,47 @@ The eighth came from Maho Beach. Its error was within 550 m, including a planned
 200 m allowance for the unsurveyed microphone. These repeated development tests
 cover two successful sites. Broader accuracy remains unmeasured.
 
-The change in `80d33f2` lets passage timing use flight segments with three to
-seven recorded positions. It added one aircraft match to the Maho result.
-The accepted recording count stayed at eight. Lake Hood, Southampton, and LAX
-returned no accepted location. Other Maho intervals had timing breaks and were
-rejected before analysis.
+Six compression and duration checks used copies of three existing recordings.
+Full-length 16 kbit/s Opus audio passed for Maho and Midway. Compressed Lake Hood
+remained ambiguous. The first 15 minutes of all three recordings remained
+unresolved. These checks cover a small part of the variation in internet audio.
 
-All 108 Rust tests and the required checks passed locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42156168484).
-The downloaded Windows executable reproduced the Midway and Maho results and
-kept an ambiguous Maho result. Six Python tests check the benchmark runner.
+Lake Hood, Southampton, and LAX returned no accepted audio location. A separate
+Maho test searched free samples for September 1, October 1, and November 1 with
+the same result: one accepted recording, one ambiguous, and one insufficient.
+The app has not been verified against a complete historical flight archive.
+
+All 130 Rust tests and the required checks passed locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42351026350).
+The downloaded Windows executable reproduced the expanded Maho result.
+Nine Python tests check the benchmark runner.
 Location accuracy needs separate tests against known positions.
+
+Optional video text tests matched an airport name within 31.06 m of the camera
+reference in two 360p Lake Hood clips. The reports also contained a broad
+metro-area clue. Seven low-resolution files returned no place matches. This
+evaluates visible-name matching. The audio result for Lake Hood remains unresolved.
 
 The [validation record](../validation/README.md) preserves the original 250 m
 plans, failed tests, older wrong Doppler results, source records, and build checks.
 
 ## Input coverage
 
-- The decoder accepts recordings from 20 seconds to two hours long.
+- Audio analysis accepts recordings from 20 seconds to two hours long.
+  Optional video text can read shorter clips.
 - Passage timing needs at least eight minutes of continuous audio and six
   sound peaks. It requires a search area.
-- Automatic downloads use a selected date range. Cached analysis can search all
-  dates available for the selected provider. Missing dates outside that cache
-  remain unsearched. A report records the dates covered by a batched search.
+- With blank dates, online analysis discovers the provider's published days and
+  includes older prepared days. Offline analysis uses prepared days only.
+  A report records the dates searched and the provider index used.
+- Date discovery reads provider metadata. Each flight archive still needs a
+  complete download and integrity check. Airport indexes use the advertised
+  replay period and exclude partial UTC days. Source gaps can stop a download.
+- Saved date indexes are reused for up to six hours online. The `dates --offline`
+  command reads a saved index; flight files must be downloaded separately.
+- A worldwide search across all available dates can need several TB of storage
+  and a long processing time. Downloads can be cancelled and resumed. Use the
+  `dates` command to inspect coverage before preparing a large cache.
 - Wider ranges increase download size and total processing time. Analysis loads
   overlapping daily batches and compares their results. Free sources can have
   gaps or shorter retention periods. A missing required archive stops the run.
@@ -71,9 +109,19 @@ Free archives can miss audible aircraft or parts of their paths. A complete
 download confirms the requested files and their integrity. Aircraft coverage
 still depends on the source network.
 
-The first-of-month sample uses 288 worldwide snapshots spaced five minutes
-apart. Short flights between snapshots can be absent. Missing traces appear in
-the report and cache manifest. This source permits testing and evaluation.
+The first-of-month sample checks 288 worldwide snapshot slots at five-minute
+intervals. If a snapshot is missing, it tries the preceding and following
+minute within the same day. The cache keeps the actual source filename and
+records the replacement. Short flights between snapshots can be absent.
+Historical snapshots can be delayed relative to their filenames. Preparation
+accepts offsets smaller than one five-minute discovery interval. Offsets over
+one minute appear in the manifest and report. Flight-trace times are preserved.
+Some historical traces include positions from the preceding UTC day. The cache
+keeps these source files and records the overlap. Sample analysis uses positions
+within the selected archive dates.
+Missing traces and snapshot replacements appear in the report and cache
+manifest. Preparation stops if a slot and both neighboring minutes are
+unavailable. This source permits testing and evaluation.
 
 The free sample downloader retrieved all 288 snapshots and 97 Maho traces in
 validation. Every file matched an independent download. Cache reuse and recovery

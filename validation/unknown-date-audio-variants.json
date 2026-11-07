@@ -1,0 +1,491 @@
+{
+  "scope": "Six derived copies of three existing internet recordings measure compression and duration effects. Every search used the original broad region, no recording date or start time, and all prepared provider dates with offline mode.",
+  "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+  "cli_sha256": "5d1299555ff9d665bbed8a3ce37def279cb6f80d984a2bae5e46d938bc1de9fb",
+  "preparation_plan_fields": {
+    "source_manifest_sha256": "f88cfe0286489c27690b27517a1e4a976d98eb353671bd177c9ef512d111bdee",
+    "cli_sha256": "5d1299555ff9d665bbed8a3ce37def279cb6f80d984a2bae5e46d938bc1de9fb",
+    "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+    "cases": [
+      "maho-nov1-b",
+      "midway-nov4-b",
+      "lake-new-a"
+    ],
+    "recording_date_supplied": false,
+    "recording_clock_supplied": false,
+    "offline": true,
+    "original_regions": true,
+    "variants": [
+      {
+        "name": "opus16",
+        "description": "Full length, mono 8 kHz Opus at 16 kbit/s; no source metadata."
+      },
+      {
+        "name": "first15",
+        "description": "First 900 seconds, mono 8 kHz lossless FLAC; no source metadata."
+      }
+    ],
+    "ffmpeg": "ffmpeg version 8.1.1-full_build-www.gyan.dev Copyright (c) 2000-2026 the FFmpeg developers"
+  },
+  "preparation_plan_sha256": "adf7e79d42c3dfb9a1e0994974c0eda47c428c3f7bec7eef32f4757e888ef62b",
+  "preparation_runner_sha256": "ff1653d10e89ef235724494ee773b6acbcf427daea1f433a5ca8b02045937b98",
+  "run_plan": {
+    "cli_sha256": "5d1299555ff9d665bbed8a3ce37def279cb6f80d984a2bae5e46d938bc1de9fb",
+    "manifest_sha256": "af85d9f1d5f86aa6e6e32d5f5763ee0d141c1250b00ccaecf81dc713ab6afce4",
+    "runner_sha256": "1819fac35d2464d9c527bce26829408bd2c2cc42371e0498e2575f891785b907",
+    "target_error_m": 1000,
+    "selected_cases": [
+      "maho-nov1-b-opus16",
+      "maho-nov1-b-first15",
+      "midway-nov4-b-opus16",
+      "midway-nov4-b-first15",
+      "lake-new-a-opus16",
+      "lake-new-a-first15"
+    ],
+    "all_cases_selected": true,
+    "workers": 2,
+    "timeout_s": 2400.0,
+    "recording_clock_supplied": false,
+    "recording_date_supplied": false,
+    "offline": true,
+    "archive_override": null,
+    "all_cases_are_replays": true
+  },
+  "case_manifest_sha256": "af85d9f1d5f86aa6e6e32d5f5763ee0d141c1250b00ccaecf81dc713ab6afce4",
+  "manifest": {
+    "target_error_m": 1000,
+    "source": "plan.json",
+    "derived_samples": true,
+    "cases": [
+      {
+        "id": "maho-nov1-b-opus16",
+        "media_sha256": "25ab4104b02305ebb99f2665f48bd3299db94c25ba2599fffd9c86fd508e93d7",
+        "settings": {
+          "aircraft_filter": "all",
+          "bounds": {
+            "south": 17.85,
+            "north": 18.25,
+            "west": -63.35,
+            "east": -62.95
+          },
+          "ground_datum": "egm96",
+          "ground_m": 0.0,
+          "smooth_tracks": true,
+          "temperature_c": 15.0,
+          "timing_options": {
+            "grid_m": 300.0,
+            "maximum_grid_points": 50000,
+            "maximum_passage_distance_m": 500.0,
+            "retained_candidates": 256
+          }
+        },
+        "paths": {
+          "media": "real-audio-variants/maho-nov1-b-opus16.ogg"
+        },
+        "references": [
+          {
+            "latitude": 18.0402897,
+            "longitude": -63.1208364
+          }
+        ],
+        "reference_allowance_m": 200,
+        "archive": {
+          "date_from": "",
+          "date_to": null,
+          "cache": "maho-wide-date-sample-cache",
+          "provider": "adsb_exchange_sample"
+        },
+        "parent_case": "maho-nov1-b",
+        "parent_media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+        "variant": "opus16"
+      },
+      {
+        "id": "maho-nov1-b-first15",
+        "media_sha256": "07b41fcb9949cf576821fe99006e29f8be3eca39e1ada32738b44328af441ff9",
+        "settings": {
+          "aircraft_filter": "all",
+          "bounds": {
+            "south": 17.85,
+            "north": 18.25,
+            "west": -63.35,
+            "east": -62.95
+          },
+          "ground_datum": "egm96",
+          "ground_m": 0.0,
+          "smooth_tracks": true,
+          "temperature_c": 15.0,
+          "timing_options": {
+            "grid_m": 300.0,
+            "maximum_grid_points": 50000,
+            "maximum_passage_distance_m": 500.0,
+            "retained_candidates": 256
+          }
+        },
+        "paths": {
+          "media": "real-audio-variants/maho-nov1-b-first15.flac"
+        },
+        "references": [
+          {
+            "latitude": 18.0402897,
+            "longitude": -63.1208364
+          }
+        ],
+        "reference_allowance_m": 200,
+        "archive": {
+          "date_from": "",
+          "date_to": null,
+          "cache": "maho-wide-date-sample-cache",
+          "provider": "adsb_exchange_sample"
+        },
+        "parent_case": "maho-nov1-b",
+        "parent_media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+        "variant": "first15"
+      },
+      {
+        "id": "midway-nov4-b-opus16",
+        "media_sha256": "582b3d0067c849ce817526570429d48c598763ec88ffb1249f4b656bb05d2870",
+        "settings": {
+          "aircraft_filter": "all",
+          "bounds": {
+            "south": 41.65,
+            "north": 42.01,
+            "west": -87.98,
+            "east": -87.5
+          },
+          "ground_datum": "egm96",
+          "ground_m": 180.0,
+          "smooth_tracks": true,
+          "temperature_c": 15.0,
+          "timing_options": {
+            "grid_m": 300.0,
+            "maximum_grid_points": 50000,
+            "maximum_passage_distance_m": 500.0,
+            "retained_candidates": 256
+          }
+        },
+        "paths": {
+          "media": "real-audio-variants/midway-nov4-b-opus16.ogg"
+        },
+        "references": [
+          {
+            "latitude": 41.77844250226028,
+            "longitude": -87.74277810405209
+          }
+        ],
+        "reference_allowance_m": 0,
+        "archive": {
+          "date_from": "",
+          "date_to": null,
+          "cache": "free-airport-sources",
+          "provider": "webtrak_chicago"
+        },
+        "parent_case": "midway-nov4-b",
+        "parent_media_sha256": "4be21eaaa6a3569efdc2b486037b6871b2c72d4f514ea9bf510db89ffd166eb4",
+        "variant": "opus16"
+      },
+      {
+        "id": "midway-nov4-b-first15",
+        "media_sha256": "2e08f0c63445890b87f8196ff2e3def01d1766dbc6492be09904322cf8d94dfb",
+        "settings": {
+          "aircraft_filter": "all",
+          "bounds": {
+            "south": 41.65,
+            "north": 42.01,
+            "west": -87.98,
+            "east": -87.5
+          },
+          "ground_datum": "egm96",
+          "ground_m": 180.0,
+          "smooth_tracks": true,
+          "temperature_c": 15.0,
+          "timing_options": {
+            "grid_m": 300.0,
+            "maximum_grid_points": 50000,
+            "maximum_passage_distance_m": 500.0,
+            "retained_candidates": 256
+          }
+        },
+        "paths": {
+          "media": "real-audio-variants/midway-nov4-b-first15.flac"
+        },
+        "references": [
+          {
+            "latitude": 41.77844250226028,
+            "longitude": -87.74277810405209
+          }
+        ],
+        "reference_allowance_m": 0,
+        "archive": {
+          "date_from": "",
+          "date_to": null,
+          "cache": "free-airport-sources",
+          "provider": "webtrak_chicago"
+        },
+        "parent_case": "midway-nov4-b",
+        "parent_media_sha256": "4be21eaaa6a3569efdc2b486037b6871b2c72d4f514ea9bf510db89ffd166eb4",
+        "variant": "first15"
+      },
+      {
+        "id": "lake-new-a-opus16",
+        "media_sha256": "4d7d22385d18103a564b90484a8c184ea4dc77a54c2c8c1409a13a576da04c3f",
+        "settings": {
+          "aircraft_filter": "all",
+          "bounds": {
+            "south": 61.0,
+            "north": 61.36,
+            "west": -150.36,
+            "east": -149.62
+          },
+          "ground_datum": "egm96",
+          "ground_m": 27.0,
+          "smooth_tracks": true,
+          "temperature_c": 15.0,
+          "timing_options": {
+            "grid_m": 300.0,
+            "maximum_grid_points": 50000,
+            "maximum_passage_distance_m": 500.0,
+            "retained_candidates": 256
+          }
+        },
+        "paths": {
+          "media": "real-audio-variants/lake-new-a-opus16.ogg"
+        },
+        "archive": {
+          "date_from": "",
+          "date_to": null,
+          "cache": "lake-nov6-heldout/flight-cache",
+          "provider": "adsb_lol"
+        },
+        "references": [
+          {
+            "latitude": 61.179633,
+            "longitude": -149.9719665,
+            "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+          }
+        ],
+        "reference_allowance_m": 0,
+        "parent_case": "lake-new-a",
+        "parent_media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+        "variant": "opus16"
+      },
+      {
+        "id": "lake-new-a-first15",
+        "media_sha256": "38849f42cbf5cfda5e4ca6efdc511ff6dae9499dee4898349a721823307c5244",
+        "settings": {
+          "aircraft_filter": "all",
+          "bounds": {
+            "south": 61.0,
+            "north": 61.36,
+            "west": -150.36,
+            "east": -149.62
+          },
+          "ground_datum": "egm96",
+          "ground_m": 27.0,
+          "smooth_tracks": true,
+          "temperature_c": 15.0,
+          "timing_options": {
+            "grid_m": 300.0,
+            "maximum_grid_points": 50000,
+            "maximum_passage_distance_m": 500.0,
+            "retained_candidates": 256
+          }
+        },
+        "paths": {
+          "media": "real-audio-variants/lake-new-a-first15.flac"
+        },
+        "archive": {
+          "date_from": "",
+          "date_to": null,
+          "cache": "lake-nov6-heldout/flight-cache",
+          "provider": "adsb_lol"
+        },
+        "references": [
+          {
+            "latitude": 61.179633,
+            "longitude": -149.9719665,
+            "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+          }
+        ],
+        "reference_allowance_m": 0,
+        "parent_case": "lake-new-a",
+        "parent_media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+        "variant": "first15"
+      }
+    ]
+  },
+  "counts": {
+    "accepted_within_1km": 2,
+    "ambiguous": 2,
+    "insufficient": 2,
+    "wrong_accepted": 0,
+    "processing_errors": 0
+  },
+  "cases": [
+    {
+      "case": "maho-nov1-b-opus16",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "d4b4d222a39660adaaeb6b1054a0c3931877d65d0be1bfd143b7819b81dd66de",
+      "media_sha256": "25ab4104b02305ebb99f2665f48bd3299db94c25ba2599fffd9c86fd508e93d7",
+      "exit_code": 0,
+      "report_sha256": "2b7a6e211fb1dda4c7850b37081d27fb8e4f6117ea8841028255e8f1c8aa0101",
+      "status": "candidates_found",
+      "sound_peaks": 124,
+      "track_count": 818,
+      "region": {
+        "latitude": 18.04328859060403,
+        "longitude": -63.121830985915494,
+        "enclosing_radius_m": 0.0,
+        "competitive_points": 1
+      },
+      "error_m": 549.649056637247,
+      "matched_flights": 16,
+      "score": 30.083083700056477,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-09-01",
+          "2026-10-01",
+          "2026-11-01"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 24.86911940004211,
+      "explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 fit within 1 km of the reported region center. This is a model screen, not a verified accuracy radius."
+    },
+    {
+      "case": "maho-nov1-b-first15",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "e3339ff1afebbfffefec7184e1a2f543cbf03f8b14780839916e38fb64257d30",
+      "media_sha256": "07b41fcb9949cf576821fe99006e29f8be3eca39e1ada32738b44328af441ff9",
+      "exit_code": 3,
+      "report_sha256": "7cdd255ed7e26d60627d35d2dc2a2153d2b710ddfc21a55825725f2e6fa24d55",
+      "status": "insufficient_evidence",
+      "sound_peaks": 16,
+      "track_count": 818,
+      "date_search": {
+        "dates": [
+          "2026-09-01",
+          "2026-10-01",
+          "2026-11-01"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 5.114976699929684,
+      "explanation": "No leading location has six matched flight passages."
+    },
+    {
+      "case": "midway-nov4-b-opus16",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "0a77b364fb6c0cbc2ab34a46d87563cb718ad6c6dd420e396efb9352107084d1",
+      "media_sha256": "582b3d0067c849ce817526570429d48c598763ec88ffb1249f4b656bb05d2870",
+      "exit_code": 0,
+      "report_sha256": "fcdcfc6a90467531d96d5eee9de8408b34f589b49eb12d2a7ee11cdc8dd42ac3",
+      "status": "candidates_found",
+      "sound_peaks": 101,
+      "track_count": 13476,
+      "region": {
+        "latitude": 41.778955223880594,
+        "longitude": -87.7381954887218,
+        "enclosing_radius_m": 667.9742150583606,
+        "competitive_points": 5
+      },
+      "error_m": 384.2472669123515,
+      "matched_flights": 26,
+      "score": 41.160262101187016,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 174.7573887000326,
+      "explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 fit within 1 km of the reported region center. This is a model screen, not a verified accuracy radius."
+    },
+    {
+      "case": "midway-nov4-b-first15",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "b961aaca26dc61d998c72619490a671768b82cc40cc72e703dd9185c3adbc444",
+      "media_sha256": "2e08f0c63445890b87f8196ff2e3def01d1766dbc6492be09904322cf8d94dfb",
+      "exit_code": 4,
+      "report_sha256": "e915edb3f6fe59adb00a27f1345e296e38302e496fc2cdaeb7873d08d7365a8a",
+      "status": "ambiguous",
+      "sound_peaks": 17,
+      "track_count": 13476,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 63.76700950006489,
+      "explanation": "The timing signal has competing locations that do not fit the checked 1 km regions. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location."
+    },
+    {
+      "case": "lake-new-a-opus16",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "70e27ed6682311fad85dfaf0c6b3502955da810bb3ea0389e33b1d0a7914e36f",
+      "media_sha256": "4d7d22385d18103a564b90484a8c184ea4dc77a54c2c8c1409a13a576da04c3f",
+      "exit_code": 4,
+      "report_sha256": "3410761b85e8cac55f30df7c02172be92939cd6ddf1e91dff5202175eb3ed973",
+      "status": "ambiguous",
+      "sound_peaks": 23,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 88.9033815000439,
+      "explanation": "The timing signal has competing locations that do not fit the checked 1 km regions. The score difference is less than a likelihood factor of 100; the recording does not give a single useful location."
+    },
+    {
+      "case": "lake-new-a-first15",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "5cba1c99f4873c8d869131b3a1c555857553a47273e0f6bddd8b5c6086669b56",
+      "media_sha256": "38849f42cbf5cfda5e4ca6efdc511ff6dae9499dee4898349a721823307c5244",
+      "exit_code": 3,
+      "report_sha256": "ecbfb3445ac56ff1fc3fb23be7fc28baa621f32fe2f9fe3aa4984a4b6681b3f9",
+      "status": "insufficient_evidence",
+      "sound_peaks": 11,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 56.3710525999777,
+      "explanation": "The leading score did not exceed every shuffled-sound control. No reliable timing signal was established."
+    }
+  ]
+}

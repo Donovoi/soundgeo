@@ -18,6 +18,7 @@ pub struct Options {
     pub grid_m: f64,
     pub maximum_grid_points: usize,
     pub maximum_passage_distance_m: f64,
+    pub timing_sigma_s: f64,
     pub retained_candidates: usize,
 }
 impl Default for Options {
@@ -26,6 +27,7 @@ impl Default for Options {
             grid_m: 300.,
             maximum_grid_points: 50000,
             maximum_passage_distance_m: 500.,
+            timing_sigma_s: 1.,
             retained_candidates: 256,
         }
     }
@@ -131,7 +133,9 @@ impl<'a> PreparedSearch<'a> {
         let bounds = job.bounds.context("Passage timing needs search bounds")?;
         bounds.validate()?;
         ensure!(
-            options.grid_m.is_finite()
+            options.timing_sigma_s.is_finite()
+                && (0.5..=10.).contains(&options.timing_sigma_s)
+                && options.grid_m.is_finite()
                 && (50. ..=1000.).contains(&options.grid_m)
                 && (100..=50000).contains(&options.maximum_grid_points)
                 && (1..=1024).contains(&options.retained_candidates)
@@ -217,7 +221,7 @@ impl<'a> PreparedSearch<'a> {
             control.check()?;
             let point = self.points[index];
             let passages = self.passages(index);
-            if passages.len() >= 10 {
+            if passages.len() >= super::assessment::MIN_MATCHES {
                 result.eligible_points += 1;
                 let proposals = propose(
                     peaks,
@@ -226,6 +230,7 @@ impl<'a> PreparedSearch<'a> {
                     reference_days.0,
                     reference_days.1,
                     job,
+                    options.timing_sigma_s,
                     control,
                 )?;
                 let mut location_best: Option<f64> = None;
@@ -240,6 +245,7 @@ impl<'a> PreparedSearch<'a> {
                         duration,
                         reference_days,
                         job,
+                        options.timing_sigma_s,
                     ) {
                         result.likelihood_evaluations += 1;
                         location_best = Some(
@@ -296,6 +302,7 @@ fn allowed(offset: f64, duration: f64, start: f64, end: f64, job: &Job) -> bool 
             .start_utc
             .is_none_or(|t| (t - offset).abs() <= job.time_tolerance_s)
 }
+#[allow(clippy::too_many_arguments)]
 fn propose(
     peaks: &[f64],
     reference: &[Passage],
@@ -303,6 +310,7 @@ fn propose(
     start: f64,
     end: f64,
     job: &Job,
+    sigma: f64,
     control: &Control,
 ) -> Result<Vec<f64>> {
     let first = ((reference[0].time - peaks[peaks.len() - 1]) * 2.).round_ties_even() as i64;
@@ -326,6 +334,7 @@ fn propose(
                     day,
                     window_end,
                     job,
+                    sigma,
                     control,
                 )?);
             }
@@ -334,37 +343,48 @@ fn propose(
         return Ok(proposals);
     }
     let mut histogram = vec![0u32; length];
+    let mut occupied = Vec::new();
     for (i, r) in reference.iter().enumerate() {
         if i.is_multiple_of(128) {
             control.check()?;
         }
         for peak in peaks {
             let index = ((r.time - peak) * 2.).round_ties_even() as i64 - first;
+            if histogram[index as usize] == 0 {
+                occupied.push(index as usize);
+            }
             histogram[index as usize] += 1;
         }
     }
-    let kernel: Vec<_> = (-6..=6)
-        .map(|i| (-0.5 * (i as f64 * 0.5).powi(2)).exp())
+    let half_width = (6. * sigma).ceil() as isize;
+    let kernel: Vec<_> = (-half_width..=half_width)
+        .map(|i| (-0.5 * (i as f64 * 0.5 / sigma).powi(2)).exp())
         .collect();
     let mean: f64 = kernel.iter().sum::<f64>() * 0.5;
     let variance: f64 = kernel.iter().map(|k| k * k).sum::<f64>() * 0.5;
     let mut raw = vec![0.; length];
-    for (i, &count) in histogram
-        .iter()
-        .enumerate()
-        .filter(|(_, count)| **count != 0)
-    {
+    let mut touched = Vec::new();
+    // Preserve addition order while avoiding a full-day scan for each location.
+    occupied.sort_unstable();
+    for i in occupied {
+        let count = histogram[i];
         for (k, weight) in kernel.iter().enumerate() {
-            let to = i as isize + k as isize - 6;
+            let to = i as isize + k as isize - half_width;
             if to >= 0 && (to as usize) < length {
+                if raw[to as usize] == 0. {
+                    touched.push(to as usize);
+                }
                 raw[to as usize] += count as f64 * weight;
             }
         }
     }
-    let mut standardized = vec![f64::NEG_INFINITY; length];
+    touched.sort_unstable();
+    let mut positions = Vec::new();
+    let mut raw_scores = Vec::new();
+    let mut standardized = Vec::new();
     let (mut a, mut b) = (0, 0);
-    for i in 0..length {
-        if i.is_multiple_of(16384) {
+    for (iteration, i) in touched.into_iter().enumerate() {
+        if iteration.is_multiple_of(16384) {
             control.check()?;
         }
         let offset = (i as i64 + first) as f64 * 0.5;
@@ -375,17 +395,21 @@ fn propose(
             b += 1;
         }
         if b - a < 3 || !allowed(offset, duration, start, end, job) {
-            raw[i] = f64::NEG_INFINITY;
             continue;
         }
         let expected = peaks.len() as f64 * (b - a) as f64 / duration;
-        standardized[i] = (raw[i] - expected * mean) / (expected * variance).max(0.01).sqrt();
+        positions.push(i);
+        raw_scores.push(raw[i]);
+        standardized.push((raw[i] - expected * mean) / (expected * variance).max(0.01).sqrt());
+    }
+    if positions.is_empty() {
+        return Ok(vec![]);
     }
     let mut proposals: Vec<f64> = vec![];
-    for mut criterion in [raw, standardized] {
+    for mut criterion in [raw_scores, standardized] {
         for _ in 0..4 {
             let mut index = 0;
-            for i in 1..length {
+            for i in 1..criterion.len() {
                 if criterion[i] > criterion[index] {
                     index = i;
                 }
@@ -393,11 +417,18 @@ fn propose(
             if !criterion[index].is_finite() {
                 break;
             }
-            let offset = (index as i64 + first) as f64 * 0.5;
-            if proposals.iter().all(|old| (offset - old).abs() > 7.5) {
+            let position = positions[index];
+            let offset = (position as i64 + first) as f64 * 0.5;
+            if proposals
+                .iter()
+                .all(|old| (offset - old).abs() > 7.5 * sigma)
+            {
                 proposals.push(offset);
             }
-            criterion[index.saturating_sub(30)..(index + 31).min(length)].fill(f64::NEG_INFINITY);
+            let suppression = (30. * sigma).ceil() as usize;
+            let low = positions.partition_point(|&p| p < position.saturating_sub(suppression));
+            let high = positions.partition_point(|&p| p <= position + suppression);
+            criterion[low..high].fill(f64::NEG_INFINITY);
         }
     }
     Ok(proposals)
@@ -413,10 +444,11 @@ fn evaluate(
     duration: f64,
     days: (f64, f64),
     job: &Job,
+    sigma: f64,
 ) -> Option<Candidate> {
     let mut pairs = vec![];
     for _ in 0..3 {
-        pairs = assign(peaks, reference, offset);
+        pairs = assign(peaks, reference, offset, sigma);
         if pairs.is_empty() {
             break;
         }
@@ -433,20 +465,23 @@ fn evaluate(
     let times: Vec<_> = reference
         .iter()
         .map(|r| r.time - offset)
-        .filter(|t| *t >= -8. && *t <= duration + 8.)
+        .filter(|t| *t >= -8. * sigma && *t <= duration + 8. * sigma)
         .collect();
     let density: Vec<_> = peaks
         .iter()
         .map(|p| {
             times
                 .iter()
-                .map(|t| (-0.5 * (p - t).powi(2)).exp() / (2. * std::f64::consts::PI).sqrt())
+                .map(|t| {
+                    (-0.5 * ((p - t) / sigma).powi(2)).exp()
+                        / (sigma * (2. * std::f64::consts::PI).sqrt())
+                })
                 .sum()
         })
         .collect();
     let exposure: f64 = times
         .iter()
-        .map(|t| normal_cdf(duration - t) - normal_cdf(-t))
+        .map(|t| normal_cdf((duration - t) / sigma) - normal_cdf(-t / sigma))
         .sum();
     let fit = likelihood::fit(&density, exposure, duration);
     Some(Candidate {
@@ -579,6 +614,7 @@ mod tests {
             day,
             day + 41. * 86400.,
             &Job::default(),
+            1.,
             &Control::default(),
         )
         .unwrap();
@@ -619,6 +655,69 @@ mod tests {
         // background. Compare with the closed-form likelihood, not a cutoff.
         let expected = 12. * (1200. / (12. * (2. * std::f64::consts::PI).sqrt())).ln();
         assert!((best.log_likelihood_ratio - expected).abs() < 1e-6);
+    }
+
+    #[test]
+    fn six_reference_passages_are_not_excluded_before_the_six_match_screen() {
+        let (job, mut tracks, mut peaks, truth, offset) = generated_case();
+        tracks.truncate(6);
+        peaks.truncate(6);
+        let result = locate(
+            &job,
+            &peaks,
+            1200.,
+            &tracks,
+            &Options::default(),
+            &Control::default(),
+            &|_, _| {},
+        )
+        .unwrap();
+        let best = &result.candidates[0];
+        assert_eq!(best.pairs.len(), 6);
+        assert!((best.latitude - truth.lat).abs() < 1e-10);
+        assert!((best.longitude - truth.lon).abs() < 1e-10);
+        assert!((best.offset_utc - offset).abs() < 1e-6);
+    }
+
+    #[test]
+    fn timing_width_preserves_gaussian_normalization_and_rejects_invalid_values() {
+        let (job, tracks, peaks, _, _) = generated_case();
+        for sigma in [0.5, 1., 3.] {
+            let options = Options {
+                timing_sigma_s: sigma,
+                ..Default::default()
+            };
+            let result = locate(
+                &job,
+                &peaks,
+                1200.,
+                &tracks,
+                &options,
+                &Control::default(),
+                &|_, _| {},
+            )
+            .unwrap();
+            let expected = 12. * (1200. / (12. * sigma * (2. * std::f64::consts::PI).sqrt())).ln();
+            assert!((result.candidates[0].log_likelihood_ratio - expected).abs() < 1e-6);
+        }
+        for sigma in [0., 0.49, 10.01, f64::NAN, f64::INFINITY] {
+            let options = Options {
+                timing_sigma_s: sigma,
+                ..Default::default()
+            };
+            assert!(
+                locate(
+                    &job,
+                    &peaks,
+                    1200.,
+                    &tracks,
+                    &options,
+                    &Control::default(),
+                    &|_, _| {}
+                )
+                .is_err()
+            );
+        }
     }
     #[test]
     fn bounded_geometry_cache_preserves_results_across_sound_permutations() {

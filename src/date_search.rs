@@ -10,6 +10,8 @@ pub struct Coverage {
     pub completed_batches: usize,
     pub complete: bool,
     pub track_count_includes_overlap: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub provider_discovery: Option<crate::availability::Catalog>,
 }
 
 fn batches(dates: &[String]) -> Result<Vec<(String, String)>> {
@@ -62,7 +64,9 @@ pub(crate) fn run(
         combined.track_count += result.track_count;
         combined.hypotheses += result.hypotheses;
         combined.search_grid_m = combined.search_grid_m.max(result.search_grid_m);
-        combined.search_method = result.search_method;
+        if !result.search_method.is_empty() {
+            combined.search_method = result.search_method;
+        }
         combined.reference_sources.extend(result.reference_sources);
         combined.terrain_sources.extend(result.terrain_sources);
         let mut warnings = result.warnings;
@@ -112,6 +116,7 @@ pub(crate) fn run(
         completed_batches: windows.len(),
         complete: true,
         track_count_includes_overlap: true,
+        provider_discovery: None,
     });
     progress("Date search complete", 1.);
     Ok(combined)
