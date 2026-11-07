@@ -119,6 +119,8 @@ def main():
     parser.add_argument('--data-root', type=Path, required=True,
                         help='Folder containing the original local media and reference caches')
     parser.add_argument('--output', type=Path, required=True, help='New folder; existing results are preserved')
+    parser.add_argument('--manifest', type=Path, default=Path(__file__).with_name('timing-cases.json'),
+                        help='Case manifest; defaults to the preserved 25-case benchmark')
     parser.add_argument('--case', action='append', help='Case ID; repeat to select several, omit for all')
     parser.add_argument('--unknown-date', action='store_true', help='Search cached dates without supplying a recording date')
     parser.add_argument('--offline', action='store_true', help='Disable network access in the app')
@@ -129,7 +131,7 @@ def main():
     args = parser.parse_args()
     if not math.isfinite(args.timeout) or args.timeout <= 0:
         parser.error('--timeout must be a positive number of seconds')
-    manifest_path = Path(__file__).with_name('timing-cases.json')
+    manifest_path = args.manifest.resolve(strict=True)
     manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
     selected = [case for case in manifest['cases'] if not args.case or case['id'] in args.case]
     if not selected or (args.case and set(args.case) - {case['id'] for case in selected}):
@@ -154,6 +156,7 @@ def main():
         prepared.append((case, job))
     args.output.mkdir(parents=True, exist_ok=False)
     plan = {'cli_sha256': digest(cli), 'manifest_sha256': digest(manifest_path),
+            'runner_sha256': digest(Path(__file__)),
             'target_error_m': manifest['target_error_m'], 'selected_cases': [c['id'] for c in selected],
             'all_cases_selected': len(selected) == len(manifest['cases']),
             'workers': args.workers, 'timeout_s': args.timeout,

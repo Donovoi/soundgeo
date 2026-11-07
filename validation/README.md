@@ -29,6 +29,20 @@ The Maho check includes the planned 200 m allowance for the unsurveyed microphon
 It returns code 0 only if every selected recording passes. An ambiguous,
 insufficient, wrong, or failed result returns code 1. Existing failed recordings
 remain in the manifest. This benchmark is expected to fail until they pass.
+
+To test without a recording date or time, add `--unknown-date`. This searches
+all available dates for the selected provider. Add `--offline` to disable network
+access. Imported day-specific flight files require a prepared provider cache:
+
+```powershell
+python validation/run_timing.py --cli target/release/soundgeo-cli.exe --data-root .. --output ../lake-date-search --case lake-hood --case lake-hood-nov1 --unknown-date --offline --cache ../real-validation/flight-cache --provider adsb_lol
+```
+
+Repeat `--case` to select more recordings. Use `--manifest` for a separately
+prepared set of cases. The runner records the executable, manifest, and runner
+hashes. It checks that date-free reports contain no supplied archive date or
+day-specific import and that offline reports used offline mode. References
+enter only the evaluator after the app exits.
 The six fast Python tests in CI check the runner's safeguards. They do not run
 the real media benchmark or establish location accuracy.
 
