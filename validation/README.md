@@ -16,13 +16,13 @@ metadata. Flight files are checked when they are prepared.
 
 The same build repeated three real audio searches offline. Maho passed at
 549.65 m and Midway at 254.85 m. Lake Hood remained ambiguous. All report fields
-except creation time matched the previous build. A full 89-day Chicago download
-is in progress for a wider offline Midway test.
+except creation time matched the previous build. The full 89-day Chicago download
+for a wider offline Midway test remains incomplete.
 
 [Historical sample checks](empty-sample-date-validation.json) found and fixed
 two failures. Some 2016 discovery snapshots have timestamps slightly more than
-30 seconds after their filenames. The downloader now accepts offsets below
-one minute and keeps the original flight-trace times. A verified day with zero
+30 seconds after their filenames. The first fix accepted offsets below
+one minute and kept the original flight-trace times. A verified day with zero
 regional aircraft now stays in the coverage record while analysis continues
 through later days.
 
@@ -41,17 +41,33 @@ identities and a time base at their first observation. Their downloaded bytes
 matched independent source copies. Their timestamps stayed unchanged.
 
 The full day passed offline verification. Maho then passed at 549.65 m across
-six prepared dates, with no recording date or clock supplied. The latest local
+six prepared dates, with no recording date or clock supplied. The local
 build, `275b0f2`, passed 142 Rust tests, nine Python tests, and all required
 release checks. An offline regression also checks the dates inside older cache
 files whose stored checksums match.
+
+[Snapshot boundary checks](snapshot-boundary-validation.json) recovered a
+December 2016 snapshot timestamped exactly one minute after its filename.
+The nine-date Maho replay passed offline at 549.65 m, with no recording date or
+time supplied and no connections to the test proxy.
+
+[Historical overlap checks](historical-trace-overlap.json) then found January
+2017 snapshot delays up to 71.3 seconds. Seven traces also included positions
+from the preceding evening. Build `1c948eb` records these offsets and overlaps,
+preserves source bytes and times, and filters sample analysis to the selected
+archive dates. It passed all 144 Rust tests, nine Python tests, formatting,
+strict Clippy, doc tests, and both release builds. The repaired January download
+and ten-date real-video replay remain unverified on this build.
+
+Revision `99588f3` passed [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42364660722)
+with 142 Rust tests and nine Python tests on each platform.
 
 Revision `0dccdd9` passed [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42361118775)
 with 139 Rust tests on each platform. Its downloaded Windows executable repeated
 the earlier four-date Maho result. All report fields except creation time
 matched the local build.
 
-The wider preparation runs cover 89 Chicago days and 125 free sample dates.
+The wider preparation plans cover 89 Chicago days and 125 free sample dates.
 The first newly downloaded Chicago day contains 634,783 positions across all
 2,880 intervals. It passed offline verification with unchanged files and no
 proxy connections. The full-window location tests remain pending.
