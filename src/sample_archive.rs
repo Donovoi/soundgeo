@@ -103,11 +103,11 @@ fn snapshot(value: &Value, expected: f64, bounds: Bounds) -> Result<BTreeSet<Str
     let now = value["now"]
         .as_f64()
         .context("Sample snapshot lacks its time")?;
-    // Historical snapshots can be recorded about 30 seconds after the
-    // filename time, with small jitter. These snapshots select aircraft IDs;
-    // the full traces retain their own timestamps for location analysis.
+    // Historical snapshots can be recorded up to one minute after the
+    // filename time, including the exact boundary. Snapshots select aircraft
+    // IDs; full traces retain their own timestamps for location analysis.
     ensure!(
-        (now - expected).abs() < 60.,
+        (now - expected).abs() <= 60.,
         "Sample snapshot timestamp {now} is outside the one-minute window around {expected}"
     );
     let aircraft = value["aircraft"]
@@ -906,7 +906,7 @@ mod tests {
     }
     #[test]
     fn historical_snapshot_clock_jitter_keeps_trace_times_unchanged() {
-        for offset in [-59.9, -1., 30.2, 31.9, 59.9] {
+        for offset in [-60., -59.9, -1., 30.2, 31.9, 59.9, 60.] {
             let value = json!({"now":start()+offset,"aircraft":[
                 {"hex":"abcdef","lat":10.5,"lon":20.5}
             ]});
@@ -916,7 +916,7 @@ mod tests {
             );
             assert_eq!(value["now"].as_f64().unwrap(), start() + offset);
         }
-        for offset in [-300., -60., 60., 300., 86400.] {
+        for offset in [-300., -60.01, 60.01, 300., 86400.] {
             assert!(
                 snapshot(
                     &json!({"now":start()+offset,"aircraft":[]}),
