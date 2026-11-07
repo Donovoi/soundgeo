@@ -5,7 +5,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 const CONTROLS: usize = 19;
-const MIN_MATCHES: usize = 6;
+pub(super) const MIN_MATCHES: usize = 6;
 const REGION_M: f64 = 1000.;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -108,7 +108,11 @@ fn assess_inner(
         progress(m, p / (CONTROLS + 1) as f32)
     })?;
     let sufficient = search.candidates.first().is_some_and(|c| {
-        c.pairs.iter().filter(|p| p.residual_s.abs() <= 3.).count() >= MIN_MATCHES
+        c.pairs
+            .iter()
+            .filter(|p| p.residual_s.abs() <= 3. * options.timing_sigma_s)
+            .count()
+            >= MIN_MATCHES
     });
     result.search = Some(search);
     if !sufficient && !all_controls {
@@ -153,7 +157,7 @@ pub(crate) fn apply_screen(result: &mut Assessment) {
     if first
         .pairs
         .iter()
-        .filter(|p| p.residual_s.abs() <= 3.)
+        .filter(|p| p.residual_s.abs() <= 3. * search.options.timing_sigma_s)
         .count()
         < MIN_MATCHES
     {

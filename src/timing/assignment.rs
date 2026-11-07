@@ -1,13 +1,18 @@
 //! Maximum-weight one-to-one acoustic/flight assignment, including close peaks.
 use super::reference::Passage;
 
-pub(super) fn assign(peaks: &[f64], reference: &[Passage], offset: f64) -> Vec<(usize, usize)> {
+pub(super) fn assign(
+    peaks: &[f64],
+    reference: &[Passage],
+    offset: f64,
+    sigma: f64,
+) -> Vec<(usize, usize)> {
     let mut rows = vec![];
     let mut columns = vec![];
     let mut independent = vec![];
     for (i, peak) in peaks.iter().enumerate() {
-        let a = reference.partition_point(|r| r.time < offset + peak - 3.);
-        let b = reference.partition_point(|r| r.time <= offset + peak + 3.);
+        let a = reference.partition_point(|r| r.time < offset + peak - 3. * sigma);
+        let b = reference.partition_point(|r| r.time <= offset + peak + 3. * sigma);
         if a == b {
             continue;
         }
@@ -37,8 +42,8 @@ pub(super) fn assign(peaks: &[f64], reference: &[Passage], offset: f64) -> Vec<(
                 .iter()
                 .map(|&j| {
                     let delta = reference[j].time - peaks[i] - offset;
-                    if delta.abs() <= 3. {
-                        -(-0.5 * delta * delta).exp()
+                    if delta.abs() <= 3. * sigma {
+                        -(-0.5 * (delta / sigma).powi(2)).exp()
                     } else {
                         0.
                     }
@@ -132,8 +137,8 @@ mod tests {
                 track: 1,
             },
         ];
-        assert_eq!(assign(&[0., 0.5], &refs, 0.), vec![(0, 1), (1, 0)]);
-        assert_eq!(assign(&[0., 0.5, 20.], &refs, 0.), vec![(0, 1), (1, 0)]);
+        assert_eq!(assign(&[0., 0.5], &refs, 0., 1.), vec![(0, 1), (1, 0)]);
+        assert_eq!(assign(&[0., 0.5, 20.], &refs, 0., 1.), vec![(0, 1), (1, 0)]);
     }
     #[test]
     fn assignment_matches_exhaustive_independent_oracle() {

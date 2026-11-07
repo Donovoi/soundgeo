@@ -442,7 +442,7 @@ pub(crate) fn analyze_sources(
         }
         .into();
         report.warnings.push(assessment.explanation.clone());
-        report.warnings.push("Passage timing uses nearby aircraft, a fixed media clock rate and a one-second timing width. Speech, missing flights, changing sound power and nonstationary noise can invalidate this model. Shuffled controls and the candidate spread are not a calibrated accuracy radius.".into());
+        report.warnings.push(format!("Passage timing uses nearby aircraft, a fixed media clock rate and a timing width of {} seconds. Speech, missing flights, changing sound power and nonstationary noise can invalidate this model. See the limitations document for result interpretation.", job.timing_options.timing_sigma_s));
         report.timing = Some(assessment);
         progress("Analysis complete", 1.);
         return Ok(report);
