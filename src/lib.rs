@@ -1,6 +1,7 @@
 pub mod aircraft;
 pub mod archive;
 pub mod audio;
+pub mod availability;
 pub mod data;
 mod date_search;
 pub mod demo;
@@ -114,10 +115,13 @@ impl Job {
             bail!("Choose an existing video or audio file.");
         }
         if let Some(request) = &self.archive {
-            let dates = request.dates()?;
+            request.validate()?;
             if request.provider == archive::ArchiveProvider::AdsbExchangeSample {
-                for date in dates {
-                    sample_archive::validate(&date, self.bounds)?;
+                sample_archive::validate_bounds(self.bounds)?;
+                if !request.date_from.trim().is_empty() {
+                    for date in request.dates()? {
+                        sample_archive::validate(&date, self.bounds)?;
+                    }
                 }
             }
         } else if !self.tracks.exists() {
@@ -318,9 +322,12 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         report.warnings.push("Only one flyover and no known clock: time and location can be ambiguous, especially on straight flight paths.".into());
     }
     if let Some(request) = &job.archive {
-        let dates = request.dates()?;
-        if dates.len() > 1 {
-            return date_search::run(job, report, timing_peaks, &dates, control, progress);
+        let (dates, discovery) = request.resolve_dates(control, &|m, _| progress(m, 0.33))?;
+        if dates.len() > 1 || discovery.is_some() {
+            let mut result =
+                date_search::run(job, report, timing_peaks, &dates, control, progress)?;
+            result.date_search.as_mut().unwrap().provider_discovery = discovery;
+            return Ok(result);
         }
     }
     let sources = if let Some(request) = &job.archive {
@@ -521,6 +528,9 @@ pub fn prepare_data(job: &Job, control: &Control, progress: &Progress<'_>) -> Re
         .archive
         .as_ref()
         .context("Select a flight provider and cache folder")?;
+    if request.provider == archive::ArchiveProvider::AdsbExchangeSample {
+        sample_archive::validate_bounds(job.bounds)?;
+    }
     let flight_sources =
         request.ensure_for_bounds(job.bounds, control, &|m, p| progress(m, p * 0.9))?;
     let terrain_sources = if let Some((bounds, folder)) = terrain {

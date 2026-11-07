@@ -71,9 +71,17 @@ plans, failed tests, older wrong Doppler results, source records, and build chec
   Optional video text can read shorter clips.
 - Passage timing needs at least eight minutes of continuous audio and six
   sound peaks. It requires a search area.
-- Automatic downloads use a selected date range. Cached analysis can search all
-  dates available for the selected provider. Missing dates outside that cache
-  remain unsearched. A report records the dates covered by a batched search.
+- With blank dates, online analysis discovers the provider's published days and
+  includes older prepared days. Offline analysis uses prepared days only.
+  A report records the dates searched and the provider index used.
+- Date discovery reads provider metadata. Each flight archive still needs a
+  complete download and integrity check. Airport indexes use the advertised
+  replay period and exclude partial UTC days. Source gaps can stop a download.
+- Saved date indexes are reused for up to six hours online. The `dates --offline`
+  command reads a saved index; flight files must be downloaded separately.
+- A worldwide search across all available dates can need several TB of storage
+  and a long processing time. Downloads can be cancelled and resumed. Use the
+  `dates` command to inspect coverage before preparing a large cache.
 - Wider ranges increase download size and total processing time. Analysis loads
   overlapping daily batches and compares their results. Free sources can have
   gaps or shorter retention periods. A missing required archive stops the run.

@@ -32,11 +32,18 @@ fn hmac(key: &[u8], bytes: &[u8]) -> Vec<u8> {
     mac.update(bytes);
     mac.finalize().into_bytes().to_vec()
 }
-fn authorization(host: &str, path: &str, stamp: &str, access: &str, secret: &str) -> String {
+fn authorization(
+    host: &str,
+    path: &str,
+    query: &str,
+    stamp: &str,
+    access: &str,
+    secret: &str,
+) -> String {
     let empty = hash(b"");
     let signed = "host;x-amz-content-sha256;x-amz-date";
     let headers = format!("host:{host}\nx-amz-content-sha256:{empty}\nx-amz-date:{stamp}\n");
-    let canonical = format!("GET\n{path}\n\n{headers}\n{signed}\n{empty}");
+    let canonical = format!("GET\n{path}\n{query}\n{headers}\n{signed}\n{empty}");
     let day = &stamp[..8];
     let scope = format!("{day}/auto/s3/aws4_request");
     let string = format!(
@@ -61,9 +68,12 @@ pub fn validate(date: &str, bounds: Option<Bounds>) -> Result<Bounds> {
         "The free ADS-B Exchange sample covers only the first day of each month; choose a first-of-month date or another free source"
     );
     ensure!(
-        day >= NaiveDate::from_ymd_opt(2023, 1, 1).unwrap() && day < Utc::now().date_naive(),
-        "Choose a sample date from 2023 through yesterday UTC"
+        day >= NaiveDate::from_ymd_opt(2016, 1, 1).unwrap() && day < Utc::now().date_naive(),
+        "Choose a sample date from 2016 through yesterday UTC"
     );
+    validate_bounds(bounds)
+}
+pub(crate) fn validate_bounds(bounds: Option<Bounds>) -> Result<Bounds> {
     let bounds = bounds.context("The free sample download needs search-area bounds")?;
     bounds.validate()?;
     Ok(bounds)
@@ -131,12 +141,12 @@ fn trace(value: &Value, expected: f64, id: &str) -> Result<()> {
     Ok(())
 }
 
-struct Client {
+pub(crate) struct Client {
     http: reqwest::Client,
     endpoint: String,
 }
 impl Client {
-    fn new() -> Result<Self> {
+    pub(crate) fn new() -> Result<Self> {
         Ok(Self {
             http: reqwest::Client::builder()
                 .connect_timeout(Duration::from_secs(15))
@@ -148,6 +158,37 @@ impl Client {
         })
     }
     async fn get(&self, key: &str, control: &Control) -> Result<Option<Vec<u8>>> {
+        self.get_query(key, "", control).await
+    }
+    pub(crate) async fn listing(
+        &self,
+        prefix: &str,
+        continuation: Option<&str>,
+        control: &Control,
+    ) -> Result<(String, Vec<u8>)> {
+        let mut fields = vec![
+            ("delimiter", "/"),
+            ("list-type", "2"),
+            ("max-keys", "1000"),
+            ("prefix", prefix),
+        ];
+        if let Some(token) = continuation {
+            fields.push(("continuation-token", token));
+        }
+        let query = crate::availability::query(&fields);
+        let url = format!("{}/{BUCKET}/?{query}", self.endpoint);
+        let bytes = self
+            .get_query("", &query, control)
+            .await?
+            .context("The free sample date index is unavailable")?;
+        Ok((url, bytes))
+    }
+    async fn get_query(
+        &self,
+        key: &str,
+        query: &str,
+        control: &Control,
+    ) -> Result<Option<Vec<u8>>> {
         control.require_network(key)?;
         let path = format!("/{BUCKET}/{key}");
         // Keys contain only validated dates, fixed names, hex digits and '~'.
@@ -165,14 +206,19 @@ impl Client {
         for attempt in 0..3 {
             control.check()?;
             let stamp = Utc::now().format("%Y%m%dT%H%M%SZ").to_string();
+            let suffix = if query.is_empty() {
+                String::new()
+            } else {
+                format!("?{query}")
+            };
             let request = self
                 .http
-                .get(format!("{}{path}", self.endpoint))
+                .get(format!("{}{path}{suffix}", self.endpoint))
                 .header("x-amz-content-sha256", hash(b""))
                 .header("x-amz-date", &stamp)
                 .header(
                     "authorization",
-                    authorization(host, &path, &stamp, ACCESS, SECRET),
+                    authorization(host, &path, query, &stamp, ACCESS, SECRET),
                 );
             let result = async {
                 let mut response = cancelable(request.send(), control).await??;
@@ -701,6 +747,7 @@ mod tests {
         let actual = authorization(
             "example.com",
             "/adsbx-sample-data/traces/2024/03/01/23/trace_full_~abc123.json",
+            "",
             "20240302T123456Z",
             "TESTACCESS",
             "test-secret",

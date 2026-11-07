@@ -537,11 +537,15 @@ pub fn download_day(
         .as_array()
         .context("Archive has no assets")?
         .iter()
-        .filter(|v| v["name"].as_str().is_some_and(|n| n.contains(".tar.")))
+        .filter(|v| {
+            v["name"]
+                .as_str()
+                .is_some_and(|n| n.ends_with(".tar") || n.contains(".tar."))
+        })
         .collect();
     assets.sort_by_key(|v| v["name"].as_str().unwrap_or(""));
     if assets.is_empty() {
-        bail!("No split archive files in this release.");
+        bail!("No archive files in this release.");
     }
     let total: u64 = assets.iter().map(|v| v["size"].as_u64().unwrap_or(0)).sum();
     std::fs::create_dir_all(&dir)?;
