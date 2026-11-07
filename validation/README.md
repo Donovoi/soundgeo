@@ -8,6 +8,17 @@ New results must state which target they use.
 
 ## Current checks
 
+[Automatic date discovery](automatic-date-discovery.json) found 1,327 ADSB.lol
+days, 125 first-of-month sample days, and 89 complete days for each airport
+provider on November 7, 2026. Each saved index replayed offline with identical
+output and no connection to the test proxy. These checks downloaded date
+metadata. Flight files are checked when they are prepared.
+
+The same build repeated three real audio searches offline. Maho passed at
+549.65 m and Midway at 254.85 m. Lake Hood remained ambiguous. All report fields
+except creation time matched the previous build. A full 89-day Chicago download
+is in progress for a wider offline Midway test.
+
 The [unknown-date audio run](unknown-date-results.json) tested 27 recordings
 offline with no recording date or time supplied. Each case kept its broad search
 region and used all dates in its prepared provider cache. Eight recordings
