@@ -12,6 +12,8 @@ pub mod sample_archive;
 pub mod search;
 pub mod terrain_archive;
 pub mod timing;
+pub mod visual;
+pub mod visual_data;
 pub mod webtrak;
 
 use anyhow::{Context, Result, bail};

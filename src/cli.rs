@@ -22,6 +22,44 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Commands {
+    /// Prepare free GeoNames place data for optional offline video clues.
+    VideoData {
+        /// ALL, or a two-letter country code such as US.
+        #[arg(long, default_value = "ALL")]
+        country: String,
+        #[arg(long, default_value = "video-data")]
+        output: PathBuf,
+    },
+    /// Read visible place names and clocks locally. Produces a separate clue report.
+    VideoClues {
+        #[arg(long)]
+        input: PathBuf,
+        /// GeoNames country or worldwide .txt file.
+        #[arg(long)]
+        gazetteer: PathBuf,
+        #[arg(long)]
+        ffmpeg: Option<PathBuf>,
+        #[arg(long)]
+        tesseract: Option<PathBuf>,
+        #[arg(long)]
+        tessdata: Option<PathBuf>,
+        #[arg(long, default_value = "3", value_parser = clap::value_parser!(u8).range(1..=12))]
+        frames: u8,
+        #[arg(long, allow_hyphen_values = true, requires_all = ["north", "west", "east"])]
+        south: Option<f64>,
+        #[arg(long, allow_hyphen_values = true, requires = "south")]
+        north: Option<f64>,
+        #[arg(long, allow_hyphen_values = true, requires = "south")]
+        west: Option<f64>,
+        #[arg(long, allow_hyphen_values = true, requires = "south")]
+        east: Option<f64>,
+        /// Report file, or - for JSON on stdout.
+        #[arg(long)]
+        output: PathBuf,
+        /// Return exit code 3 when no place names match.
+        #[arg(long)]
+        require_match: bool,
+    },
     /// Download the small ICAO aircraft type catalog for propeller filtering.
     Catalog {
         #[arg(long, default_value = "aircraft-types.json")]
@@ -138,6 +176,52 @@ fn run(args: Args) -> Result<u8> {
         }
     };
     match args.command {
+        Some(Commands::VideoData { country, output }) => {
+            let path = soundgeo::visual_data::prepare(&country, &output, &control, &progress)?;
+            if !args.quiet {
+                println!("Place data: {}", path.display());
+            }
+        }
+        Some(Commands::VideoClues {
+            input,
+            gazetteer,
+            ffmpeg,
+            tesseract,
+            tessdata,
+            frames,
+            south,
+            north,
+            west,
+            east,
+            output,
+            require_match,
+        }) => {
+            let options = soundgeo::visual::Options {
+                media: input,
+                gazetteer,
+                ffmpeg,
+                tesseract,
+                tessdata,
+                frames: frames as usize,
+                bounds: south.map(|south| soundgeo::geo::Bounds {
+                    south,
+                    north: north.unwrap(),
+                    west: west.unwrap(),
+                    east: east.unwrap(),
+                }),
+            };
+            let report = soundgeo::visual::analyze(&options, &control, &progress)?;
+            soundgeo::visual::write_report(
+                &report,
+                &output,
+                &[&options.media, &options.gazetteer],
+            )?;
+            return Ok(if require_match && report.places.is_empty() {
+                3
+            } else {
+                0
+            });
+        }
         Some(Commands::Terrain {
             south,
             north,

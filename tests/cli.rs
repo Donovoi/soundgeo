@@ -7,6 +7,51 @@ fn cli() -> Command {
 }
 
 #[test]
+fn optional_video_commands_keep_offline_and_argument_guards() {
+    let dir = tempfile::tempdir().unwrap();
+    let result = cli()
+        .args(["video-data", "--country", "US", "--offline", "--output"])
+        .arg(dir.path())
+        .output()
+        .unwrap();
+    assert_eq!(result.status.code(), Some(1));
+    assert!(String::from_utf8_lossy(&result.stderr).contains("Offline mode"));
+    assert_eq!(std::fs::read_dir(dir.path()).unwrap().count(), 0);
+    let result = cli()
+        .args([
+            "video-clues",
+            "--input",
+            "https://example.com/video.mp4",
+            "--gazetteer",
+            "places.txt",
+            "--output",
+            "-",
+            "--offline",
+        ])
+        .output()
+        .unwrap();
+    assert_eq!(result.status.code(), Some(1));
+    assert!(result.stdout.is_empty());
+    assert!(String::from_utf8_lossy(&result.stderr).contains("local video"));
+    let result = cli()
+        .args([
+            "video-clues",
+            "--input",
+            "video.mp4",
+            "--gazetteer",
+            "places.txt",
+            "--output",
+            "-",
+            "--south",
+            "50",
+        ])
+        .output()
+        .unwrap();
+    assert_eq!(result.status.code(), Some(2));
+    assert!(String::from_utf8_lossy(&result.stderr).contains("--north"));
+}
+
+#[test]
 fn headless_cli_generates_demo_and_streams_a_complete_report() {
     let dir = tempfile::tempdir().unwrap();
     let demo = dir.path().join("demo with spaces");

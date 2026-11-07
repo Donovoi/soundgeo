@@ -43,7 +43,7 @@ prepared set of cases. The runner records the executable, manifest, and runner
 hashes. It checks that date-free reports contain no supplied archive date or
 day-specific import and that offline reports used offline mode. References
 enter only the evaluator after the app exits.
-The six fast Python tests in CI check the runner's safeguards. They do not run
+The nine fast Python tests in CI check the runner's safeguards. They do not run
 the real media benchmark or establish location accuracy.
 
 The completed fixed-build benchmark has nine reports and one search-limit error.
