@@ -48,6 +48,21 @@ fn stem(country: &str) -> Result<String> {
     Ok(country)
 }
 
+fn archive_size(response: &reqwest::Response) -> Result<u64> {
+    // A HEAD response has an empty body. Its body size hint can be zero even
+    // when Content-Length correctly describes the requested archive.
+    let size = response
+        .headers()
+        .get(reqwest::header::CONTENT_LENGTH)
+        .context("GeoNames did not provide its archive size")?
+        .to_str()?
+        .parse()?;
+    if size == 0 || size > 4 * 1024 * 1024 * 1024 {
+        bail!("Unexpected GeoNames archive size");
+    }
+    Ok(size)
+}
+
 fn extract(archive: &Path, entry_name: &str, output: &Path, control: &Control) -> Result<()> {
     let mut zip = zip::ZipArchive::new(File::open(archive)?)?;
     let mut entry = zip
@@ -110,13 +125,8 @@ pub fn prepare(
         let response = crate::network::cancelable(client.head(&url).send(), control)
             .await??
             .error_for_status()?;
-        response
-            .content_length()
-            .context("GeoNames did not provide its archive size")
+        archive_size(&response)
     })?;
-    if size == 0 || size > 4 * 1024 * 1024 * 1024 {
-        bail!("Unexpected GeoNames archive size");
-    }
     crate::network::fetch_file(&url, &archive, size, None, control, progress)?;
     progress("Extracting GeoNames place data", 0.95);
     extract(&archive, &format!("{stem}.txt"), &text, control)?;
@@ -137,6 +147,40 @@ pub fn prepare(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn head_uses_archive_header_despite_empty_response_body() {
+        let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        let address = listener.local_addr().unwrap();
+        let server = std::thread::spawn(move || {
+            let (mut stream, _) = listener.accept().unwrap();
+            stream
+                .set_read_timeout(Some(Duration::from_secs(5)))
+                .unwrap();
+            let mut request = [0; 1024];
+            let n = stream.read(&mut request).unwrap();
+            assert!(request[..n].starts_with(b"HEAD /"));
+            stream
+                .write_all(
+                    b"HTTP/1.1 200 OK\r\nContent-Length: 422529142\r\nConnection: close\r\n\r\n",
+                )
+                .unwrap();
+        });
+        tokio::runtime::Runtime::new().unwrap().block_on(async {
+            let client = reqwest::Client::builder()
+                .no_proxy()
+                .timeout(Duration::from_secs(5))
+                .build()
+                .unwrap();
+            let response = client
+                .head(format!("http://{address}/archive.zip"))
+                .send()
+                .await
+                .unwrap();
+            assert_eq!(response.content_length(), Some(0));
+            assert_eq!(archive_size(&response).unwrap(), 422529142);
+        });
+        server.join().unwrap();
+    }
     #[test]
     fn country_and_offline_integrity() {
         assert_eq!(stem("us").unwrap(), "US");
