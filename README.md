@@ -58,8 +58,8 @@ Select **Worldwide: ADSB.lol** for the worldwide archive.
 For a first-of-month recording, you can also select **Free evaluation sample:
 first of each month**. Set a search area. This source is limited to testing and
 evaluation. It downloads the full day's traces for aircraft found in 288
-worldwide snapshots, spaced five minutes apart. The report and cache manifest
-list missing traces.
+worldwide snapshots near five-minute intervals. The report and cache manifest
+list missing traces and any snapshots taken from neighboring minutes.
 For a recording near Chicago, you can select **Chicago: public airport replay**.
 For a recording near Los Angeles, select **LAX: public airport replay**.
 The Chicago source contains local airport radar data. It keeps about 90 days of history.
