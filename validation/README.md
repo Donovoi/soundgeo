@@ -34,6 +34,28 @@ proxy received no connections. Code revision `d2366f4` passed all 139 Rust
 tests, nine Python tests, formatting, strict Clippy, doc tests, and both release
 builds. The record keeps the two failed attempts.
 
+[Further archive checks](sample-archive-compatibility.json) recovered a missing
+September 2016 snapshot from the preceding minute. The cache keeps the actual
+filename and records the replacement. Two legacy flight traces used `hex`
+identities and a time base at their first observation. Their downloaded bytes
+matched independent source copies. Their timestamps stayed unchanged.
+
+The full day passed offline verification. Maho then passed at 549.65 m across
+six prepared dates, with no recording date or clock supplied. The latest local
+build, `275b0f2`, passed 142 Rust tests, nine Python tests, and all required
+release checks. An offline regression also checks the dates inside older cache
+files whose stored checksums match.
+
+Revision `0dccdd9` passed [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42361118775)
+with 139 Rust tests on each platform. Its downloaded Windows executable repeated
+the earlier four-date Maho result. All report fields except creation time
+matched the local build.
+
+The wider preparation runs cover 89 Chicago days and 125 free sample dates.
+The first newly downloaded Chicago day contains 634,783 positions across all
+2,880 intervals. It passed offline verification with unchanged files and no
+proxy connections. The full-window location tests remain pending.
+
 The [unknown-date audio run](unknown-date-results.json) tested 27 recordings
 offline with no recording date or time supplied. Each case kept its broad search
 region and used all dates in its prepared provider cache. Eight recordings
