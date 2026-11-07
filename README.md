@@ -100,6 +100,37 @@ In the desktop app, use **Prepare data for offline use** with the selected fligh
 provider, date range, and terrain settings. Then select **Offline mode: use cached
 data only**. Leave the dates blank to search the prepared cache.
 
+## Optional video clues
+
+SoundGeo can read visible place names and clocks from a video. This option uses
+local text recognition. It produces a separate JSON report with the text, frame
+times, and matching places on a map. Audio searches keep their own results.
+
+Install [Tesseract 5](https://tesseract-ocr.github.io/tessdoc/Installation.html)
+with its English language data. Keep FFmpeg and FFprobe together. Prepare free
+[GeoNames](https://www.geonames.org/) place data before going offline:
+
+```powershell
+soundgeo-cli.exe video-data --country ALL --output video-data
+```
+
+Use a two-letter country code such as `US` to prepare one country. GeoNames data
+uses the [CC BY 4.0 license](https://creativecommons.org/licenses/by/4.0/).
+Copy the `.txt` and `.source.json` files, Tesseract, its `tessdata` folder,
+FFmpeg, and FFprobe to the offline computer.
+
+```powershell
+soundgeo-cli.exe video-clues --input recording.mp4 --gazetteer video-data/allCountries.txt --offline --output video-clues.json
+```
+
+Use `--tesseract`, `--tessdata`, and `--ffmpeg` to set tool paths if needed.
+Use `--frames 6` to read more frames. Use `--output -` for JSON on standard output.
+The `--require-match` option returns exit code 3 if no place names match.
+Read all entries in `places` and the source text in `frames`.
+
+In the desktop app, open **Video clues (optional)** below the recording field.
+Prepare or select the place data, select Tesseract, then choose **Read video clues**.
+
 ## Use the command line
 
 Use `soundgeo-cli.exe` for scripts and scheduled tasks.

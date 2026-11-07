@@ -16,6 +16,8 @@ enum Message {
     Downloaded(PathBuf),
     Catalog(PathBuf),
     Prepared(usize),
+    VideoClues(Box<soundgeo::visual::Report>),
+    VideoData(PathBuf),
     Error(String),
 }
 pub struct App {
@@ -32,6 +34,9 @@ pub struct App {
     status: String,
     error: Option<String>,
     date: String,
+    visual_options: soundgeo::visual::Options,
+    visual_report: Option<soundgeo::visual::Report>,
+    visual_country: String,
 }
 impl App {
     pub fn new(cc: &eframe::CreationContext<'_>, report: Option<Report>) -> Self {
@@ -78,6 +83,9 @@ impl App {
             status: "Ready when you are".into(),
             error: None,
             date: String::new(),
+            visual_options: soundgeo::visual::Options::default(),
+            visual_report: None,
+            visual_country: "ALL".into(),
         }
     }
     fn busy(&self) -> bool {
@@ -158,6 +166,18 @@ impl App {
             .unwrap_or_default();
         for message in messages {
             match message {
+                Message::VideoClues(report) => {
+                    self.visual_report = Some(*report);
+                    self.status = "Video clues ready".into();
+                    self.progress = 1.;
+                    self.receiver = None;
+                }
+                Message::VideoData(path) => {
+                    self.visual_options.gazetteer = path;
+                    self.status = "Place data ready for offline use".into();
+                    self.progress = 1.;
+                    self.receiver = None;
+                }
                 Message::Progress(m, p) => {
                     self.status = m;
                     self.progress = p;
@@ -224,6 +244,7 @@ impl App {
         ui.add_enabled_ui(!self.busy(),|ui|{
             ui.label(RichText::new("1  Video or audio").strong());
             file_field(ui,&mut self.job.media,"Choose recording…",&["mp4","mov","mkv","webm","avi","wav","mp3","flac","m4a"]);
+            self.video_controls(ui, ctx);
             ui.label(RichText::new("You can also drop a file into this window.").small().color(MUTED));
             ui.add_space(6.);ui.label(RichText::new("2  Historical flight data").strong());
             ui.checkbox(&mut self.job.offline, "Offline mode: use cached data only");
@@ -440,7 +461,80 @@ impl App {
         ui.label(RichText::new("Strict mode assumes closer known propellers would be audible. It can reject the true location.").small().color(MUTED));
         ui.separator();
     }
+    fn video_controls(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        egui::CollapsingHeader::new("Video clues (optional)").show(ui, |ui| {
+            ui.label("Read visible place names and clocks. This runs locally and creates a separate report.");
+            file_field(ui, &mut self.visual_options.gazetteer, "Choose GeoNames .txt…", &["txt"]);
+            ui.horizontal(|ui| {
+                ui.label("Country code, or ALL");
+                ui.text_edit_singleline(&mut self.visual_country);
+            });
+            if ui.add_enabled(!self.job.offline, egui::Button::new("Prepare place data…")).clicked()
+                && let Some(folder) = rfd::FileDialog::new().pick_folder() {
+                let country = self.visual_country.clone();
+                self.worker(ctx, move |tx, control| {
+                    let result = soundgeo::visual_data::prepare(&country, &folder, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
+                    let _ = tx.send(match result { Ok(path) => Message::VideoData(path), Err(e) => Message::Error(format!("{e:#}")) });
+                });
+            }
+            let path = self.visual_options.tesseract.get_or_insert_with(|| "tesseract".into());
+            file_field(ui, path, "Choose Tesseract…", &["exe"]);
+            if ui.small_button("Choose Tesseract language folder…").clicked() {
+                self.visual_options.tessdata = rfd::FileDialog::new().pick_folder();
+            }
+            if let Some(path) = &self.visual_options.tessdata { ui.label(path.display().to_string()); }
+            if ui.button("Read video clues").clicked() {
+                let mut options = self.visual_options.clone();
+                options.media = self.job.media.clone();
+                options.ffmpeg = self.job.ffmpeg.clone();
+                options.bounds = self.use_bounds.then_some(self.bounds);
+                self.visual_report = None;
+                self.worker(ctx, move |tx, control| {
+                    let result = soundgeo::visual::analyze(&options, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
+                    let _ = tx.send(match result { Ok(report) => Message::VideoClues(Box::new(report)), Err(e) => Message::Error(format!("{e:#}")) });
+                });
+            }
+        });
+    }
     fn results(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        if let Some(report) = &self.visual_report {
+            ui.heading("Video text clues");
+            if report.places.is_empty() {
+                ui.label("No place names matched the prepared data.");
+            }
+            for place in report.places.iter().take(25) {
+                ui.horizontal(|ui| {
+                    ui.hyperlink_to(&place.name, &place.source_url);
+                    ui.label(format!(
+                        "{:.6}, {:.6} · {}",
+                        place.latitude, place.longitude, place.country
+                    ));
+                });
+            }
+            ui.label("Coordinates refer to named places. Review the text and map to assess the recording location.");
+            egui::CollapsingHeader::new("Visible text").show(ui, |ui| {
+                for frame in &report.frames {
+                    ui.label(format!("{:.1}s · {}", frame.offset_s, frame.view));
+                    ui.label(&frame.text);
+                }
+            });
+            if ui.button("Save video clue report…").clicked()
+                && let Some(path) = rfd::FileDialog::new()
+                    .set_file_name("video-clues.json")
+                    .save_file()
+                && let Err(error) = soundgeo::visual::write_report(
+                    report,
+                    &path,
+                    &[&self.job.media, &self.visual_options.gazetteer],
+                )
+            {
+                self.error = Some(error.to_string());
+            }
+            ui.separator();
+            if self.report.is_none() {
+                return;
+            }
+        }
         let Some(report) = &self.report else {
             ui.add_space(65.);
             ui.label(

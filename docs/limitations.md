@@ -3,6 +3,24 @@
 SoundGeo is in development. Reliable location recovery from varied internet
 samples remains unfinished. The current location target is within 1 km.
 
+## Video text clues
+
+Video text reading is optional. It needs Tesseract 5, English language data,
+FFmpeg, FFprobe, and a local GeoNames file. It samples frames across the video
+and reads the full image and the top and bottom edges. Text that appears briefly
+can fall between the sampled frames. Small, blurred, or compressed text can fail.
+
+Place matching uses complete names or aliases with two to twelve words.
+Single-word names are currently excluded. All matching places remain in the
+report. The order favors longer names and more matching text samples.
+Different places can share a name. Signs, captions, and watermarks can describe
+places away from the camera. GeoNames coordinates identify a named feature;
+they do not establish the camera position or a location error radius.
+
+Visible dates and times remain text clues. SoundGeo does not infer a timezone
+or pass them into an audio search. Video clues have separate reports and
+validation results. The audio-only benchmark does not use OCR.
+
 ## Real-video results
 
 Revision `80d33f2` replayed 25 recordings with flight passage timing.
