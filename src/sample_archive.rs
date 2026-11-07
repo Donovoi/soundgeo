@@ -522,6 +522,8 @@ async fn download(
     let shared = cache.join(format!("adsbx-sample-{date}-snapshots"));
     let traces = root.join("traces");
     let manifest_path = root.join("sample-manifest.json");
+    let day = NaiveDate::parse_from_str(date, "%Y-%m-%d")?;
+    let start = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() as f64;
     let names: Vec<_> = (0..288).map(|i| snapshot_name(i * 5)).collect();
     if let Ok(bytes) = std::fs::read(&manifest_path)
         && let Ok(manifest) = serde_json::from_slice::<Manifest>(&bytes)
@@ -538,16 +540,19 @@ async fn download(
                 .file
                 .strip_prefix("trace_full_")
                 .and_then(|n| n.strip_suffix(".json.gz"));
-            id.is_some_and(|id| ident(id).as_deref() == Some(id))
-                && valid_object(&traces.join(&o.file), o, control)
+            id.is_some_and(|id| {
+                ident(id).as_deref() == Some(id)
+                    && valid_object(&traces.join(&o.file), o, control)
+                    && std::fs::read(traces.join(&o.file)).is_ok_and(|bytes| {
+                        parse(&bytes).is_ok_and(|value| trace(&value, start, id).is_ok())
+                    })
+            })
         })
     {
         control.check()?;
         progress("Using verified full-day free sample cache", 1.);
         return Ok(traces);
     }
-    let day = NaiveDate::parse_from_str(date, "%Y-%m-%d")?;
-    let start = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() as f64;
     let prefix = date.replace('-', "/");
     let mut manifest = Manifest {
         schema: 2,
@@ -1016,6 +1021,50 @@ mod tests {
         ] {
             assert!(trace(&value, start(), "abcdef").is_err());
         }
+    }
+
+    #[test]
+    fn offline_cache_rechecks_trace_dates_even_when_recorded_hashes_match() {
+        let dir = tempfile::tempdir().unwrap();
+        let server = Server::new(fixture);
+        let client = server.client();
+        let path = run(&client, dir.path()).unwrap();
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let mut manifest: Manifest =
+            serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
+        // Earlier validators checked the base date but not observation offsets.
+        let record = &mut manifest.traces[0];
+        let trace_path = path.join(&record.file);
+        let mut value = parse(&std::fs::read(&trace_path).unwrap()).unwrap();
+        value["trace"][0][0] = json!(86400.);
+        let bytes = compressed(value);
+        record.bytes = bytes.len();
+        record.sha256 = hash(&bytes);
+        std::fs::write(&trace_path, &bytes).unwrap();
+        std::fs::write(
+            path.join(format!("receipt-{}.json", record.file)),
+            serde_json::to_vec(&record).unwrap(),
+        )
+        .unwrap();
+        assert!(valid_object(&trace_path, record, &Control::default()));
+        std::fs::write(&manifest_path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+        let calls = server.calls.load(Ordering::Relaxed);
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let error = runtime
+            .block_on(download(
+                &client,
+                DAY,
+                dir.path(),
+                bounds(),
+                &Control::default().with_offline(true),
+                &|_, _| {},
+            ))
+            .unwrap_err();
+        assert!(format!("{error:#}").contains("Offline mode"));
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
     }
 
     #[test]
