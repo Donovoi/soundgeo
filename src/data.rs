@@ -16,6 +16,9 @@ use std::{
     time::Duration,
 };
 
+#[path = "data_cache.rs"]
+mod cache;
+
 #[derive(Debug)]
 pub struct Dataset {
     pub tracks: Vec<Track>,
@@ -114,7 +117,21 @@ pub fn load_for_job_sources(
             )
         }),
     };
-    let mut dataset = load_filtered(sources, control, &filter)?;
+    let prepared_cache = cache::PreparedCache::for_job(job, sources, &filter, control)?;
+    let mut dataset = match prepared_cache
+        .as_ref()
+        .and_then(|cache| cache.load().ok().flatten())
+    {
+        Some(dataset) => dataset,
+        None => {
+            let dataset = load_filtered(sources, control, &filter)?;
+            if let Some(cache) = &prepared_cache {
+                // This optional cache must not prevent use of read-only archives.
+                let _ = cache.save(&dataset, control);
+            }
+            dataset
+        }
+    };
     if job.smooth_tracks {
         for track in &mut dataset.tracks {
             control.check()?;
@@ -124,12 +141,7 @@ pub fn load_for_job_sources(
     }
     Ok(dataset)
 }
-fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Result<Dataset> {
-    let mut raw: BTreeMap<String, Vec<Sample>> = BTreeMap::new();
-    let mut kinds = BTreeMap::new();
-    let mut skipped = 0usize;
-    let mut barometric = 0usize;
-    let mut total = 0usize;
+fn source_paths(sources: &[PathBuf]) -> Vec<PathBuf> {
     let mut paths: Vec<PathBuf> = sources
         .iter()
         .flat_map(|path| {
@@ -155,6 +167,15 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
         .collect();
     paths.sort();
     paths.dedup();
+    paths
+}
+fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Result<Dataset> {
+    let mut raw: BTreeMap<String, Vec<Sample>> = BTreeMap::new();
+    let mut kinds = BTreeMap::new();
+    let mut skipped = 0usize;
+    let mut barometric = 0usize;
+    let mut total = 0usize;
+    let paths = source_paths(sources);
     if paths.is_empty() {
         bail!("No CSV or readsb trace files found in this folder.");
     }
