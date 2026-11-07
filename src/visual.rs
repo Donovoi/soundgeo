@@ -26,6 +26,7 @@ pub struct Options {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct FrameText {
+    /// Seconds from the first video presentation timestamp.
     pub offset_s: f64,
     pub view: String,
     pub text: String,
@@ -76,7 +77,7 @@ pub(crate) fn hash_file(path: &Path, control: &Control) -> Result<String> {
     Ok(format!("{:x}", hash.finalize()))
 }
 
-fn run(command: &mut Command, dir: &Path, control: &Control) -> Result<String> {
+fn run_file(command: &mut Command, dir: &Path, control: &Control) -> Result<PathBuf> {
     let out = dir.join("stdout.txt");
     let err = dir.join("stderr.txt");
     let mut child = command
@@ -112,7 +113,43 @@ fn run(command: &mut Command, dir: &Path, control: &Control) -> Result<String> {
     if !status.success() {
         bail!("Video clue tool failed: {}", bounded(&err)?);
     }
-    bounded(&out)
+    Ok(out)
+}
+
+fn run(command: &mut Command, dir: &Path, control: &Control) -> Result<String> {
+    let out = run_file(command, dir, control)?;
+    let mut text = String::new();
+    File::open(out)?
+        .take(256 * 1024)
+        .read_to_string(&mut text)?;
+    Ok(text)
+}
+
+fn video_span(reader: impl BufRead, control: &Control) -> Result<(f64, f64, usize)> {
+    let (mut start, mut end, mut packets) = (f64::INFINITY, f64::NEG_INFINITY, 0);
+    for line in reader.lines() {
+        control.check()?;
+        let line = line?;
+        let number = |key: &str| {
+            line.split('|').find_map(|value| {
+                value
+                    .strip_prefix(key)?
+                    .parse::<f64>()
+                    .ok()
+                    .filter(|n| n.is_finite())
+            })
+        };
+        if let Some(pts) = number("pts_time=") {
+            let duration = number("duration_time=").unwrap_or(0.).max(0.);
+            start = start.min(pts);
+            end = end.max(pts + duration);
+            packets += 1;
+        }
+    }
+    if packets == 0 || !(end - start).is_finite() {
+        bail!("The file has no usable video packet timestamps");
+    }
+    Ok((start, end - start, packets))
 }
 
 fn normalize(text: &str) -> String {
@@ -285,31 +322,28 @@ pub fn analyze(options: &Options, control: &Control, progress: &Progress<'_>) ->
         "ffprobe"
     });
     let media = options.media.canonicalize()?;
-    let metadata = run(
+    // Fragmented live-stream clips can report an absolute end timestamp as
+    // their duration. Read the actual video packet span, including reordered PTS.
+    let packet_file = run_file(
         audio::quiet_command(&ffprobe)
             .args([
                 "-v",
                 "error",
                 "-protocol_whitelist",
                 "file,pipe",
+                "-select_streams",
+                "v:0",
                 "-show_entries",
-                "format=duration",
+                "packet=pts_time,duration_time",
                 "-of",
-                "json",
+                "compact=p=0:nk=0",
             ])
             .arg(&media),
         dir.path(),
         control,
     )?;
-    let metadata: serde_json::Value =
-        serde_json::from_str(&metadata).context("Read video duration")?;
-    let duration: f64 = metadata["format"]["duration"]
-        .as_str()
-        .context("The video has no duration")?
-        .parse()?;
-    if !duration.is_finite() || duration <= 0. {
-        bail!("The video duration must be positive");
-    }
+    let (start, duration, packets) = video_span(BufReader::new(File::open(packet_file)?), control)?;
+    let count = count.min(packets);
     let tesseract = options
         .tesseract
         .clone()
@@ -350,8 +384,10 @@ pub fn analyze(options: &Options, control: &Control, progress: &Progress<'_>) ->
                         "-y",
                         "-protocol_whitelist",
                         "file,pipe",
+                        "-seek_timestamp",
+                        "1",
                         "-ss",
-                        &offset.to_string(),
+                        &(start + offset).to_string(),
                         "-i",
                     ])
                     .arg(&media)
@@ -419,6 +455,19 @@ pub fn write_report(report: &Report, output: &Path, inputs: &[&Path]) -> Result<
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn frame_span_uses_packet_timestamps_instead_of_container_duration() {
+        let packets = b"pts_time=20516298.766667|duration_time=0.033333\npts_time=N/A\npts_time=20516293.800000|duration_time=0.033333\n";
+        let (start, duration, count) = video_span(&packets[..], &Control::default()).unwrap();
+        assert_eq!(start, 20516293.8);
+        assert!((duration - 5.).abs() < 1e-7);
+        assert_eq!(count, 2);
+        assert_eq!(
+            video_span(&b"pts_time=12|duration_time=N/A\n"[..], &Control::default()).unwrap(),
+            (12., 0., 1)
+        );
+        assert!(video_span(&b"pts_time=N/A\n"[..], &Control::default()).is_err());
+    }
     fn row(id: u64, name: &str, aliases: &str, lat: f64) -> String {
         format!(
             "{id}\t{name}\t{name}\t{aliases}\t{lat}\t-1.0\tS\tAIRP\tGB\t\t\t\t\t\t0\t0\t0\tEurope/London\t2026-01-01\n"
