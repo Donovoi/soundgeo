@@ -40,6 +40,23 @@ kept the same peaks, scores, controls, regions, and status after the optional
 video path was added. The 27-case run used `dcd73cc`; its executable and report
 hashes remain in the record.
 
+[Compression and duration checks](unknown-date-audio-variants.json) used six
+copies of three existing recordings. Full-length mono Opus audio at 16 kbit/s
+passed for Maho at 549.65 m and Midway at 384.25 m. Compressed Lake Hood remained
+ambiguous. The first 15 minutes of each recording returned either an ambiguous
+result or insufficient evidence. All six runs used offline data with no supplied
+dates or times. No accepted result exceeded 1 km. These copies share their source
+recordings with the original benchmark.
+
+A [playback-speed diagnostic](unknown-date-playback-rates.json) searched five
+fixed rates for Lake Hood, LAX, and Midway. The unchanged rate had the highest
+score in all three cases. The alternative rates did not improve the selected
+Lake Hood or LAX result. These searches had no shuffled-control assessment.
+The app's timing model remains unchanged.
+
+The documentation revision `ce5e828` also passed
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42353809388).
+
 To repeat the 27-case run with retained media and prepared data:
 
 ```powershell
