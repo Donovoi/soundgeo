@@ -343,12 +343,16 @@ fn propose(
         return Ok(proposals);
     }
     let mut histogram = vec![0u32; length];
+    let mut occupied = Vec::new();
     for (i, r) in reference.iter().enumerate() {
         if i.is_multiple_of(128) {
             control.check()?;
         }
         for peak in peaks {
             let index = ((r.time - peak) * 2.).round_ties_even() as i64 - first;
+            if histogram[index as usize] == 0 {
+                occupied.push(index as usize);
+            }
             histogram[index as usize] += 1;
         }
     }
@@ -359,22 +363,28 @@ fn propose(
     let mean: f64 = kernel.iter().sum::<f64>() * 0.5;
     let variance: f64 = kernel.iter().map(|k| k * k).sum::<f64>() * 0.5;
     let mut raw = vec![0.; length];
-    for (i, &count) in histogram
-        .iter()
-        .enumerate()
-        .filter(|(_, count)| **count != 0)
-    {
+    let mut touched = Vec::new();
+    // Preserve addition order while avoiding a full-day scan for each location.
+    occupied.sort_unstable();
+    for i in occupied {
+        let count = histogram[i];
         for (k, weight) in kernel.iter().enumerate() {
             let to = i as isize + k as isize - half_width;
             if to >= 0 && (to as usize) < length {
+                if raw[to as usize] == 0. {
+                    touched.push(to as usize);
+                }
                 raw[to as usize] += count as f64 * weight;
             }
         }
     }
-    let mut standardized = vec![f64::NEG_INFINITY; length];
+    touched.sort_unstable();
+    let mut positions = Vec::new();
+    let mut raw_scores = Vec::new();
+    let mut standardized = Vec::new();
     let (mut a, mut b) = (0, 0);
-    for i in 0..length {
-        if i.is_multiple_of(16384) {
+    for (iteration, i) in touched.into_iter().enumerate() {
+        if iteration.is_multiple_of(16384) {
             control.check()?;
         }
         let offset = (i as i64 + first) as f64 * 0.5;
@@ -385,17 +395,21 @@ fn propose(
             b += 1;
         }
         if b - a < 3 || !allowed(offset, duration, start, end, job) {
-            raw[i] = f64::NEG_INFINITY;
             continue;
         }
         let expected = peaks.len() as f64 * (b - a) as f64 / duration;
-        standardized[i] = (raw[i] - expected * mean) / (expected * variance).max(0.01).sqrt();
+        positions.push(i);
+        raw_scores.push(raw[i]);
+        standardized.push((raw[i] - expected * mean) / (expected * variance).max(0.01).sqrt());
+    }
+    if positions.is_empty() {
+        return Ok(vec![]);
     }
     let mut proposals: Vec<f64> = vec![];
-    for mut criterion in [raw, standardized] {
+    for mut criterion in [raw_scores, standardized] {
         for _ in 0..4 {
             let mut index = 0;
-            for i in 1..length {
+            for i in 1..criterion.len() {
                 if criterion[i] > criterion[index] {
                     index = i;
                 }
@@ -403,7 +417,8 @@ fn propose(
             if !criterion[index].is_finite() {
                 break;
             }
-            let offset = (index as i64 + first) as f64 * 0.5;
+            let position = positions[index];
+            let offset = (position as i64 + first) as f64 * 0.5;
             if proposals
                 .iter()
                 .all(|old| (offset - old).abs() > 7.5 * sigma)
@@ -411,8 +426,9 @@ fn propose(
                 proposals.push(offset);
             }
             let suppression = (30. * sigma).ceil() as usize;
-            criterion[index.saturating_sub(suppression)..(index + suppression + 1).min(length)]
-                .fill(f64::NEG_INFINITY);
+            let low = positions.partition_point(|&p| p < position.saturating_sub(suppression));
+            let high = positions.partition_point(|&p| p <= position + suppression);
+            criterion[low..high].fill(f64::NEG_INFINITY);
         }
     }
     Ok(proposals)
