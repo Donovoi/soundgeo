@@ -11,7 +11,8 @@ and reads the full image and the top and bottom edges. Text that appears briefly
 can fall between the sampled frames. Small, blurred, or compressed text can fail.
 
 Place matching uses complete names or aliases with two to twelve words.
-Single-word names are currently excluded. All matching places remain in the
+Names must contain at least two words with two letters each and five letters
+in total. Single-word names and short numeric aliases are excluded. All matching places remain in the
 report. The order favors longer names and more matching text samples.
 Different places can share a name. Signs, captions, and watermarks can describe
 places away from the camera. GeoNames coordinates identify a named feature;
