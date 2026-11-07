@@ -187,15 +187,29 @@ fn match_places(
         }
         let mut found = BTreeSet::new();
         let mut best = String::new();
+        let mut best_words = 0;
         for name in [fields[1], fields[2]]
             .into_iter()
             .chain(fields[3].split(','))
         {
             let norm = normalize(name);
+            // Short numeric aliases occur in GeoNames and in garbled OCR.
+            // Require two words with letters before treating an alias as a name.
+            let (words, letters) = norm
+                .split_whitespace()
+                .map(|word| word.chars().filter(|c| c.is_alphabetic()).count())
+                .fold((0, 0), |(words, letters), n| {
+                    (words + usize::from(n >= 2), letters + n)
+                });
+            if words < 2 || letters < 5 {
+                continue;
+            }
             if let Some(indices) = phrases.get(&norm) {
                 found.extend(indices);
-                if norm.split_whitespace().count() > best.split_whitespace().count() {
+                let count = norm.split_whitespace().count();
+                if count > best_words {
                     best = name.into();
+                    best_words = count;
                 }
             }
         }
@@ -227,7 +241,7 @@ fn match_places(
     let mut places: Vec<_> = matches.into_values().collect();
     places.sort_by_key(|p| {
         (
-            std::cmp::Reverse(p.matched_name.split_whitespace().count()),
+            std::cmp::Reverse(normalize(&p.matched_name).split_whitespace().count()),
             std::cmp::Reverse(p.frame_indices.len()),
             p.geoname_id,
         )
@@ -414,11 +428,12 @@ mod tests {
     fn preserves_ambiguous_places_and_matches_whole_phrases() {
         let data = row(1, "Test Airport", "Test Field", 50.)
             + &row(2, "Test Airport", "", 51.)
-            + &row(3, "Airport", "", 50.);
+            + &row(3, "Airport", "", 50.)
+            + &row(4, "Example Village", "To 1", 50.);
         let frames = vec![FrameText {
             offset_s: 0.,
             view: "full".into(),
-            text: "LIVE | TEST AIRPORT 2026-11-06 11:59:46 AKST".into(),
+            text: "LIVE | TEST AIRPORT TO 1 2026-11-06 11:59:46 AKST".into(),
             clock_text: vec![],
         }];
         let places = match_places(data.as_bytes(), &frames, None, &Control::default()).unwrap();
@@ -479,7 +494,22 @@ mod tests {
         );
         let cancelled = Control::default();
         cancelled.stop();
-        assert!(match_places(data.as_bytes(), &[frame], None, &cancelled).is_err());
+        assert!(
+            match_places(
+                data.as_bytes(),
+                std::slice::from_ref(&frame),
+                None,
+                &cancelled
+            )
+            .is_err()
+        );
+        let data = row(1, "Test-Field-Airport", "Test Field", 50.);
+        let frame = FrameText {
+            text: "Test Field Airport".into(),
+            ..frame
+        };
+        let places = match_places(data.as_bytes(), &[frame], None, &Control::default()).unwrap();
+        assert_eq!(places[0].matched_name, "Test-Field-Airport");
     }
     #[test]
     fn rejects_remote_media_before_starting_a_tool() {
