@@ -41,6 +41,11 @@ The eighth came from Maho Beach. Its error was within 550 m, including a planned
 200 m allowance for the unsurveyed microphone. These repeated development tests
 cover two successful sites. Broader accuracy remains unmeasured.
 
+Six compression and duration checks used copies of three existing recordings.
+Full-length 16 kbit/s Opus audio passed for Maho and Midway. Compressed Lake Hood
+remained ambiguous. The first 15 minutes of all three recordings remained
+unresolved. These checks cover a small part of the variation in internet audio.
+
 Lake Hood, Southampton, and LAX returned no accepted audio location. A separate
 Maho test searched free samples for September 1, October 1, and November 1 with
 the same result: one accepted recording, one ambiguous, and one insufficient.
