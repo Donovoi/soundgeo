@@ -32,15 +32,15 @@ The [validation record](validation/README.md) contains test results, sources, an
 
 - A local video or audio file.
 - FFmpeg to read the audio.
-- Flight position data for a possible recording date.
-- A prepared flight cache, or a date range for downloading flight data.
+- A free flight-data source, or a prepared flight cache.
+- A folder for downloaded data.
 
 ## Use the desktop application
 
 1. Start `soundgeo.exe`.
 2. Select a recording, or drag the file into the window.
 3. Keep **Download missing flight data automatically** selected.
-4. Leave the dates blank to search all cached dates, or enter a UTC date range to download and search.
+4. Leave the dates blank to find and search available days. You can also enter a UTC date range.
 5. Select a folder for the downloaded data.
 6. Leave **Recording time** empty if you do not know the start time.
 7. Set a search area if you know the region.
@@ -51,6 +51,8 @@ The [validation record](validation/README.md) contains test results, sources, an
 Put FFmpeg on `PATH`, beside the application, or select its path in the advanced settings.
 A new daily flight archive can require several GB of storage.
 The program checks downloaded files and uses valid files again.
+With blank dates, online analysis discovers the provider's available days and
+downloads missing files as it searches. Offline analysis searches prepared days.
 
 Select **Worldwide: ADSB.lol** for the worldwide archive.
 For a first-of-month recording, you can also select **Free evaluation sample:
@@ -70,6 +72,18 @@ The demo runs offline.
 
 ## Prepare data for offline use
 
+To list available days without downloading flight files:
+
+```powershell
+soundgeo-cli.exe dates --provider webtrak-chicago --cache flight-cache --output available-dates.json
+```
+
+To prepare all available days, omit the dates:
+
+```powershell
+soundgeo-cli.exe download --provider webtrak-chicago --output flight-cache
+```
+
 Download flight data for the period you want to keep available. The worldwide and airport downloaders also
 prepare the aircraft catalog. Add terrain bounds and a terrain cache if needed:
 
@@ -87,7 +101,7 @@ Analyze offline with the prepared cache:
 soundgeo-cli.exe analyze --config region.json --input recording.mp4 --cache flight-cache --provider webtrak-chicago --terrain-cache terrain-cache --offline --output report.json
 ```
 
-Leave dates out of the command and job file to search every cached date for that provider. The report estimates
+Leave dates out of the command and job file to search every prepared date offline. The report estimates
 the recording time from the matched sounds. Batched reports also list the dates searched.
 Longer searches run in overlapping daily batches. This covers recordings across
 midnight and keeps flight data for at most two adjacent days in memory at once.

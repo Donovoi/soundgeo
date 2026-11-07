@@ -265,12 +265,12 @@ impl App {
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakChicago,"Chicago: public airport replay");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakLax,"LAX: public airport replay");
                 });
-                ui.label(RichText::new("Optional date range. Leave dates blank to search every cached date.").small().color(MUTED));
+                ui.label(RichText::new("Optional date range. Blank dates find the provider's available days online. Offline mode searches prepared dates.").small().color(MUTED));
                 if request.provider == ArchiveProvider::AdsbExchangeSample {
                     ui.label(RichText::new("Use the first day of a month and set a search area below. This free sample is for testing and evaluation. It can miss flights between five-minute discovery snapshots.").small().color(MUTED));
                     ui.hyperlink_to("Free sample coverage and terms", "https://www.adsbexchange.com/data-products/sample-data/");
                 }
-                ui.add(egui::TextEdit::singleline(&mut request.date_from).hint_text("First date, or blank for all cached dates").desired_width(f32::INFINITY));
+                ui.add(egui::TextEdit::singleline(&mut request.date_from).hint_text("First date, or blank to find dates").desired_width(f32::INFINITY));
                 let mut several = request.date_to.is_some();
                 if ui.checkbox(&mut several,"Search several possible dates").changed(){request.date_to=several.then(String::new);}
                 if let Some(to)=&mut request.date_to{ui.add(egui::TextEdit::singleline(to).hint_text("Last date, inclusive (YYYY-MM-DD)").desired_width(f32::INFINITY));}

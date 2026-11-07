@@ -279,3 +279,147 @@ fn offline_media_decode_blocks_external_playlist_requests() {
         std::io::ErrorKind::WouldBlock
     );
 }
+
+fn date_index(root: &Path, dates: &[&str]) {
+    let catalog = soundgeo::availability::Catalog {
+        provider: soundgeo::archive::ArchiveProvider::WebtrakChicago,
+        retrieved_utc: chrono::Utc::now().to_rfc3339(),
+        dates: dates.iter().map(|s| (*s).to_owned()).collect(),
+        basis: "Saved provider-index fixture; no recording date supplied".into(),
+        sources: vec![soundgeo::availability::Source {
+            url: "https://example.com/fixture-index".into(),
+            sha256: format!("{:x}", Sha256::digest(b"fixture")),
+            status: 200,
+            request_body_sha256: None,
+        }],
+    };
+    let hash = format!(
+        "{:x}",
+        Sha256::digest(serde_json::to_vec(&catalog).unwrap())
+    );
+    std::fs::create_dir_all(root).unwrap();
+    std::fs::write(
+        root.join("available-dates-webtrak_chicago.json"),
+        serde_json::to_vec(&serde_json::json!({"format":1,"payload":catalog,"sha256":hash}))
+            .unwrap(),
+    )
+    .unwrap();
+}
+
+#[test]
+fn unknown_date_online_search_uses_provider_index_and_keeps_older_cached_days() {
+    let dir = tempfile::tempdir().unwrap();
+    demo::create(dir.path()).unwrap();
+    let cache = dir.path().join("cache");
+    date_index(&cache, &["2026-09-08", "2026-09-09"]);
+    cache_day(&cache, "2026-09-08", &shifted_csv(0., None));
+    for date in ["2026-08-07", "2026-09-09"] {
+        let time = NaiveDate::parse_from_str(date, "%Y-%m-%d")
+            .unwrap()
+            .and_hms_opt(0, 0, 0)
+            .unwrap()
+            .and_utc()
+            .timestamp();
+        cache_day(
+            &cache,
+            date,
+            format!("aircraft,time,lat,lon,altitude_m\nunrelated,{time},0,0,1000\n").as_bytes(),
+        );
+    }
+    let output = Command::new(env!("CARGO_BIN_EXE_soundgeo-cli"))
+        .current_dir(dir.path())
+        .args([
+            "analyze",
+            "--config",
+            "job.json",
+            "--cache",
+            "cache",
+            "--provider",
+            "webtrak-chicago",
+            "--output",
+            "-",
+            "--quiet",
+            "--require-match",
+        ])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let report: Report = serde_json::from_slice(&output.stdout).unwrap();
+    assert!(report.job.start_utc.is_none() && !report.job.offline);
+    assert!(report.job.archive.as_ref().unwrap().date_from.is_empty());
+    let coverage = report.date_search.unwrap();
+    assert_eq!(coverage.dates, ["2026-08-07", "2026-09-08", "2026-09-09"]);
+    assert!(coverage.complete);
+    assert_eq!(
+        coverage.provider_discovery.unwrap().dates,
+        ["2026-09-08", "2026-09-09"]
+    );
+    let first = &report.candidates[0];
+    assert!(
+        demo::TRUTH.distance(Point {
+            lat: first.latitude,
+            lon: first.longitude,
+            alt: first.ground_m
+        }) < 500.
+    );
+}
+
+#[test]
+fn saved_date_index_does_not_count_as_downloaded_flight_data_offline() {
+    let dir = tempfile::tempdir().unwrap();
+    demo::create(dir.path()).unwrap();
+    date_index(&dir.path().join("cache"), &["2026-09-08"]);
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    listener.set_nonblocking(true).unwrap();
+    let proxy = format!("http://{}", listener.local_addr().unwrap());
+    let command = |args: &[&str]| {
+        Command::new(env!("CARGO_BIN_EXE_soundgeo-cli"))
+            .current_dir(dir.path())
+            .env("HTTP_PROXY", &proxy)
+            .env("HTTPS_PROXY", &proxy)
+            .env("ALL_PROXY", &proxy)
+            .env("NO_PROXY", "")
+            .args(args)
+            .output()
+            .unwrap()
+    };
+    let dates = command(&[
+        "dates",
+        "--provider",
+        "webtrak-chicago",
+        "--cache",
+        "cache",
+        "--offline",
+        "--quiet",
+    ]);
+    assert!(
+        dates.status.success(),
+        "{}",
+        String::from_utf8_lossy(&dates.stderr)
+    );
+    let catalog: soundgeo::availability::Catalog = serde_json::from_slice(&dates.stdout).unwrap();
+    assert_eq!(catalog.dates, ["2026-09-08"]);
+    let analysis = command(&[
+        "analyze",
+        "--config",
+        "job.json",
+        "--provider",
+        "webtrak-chicago",
+        "--cache",
+        "cache",
+        "--offline",
+        "--output",
+        "-",
+        "--quiet",
+    ]);
+    assert!(!analysis.status.success());
+    assert!(String::from_utf8_lossy(&analysis.stderr).contains("No cached dates"));
+    assert_eq!(
+        listener.accept().unwrap_err().kind(),
+        std::io::ErrorKind::WouldBlock
+    );
+}

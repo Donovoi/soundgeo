@@ -37,6 +37,44 @@ pub struct ArchiveRequest {
 }
 
 impl ArchiveRequest {
+    pub fn validate(&self) -> Result<()> {
+        if self.cache.as_os_str().is_empty() {
+            bail!("Choose a folder for the flight archive cache");
+        }
+        if self.date_from.trim().is_empty() {
+            if self.date_to.as_ref().is_some_and(|s| !s.trim().is_empty()) {
+                bail!("Set both range endpoints, or leave both blank to discover dates");
+            }
+        } else {
+            self.dates()?;
+        }
+        Ok(())
+    }
+
+    pub fn resolve_dates(
+        &self,
+        control: &Control,
+        progress: &Progress<'_>,
+    ) -> Result<(Vec<String>, Option<crate::availability::Catalog>)> {
+        self.validate()?;
+        control.check()?;
+        if !self.date_from.trim().is_empty() || control.offline {
+            return Ok((self.dates()?, None));
+        }
+        let catalog = crate::availability::discover(self.provider, &self.cache, control, progress)?;
+        let mut dates: std::collections::BTreeSet<_> = catalog.dates.iter().cloned().collect();
+        // Keep older prepared days after a rolling provider window expires.
+        dates.extend(self.cached_dates_allow_empty()?);
+        Ok((dates.into_iter().collect(), Some(catalog)))
+    }
+
+    fn first_year(&self) -> i32 {
+        if self.provider == ArchiveProvider::AdsbExchangeSample {
+            2016
+        } else {
+            2023
+        }
+    }
     pub fn dates(&self) -> Result<Vec<String>> {
         if self.date_from.trim().is_empty() {
             if self.date_to.as_ref().is_some_and(|s| !s.trim().is_empty()) {
@@ -56,11 +94,12 @@ impl ArchiveRequest {
         if from > to {
             bail!("Archive end date must be on or after the start date");
         }
-        if from < NaiveDate::from_ymd_opt(2023, 1, 1).unwrap()
+        if from < NaiveDate::from_ymd_opt(self.first_year(), 1, 1).unwrap()
             || to >= chrono::Utc::now().date_naive()
         {
             bail!(
-                "Daily flight archives cover dates from 2023 through yesterday UTC; the latest day may not be published yet"
+                "This provider supports dates from {} through yesterday UTC; the latest day may not be published yet",
+                self.first_year()
             );
         }
         if self.cache.as_os_str().is_empty() {
@@ -85,10 +124,23 @@ impl ArchiveRequest {
     }
 
     fn cached_dates(&self) -> Result<Vec<String>> {
+        let dates = self.cached_dates_allow_empty()?;
+        if dates.is_empty() {
+            bail!(
+                "No cached dates found for this provider. Prepare flight data online before offline analysis."
+            );
+        }
+        Ok(dates)
+    }
+
+    fn cached_dates_allow_empty(&self) -> Result<Vec<String>> {
         let mut dates = std::collections::BTreeSet::new();
-        for entry in std::fs::read_dir(&self.cache)
-            .context("Choose a prepared flight cache or provide a download date range")?
-        {
+        let entries = match std::fs::read_dir(&self.cache) {
+            Ok(entries) => entries,
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(vec![]),
+            Err(error) => return Err(error).context("Could not read the flight cache"),
+        };
+        for entry in entries {
             let entry = entry?;
             if !entry.file_type()?.is_dir() {
                 continue;
@@ -104,16 +156,11 @@ impl ArchiveRequest {
                     .unwrap_or(""),
             };
             if let Ok(day) = NaiveDate::parse_from_str(date, "%Y-%m-%d")
-                && day >= NaiveDate::from_ymd_opt(2023, 1, 1).unwrap()
+                && day >= NaiveDate::from_ymd_opt(self.first_year(), 1, 1).unwrap()
                 && day < chrono::Utc::now().date_naive()
             {
                 dates.insert(day.to_string());
             }
-        }
-        if dates.is_empty() {
-            bail!(
-                "No cached dates found for the selected provider. Prepare flight data while online, or supply a download date range."
-            );
         }
         Ok(dates.into_iter().collect())
     }
@@ -128,7 +175,10 @@ impl ArchiveRequest {
         control: &Control,
         progress: &Progress<'_>,
     ) -> Result<Vec<PathBuf>> {
-        let dates = self.dates()?;
+        if self.provider == ArchiveProvider::AdsbExchangeSample {
+            crate::sample_archive::validate_bounds(bounds)?;
+        }
+        let (dates, _) = self.resolve_dates(control, progress)?;
         if self.provider == ArchiveProvider::AdsbExchangeSample {
             for date in &dates {
                 crate::sample_archive::validate(date, bounds)?;
