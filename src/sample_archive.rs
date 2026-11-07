@@ -130,17 +130,35 @@ fn snapshot(value: &Value, expected: f64, bounds: Bounds) -> Result<BTreeSet<Str
 }
 fn trace(value: &Value, expected: f64, id: &str) -> Result<()> {
     ensure!(
-        value["icao"].as_str().and_then(ident).as_deref() == Some(id),
+        value["icao"]
+            .as_str()
+            .or_else(|| value["hex"].as_str())
+            .and_then(ident)
+            .as_deref()
+            == Some(id),
         "Sample trace has the wrong aircraft identity"
     );
     let timestamp = value["timestamp"]
         .as_f64()
         .context("Sample trace lacks its date")?;
     ensure!(
-        (timestamp - expected).abs() < 1.,
+        (expected..expected + 86400.).contains(&timestamp),
         "Sample trace has the wrong date"
     );
-    ensure!(value["trace"].is_array(), "Sample trace lacks positions");
+    let positions = value["trace"]
+        .as_array()
+        .context("Sample trace lacks positions")?;
+    // Older traces use the first observation as their base time. Newer
+    // traces use midnight. In both formats, the importer adds each offset
+    // to the original base; no timestamp is rewritten here.
+    ensure!(
+        positions
+            .iter()
+            .all(|row| row[0].as_f64().is_some_and(|offset| {
+                (expected..expected + 86400.).contains(&(timestamp + offset))
+            })),
+        "Sample trace has an invalid observation time or a position outside the requested UTC day"
+    );
     Ok(())
 }
 
@@ -647,7 +665,7 @@ pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
         String::new()
     } else {
         format!(
-            " {} missing snapshots used neighboring minutes. The manifest records each requested and actual source filename.",
+            " Missing snapshot slots filled from neighboring minutes: {}. The manifest records each requested and actual source filename.",
             manifest.snapshot_replacements.len()
         )
     };
@@ -905,7 +923,7 @@ mod tests {
         }
         assert!(
             trace(
-                &json!({"icao":"abcdef","timestamp":start()+30.2,"trace":[]}),
+                &json!({"icao":"abcdef","timestamp":start()+86400.+30.2,"trace":[]}),
                 start(),
                 "abcdef"
             )
@@ -968,6 +986,39 @@ mod tests {
         );
     }
     #[test]
+    fn legacy_trace_identity_and_base_preserve_absolute_observation_times() {
+        let dir = tempfile::tempdir().unwrap();
+        let server = Server::new(|key| {
+            let (status, bytes, delay) = fixture(key);
+            if !key.contains("/traces/") {
+                return (status, bytes, delay);
+            }
+            let mut value = parse(&bytes).unwrap();
+            value["hex"] = value.as_object_mut().unwrap().remove("icao").unwrap();
+            value["timestamp"] = json!(start() + 3600.);
+            (status, compressed(value), delay)
+        });
+        let path = run(&server.client(), dir.path()).unwrap();
+        let dataset = crate::data::load(&path, &Control::default()).unwrap();
+        assert_eq!(dataset.tracks.len(), 2);
+        for track in &dataset.tracks {
+            assert_eq!(track.samples[0].time, start() + 3610.);
+        }
+        let value = parse(&std::fs::read(path.join("trace_full_abcdef.json.gz")).unwrap()).unwrap();
+        assert!(value.get("icao").is_none());
+        assert_eq!(value["hex"], "abcdef");
+        assert_eq!(value["timestamp"], start() + 3600.);
+        for value in [
+            json!({"icao":"000000","hex":"abcdef","timestamp":start(),"trace":[]}),
+            json!({"hex":"abcdef","timestamp":start()+86400.,"trace":[]}),
+            json!({"hex":"abcdef","timestamp":start()+3600.,"trace":[[-3601.]]}),
+            json!({"hex":"abcdef","timestamp":start()+3600.,"trace":[[82800.]]}),
+        ] {
+            assert!(trace(&value, start(), "abcdef").is_err());
+        }
+    }
+
+    #[test]
     fn missing_snapshot_uses_recorded_neighbor_and_verifies_it_offline() {
         assert_eq!(snapshot_choices(0), [0, 1]);
         assert_eq!(snapshot_choices(287), [1435, 1434, 1436]);
@@ -997,7 +1048,7 @@ mod tests {
         assert!(
             coverage_warning(&path)
                 .unwrap()
-                .contains("1 missing snapshots used neighboring minutes")
+                .contains("Missing snapshot slots filled from neighboring minutes: 1.")
         );
         let shared = dir.path().join(format!("adsbx-sample-{DAY}-snapshots"));
         assert!(!shared.join("000500Z.json.gz").exists());
