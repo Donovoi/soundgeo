@@ -1,0 +1,151 @@
+{
+  "scope": "Default audio behavior checked again after adding optional video clues. Original broad regions and all prepared dates are used; no recording dates or times are supplied. Offline analysis.",
+  "local_build": {
+    "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+    "executable": "analysis-build\\soundgeo-cli-video-eee5b0c.exe",
+    "sha256": "5d1299555ff9d665bbed8a3ce37def279cb6f80d984a2bae5e46d938bc1de9fb",
+    "tools": {
+      "tesseract": {
+        "path": "video-tools\\tesseract\\tesseract.exe",
+        "sha256": "babb405f4366b480d02cd8ff2bac8d497170f6c1711ce6f3d5d8bf0fb7fa6ed9"
+      },
+      "english_model": {
+        "path": "video-tools\\tesseract\\tessdata\\eng.traineddata",
+        "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
+      }
+    }
+  },
+  "checks": {
+    "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+    "local_rust_tests_passed": 130,
+    "python_runner_tests_passed": 9,
+    "formatting": "passed",
+    "clippy_release_all_targets": "passed",
+    "doc_tests": "passed",
+    "release_binaries": "passed",
+    "ci_run": "https://github.com/Donovoi/soundgeo/actions/runs/42351026350",
+    "ci_platforms_passed": [
+      "Windows",
+      "Ubuntu"
+    ]
+  },
+  "results": [
+    {
+      "case": "lake-new-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "9e62166225927616076bde030469625c6ed39738d4b97b372fa7e1ae309af2d5",
+      "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+      "exit_code": 4,
+      "report_sha256": "179db2878da230b128288a6e8c6622a16f40fa3ef9ce121289a5e46925ee6fb4",
+      "status": "ambiguous",
+      "sound_peaks": 19,
+      "track_count": 5973,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04",
+          "2026-11-06"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 100.87252680002712
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "c502adbcc83a1cfe29c4afd3abe8281a9681b8ca917aeed17247fccdbe5addd1",
+      "media_sha256": "915c8ccfe6e7af52920567c602b5dbacfaedc2973ce14b540b7d3367dacdb62f",
+      "exit_code": 4,
+      "report_sha256": "1b567c37f4854ea56461f1012e436db0bb0b70826bacc53b64e0f923a765e263",
+      "status": "ambiguous",
+      "sound_peaks": 30,
+      "track_count": 13476,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 153.57221729995217
+    },
+    {
+      "case": "midway-nov4-b",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "8ddddcd63445fc39e5db1c324828e0de98e1d64fd67e86af60dbb149561f50dc",
+      "media_sha256": "4be21eaaa6a3569efdc2b486037b6871b2c72d4f514ea9bf510db89ffd166eb4",
+      "exit_code": 0,
+      "report_sha256": "0d381eb9d81502eca633e1a7b063d1ce9ac6ce009352de88e732c6864f45412e",
+      "status": "candidates_found",
+      "sound_peaks": 96,
+      "track_count": 13476,
+      "region": {
+        "latitude": 41.77626865671642,
+        "longitude": -87.7418045112782,
+        "enclosing_radius_m": 423.16497321115145,
+        "competitive_points": 4
+      },
+      "error_m": 254.84660469493025,
+      "matched_flights": 27,
+      "score": 42.35212978648033,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-11-01",
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 233.0906516999239
+    }
+  ],
+  "comparison_build": {
+    "source_commit": "dcd73cc3b459b2bfb6b38db1acf6dc830c145162",
+    "executable": "analysis-build\\soundgeo-cli-cached-dcd73cc.exe",
+    "sha256": "9639bb5d87d8e84c159ac08728b6974cf76f78dfcef60daedcb0cf914e36d065"
+  },
+  "comparisons": [
+    {
+      "case": "lake-new-a",
+      "equal_fields": {
+        "status": true,
+        "peaks": true,
+        "region": true,
+        "control_maximum_scores": true,
+        "search": true
+      }
+    },
+    {
+      "case": "midway-nov1-holdout",
+      "equal_fields": {
+        "status": true,
+        "peaks": true,
+        "region": true,
+        "control_maximum_scores": true,
+        "search": true
+      }
+    },
+    {
+      "case": "midway-nov4-b",
+      "equal_fields": {
+        "status": true,
+        "peaks": true,
+        "region": true,
+        "control_maximum_scores": true,
+        "search": true
+      }
+    }
+  ]
+}

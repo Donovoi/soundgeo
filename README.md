@@ -116,8 +116,9 @@ soundgeo-cli.exe video-data --country ALL --output video-data
 
 Use a two-letter country code such as `US` to prepare one country. GeoNames data
 uses the [CC BY 4.0 license](https://creativecommons.org/licenses/by/4.0/).
-Copy the `.txt` and `.source.json` files, Tesseract, its `tessdata` folder,
-FFmpeg, and FFprobe to the offline computer.
+Copy the `.txt` and `.source.json` files to the offline computer. Also copy
+the complete Tesseract installation, including its `tessdata` folder,
+and both FFmpeg and FFprobe.
 
 ```powershell
 soundgeo-cli.exe video-clues --input recording.mp4 --gazetteer video-data/allCountries.txt --offline --output video-clues.json
@@ -125,6 +126,7 @@ soundgeo-cli.exe video-clues --input recording.mp4 --gazetteer video-data/allCou
 
 Use `--tesseract`, `--tessdata`, and `--ffmpeg` to set tool paths if needed.
 Use `--frames 6` to read more frames. Use `--output -` for JSON on standard output.
+Read JSON output as UTF-8.
 The `--require-match` option returns exit code 3 if no place names match.
 Read all entries in `places` and the source text in `frames`.
 
