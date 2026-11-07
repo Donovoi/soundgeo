@@ -113,6 +113,9 @@ The first-of-month sample checks 288 worldwide snapshot slots at five-minute
 intervals. If a snapshot is missing, it tries the preceding and following
 minute within the same day. The cache keeps the actual source filename and
 records the replacement. Short flights between snapshots can be absent.
+Historical snapshots can be delayed relative to their filenames. Preparation
+accepts offsets smaller than one five-minute discovery interval. Offsets over
+one minute appear in the manifest and report. Flight-trace times are preserved.
 Missing traces and snapshot replacements appear in the report and cache
 manifest. Preparation stops if a slot and both neighboring minutes are
 unavailable. This source permits testing and evaluation.
