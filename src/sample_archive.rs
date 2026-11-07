@@ -575,15 +575,24 @@ async fn download(
 }
 
 pub fn coverage_warning(path: &Path) -> Result<String> {
+    Ok(coverage(path)?.0)
+}
+
+// Called after archive preparation has verified the manifest and source files.
+pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
     let manifest: Manifest = serde_json::from_slice(&std::fs::read(
         path.parent()
             .context("Missing sample cache directory")?
             .join("sample-manifest.json"),
     )?)?;
-    Ok(format!(
-        "ADS-B Exchange free evaluation sample: {} full-day traces, {} unavailable. Discovery used all 288 five-minute snapshots in the search area. Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
-        manifest.traces.len(),
-        manifest.missing_aircraft.len()
+    Ok((
+        format!(
+            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery used all 288 five-minute snapshots in the search area. Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
+            manifest.date,
+            manifest.traces.len(),
+            manifest.missing_aircraft.len()
+        ),
+        manifest.traces.is_empty(),
     ))
 }
 
