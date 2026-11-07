@@ -51,6 +51,31 @@ fn selected_date_range_reuses_verified_cache_without_network() {
 }
 
 #[test]
+fn older_unsplit_archive_reuses_verified_cache_offline() {
+    let dir = tempfile::tempdir().unwrap();
+    cached_day(dir.path(), "2024-03-01");
+    let folder = dir.path().join("2024-03-01");
+    let path = folder.join("archive-manifest.json");
+    let mut manifest: serde_json::Value =
+        serde_json::from_slice(&std::fs::read(&path).unwrap()).unwrap();
+    let old = manifest["assets"][0]["name"].as_str().unwrap().to_owned();
+    let name = old.strip_suffix(".aa").unwrap().to_owned();
+    std::fs::rename(folder.join(old), folder.join(&name)).unwrap();
+    manifest["assets"][0]["name"] = name.clone().into();
+    std::fs::write(path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+    let request = ArchiveRequest {
+        date_from: "2024-03-01".into(),
+        date_to: None,
+        cache: dir.path().into(),
+        provider: Default::default(),
+    };
+    let paths = request
+        .ensure(&Control::default().with_offline(true), &|_, _| {})
+        .unwrap();
+    assert_eq!(paths, [folder.join(name)]);
+}
+
+#[test]
 fn invalid_ranges_and_wrong_date_cache_are_rejected() {
     let dir = tempfile::tempdir().unwrap();
     let mut request = ArchiveRequest {

@@ -1,0 +1,274 @@
+{
+  "scope": "Prepare the oldest advertised free sample, preserve an empty regional day, and continue a date-free real audio search offline.",
+  "local_build": {
+    "source_commit": "d2366f47812396f2bfba81e796c9291843a1a35a",
+    "cli": "analysis-build/soundgeo-cli-empty-d2366f4.exe",
+    "cli_sha256": "b6acc95fcfc6645cab06d11f2288c3fc9db1e6760ae9712ec91767ef3f0dced4",
+    "rust_tests_passed": 139,
+    "python_tests_passed": 9,
+    "checks": [
+      "fmt",
+      "strict clippy",
+      "all targets",
+      "doc tests",
+      "both release binaries"
+    ]
+  },
+  "initial_date_discovery_checks": "automatic-date-discovery.json",
+  "date_discovery_ci": {
+    "source_commit": "933466ae5bbac8e5b145062e7440812ac810fd8a",
+    "run_id": 42359473181,
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42359473181",
+    "platforms": {
+      "windows-latest": {
+        "passed": 137,
+        "failed": 0,
+        "ignored": 0,
+        "test_groups": 22,
+        "python_tests": true
+      },
+      "ubuntu-latest": {
+        "passed": 137,
+        "failed": 0,
+        "ignored": 0,
+        "test_groups": 22,
+        "python_tests": true
+      }
+    }
+  },
+  "timestamp_fix": {
+    "build": {
+      "source_commit": "7d4a2f60b02c556317be5f8a443e993f99a182cc",
+      "cli": "analysis-build/soundgeo-cli-sample-7d4a2f6.exe",
+      "cli_sha256": "dc7268b5cb3c059283892d2597703162678845313b7307751ff168b83058142f",
+      "rust_tests_passed": 138,
+      "python_tests_passed": 9,
+      "checks": [
+        "fmt",
+        "strict clippy",
+        "all targets",
+        "doc tests",
+        "both release binaries"
+      ]
+    },
+    "plan": {
+      "source_commit": "7d4a2f60b02c556317be5f8a443e993f99a182cc",
+      "cli": "analysis-build/soundgeo-cli-sample-7d4a2f6.exe",
+      "cli_sha256": "dc7268b5cb3c059283892d2597703162678845313b7307751ff168b83058142f",
+      "rust_tests_passed": 138,
+      "python_tests_passed": 9,
+      "checks": [
+        "fmt",
+        "strict clippy",
+        "all targets",
+        "doc tests",
+        "both release binaries"
+      ],
+      "purpose": "Check download compatibility with the oldest date advertised by the free sample index. Selection uses the index only. This is a provider test.",
+      "date": "2016-07-01",
+      "selection_rule": "oldest advertised date",
+      "index_sha256": "7c00873528d4e8a17405b55311e7f9ded7afa17e97a60fa1cc991c6c8f02a645",
+      "bounds": {
+        "south": 17.85,
+        "north": 18.25,
+        "west": -63.35,
+        "east": -62.95
+      },
+      "created_utc": "2026-11-07T09:30:39.976928+00:00"
+    },
+    "download_and_offline_verification": {
+      "exit_code": 0,
+      "elapsed_s": 178.0628684000112,
+      "offline_exit_code": 0,
+      "proxy_connections": 0
+    },
+    "source_check": {
+      "date": "2016-07-01",
+      "snapshots_verified": 288,
+      "aircraft_in_region": 0,
+      "traces": 0,
+      "missing_traces": 0,
+      "snapshot_offset_min_s": 0.0,
+      "snapshot_offset_max_s": 31.90000009536743,
+      "snapshots_outside_previous_30s_window": 36,
+      "manifest_sha256": "7428bbdc28aa23d3c1b8ffca86f1549956370dc145bb3c65720ee35fc897f2e7"
+    },
+    "interpretation": "The 30-second discovery-snapshot check rejected 36 of 288 published snapshots. The revised window is less than one minute. Full flight-trace timestamps are unchanged."
+  },
+  "retained_empty_day_failure": {
+    "build_commit": "7d4a2f60b02c556317be5f8a443e993f99a182cc",
+    "result": {
+      "cli_sha256": "dc7268b5cb3c059283892d2597703162678845313b7307751ff168b83058142f",
+      "manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+      "runner_sha256": "1819fac35d2464d9c527bce26829408bd2c2cc42371e0498e2575f891785b907",
+      "target_error_m": 1000,
+      "selected_cases": [
+        "maho-nov1-b"
+      ],
+      "all_cases_selected": false,
+      "workers": 1,
+      "timeout_s": 1200.0,
+      "recording_clock_supplied": false,
+      "recording_date_supplied": false,
+      "offline": true,
+      "archive_override": {
+        "cache": "oldest-free-sample-fixed\\cache",
+        "provider": "adsb_exchange_sample"
+      },
+      "all_cases_are_replays": true,
+      "completed_cases": 1,
+      "planned_cases": 1,
+      "accepted": 0,
+      "wrong_screened": 0,
+      "processing_errors": 1,
+      "cases": [
+        {
+          "case": "maho-nov1-b",
+          "accepted": false,
+          "screened": false,
+          "job_sha256": "dff792d914472eb20b5d13b6e6b0f6bff1fcc7a59f664fdaddfa8008cbcfe5bb",
+          "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+          "exit_code": 1,
+          "error": "The CLI did not write a report; see run.log",
+          "elapsed_s": 3.5115165000315756
+        }
+      ]
+    },
+    "result_sha256": "31692be377d2664ae14ca35fdc0260b82a0c3b2e5ce268789e05d9a2864621fc",
+    "error": "No CSV or readsb trace files found in this folder."
+  },
+  "corrected_offline_analysis": {
+    "plan": {
+      "source_commit": "d2366f47812396f2bfba81e796c9291843a1a35a",
+      "cli": "analysis-build/soundgeo-cli-empty-d2366f4.exe",
+      "cli_sha256": "b6acc95fcfc6645cab06d11f2288c3fc9db1e6760ae9712ec91767ef3f0dced4",
+      "rust_tests_passed": 139,
+      "python_tests_passed": 9,
+      "checks": [
+        "fmt",
+        "strict clippy",
+        "all targets",
+        "doc tests",
+        "both release binaries"
+      ],
+      "case": "maho-nov1-b",
+      "recording_date_supplied": false,
+      "recording_clock_supplied": false,
+      "offline": true,
+      "target_error_m": 1000,
+      "source_manifests": [
+        {
+          "file": "oldest-free-sample-fixed/cache/adsbx-sample-2016-07-01-adbd76249b092139/sample-manifest.json",
+          "sha256": "7428bbdc28aa23d3c1b8ffca86f1549956370dc145bb3c65720ee35fc897f2e7",
+          "date": "2016-07-01",
+          "traces": 0
+        },
+        {
+          "file": "oldest-free-sample-fixed/cache/adsbx-sample-2026-09-01-adbd76249b092139/sample-manifest.json",
+          "sha256": "35abb01059fc82172e286613ff13bd3022e93143ad6155e3679d54decadb275a",
+          "date": "2026-09-01",
+          "traces": 62
+        },
+        {
+          "file": "oldest-free-sample-fixed/cache/adsbx-sample-2026-10-01-adbd76249b092139/sample-manifest.json",
+          "sha256": "3752fa324f614d357eadc33c9af52b9f7017ca6e0ae2dd3645c98b953df2fdcb",
+          "date": "2026-10-01",
+          "traces": 60
+        },
+        {
+          "file": "oldest-free-sample-fixed/cache/adsbx-sample-2026-11-01-adbd76249b092139/sample-manifest.json",
+          "sha256": "083a06ea7eaf789413df519110b18b7ec278509eafd1c98cdfd4d523effe2f25",
+          "date": "2026-11-01",
+          "traces": 97
+        }
+      ],
+      "prior_failed_run": "oldest-free-sample-fixed/audio/results.json",
+      "created_utc": "2026-11-07T09:44:48.713274+00:00"
+    },
+    "execution": {
+      "runner_exit_code": 0,
+      "proxy_connections": 0,
+      "source_manifests_unchanged": true
+    },
+    "result": {
+      "cli_sha256": "b6acc95fcfc6645cab06d11f2288c3fc9db1e6760ae9712ec91767ef3f0dced4",
+      "manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+      "runner_sha256": "1819fac35d2464d9c527bce26829408bd2c2cc42371e0498e2575f891785b907",
+      "target_error_m": 1000,
+      "selected_cases": [
+        "maho-nov1-b"
+      ],
+      "all_cases_selected": false,
+      "workers": 1,
+      "timeout_s": 1200.0,
+      "recording_clock_supplied": false,
+      "recording_date_supplied": false,
+      "offline": true,
+      "archive_override": {
+        "cache": "oldest-free-sample-fixed\\cache",
+        "provider": "adsb_exchange_sample"
+      },
+      "all_cases_are_replays": true,
+      "completed_cases": 1,
+      "planned_cases": 1,
+      "accepted": 1,
+      "wrong_screened": 0,
+      "processing_errors": 0,
+      "cases": [
+        {
+          "case": "maho-nov1-b",
+          "accepted": true,
+          "screened": true,
+          "job_sha256": "dff792d914472eb20b5d13b6e6b0f6bff1fcc7a59f664fdaddfa8008cbcfe5bb",
+          "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+          "exit_code": 0,
+          "report_sha256": "29da25f08424094778150149ee65f68c21069075375fd83021bc7605cbdb9682",
+          "status": "candidates_found",
+          "sound_peaks": 117,
+          "track_count": 818,
+          "region": {
+            "latitude": 18.04328859060403,
+            "longitude": -63.121830985915494,
+            "enclosing_radius_m": 0.0,
+            "competitive_points": 1
+          },
+          "error_m": 549.649056637247,
+          "matched_flights": 16,
+          "score": 31.0335629455301,
+          "controls": 19,
+          "date_search": {
+            "dates": [
+              "2016-07-01",
+              "2026-09-01",
+              "2026-10-01",
+              "2026-11-01"
+            ],
+            "completed_batches": 4,
+            "complete": true,
+            "track_count_includes_overlap": true
+          },
+          "elapsed_s": 15.75178369996138
+        }
+      ]
+    },
+    "report": "empty-sample-audio-validation/audio/maho-nov1-b/report.json",
+    "report_sha256": "29da25f08424094778150149ee65f68c21069075375fd83021bc7605cbdb9682",
+    "previous_report": "maho-wide-date-validation/maho-nov1-b/report.json",
+    "previous_report_sha256": "3981565f1d1f5ba7728d874326bc6f786e4a4dbe2a0d1f93d805c985b1a05cc5",
+    "unchanged_fields": [
+      "status",
+      "duration_s",
+      "track_count",
+      "events",
+      "candidates",
+      "search_grid_m",
+      "search_method",
+      "hypotheses",
+      "terrain_sources",
+      "timing"
+    ],
+    "interpretation": "Maho reproduced its 549.65 m result after all four prepared days were searched. The 2016 day contains zero regional aircraft and contributes no timing matches. Empty days remain in report coverage and warnings."
+  },
+  "unit_regression": "The native CLI test checks a single empty day, an empty day before and after a matching day, and failure after a required snapshot is removed.",
+  "overall_accuracy": "The 27-recording benchmark remains 8 accepted within 1 km, 5 ambiguous, and 14 insufficient. Lake Hood audio remains 0 of 7. This Maho replay does not add an independent recording."
+}

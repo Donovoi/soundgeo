@@ -1,0 +1,2 @@
+# Keep published validation hashes consistent across operating systems.
+validation/*.json text eol=lf

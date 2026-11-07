@@ -1,0 +1,842 @@
+{
+  "scope": "Historical discovery clocks and traces that cross midnight.",
+  "qualified_local_build": {
+    "source_commit": "1c948eb36617e91579542bfdbf33729c91e2c687",
+    "cli": "analysis-build/soundgeo-cli-carryover-1c948eb.exe",
+    "cli_sha256": "fd9302b370a7e5dfa54451b02e60d5893c68bc8277a0b0ff51153a485c70b729",
+    "rust_tests_passed": 144,
+    "python_tests_passed": 9,
+    "checks": [
+      "fmt",
+      "clippy",
+      "tests",
+      "doc-tests",
+      "build",
+      "python"
+    ]
+  },
+  "local_checks": [
+    {
+      "check": "fmt",
+      "exit_code": 0,
+      "elapsed_s": 0.5537311000516638
+    },
+    {
+      "check": "clippy",
+      "exit_code": 0,
+      "elapsed_s": 4.6324032000266016
+    },
+    {
+      "check": "tests",
+      "exit_code": 0,
+      "elapsed_s": 239.7664674000116
+    },
+    {
+      "check": "doc-tests",
+      "exit_code": 0,
+      "elapsed_s": 1.0130252999952063
+    },
+    {
+      "check": "build",
+      "exit_code": 0,
+      "elapsed_s": 0.5047472000587732
+    },
+    {
+      "check": "python",
+      "exit_code": 0,
+      "elapsed_s": 0.12593290000222623
+    }
+  ],
+  "previous_build": {
+    "source_commit": "7ac510f6bd9a0ac5286ad72aac3f36e4368ae836",
+    "cli": "analysis-build/soundgeo-cli-clock-7ac510f.exe",
+    "cli_sha256": "0b2fc4bdd5e45b3142f09d4e8725dd14b9a62c09b8fa1ee6b8044cd70cf8f700",
+    "rust_tests_passed": 143,
+    "python_tests_passed": 9,
+    "checks": [
+      "fmt",
+      "clippy",
+      "tests",
+      "doc-tests",
+      "build",
+      "python"
+    ]
+  },
+  "january_failed_attempt": {
+    "plan": {
+      "source_commit": "7ac510f6bd9a0ac5286ad72aac3f36e4368ae836",
+      "cli": "analysis-build/soundgeo-cli-clock-7ac510f.exe",
+      "cli_sha256": "0b2fc4bdd5e45b3142f09d4e8725dd14b9a62c09b8fa1ee6b8044cd70cf8f700",
+      "rust_tests_passed": 143,
+      "python_tests_passed": 9,
+      "checks": [
+        "fmt",
+        "clippy",
+        "tests",
+        "doc-tests",
+        "build",
+        "python"
+      ],
+      "prepared_day": "2017-01-01",
+      "recording_date_supplied": false,
+      "recording_clock_supplied": false,
+      "bounds": {
+        "south": 17.85,
+        "north": 18.25,
+        "west": -63.35,
+        "east": -62.95
+      },
+      "original_partial_snapshots": [
+        {
+          "file": "000000Z.json.gz",
+          "sha256": "df134452cc931c59ac9d137b2537244d063046e617daf57711f862ee7b424afa"
+        }
+      ],
+      "prior_failure": "maho-available-window/attempt-3-download-result.json",
+      "created_utc": "2026-11-07T11:01:04.931131+00:00"
+    },
+    "result": {
+      "exit_code": 1,
+      "elapsed_s": 194.16477110004053
+    },
+    "error": "Sample trace has the wrong date",
+    "snapshots_downloaded": 288,
+    "snapshot_offsets_over_one_minute": 127,
+    "maximum_snapshot_offset_s": 71.29999995231628
+  },
+  "discovery_source_probes": [
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/readsb-hist/2017/01/01/000000Z.json.gz",
+      "status": 200,
+      "bytes": 419251,
+      "sha256": "df134452cc931c59ac9d137b2537244d063046e617daf57711f862ee7b424afa",
+      "now": 1483228832.6,
+      "aircraft_count": 9698,
+      "fields": [
+        "now",
+        "aircraft"
+      ],
+      "expected": 1483228800.0,
+      "offset_s": 32.59999990463257
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/readsb-hist/2017/01/01/000500Z.json.gz",
+      "status": 200,
+      "bytes": 426554,
+      "sha256": "a35b4168d658dccd74605a6c0e5418c618eab7208ba37442d8d37a7f369cb8e3",
+      "now": 1483229169.2,
+      "aircraft_count": 9888,
+      "fields": [
+        "now",
+        "aircraft"
+      ],
+      "expected": 1483229100.0,
+      "offset_s": 69.20000004768372
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/readsb-hist/2017/01/01/001000Z.json.gz",
+      "status": 200,
+      "bytes": 433429,
+      "sha256": "ab86736add581a6af0617e57e3e964f2fb64cd0223d4ca26990de7fd4383eaa9",
+      "now": 1483229439.5,
+      "aircraft_count": 10023,
+      "fields": [
+        "now",
+        "aircraft"
+      ],
+      "expected": 1483229400.0,
+      "offset_s": 39.5
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/readsb-hist/2017/01/01/120000Z.json.gz",
+      "status": 200,
+      "bytes": 506655,
+      "sha256": "f0ca523a6408a30afbe6a59dde1b92a6bfc057836ac96b1aa3cbf052aef99374",
+      "now": 1483272068.6,
+      "aircraft_count": 11315,
+      "fields": [
+        "now",
+        "aircraft"
+      ],
+      "expected": 1483272000.0,
+      "offset_s": 68.59999990463257
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/readsb-hist/2017/07/01/000000Z.json.gz",
+      "status": 200,
+      "bytes": 200571,
+      "sha256": "6f5e0a95c306c9b2cd0de8279375c64dcfbe0cac387b3cd94e679ae7ec8f6cc5",
+      "now": 1498867230.5,
+      "aircraft_count": 5650,
+      "fields": [
+        "now",
+        "aircraft"
+      ],
+      "expected": 1498867200.0,
+      "offset_s": 30.5
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/readsb-hist/2018/01/01/000000Z.json.gz",
+      "status": 200,
+      "bytes": 163953,
+      "sha256": "51ae11ca143e210344a7d6095f7eee0eff1e3e3f8e0e7042f1fd9ec5aa44032a",
+      "now": 1514764831.1,
+      "aircraft_count": 4612,
+      "fields": [
+        "now",
+        "aircraft"
+      ],
+      "expected": 1514764800.0,
+      "offset_s": 31.09999990463257
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/readsb-hist/2019/01/01/000000Z.json.gz",
+      "status": 200,
+      "bytes": 237972,
+      "sha256": "aa595b475a45a7a304a86a7390de57708f11749b55db2d102d8ba66875c12709",
+      "now": 1546300830.0,
+      "aircraft_count": 6084,
+      "fields": [
+        "now",
+        "aircraft"
+      ],
+      "expected": 1546300800.0,
+      "offset_s": 30.0
+    }
+  ],
+  "flight_source_probes": [
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/0c/trace_full_34230c.json",
+      "status": 200,
+      "bytes": 1751,
+      "sha256": "c5812020abf9e22d3f6a6d109099a19133509de23d09d2265b0a605f88b2b111",
+      "icao": null,
+      "hex": "34230c",
+      "timestamp": 1483269968.5,
+      "first_trace": [
+        [
+          0,
+          40.524514,
+          -3.574801,
+          2050,
+          197.0,
+          0.0,
+          0,
+          2432,
+          {
+            "squawk": "4512",
+            "flight": "IBE6585",
+            "alt_geom": 2425,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/d5/trace_full_3450d5.json",
+      "status": 200,
+      "bytes": 5069,
+      "sha256": "35d0a828566ac4fc0c057ad149f378214206616476aa9336d29cda32456d898c",
+      "icao": null,
+      "hex": "3450d5",
+      "timestamp": 1483225805.0,
+      "first_trace": [
+        [
+          0,
+          40.63266,
+          -73.777222,
+          "ground",
+          51.5,
+          209.1,
+          0,
+          0,
+          {
+            "squawk": "0126",
+            "flight": "IBE6253",
+            "alt_geom": 55,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/d8/trace_full_3450d8.json",
+      "status": 200,
+      "bytes": 1494,
+      "sha256": "0c9e9ebaddbd9ec49649f9371d3eb819bfe4e17223f00a75a7ffeb13a609a483",
+      "icao": null,
+      "hex": "3450d8",
+      "timestamp": 1483281399.8,
+      "first_trace": [
+        [
+          0,
+          40.555069,
+          -3.577393,
+          "ground",
+          179.9,
+          335.7,
+          0,
+          1984,
+          {
+            "squawk": "4510",
+            "flight": "AEA193",
+            "alt_geom": 3894,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/0b/trace_full_34520b.json",
+      "status": 200,
+      "bytes": 2826,
+      "sha256": "99884bc6d655046ed09ee68b9d79e4bb19e6baf84adcd602f376d0a0bf8e0022",
+      "icao": null,
+      "hex": "34520b",
+      "timestamp": 1483225434.7,
+      "first_trace": [
+        [
+          0,
+          6.172497,
+          -75.42736,
+          0,
+          0.0,
+          227.0,
+          0,
+          0,
+          {
+            "squawk": "6644",
+            "flight": "IBE6589",
+            "alt_geom": 281,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/06/trace_full_484006.json",
+      "status": 200,
+      "bytes": 3068,
+      "sha256": "64ab195cf88db7bf7cd48f124cb7a602dc52f070954bddf919b841bad0fb5de6",
+      "icao": null,
+      "hex": "484006",
+      "timestamp": 1483222091.0,
+      "first_trace": [
+        [
+          0,
+          18.009384,
+          -63.148285,
+          35000,
+          507.0,
+          44.0,
+          0,
+          0,
+          {
+            "flight": "KLM736",
+            "alt_geom": 35110,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/75/trace_full_484175.json",
+      "status": 200,
+      "bytes": 3449,
+      "sha256": "b3855a148c46bffd072f40776bd290620eab4b610b5264ac16999b61b8ff5508",
+      "icao": null,
+      "hex": "484175",
+      "timestamp": 1483262456.8,
+      "first_trace": [
+        [
+          0,
+          52.313,
+          4.76303,
+          "ground",
+          0.0,
+          253.0,
+          0,
+          null,
+          {
+            "alt_geom": 139,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/68/trace_full_484368.json",
+      "status": 200,
+      "bytes": 7855,
+      "sha256": "db1f608f01f000aa776d1ee0e570e19c4fca6efd34f618f7f38ed76bc0025c28",
+      "icao": null,
+      "hex": "484368",
+      "timestamp": 1483225203.9,
+      "first_trace": [
+        [
+          0,
+          4.718395,
+          -74.179497,
+          8275,
+          157.0,
+          127.0,
+          0,
+          -704,
+          {
+            "squawk": "4270",
+            "flight": "KLM745",
+            "alt_geom": 8606,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/6b/trace_full_48506b.json",
+      "status": 200,
+      "bytes": 5773,
+      "sha256": "4c564de8730e55ada758369083a63d370e1e0ed4ac9ed09d2f820ba21d49323c",
+      "icao": null,
+      "hex": "48506b",
+      "timestamp": 1483235291.9,
+      "first_trace": [
+        [
+          0,
+          17.14856,
+          -64.02591,
+          38675,
+          489.0,
+          44.0,
+          0,
+          896,
+          {
+            "flight": "TFL370",
+            "alt_geom": 38835,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/c1/trace_full_4ba9c1.json",
+      "status": 200,
+      "bytes": 6103,
+      "sha256": "e3b4fa05d0775ba7b861641195ca19fb2b8a697b1601e6a0ea8e19c41caebb7e",
+      "icao": null,
+      "hex": "4ba9c1",
+      "timestamp": 1483228832.6,
+      "first_trace": [
+        [
+          0,
+          43.146515,
+          24.453842,
+          34000,
+          520.0,
+          297.7,
+          0,
+          64,
+          {
+            "squawk": "2302",
+            "flight": "THY800",
+            "alt_geom": 34405,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/bc/trace_full_a1a9bc.json",
+      "status": 200,
+      "bytes": 2115,
+      "sha256": "55caac6cbac8b15564de092cd92c4f83fbf49b930acc30c668e00a0549d51d0a",
+      "icao": null,
+      "hex": "a1a9bc",
+      "timestamp": 1483222118.6,
+      "first_trace": [
+        [
+          0,
+          20.599411,
+          -69.749,
+          39000,
+          530.0,
+          125.0,
+          0,
+          0,
+          {
+            "squawk": "5674",
+            "flight": "EJA206",
+            "alt_geom": 39110,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/c7/trace_full_a976c7.json",
+      "status": 200,
+      "bytes": 9537,
+      "sha256": "1da7eb8edbb7586097ec08a74cb9c72fec89468af0793632497c9551cd6331ac",
+      "icao": null,
+      "hex": "a976c7",
+      "timestamp": 1483223603.2,
+      "first_trace": [
+        [
+          0,
+          20.59052,
+          -78.75604,
+          34950,
+          488.0,
+          164.0,
+          0,
+          0,
+          {
+            "squawk": "1521",
+            "flight": "JBU479",
+            "alt_geom": 35119,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/4c/trace_full_ad964c.json",
+      "status": 200,
+      "bytes": 4347,
+      "sha256": "86a78ca7988830029272a060d0ecf79776d736d31be74ca8ae76c770697474aa",
+      "icao": null,
+      "hex": "ad964c",
+      "timestamp": 1483238815.8,
+      "first_trace": [
+        [
+          0,
+          4.680316,
+          -74.109413,
+          9250,
+          184.0,
+          129.0,
+          0,
+          2560,
+          {
+            "squawk": "2246",
+            "flight": "AVA018",
+            "alt_geom": 9670,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    },
+    {
+      "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/traces/2017/01/01/ae/trace_full_c078ae.json",
+      "status": 200,
+      "bytes": 4138,
+      "sha256": "9584675ea23bb64054cbbc0e55f5685fb5aa333e4bf8fc0c08bc8117d43875b0",
+      "icao": null,
+      "hex": "c078ae",
+      "timestamp": 1483228557.9,
+      "first_trace": [
+        [
+          0,
+          45.481281,
+          -73.734673,
+          "ground",
+          7.0,
+          45.0,
+          0,
+          0,
+          {
+            "squawk": "3511",
+            "flight": "TSC159",
+            "alt_geom": 104,
+            "type": "adsb_icao"
+          }
+        ]
+      ],
+      "aircraft_count": 0,
+      "fields": [
+        "hex",
+        "r",
+        "t",
+        "desc",
+        "timestamp",
+        "trace"
+      ]
+    }
+  ],
+  "flight_time_audit": [
+    {
+      "id": "34230c",
+      "base_utc": "2017-01-01T11:26:08.500000+00:00",
+      "points": 124,
+      "in_day": 124,
+      "first_utc": "2017-01-01T11:26:08.500000+00:00",
+      "last_utc": "2017-01-01T23:40:16+00:00",
+      "bytes": 1751,
+      "sha256": "c5812020abf9e22d3f6a6d109099a19133509de23d09d2265b0a605f88b2b111"
+    },
+    {
+      "id": "3450d5",
+      "base_utc": "2016-12-31T23:10:05+00:00",
+      "points": 699,
+      "in_day": 558,
+      "first_utc": "2016-12-31T23:10:05+00:00",
+      "last_utc": "2017-01-01T22:56:48+00:00",
+      "bytes": 5069,
+      "sha256": "35d0a828566ac4fc0c057ad149f378214206616476aa9336d29cda32456d898c"
+    },
+    {
+      "id": "3450d8",
+      "base_utc": "2017-01-01T14:36:39.800000+00:00",
+      "points": 75,
+      "in_day": 75,
+      "first_utc": "2017-01-01T14:36:39.800000+00:00",
+      "last_utc": "2017-01-01T23:54:16.600000+00:00",
+      "bytes": 1494,
+      "sha256": "0c9e9ebaddbd9ec49649f9371d3eb819bfe4e17223f00a75a7ffeb13a609a483"
+    },
+    {
+      "id": "34520b",
+      "base_utc": "2016-12-31T23:03:54.700000+00:00",
+      "points": 158,
+      "in_day": 155,
+      "first_utc": "2016-12-31T23:03:54.700000+00:00",
+      "last_utc": "2017-01-01T15:30:11.700000+00:00",
+      "bytes": 2826,
+      "sha256": "99884bc6d655046ed09ee68b9d79e4bb19e6baf84adcd602f376d0a0bf8e0022"
+    },
+    {
+      "id": "484006",
+      "base_utc": "2016-12-31T22:08:11+00:00",
+      "points": 797,
+      "in_day": 616,
+      "first_utc": "2016-12-31T22:08:11+00:00",
+      "last_utc": "2017-01-01T06:03:46.900000+00:00",
+      "bytes": 3068,
+      "sha256": "64ab195cf88db7bf7cd48f124cb7a602dc52f070954bddf919b841bad0fb5de6"
+    },
+    {
+      "id": "484175",
+      "base_utc": "2017-01-01T09:20:56.800000+00:00",
+      "points": 270,
+      "in_day": 270,
+      "first_utc": "2017-01-01T09:20:56.700000+00:00",
+      "last_utc": "2017-01-01T22:28:50.100000+00:00",
+      "bytes": 3449,
+      "sha256": "b3855a148c46bffd072f40776bd290620eab4b610b5264ac16999b61b8ff5508"
+    },
+    {
+      "id": "484368",
+      "base_utc": "2016-12-31T23:00:03.900000+00:00",
+      "points": 968,
+      "in_day": 787,
+      "first_utc": "2016-12-31T23:00:03.900000+00:00",
+      "last_utc": "2017-01-01T23:59:36.300000+00:00",
+      "bytes": 7855,
+      "sha256": "db1f608f01f000aa776d1ee0e570e19c4fca6efd34f618f7f38ed76bc0025c28"
+    },
+    {
+      "id": "48506b",
+      "base_utc": "2017-01-01T01:48:11.900000+00:00",
+      "points": 466,
+      "in_day": 466,
+      "first_utc": "2017-01-01T01:48:11.900000+00:00",
+      "last_utc": "2017-01-01T22:09:49.500000+00:00",
+      "bytes": 5773,
+      "sha256": "4c564de8730e55ada758369083a63d370e1e0ed4ac9ed09d2f820ba21d49323c"
+    },
+    {
+      "id": "4ba9c1",
+      "base_utc": "2017-01-01T00:00:32.600000+00:00",
+      "points": 569,
+      "in_day": 569,
+      "first_utc": "2017-01-01T00:00:32.600000+00:00",
+      "last_utc": "2017-01-01T20:50:25.700000+00:00",
+      "bytes": 6103,
+      "sha256": "e3b4fa05d0775ba7b861641195ca19fb2b8a697b1601e6a0ea8e19c41caebb7e"
+    },
+    {
+      "id": "a1a9bc",
+      "base_utc": "2016-12-31T22:08:38.600000+00:00",
+      "points": 289,
+      "in_day": 108,
+      "first_utc": "2016-12-31T22:08:38.600000+00:00",
+      "last_utc": "2017-01-01T23:58:52.900000+00:00",
+      "bytes": 2115,
+      "sha256": "55caac6cbac8b15564de092cd92c4f83fbf49b930acc30c668e00a0549d51d0a"
+    },
+    {
+      "id": "a976c7",
+      "base_utc": "2016-12-31T22:33:23.200000+00:00",
+      "points": 958,
+      "in_day": 929,
+      "first_utc": "2016-12-31T22:33:23.200000+00:00",
+      "last_utc": "2017-01-01T22:25:48.300000+00:00",
+      "bytes": 9537,
+      "sha256": "1da7eb8edbb7586097ec08a74cb9c72fec89468af0793632497c9551cd6331ac"
+    },
+    {
+      "id": "ad964c",
+      "base_utc": "2017-01-01T02:46:55.800000+00:00",
+      "points": 698,
+      "in_day": 698,
+      "first_utc": "2017-01-01T02:46:55.800000+00:00",
+      "last_utc": "2017-01-01T23:14:11.600000+00:00",
+      "bytes": 4347,
+      "sha256": "86a78ca7988830029272a060d0ecf79776d736d31be74ca8ae76c770697474aa"
+    },
+    {
+      "id": "c078ae",
+      "base_utc": "2016-12-31T23:55:57.900000+00:00",
+      "points": 418,
+      "in_day": 237,
+      "first_utc": "2016-12-31T23:55:57.900000+00:00",
+      "last_utc": "2017-01-01T21:25:29.900000+00:00",
+      "bytes": 4138,
+      "sha256": "9584675ea23bb64054cbbc0e55f5685fb5aa333e4bf8fc0c08bc8117d43875b0"
+    }
+  ],
+  "changes": [
+    "Discovery snapshot offsets must be smaller than the five-minute sampling interval. Offsets over one minute are recorded in the manifest and report.",
+    "Historical traces may include leading positions from the preceding UTC day when they also contain positions on the requested day. Original source bytes and timestamps are kept.",
+    "Sample analysis filters to selected archive dates. Decoded-cache keys include those date filters."
+  ],
+  "regression_tests": [
+    "delayed_discovery_snapshots_record_offsets_and_replay_offline",
+    "leading_previous_day_positions_are_preserved_and_filtered_for_analysis",
+    "offline_cache_rechecks_trace_dates_even_when_recorded_hashes_match"
+  ],
+  "real_video_status": "The last completed Maho replay searched nine dates offline and passed at 549.65 m. The repaired January archive and ten-date replay have not run on the final overlap fix. The full 125-date sample and 89-day Chicago searches remain incomplete. Lake Hood audio remains unresolved.",
+  "previous_nine_date_evidence": "snapshot-boundary-validation.json",
+  "previous_ci": {
+    "source_commit": "99588f3b1c92fc155e4ca7eb9994e80305c2be57",
+    "run_id": 42364660722,
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42364660722",
+    "status": "completed",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "platform": "windows-latest",
+        "rust_passed": 142,
+        "python_passed": 9,
+        "rust_failed": 0,
+        "rust_ignored": 0,
+        "rust_result_groups": 23
+      },
+      {
+        "platform": "ubuntu-latest",
+        "rust_passed": 142,
+        "python_passed": 9,
+        "rust_failed": 0,
+        "rust_ignored": 0,
+        "rust_result_groups": 23
+      }
+    ]
+  }
+}

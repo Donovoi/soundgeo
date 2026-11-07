@@ -1,6 +1,7 @@
 pub mod aircraft;
 pub mod archive;
 pub mod audio;
+pub mod availability;
 pub mod data;
 mod date_search;
 pub mod demo;
@@ -12,6 +13,8 @@ pub mod sample_archive;
 pub mod search;
 pub mod terrain_archive;
 pub mod timing;
+pub mod visual;
+pub mod visual_data;
 pub mod webtrak;
 
 use anyhow::{Context, Result, bail};
@@ -112,10 +115,13 @@ impl Job {
             bail!("Choose an existing video or audio file.");
         }
         if let Some(request) = &self.archive {
-            let dates = request.dates()?;
+            request.validate()?;
             if request.provider == archive::ArchiveProvider::AdsbExchangeSample {
-                for date in dates {
-                    sample_archive::validate(&date, self.bounds)?;
+                sample_archive::validate_bounds(self.bounds)?;
+                if !request.date_from.trim().is_empty() {
+                    for date in request.dates()? {
+                        sample_archive::validate(&date, self.bounds)?;
+                    }
                 }
             }
         } else if !self.tracks.exists() {
@@ -316,9 +322,12 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         report.warnings.push("Only one flyover and no known clock: time and location can be ambiguous, especially on straight flight paths.".into());
     }
     if let Some(request) = &job.archive {
-        let dates = request.dates()?;
-        if dates.len() > 1 {
-            return date_search::run(job, report, timing_peaks, &dates, control, progress);
+        let (dates, discovery) = request.resolve_dates(control, &|m, _| progress(m, 0.33))?;
+        if dates.len() > 1 || discovery.is_some() {
+            let mut result =
+                date_search::run(job, report, timing_peaks, &dates, control, progress)?;
+            result.date_search.as_mut().unwrap().provider_discovery = discovery;
+            return Ok(result);
         }
     }
     let sources = if let Some(request) = &job.archive {
@@ -367,10 +376,21 @@ pub(crate) fn analyze_sources(
         .as_ref()
         .is_some_and(|r| r.provider == archive::ArchiveProvider::AdsbExchangeSample)
     {
+        let mut no_traces = !sources.is_empty();
         for path in sources {
-            report
-                .warnings
-                .push(sample_archive::coverage_warning(path)?);
+            let (warning, empty) = sample_archive::coverage(path)?;
+            report.warnings.push(warning);
+            no_traces &= empty;
+        }
+        if no_traces {
+            report.reference_sources = sources.to_vec();
+            // Empty date batches contribute no controls. The combined search
+            // creates a pending assessment if every batch is empty.
+            if !all_controls && let Some(peaks) = timing_peaks {
+                report.search_method = "passage_timing".into();
+                report.timing = Some(timing::Assessment::pending(peaks));
+            }
+            return Ok(report);
         }
     }
     if prepared.type_catalog.is_none() {
@@ -442,7 +462,7 @@ pub(crate) fn analyze_sources(
         }
         .into();
         report.warnings.push(assessment.explanation.clone());
-        report.warnings.push("Passage timing uses nearby aircraft, a fixed media clock rate and a one-second timing width. Speech, missing flights, changing sound power and nonstationary noise can invalidate this model. Shuffled controls and the candidate spread are not a calibrated accuracy radius.".into());
+        report.warnings.push(format!("Passage timing uses nearby aircraft, a fixed media clock rate and a timing width of {} seconds. Speech, missing flights, changing sound power and nonstationary noise can invalidate this model. See the limitations document for result interpretation.", job.timing_options.timing_sigma_s));
         report.timing = Some(assessment);
         progress("Analysis complete", 1.);
         return Ok(report);
@@ -519,6 +539,9 @@ pub fn prepare_data(job: &Job, control: &Control, progress: &Progress<'_>) -> Re
         .archive
         .as_ref()
         .context("Select a flight provider and cache folder")?;
+    if request.provider == archive::ArchiveProvider::AdsbExchangeSample {
+        sample_archive::validate_bounds(job.bounds)?;
+    }
     let flight_sources =
         request.ensure_for_bounds(job.bounds, control, &|m, p| progress(m, p * 0.9))?;
     let terrain_sources = if let Some((bounds, folder)) = terrain {

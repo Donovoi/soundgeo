@@ -33,7 +33,7 @@ def under_root(root, relative):
     return resolved
 
 
-def make_job(case, data_root):
+def make_job(case, data_root, *, unknown_date=False, offline=False, archive_override=None):
     """Copy only solver settings. References and source clocks stay outside."""
     if set(case['settings']) - SETTINGS:
         raise ValueError('Unexpected benchmark solver setting')
@@ -48,16 +48,36 @@ def make_job(case, data_root):
         if set(archive) - {'date_from', 'date_to', 'provider', 'cache'}:
             raise ValueError('Unexpected benchmark archive setting')
         job['archive'] = {**archive, 'cache': str(under_root(data_root, archive['cache']))}
+    if archive_override is not None:
+        job['archive'] = dict(archive_override)
+    if unknown_date:
+        if not job.get('archive'):
+            raise ValueError('Unknown-date tests need a provider cache; use --cache and --provider')
+        job['archive'].update(date_from='', date_to=None)
+        # A date-selected import must not override or supplement the cache search.
+        job.pop('tracks', None)
+        job.pop('type_catalog', None)
+    if offline:
+        job['offline'] = True
     return job
 
 
-def evaluate(report, exit_code, case, target):
+def evaluate(report, exit_code, case, target, *, unknown_date=False, offline=False):
     """A green model status alone does not pass the real-location benchmark."""
     job = report['job']
     if job.get('start_utc') is not None or job.get('analysis_method') != 'passage_timing':
         raise ValueError('The report used a recording clock or the wrong method')
     if job.get('bounds') != case['settings']['bounds']:
         raise ValueError('The report used a different search area')
+    if unknown_date:
+        archive = job.get('archive')
+        if not archive or archive.get('date_from') or archive.get('date_to') or job.get('tracks'):
+            raise ValueError('The report used a supplied date or date-selected flight import')
+        coverage = report.get('date_search')
+        if coverage is not None and not coverage.get('complete'):
+            raise ValueError('The date search did not finish')
+    if offline and not job.get('offline'):
+        raise ValueError('The report did not use offline mode')
     timing = report['timing']
     row = {'status': report['status'], 'accepted': False, 'screened': False,
            'sound_peaks': len(timing['peaks']), 'track_count': report['track_count']}
@@ -77,11 +97,14 @@ def evaluate(report, exit_code, case, target):
     controls = timing['control_maximum_scores']
     seeds = timing['control_permutation_seeds']
     first = timing['search']['candidates'][0]
+    sigma = timing['search'].get('options', {}).get('timing_sigma_s', 1.)
+    if not math.isfinite(sigma) or not 0.5 <= sigma <= 10:
+        raise ValueError('Invalid timing width in report')
     score = first['log_likelihood_ratio']
     if (len(controls) != 19 or len(seeds) != 19 or len(set(seeds)) != 19
             or not math.isfinite(score)
             or any(not math.isfinite(value) or value + 1e-7 >= score for value in controls)
-            or sum(abs(pair['residual_s']) <= 3 for pair in first['pairs']) < 6):
+            or sum(abs(pair['residual_s']) <= 3 * sigma for pair in first['pairs']) < 6):
         raise ValueError('The report does not pass the required timing screens')
     # Reference positions enter only this evaluator, after the CLI has exited.
     error = max(distance_m(region, point) for point in case['references']) + case['reference_allowance_m']
@@ -96,35 +119,49 @@ def main():
     parser.add_argument('--data-root', type=Path, required=True,
                         help='Folder containing the original local media and reference caches')
     parser.add_argument('--output', type=Path, required=True, help='New folder; existing results are preserved')
-    parser.add_argument('--case', help='One case ID; omit to run all cases')
+    parser.add_argument('--manifest', type=Path, default=Path(__file__).with_name('timing-cases.json'),
+                        help='Case manifest; defaults to the preserved 25-case benchmark')
+    parser.add_argument('--case', action='append', help='Case ID; repeat to select several, omit for all')
+    parser.add_argument('--unknown-date', action='store_true', help='Search cached dates without supplying a recording date')
+    parser.add_argument('--offline', action='store_true', help='Disable network access in the app')
+    parser.add_argument('--cache', type=Path, help='Override the flight cache for selected cases')
+    parser.add_argument('--provider', choices=['adsb_lol', 'adsb_exchange_sample', 'webtrak_chicago', 'webtrak_lax'])
     parser.add_argument('--workers', type=int, choices=range(1, 5), default=2)
     parser.add_argument('--timeout', type=float, default=3600, help='Maximum seconds per case, including downloads')
     args = parser.parse_args()
     if not math.isfinite(args.timeout) or args.timeout <= 0:
         parser.error('--timeout must be a positive number of seconds')
-    manifest_path = Path(__file__).with_name('timing-cases.json')
+    manifest_path = args.manifest.resolve(strict=True)
     manifest = json.loads(manifest_path.read_text(encoding='utf-8'))
-    selected = [case for case in manifest['cases'] if not args.case or case['id'] == args.case]
-    if not selected:
+    selected = [case for case in manifest['cases'] if not args.case or case['id'] in args.case]
+    if not selected or (args.case and set(args.case) - {case['id'] for case in selected}):
         parser.error('Unknown case ID')
+    if bool(args.cache) != bool(args.provider):
+        parser.error('--cache and --provider must be supplied together')
+    if args.cache and not args.unknown_date:
+        parser.error('A cache override requires --unknown-date')
     if args.output.exists():
         parser.error('--output already exists; choose a new folder')
     cli = args.cli.resolve(strict=True)
     data_root = args.data_root.resolve(strict=True)
+    archive_override = {'cache': str(args.cache.resolve(strict=True)), 'provider': args.provider} if args.cache else None
     prepared = []
     for case in selected:
         if not case['id'] or any(c not in 'abcdefghijklmnopqrstuvwxyz0123456789-' for c in case['id']):
             raise ValueError('Invalid benchmark case ID')
-        job = make_job(case, data_root)
+        job = make_job(case, data_root, unknown_date=args.unknown_date, offline=args.offline,
+                       archive_override=archive_override)
         if digest(Path(job['media'])) != case['media_sha256']:
             raise ValueError(f"{case['id']}: media differs from the fixed capture")
         prepared.append((case, job))
     args.output.mkdir(parents=True, exist_ok=False)
     plan = {'cli_sha256': digest(cli), 'manifest_sha256': digest(manifest_path),
+            'runner_sha256': digest(Path(__file__)),
             'target_error_m': manifest['target_error_m'], 'selected_cases': [c['id'] for c in selected],
             'all_cases_selected': len(selected) == len(manifest['cases']),
             'workers': args.workers, 'timeout_s': args.timeout,
-            'recording_clock_supplied': False, 'all_cases_are_replays': True}
+            'recording_clock_supplied': False, 'recording_date_supplied': not args.unknown_date,
+            'offline': args.offline, 'archive_override': archive_override, 'all_cases_are_replays': True}
     (args.output / 'plan.json').write_text(json.dumps(plan, indent=2) + '\n', encoding='utf-8')
 
     def run_case(item):
@@ -147,7 +184,9 @@ def main():
                 raise ValueError('The CLI did not write a report; see run.log')
             report = json.loads(report_path.read_text(encoding='utf-8'))
             row['report_sha256'] = digest(report_path)
-            row.update(evaluate(report, process.returncode, case, manifest['target_error_m']))
+            row.update(evaluate(report, process.returncode, case, manifest['target_error_m'],
+                                unknown_date=args.unknown_date, offline=args.offline))
+            row['date_search'] = report.get('date_search')
         except (OSError, ValueError, KeyError, IndexError, TypeError, subprocess.TimeoutExpired) as error:
             row['error'] = str(error)
         row['elapsed_s'] = time.monotonic() - started

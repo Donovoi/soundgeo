@@ -1,0 +1,189 @@
+{
+  "scope": "Known broad Maho region. No recording date or time supplied. The free evaluation sample provides the first day of each month; three individual dates were prepared and searched offline. Existing recordings are replays.",
+  "local_build": {
+    "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+    "executable": "analysis-build\\soundgeo-cli-video-eee5b0c.exe",
+    "sha256": "5d1299555ff9d665bbed8a3ce37def279cb6f80d984a2bae5e46d938bc1de9fb",
+    "tools": {
+      "tesseract": {
+        "path": "video-tools\\tesseract\\tesseract.exe",
+        "sha256": "babb405f4366b480d02cd8ff2bac8d497170f6c1711ce6f3d5d8bf0fb7fa6ed9"
+      },
+      "english_model": {
+        "path": "video-tools\\tesseract\\tessdata\\eng.traineddata",
+        "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
+      }
+    }
+  },
+  "checks": {
+    "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+    "local_rust_tests_passed": 130,
+    "python_runner_tests_passed": 9,
+    "formatting": "passed",
+    "clippy_release_all_targets": "passed",
+    "doc_tests": "passed",
+    "release_binaries": "passed",
+    "ci_run": "https://github.com/Donovoi/soundgeo/actions/runs/42351026350",
+    "ci_platforms_passed": [
+      "Windows",
+      "Ubuntu"
+    ]
+  },
+  "plan": {
+    "purpose": "Add two unrelated first-of-month dates to the free sample cache before repeating the same regional audio search. No date or time will enter the solver.",
+    "dates": [
+      "2026-09-01",
+      "2026-10-01",
+      "2026-11-01"
+    ],
+    "bounds": {
+      "south": 17.85,
+      "north": 18.25,
+      "west": -63.35,
+      "east": -62.95
+    },
+    "cases": [
+      "maho-nov1-a",
+      "maho-nov1-b",
+      "maho-continuous-c"
+    ],
+    "provider": "adsb_exchange_sample",
+    "offline_analysis": true
+  },
+  "results": [
+    {
+      "case": "maho-continuous-c",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "e62a5b40bca55893075ce50347b1e8ae4e4ed481f05a0906707b5cdf4107b8b3",
+      "media_sha256": "75c0e04d7940f3b855ec598018861866b0ac40f07351e18eb400adaa94d30795",
+      "exit_code": 3,
+      "report_sha256": "633e9304c576440c4ac85e319d375e8f6c4d339749290b7d391853db526fa6c2",
+      "status": "insufficient_evidence",
+      "sound_peaks": 42,
+      "track_count": 818,
+      "date_search": {
+        "dates": [
+          "2026-09-01",
+          "2026-10-01",
+          "2026-11-01"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 13.354268299997784
+    },
+    {
+      "case": "maho-nov1-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "3a566ec47edb7952a3bb85475082f8e7fb488aaab270f17363ff4659bba5c747",
+      "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+      "exit_code": 4,
+      "report_sha256": "7f80c95013459201ade001c6584868812a2700c499d90a0f4fe65409ef85d7c7",
+      "status": "ambiguous",
+      "sound_peaks": 86,
+      "track_count": 818,
+      "date_search": {
+        "dates": [
+          "2026-09-01",
+          "2026-10-01",
+          "2026-11-01"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 23.389812599983998
+    },
+    {
+      "case": "maho-nov1-b",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "115bc7a4cea03b2fc3fabcedec8a09172c2e930801fcdaf4574009edf434fc30",
+      "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+      "exit_code": 0,
+      "report_sha256": "3981565f1d1f5ba7728d874326bc6f786e4a4dbe2a0d1f93d805c985b1a05cc5",
+      "status": "candidates_found",
+      "sound_peaks": 117,
+      "track_count": 818,
+      "region": {
+        "latitude": 18.04328859060403,
+        "longitude": -63.121830985915494,
+        "enclosing_radius_m": 0.0,
+        "competitive_points": 1
+      },
+      "error_m": 549.649056637247,
+      "matched_flights": 16,
+      "score": 31.0335629455301,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-09-01",
+          "2026-10-01",
+          "2026-11-01"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 26.341374999959953
+    }
+  ],
+  "ci_artifact": {
+    "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+    "run_url": "https://github.com/Donovoi/soundgeo/actions/runs/42351026350",
+    "binaries": [
+      {
+        "path": "ci-video-eee5b0c\\soundgeo-cli.exe",
+        "sha256": "feb7dbfc175b51fad23da2978a72da75df364d072d7a9be4acb8ce4c1fb03eae"
+      },
+      {
+        "path": "ci-video-eee5b0c\\soundgeo.exe",
+        "sha256": "1c6bb790ab3e0f7beebed536f833c42c6a27a490a16c54bed0286a9dde247608"
+      }
+    ]
+  },
+  "ci_results": [
+    {
+      "case": "maho-nov1-b",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "115bc7a4cea03b2fc3fabcedec8a09172c2e930801fcdaf4574009edf434fc30",
+      "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+      "exit_code": 0,
+      "report_sha256": "bcc265b1d4069d614fba63580106d6963c010a8e15178c7f7057821f93ec8812",
+      "status": "candidates_found",
+      "sound_peaks": 117,
+      "track_count": 818,
+      "region": {
+        "latitude": 18.04328859060403,
+        "longitude": -63.121830985915494,
+        "enclosing_radius_m": 0.0,
+        "competitive_points": 1
+      },
+      "error_m": 549.649056637247,
+      "matched_flights": 16,
+      "score": 31.0335629455301,
+      "controls": 19,
+      "date_search": {
+        "dates": [
+          "2026-09-01",
+          "2026-10-01",
+          "2026-11-01"
+        ],
+        "completed_batches": 3,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "elapsed_s": 25.07102550007403
+    }
+  ],
+  "counts": {
+    "clips": 3,
+    "accepted_within_1km": 1,
+    "wrong_screened": 0,
+    "processing_errors": 0
+  }
+}

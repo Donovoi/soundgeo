@@ -32,15 +32,15 @@ The [validation record](validation/README.md) contains test results, sources, an
 
 - A local video or audio file.
 - FFmpeg to read the audio.
-- Flight position data for a possible recording date.
-- A prepared flight cache, or a date range for downloading flight data.
+- A free flight-data source, or a prepared flight cache.
+- A folder for downloaded data.
 
 ## Use the desktop application
 
 1. Start `soundgeo.exe`.
 2. Select a recording, or drag the file into the window.
 3. Keep **Download missing flight data automatically** selected.
-4. Leave the dates blank to search all cached dates, or enter a UTC date range to download and search.
+4. Leave the dates blank to find and search available days. You can also enter a UTC date range.
 5. Select a folder for the downloaded data.
 6. Leave **Recording time** empty if you do not know the start time.
 7. Set a search area if you know the region.
@@ -51,13 +51,15 @@ The [validation record](validation/README.md) contains test results, sources, an
 Put FFmpeg on `PATH`, beside the application, or select its path in the advanced settings.
 A new daily flight archive can require several GB of storage.
 The program checks downloaded files and uses valid files again.
+With blank dates, online analysis discovers the provider's available days and
+downloads missing files as it searches. Offline analysis searches prepared days.
 
 Select **Worldwide: ADSB.lol** for the worldwide archive.
 For a first-of-month recording, you can also select **Free evaluation sample:
 first of each month**. Set a search area. This source is limited to testing and
 evaluation. It downloads the full day's traces for aircraft found in 288
-worldwide snapshots, spaced five minutes apart. The report and cache manifest
-list missing traces.
+worldwide snapshots near five-minute intervals. The report and cache manifest
+list missing traces and any snapshots taken from neighboring minutes.
 For a recording near Chicago, you can select **Chicago: public airport replay**.
 For a recording near Los Angeles, select **LAX: public airport replay**.
 The Chicago source contains local airport radar data. It keeps about 90 days of history.
@@ -69,6 +71,18 @@ Select **Try a synthetic demo** to create a test recording and example flight da
 The demo runs offline.
 
 ## Prepare data for offline use
+
+To list available days without downloading flight files:
+
+```powershell
+soundgeo-cli.exe dates --provider webtrak-chicago --cache flight-cache --output available-dates.json
+```
+
+To prepare all available days, omit the dates:
+
+```powershell
+soundgeo-cli.exe download --provider webtrak-chicago --output flight-cache
+```
 
 Download flight data for the period you want to keep available. The worldwide and airport downloaders also
 prepare the aircraft catalog. Add terrain bounds and a terrain cache if needed:
@@ -87,7 +101,7 @@ Analyze offline with the prepared cache:
 soundgeo-cli.exe analyze --config region.json --input recording.mp4 --cache flight-cache --provider webtrak-chicago --terrain-cache terrain-cache --offline --output report.json
 ```
 
-Leave dates out of the command and job file to search every cached date for that provider. The report estimates
+Leave dates out of the command and job file to search every prepared date offline. The report estimates
 the recording time from the matched sounds. Batched reports also list the dates searched.
 Longer searches run in overlapping daily batches. This covers recordings across
 midnight and keeps flight data for at most two adjacent days in memory at once.
@@ -99,6 +113,39 @@ invalid cache files. Prepare those files online, then repeat the offline run.
 In the desktop app, use **Prepare data for offline use** with the selected flight
 provider, date range, and terrain settings. Then select **Offline mode: use cached
 data only**. Leave the dates blank to search the prepared cache.
+
+## Optional video clues
+
+SoundGeo can read visible place names and clocks from a video. This option uses
+local text recognition. It produces a separate JSON report with the text, frame
+times, and matching places on a map. Audio searches keep their own results.
+
+Install [Tesseract 5](https://tesseract-ocr.github.io/tessdoc/Installation.html)
+with its English language data. Keep FFmpeg and FFprobe together. Prepare free
+[GeoNames](https://www.geonames.org/) place data before going offline:
+
+```powershell
+soundgeo-cli.exe video-data --country ALL --output video-data
+```
+
+Use a two-letter country code such as `US` to prepare one country. GeoNames data
+uses the [CC BY 4.0 license](https://creativecommons.org/licenses/by/4.0/).
+Copy the `.txt` and `.source.json` files to the offline computer. Also copy
+the complete Tesseract installation, including its `tessdata` folder,
+and both FFmpeg and FFprobe.
+
+```powershell
+soundgeo-cli.exe video-clues --input recording.mp4 --gazetteer video-data/allCountries.txt --offline --output video-clues.json
+```
+
+Use `--tesseract`, `--tessdata`, and `--ffmpeg` to set tool paths if needed.
+Use `--frames 6` to read more frames. Use `--output -` for JSON on standard output.
+Read JSON output as UTF-8.
+The `--require-match` option returns exit code 3 if no place names match.
+Read all entries in `places` and the source text in `frames`.
+
+In the desktop app, open **Video clues (optional)** below the recording field.
+Prepare or select the place data, select Tesseract, then choose **Read video clues**.
 
 ## Use the command line
 

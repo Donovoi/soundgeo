@@ -1,0 +1,694 @@
+{
+  "scope": "Optional visible-text clues, evaluated separately from audio location acceptance. No bounds, recording dates, recording times, or reference coordinates were supplied to the CLI. Full worldwide GeoNames data was prepared before offline analysis. The 360p clips were inspected before implementation; these are development tests.",
+  "source_video": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+  "local_build": {
+    "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+    "executable": "analysis-build\\soundgeo-cli-video-eee5b0c.exe",
+    "sha256": "5d1299555ff9d665bbed8a3ce37def279cb6f80d984a2bae5e46d938bc1de9fb",
+    "tools": {
+      "tesseract": {
+        "path": "video-tools\\tesseract\\tesseract.exe",
+        "sha256": "babb405f4366b480d02cd8ff2bac8d497170f6c1711ce6f3d5d8bf0fb7fa6ed9"
+      },
+      "english_model": {
+        "path": "video-tools\\tesseract\\tessdata\\eng.traineddata",
+        "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
+      }
+    }
+  },
+  "checks": {
+    "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+    "local_rust_tests_passed": 130,
+    "python_runner_tests_passed": 9,
+    "formatting": "passed",
+    "clippy_release_all_targets": "passed",
+    "doc_tests": "passed",
+    "release_binaries": "passed",
+    "ci_run": "https://github.com/Donovoi/soundgeo/actions/runs/42351026350",
+    "ci_platforms_passed": [
+      "Windows",
+      "Ubuntu"
+    ]
+  },
+  "gazetteer": {
+    "url": "https://download.geonames.org/export/dump/allCountries.zip",
+    "attribution": "GeoNames",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "archive_sha256": "f5cbfcf2d3981e37807de0e8e5cbb32278f44f9454fa64051da44789502e01fd",
+    "text_sha256": "eb04452e23cd8baa93445fe375e1727da377be5fa20398e8b1642e43feb55879"
+  },
+  "case_plan": [
+    {
+      "id": "lake-hood",
+      "media": "real-validation/lake-hood/recording.mp4",
+      "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ]
+    },
+    {
+      "id": "lake-hood-nov1",
+      "media": "real-validation/lake-hood-nov1/recording.mp4",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ]
+    },
+    {
+      "id": "lake-hood-nov1-later",
+      "media": "real-validation/lake-hood-nov1-later/recording.mp4",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ]
+    },
+    {
+      "id": "lake-hood-nov4-a",
+      "media": "fresh-validation/lake-hood-nov4-a/recording.mp4",
+      "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Previously verified owner map pin; not a survey"
+        }
+      ]
+    },
+    {
+      "id": "lake-hood-nov4-b",
+      "media": "fresh-validation/lake-hood-nov4-b/recording.mp4",
+      "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Previously verified owner map pin; not a survey"
+        }
+      ]
+    },
+    {
+      "id": "lake-new-a",
+      "media": "lake-nov6-heldout/lake-new-a/recording.mp4",
+      "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ]
+    },
+    {
+      "id": "lake-new-b",
+      "media": "lake-nov6-heldout/lake-new-b/recording.mp4",
+      "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c",
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ]
+    },
+    {
+      "id": "lake-new-a-360p-snippet",
+      "media": "lake-nov6-heldout\\lake-new-a\\first-clock.mp4",
+      "media_sha256": "89b02898e9742b674125259a3ed56fb206de37d59392e64ee984c4afe97e2b58",
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ]
+    },
+    {
+      "id": "lake-new-b-360p-snippet",
+      "media": "lake-nov6-heldout\\lake-new-b\\first-clock.mp4",
+      "media_sha256": "5f9ec4b07256f78f70041fd3eaf7cea9ac3c8c92222df88210096e252364761b",
+      "references": [
+        {
+          "latitude": 61.179633,
+          "longitude": -149.9719665,
+          "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+        }
+      ]
+    }
+  ],
+  "earlier_build": {
+    "source_commit": "84854dd7d4575921d60cc6dc6af9cd3c805a7aa2",
+    "executable": "analysis-build\\soundgeo-cli-video-84854dd.exe",
+    "sha256": "a9caa556ad7d9cbb0e40e913f0322a289a69b3a5f068f26c5ed0a46001842aa0",
+    "tools": {
+      "tesseract": {
+        "path": "video-tools\\tesseract\\tesseract.exe",
+        "sha256": "babb405f4366b480d02cd8ff2bac8d497170f6c1711ce6f3d5d8bf0fb7fa6ed9"
+      },
+      "english_model": {
+        "path": "video-tools\\tesseract\\tessdata\\eng.traineddata",
+        "sha256": "7d4322bd2a7749724879683fc3912cb542f19906c83bcc1a52132556427170b2"
+      }
+    }
+  },
+  "earlier_results": [
+    {
+      "case": "lake-hood",
+      "exit_code": 0,
+      "elapsed_s": 54.29437469993718,
+      "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "place_clues_found",
+      "place_count": 5,
+      "offline": true,
+      "report_sha256": "8a9d1e7a9605b38a3e85503f421e2467ceab5bfde4fcead2b19200b51da9db3c",
+      "places": [
+        {
+          "geoname_id": 8708531,
+          "name": "T\u1ed5 M\u1ed9t",
+          "latitude": 14.65974,
+          "longitude": 108.81435,
+          "feature_code": "PPL",
+          "country": "VN",
+          "matched_name": "To 1",
+          "frame_indices": [
+            4
+          ],
+          "source_url": "https://www.geonames.org/8708531",
+          "error_m": 9170317.523252843
+        },
+        {
+          "geoname_id": 8708533,
+          "name": "T\u1ed5 M\u1ed9t",
+          "latitude": 14.65575,
+          "longitude": 108.90277,
+          "feature_code": "PPL",
+          "country": "VN",
+          "matched_name": "To 1",
+          "frame_indices": [
+            4
+          ],
+          "source_url": "https://www.geonames.org/8708533",
+          "error_m": 9166169.632282969
+        },
+        {
+          "geoname_id": 8708539,
+          "name": "T\u1ed5 M\u1ed9t",
+          "latitude": 14.49361,
+          "longitude": 108.84608,
+          "feature_code": "PPL",
+          "country": "VN",
+          "matched_name": "To 1",
+          "frame_indices": [
+            4
+          ],
+          "source_url": "https://www.geonames.org/8708539",
+          "error_m": 9184925.529022466
+        },
+        {
+          "geoname_id": 8708542,
+          "name": "T\u1ed5 M\u1ed9t",
+          "latitude": 14.5344,
+          "longitude": 108.68354,
+          "feature_code": "PPL",
+          "country": "VN",
+          "matched_name": "To 1",
+          "frame_indices": [
+            4
+          ],
+          "source_url": "https://www.geonames.org/8708542",
+          "error_m": 9189279.706738682
+        },
+        {
+          "geoname_id": 9869268,
+          "name": "T\u1ed5 M\u1ed9t",
+          "latitude": 22.68809,
+          "longitude": 104.46444,
+          "feature_code": "PPL",
+          "country": "VN",
+          "matched_name": "To 1",
+          "frame_indices": [
+            4
+          ],
+          "source_url": "https://www.geonames.org/9869268",
+          "error_m": 8603485.979605203
+        }
+      ],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov1",
+      "exit_code": 3,
+      "elapsed_s": 51.71873710001819,
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "8a97622c24e557408ecc05b3c02f1d7503fe671b7525b5ac8b84124dfae42b84",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "exit_code": 3,
+      "elapsed_s": 94.35314340004697,
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "e1338ce8e0849e09d5fcbe7c5c2559b6b67983ff611a839c480b856c9aaa0684",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov4-a",
+      "exit_code": 3,
+      "elapsed_s": 59.51627660007216,
+      "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "0adef22700d7b1c412a70f421df5117157f304951b626a1b056265f8187e3cd5",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov4-b",
+      "exit_code": 0,
+      "elapsed_s": 85.28302039997652,
+      "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "place_clues_found",
+      "place_count": 4,
+      "offline": true,
+      "report_sha256": "0f363fd028ce81a8c5f62ed5742b84b1483f6791e214fb9eb43027f790133331",
+      "places": [
+        {
+          "geoname_id": 1566481,
+          "name": "T\u1ec1 L\u1ec5",
+          "latitude": 21.30463,
+          "longitude": 105.33655,
+          "feature_code": "PPL",
+          "country": "VN",
+          "matched_name": "Te Le",
+          "frame_indices": [
+            6
+          ],
+          "source_url": "https://www.geonames.org/1566481",
+          "error_m": 8695952.952680912
+        },
+        {
+          "geoname_id": 1566482,
+          "name": "T\u1ec1 L\u00e9",
+          "latitude": 21.26667,
+          "longitude": 105.2,
+          "feature_code": "PPL",
+          "country": "VN",
+          "matched_name": "Te Le",
+          "frame_indices": [
+            6
+          ],
+          "source_url": "https://www.geonames.org/1566482",
+          "error_m": 8706401.03202308
+        },
+        {
+          "geoname_id": 2803011,
+          "name": "Ath",
+          "latitude": 50.62829,
+          "longitude": 3.77938,
+          "feature_code": "ADM4",
+          "country": "BE",
+          "matched_name": "a te",
+          "frame_indices": [
+            6
+          ],
+          "source_url": "https://www.geonames.org/2803011",
+          "error_m": 7364708.194079315
+        },
+        {
+          "geoname_id": 4253953,
+          "name": "Art",
+          "latitude": 39.40282,
+          "longitude": -87.15529,
+          "feature_code": "PPL",
+          "country": "US",
+          "matched_name": "a te",
+          "frame_indices": [
+            6
+          ],
+          "source_url": "https://www.geonames.org/4253953",
+          "error_m": 4828297.368981226
+        }
+      ],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-new-a",
+      "exit_code": 3,
+      "elapsed_s": 53.78675759991165,
+      "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "1748cdda927426338fce37d612e17c1ce6f7b5589e046d3d20271a73f404531d",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-new-a-360p-snippet",
+      "exit_code": 1,
+      "elapsed_s": 2.0934628000250086,
+      "media_sha256": "89b02898e9742b674125259a3ed56fb206de37d59392e64ee984c4afe97e2b58",
+      "method": "video_text",
+      "not_audio_acceptance": true
+    },
+    {
+      "case": "lake-new-b",
+      "exit_code": 0,
+      "elapsed_s": 85.34034369990695,
+      "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "place_clues_found",
+      "place_count": 4,
+      "offline": true,
+      "report_sha256": "de54271e27fb60677f9c9f9dfcec6258b348b42a1ba5456109fd9f83b1af9c01",
+      "places": [
+        {
+          "geoname_id": 5495786,
+          "name": "U C",
+          "latitude": 35.24226,
+          "longitude": -106.17113,
+          "feature_code": "MN",
+          "country": "US",
+          "matched_name": "U C",
+          "frame_indices": [
+            7
+          ],
+          "source_url": "https://www.geonames.org/5495786",
+          "error_m": 4207669.390115727
+        },
+        {
+          "geoname_id": 11184283,
+          "name": "The Incubator, Alconbury Weald",
+          "latitude": 52.37467,
+          "longitude": -0.24059,
+          "feature_code": "BLDO",
+          "country": "GB",
+          "matched_name": "U&C",
+          "frame_indices": [
+            7
+          ],
+          "source_url": "https://www.geonames.org/11184283",
+          "error_m": 7106783.770264331
+        },
+        {
+          "geoname_id": 11184284,
+          "name": "The Club, Alconbury Weald",
+          "latitude": 52.37483,
+          "longitude": -0.24014,
+          "feature_code": "BLDO",
+          "country": "GB",
+          "matched_name": "U&C",
+          "frame_indices": [
+            7
+          ],
+          "source_url": "https://www.geonames.org/11184284",
+          "error_m": 7106774.907174167
+        },
+        {
+          "geoname_id": 11184287,
+          "name": "Urban&Civic plc",
+          "latitude": 51.51244,
+          "longitude": -0.14447,
+          "feature_code": "BLDO",
+          "country": "GB",
+          "matched_name": "U&C",
+          "frame_indices": [
+            7
+          ],
+          "source_url": "https://www.geonames.org/11184287",
+          "error_m": 7200893.770794063
+        }
+      ],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-new-b-360p-snippet",
+      "exit_code": 1,
+      "elapsed_s": 2.3637634000042453,
+      "media_sha256": "5f9ec4b07256f78f70041fd3eaf7cea9ac3c8c92222df88210096e252364761b",
+      "method": "video_text",
+      "not_audio_acceptance": true
+    }
+  ],
+  "results": [
+    {
+      "case": "lake-hood",
+      "exit_code": 3,
+      "elapsed_s": 55.024906100006774,
+      "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "578a19b1e7ea540339f0649bd50abe2d911d501bb1652e6d2efcd7adb2d53e84",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov1",
+      "exit_code": 3,
+      "elapsed_s": 49.100474299979396,
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "8a97622c24e557408ecc05b3c02f1d7503fe671b7525b5ac8b84124dfae42b84",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "exit_code": 3,
+      "elapsed_s": 51.80648390005808,
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "e1338ce8e0849e09d5fcbe7c5c2559b6b67983ff611a839c480b856c9aaa0684",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov4-a",
+      "exit_code": 3,
+      "elapsed_s": 46.62373759993352,
+      "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "0adef22700d7b1c412a70f421df5117157f304951b626a1b056265f8187e3cd5",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-hood-nov4-b",
+      "exit_code": 3,
+      "elapsed_s": 46.33575260010548,
+      "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "8272e60eb0c6bf862035a8bd575b212e29ea6f0e84934a683178d1a035e08a75",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-new-a",
+      "exit_code": 3,
+      "elapsed_s": 44.9487559000263,
+      "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "6584c32713817351afb0b4bd3e586c026ba54348414a54090313292034c0df87",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-new-a-360p-snippet",
+      "exit_code": 0,
+      "elapsed_s": 45.18721020000521,
+      "media_sha256": "89b02898e9742b674125259a3ed56fb206de37d59392e64ee984c4afe97e2b58",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "place_clues_found",
+      "place_count": 2,
+      "offline": true,
+      "report_sha256": "ee20531d19039e38bbaf5ea0a505743fdf51b2beadb0bacc94bebc5adc20a2c7",
+      "places": [
+        {
+          "geoname_id": 5867101,
+          "name": "Lake Hood Seaplane Base",
+          "latitude": 61.17987,
+          "longitude": -149.97166,
+          "feature_code": "AIRS",
+          "country": "US",
+          "matched_name": "Lake Hood Seaplane Base",
+          "frame_indices": [
+            1,
+            4,
+            7
+          ],
+          "source_url": "https://www.geonames.org/5867101",
+          "error_m": 31.055051082838865
+        },
+        {
+          "geoname_id": 12213327,
+          "name": "Anchorage, AK Metro Area",
+          "latitude": 62.22437,
+          "longitude": -149.55443,
+          "feature_code": "RGNE",
+          "country": "US",
+          "matched_name": "Anchorage  AK",
+          "frame_indices": [
+            1,
+            4,
+            7
+          ],
+          "source_url": "https://www.geonames.org/12213327",
+          "error_m": 118235.54992912691
+        }
+      ],
+      "top_named_place_within_1km": true
+    },
+    {
+      "case": "lake-new-b",
+      "exit_code": 3,
+      "elapsed_s": 44.54505389998667,
+      "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "no_place_clues",
+      "place_count": 0,
+      "offline": true,
+      "report_sha256": "964ea59fb439f214e4a00634a9479a759d887fe6203bbb45fcb9c9ae22b71f82",
+      "places": [],
+      "top_named_place_within_1km": false
+    },
+    {
+      "case": "lake-new-b-360p-snippet",
+      "exit_code": 0,
+      "elapsed_s": 54.886262199957855,
+      "media_sha256": "5f9ec4b07256f78f70041fd3eaf7cea9ac3c8c92222df88210096e252364761b",
+      "method": "video_text",
+      "not_audio_acceptance": true,
+      "status": "place_clues_found",
+      "place_count": 2,
+      "offline": true,
+      "report_sha256": "6dc8519aa15c9c9d3c3bb3360fab17884d0a35a1259c2565f56ec5f0d90f1725",
+      "places": [
+        {
+          "geoname_id": 5867101,
+          "name": "Lake Hood Seaplane Base",
+          "latitude": 61.17987,
+          "longitude": -149.97166,
+          "feature_code": "AIRS",
+          "country": "US",
+          "matched_name": "Lake Hood Seaplane Base",
+          "frame_indices": [
+            1,
+            4,
+            7
+          ],
+          "source_url": "https://www.geonames.org/5867101",
+          "error_m": 31.055051082838865
+        },
+        {
+          "geoname_id": 12213327,
+          "name": "Anchorage, AK Metro Area",
+          "latitude": 62.22437,
+          "longitude": -149.55443,
+          "feature_code": "RGNE",
+          "country": "US",
+          "matched_name": "Anchorage  AK",
+          "frame_indices": [
+            1,
+            4,
+            7
+          ],
+          "source_url": "https://www.geonames.org/12213327",
+          "error_m": 118235.54992912691
+        }
+      ],
+      "top_named_place_within_1km": true
+    }
+  ],
+  "counts": {
+    "clips": 9,
+    "top_named_place_within_1km": 2,
+    "no_place_clues": 7,
+    "processing_errors": 0
+  },
+  "interpretation": "The two 360p clips match Lake Hood Seaplane Base at 31.06 m from the independent camera reference. Both reports also retain an Anchorage metro-area clue whose representative coordinate is 118.24 km away. These are named-feature coordinates. No calibrated camera-position radius is assigned. All seven low-resolution files return no place clues.",
+  "ci_artifact": {
+    "source_commit": "eee5b0c3be307b80f54c642cdf1f472bb07c7bb7",
+    "run_url": "https://github.com/Donovoi/soundgeo/actions/runs/42351026350",
+    "binaries": [
+      {
+        "path": "ci-video-eee5b0c\\soundgeo-cli.exe",
+        "sha256": "feb7dbfc175b51fad23da2978a72da75df364d072d7a9be4acb8ce4c1fb03eae"
+      },
+      {
+        "path": "ci-video-eee5b0c\\soundgeo.exe",
+        "sha256": "1c6bb790ab3e0f7beebed536f833c42c6a27a490a16c54bed0286a9dde247608"
+      }
+    ]
+  },
+  "ci_report_sha256": "ee20531d19039e38bbaf5ea0a505743fdf51b2beadb0bacc94bebc5adc20a2c7",
+  "ci_report_matches_local": true,
+  "media_packet_check": {
+    "input": "video-tools/mismatched-duration.mp4",
+    "video_duration_s": 2,
+    "audio_duration_s": 10,
+    "selected_offsets_s": [
+      0.3333333333333333,
+      1,
+      1.6666666666666667
+    ],
+    "status": "no_place_clues"
+  }
+}

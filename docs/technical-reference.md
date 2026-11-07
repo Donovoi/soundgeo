@@ -1,5 +1,20 @@
 # Technical reference
 
+## Repeated archive searches
+
+The importer saves decoded regional tracks in the flight cache's `decoded-tracks`
+folder. Each entry is tied to source file hashes, the aircraft catalog, the
+search bounds, the aircraft filter, and the importer code. The source archives
+remain required. Changed source bytes or settings trigger a new import.
+Damaged derived entries are kept with a `rejected` suffix and rebuilt locally.
+The cache keeps exact floating-point values and applies track smoothing after
+loading. Read-only flight archives can be used without saving a derived cache.
+
+The passage timing setting `timing_options.timing_sigma_s` sets the Gaussian
+timing width in seconds. It defaults to `1.0` and accepts `0.5` through `10.0`.
+It is applied to clock proposals, sound-to-flight assignments, likelihood
+normalization, and shuffled controls. This setting supports model experiments.
+
 This page gives the detailed data and model rules. See the [README](../README.md) for operating instructions and [limitations](limitations.md) for model constraints and validation coverage.
 
 ## Flight data
