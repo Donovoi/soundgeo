@@ -19,6 +19,21 @@ The same build repeated three real audio searches offline. Maho passed at
 except creation time matched the previous build. A full 89-day Chicago download
 is in progress for a wider offline Midway test.
 
+[Historical sample checks](empty-sample-date-validation.json) found and fixed
+two failures. Some 2016 discovery snapshots have timestamps slightly more than
+30 seconds after their filenames. The downloader now accepts offsets below
+one minute and keeps the original flight-trace times. A verified day with zero
+regional aircraft now stays in the coverage record while analysis continues
+through later days.
+
+All 288 snapshots from July 1, 2016 passed preparation and offline verification.
+That day contained no aircraft in the Maho region. A real Maho search across
+that day and the three prepared 2026 dates passed offline at 549.65 m. Its timing
+scores, controls, and location match the earlier three-date result. The test
+proxy received no connections. Code revision `d2366f4` passed all 139 Rust
+tests, nine Python tests, formatting, strict Clippy, doc tests, and both release
+builds. The record keeps the two failed attempts.
+
 The [unknown-date audio run](unknown-date-results.json) tested 27 recordings
 offline with no recording date or time supplied. Each case kept its broad search
 region and used all dates in its prepared provider cache. Eight recordings
