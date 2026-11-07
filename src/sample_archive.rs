@@ -23,6 +23,7 @@ const ACCESS: &str = "7b8d31d9d2f2d73ffb2208614db599fa";
 const SECRET: &str = "8bd955340e355418a5204e52a055005b6ca761f896abe0cccdd741638e790a76";
 const MAX_COMPRESSED: usize = 20_000_000;
 const MAX_JSON: u64 = 128_000_000;
+const SNAPSHOT_INTERVAL_S: f64 = 300.;
 
 fn hash(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
@@ -103,12 +104,12 @@ fn snapshot(value: &Value, expected: f64, bounds: Bounds) -> Result<BTreeSet<Str
     let now = value["now"]
         .as_f64()
         .context("Sample snapshot lacks its time")?;
-    // Historical snapshots can be recorded up to one minute after the
-    // filename time, including the exact boundary. Snapshots select aircraft
+    // Discovery snapshots can lag their filename by more than a minute.
+    // Keep the offset within one discovery interval. Snapshots select aircraft
     // IDs; full traces retain their own timestamps for location analysis.
     ensure!(
-        (now - expected).abs() <= 60.,
-        "Sample snapshot timestamp {now} is outside the one-minute window around {expected}"
+        (now - expected).abs() < SNAPSHOT_INTERVAL_S,
+        "Sample snapshot timestamp {now} is outside one five-minute discovery interval around {expected}"
     );
     let aircraft = value["aircraft"]
         .as_array()
@@ -304,6 +305,11 @@ struct SnapshotReplacement {
     requested_file: String,
     source_file: String,
 }
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
+struct SnapshotClockOffset {
+    file: String,
+    seconds: f64,
+}
 #[derive(Serialize, Deserialize)]
 struct Manifest {
     schema: u32,
@@ -313,6 +319,8 @@ struct Manifest {
     snapshots: Vec<Object>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     snapshot_replacements: Vec<SnapshotReplacement>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    snapshot_clock_offsets: Vec<SnapshotClockOffset>,
     aircraft: Vec<String>,
     traces: Vec<Object>,
     missing_aircraft: Vec<String>,
@@ -355,7 +363,18 @@ fn snapshot_plan_valid(manifest: &Manifest, names: &[String]) -> bool {
             source_file: object.file.clone(),
         });
     }
+    let offset_files: BTreeSet<_> = manifest
+        .snapshot_clock_offsets
+        .iter()
+        .map(|offset| &offset.file)
+        .collect();
     replacements == manifest.snapshot_replacements
+        && offset_files.len() == manifest.snapshot_clock_offsets.len()
+        && manifest.snapshot_clock_offsets.iter().all(|offset| {
+            offset.seconds.abs() > 60.
+                && offset.seconds.abs() < SNAPSHOT_INTERVAL_S
+                && manifest.snapshots.iter().any(|o| o.file == offset.file)
+        })
 }
 fn cached_aircraft_set_valid(manifest: &Manifest, allow_missing: bool) -> bool {
     if !allow_missing && !manifest.missing_aircraft.is_empty() {
@@ -561,6 +580,7 @@ async fn download(
         source: "https://www.adsbexchange.com/data-products/sample-data/".into(),
         snapshots: vec![],
         snapshot_replacements: vec![],
+        snapshot_clock_offsets: vec![],
         aircraft: vec![],
         traces: vec![],
         missing_aircraft: vec![],
@@ -600,6 +620,13 @@ async fn download(
             manifest.snapshot_replacements.push(SnapshotReplacement {
                 requested_file: name.clone(),
                 source_file: record.file.clone(),
+            });
+        }
+        let offset = value["now"].as_f64().context("Missing snapshot time")? - expected;
+        if offset.abs() > 60. {
+            manifest.snapshot_clock_offsets.push(SnapshotClockOffset {
+                file: record.file.clone(),
+                seconds: offset,
             });
         }
         manifest.snapshots.push(record);
@@ -674,13 +701,27 @@ pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
             manifest.snapshot_replacements.len()
         )
     };
+    let offsets = if manifest.snapshot_clock_offsets.is_empty() {
+        String::new()
+    } else {
+        let maximum = manifest
+            .snapshot_clock_offsets
+            .iter()
+            .map(|offset| offset.seconds.abs())
+            .fold(0., f64::max);
+        format!(
+            " {} discovery snapshots differ from their filename times by more than one minute (maximum {maximum:.1} seconds). The manifest records these offsets. Flight-trace times are unchanged.",
+            manifest.snapshot_clock_offsets.len()
+        )
+    };
     Ok((
         format!(
-            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery inspected 288 snapshots near five-minute intervals in the search area.{} Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
+            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery inspected 288 snapshots near five-minute intervals in the search area.{}{} Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
             manifest.date,
             manifest.traces.len(),
             manifest.missing_aircraft.len(),
-            replacements
+            replacements,
+            offsets
         ),
         manifest.traces.is_empty(),
     ))
@@ -906,7 +947,7 @@ mod tests {
     }
     #[test]
     fn historical_snapshot_clock_jitter_keeps_trace_times_unchanged() {
-        for offset in [-60., -59.9, -1., 30.2, 31.9, 59.9, 60.] {
+        for offset in [-299.9, -60., -1., 30.2, 31.9, 60., 69.2, 299.9] {
             let value = json!({"now":start()+offset,"aircraft":[
                 {"hex":"abcdef","lat":10.5,"lon":20.5}
             ]});
@@ -916,7 +957,7 @@ mod tests {
             );
             assert_eq!(value["now"].as_f64().unwrap(), start() + offset);
         }
-        for offset in [-300., -60.01, 60.01, 300., 86400.] {
+        for offset in [-86400., -300., 300., 86400.] {
             assert!(
                 snapshot(
                     &json!({"now":start()+offset,"aircraft":[]}),
@@ -959,6 +1000,59 @@ mod tests {
         );
         drop(server);
         assert_eq!(run(&client, dir.path()).unwrap(), path);
+    }
+    #[test]
+    fn delayed_discovery_snapshots_record_offsets_and_replay_offline() {
+        let dir = tempfile::tempdir().unwrap();
+        let server = Server::new(|key| {
+            let (status, bytes, delay) = fixture(key);
+            if key.ends_with("/000500Z.json.gz") {
+                let mut value = parse(&bytes).unwrap();
+                value["now"] = json!(start() + 300. + 69.2);
+                return (status, compressed(value), delay);
+            }
+            (status, bytes, delay)
+        });
+        let client = server.client();
+        let path = run(&client, dir.path()).unwrap();
+        let mut manifest: Manifest = serde_json::from_slice(
+            &std::fs::read(path.parent().unwrap().join("sample-manifest.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(manifest.snapshot_clock_offsets.len(), 1);
+        assert_eq!(manifest.snapshot_clock_offsets[0].file, "000500Z.json.gz");
+        assert!((manifest.snapshot_clock_offsets[0].seconds - 69.2).abs() < 1e-6);
+        let warning = coverage_warning(&path).unwrap();
+        assert!(warning.contains("1 discovery snapshots"));
+        assert!(warning.contains("maximum 69.2 seconds"));
+        let data = crate::data::load(&path, &Control::default()).unwrap();
+        assert_eq!(data.tracks[0].samples[0].time, start() + 10.);
+        assert_eq!(server.calls.load(Ordering::Relaxed), 290);
+        let offline = Control {
+            offline: true,
+            ..Control::default()
+        };
+        let replay = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(download(
+                &client,
+                DAY,
+                dir.path(),
+                bounds(),
+                &offline,
+                &|_, _| {},
+            ))
+            .unwrap();
+        assert_eq!(path, replay);
+        assert_eq!(server.calls.load(Ordering::Relaxed), 290);
+        let names: Vec<_> = (0..288).map(|i| snapshot_name(i * 5)).collect();
+        manifest.snapshot_clock_offsets[0].seconds = SNAPSHOT_INTERVAL_S;
+        assert!(!snapshot_plan_valid(&manifest, &names));
+        manifest.snapshot_clock_offsets[0].seconds = 69.2;
+        manifest.snapshot_clock_offsets[0].file = "missing.json.gz".into();
+        assert!(!snapshot_plan_valid(&manifest, &names));
     }
     #[test]
     fn cache_damage_is_repaired_and_original_bytes_are_kept() {
