@@ -6,6 +6,48 @@ The current location target is within 1 km.
 The original 250 m plans and results below remain unchanged.
 New results must state which target they use.
 
+## Current checks
+
+The [unknown-date audio run](unknown-date-results.json) tested 27 recordings
+offline with no recording date or time supplied. Each case kept its broad search
+region and used all dates in its prepared provider cache. Eight recordings
+returned locations within 1 km. Five were ambiguous and 14 had insufficient
+evidence. No accepted result exceeded 1 km. All seven Lake Hood recordings
+failed location acceptance. The [27-case manifest](unknown-date-cases.json)
+preserves the inputs and reference positions used only by the evaluator.
+
+The Maho sample cache initially contained one date. A
+[separate expanded check](unknown-date-maho.json) prepared September 1,
+October 1, and November 1 from the free sample source. The same three recordings
+were searched offline without dates or times. One passed at 549.65 m, including
+the existing 200 m microphone allowance. One was ambiguous and one had
+insufficient evidence. The Windows CI executable reproduced the passing result.
+
+[Optional video text tests](optional-video-clues.json) used seven low-resolution
+Lake Hood files and two separate five-second 360p clips. The two 360p clips
+matched the visible name **Lake Hood Seaplane Base** to a GeoNames point 31.06 m
+from the camera reference. Both reports also kept a broad Anchorage metro-area
+clue. The seven low-resolution files returned no place matches. Earlier false
+matches and processing errors remain in the record. These are development
+tests of named-place clues. The clips were inspected before the OCR work.
+
+Code revision `eee5b0c` passed 130 Rust tests, nine Python tests,
+formatting, strict Clippy, documentation tests, and both release builds.
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42351026350)
+also passed. The downloaded Windows artifact produced the same Lake Hood text
+report as the local build. [Three audio replays](optional-video-audio-regression.json)
+kept the same peaks, scores, controls, regions, and status after the optional
+video path was added. The 27-case run used `dcd73cc`; its executable and report
+hashes remain in the record.
+
+To repeat the 27-case run with retained media and prepared data:
+
+```powershell
+python validation/run_timing.py --cli target/release/soundgeo-cli.exe --manifest validation/unknown-date-cases.json --data-root .. --output ../unknown-date-check --unknown-date --offline
+```
+
+## Earlier checks and runner use
+
 Local artifact paths in published records are relative to the validation data folder.
 Original artifact hashes are retained. Where paths were normalized in a published
 record, its bytes can differ from the original retained artifact.
