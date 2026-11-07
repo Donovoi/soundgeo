@@ -109,9 +109,13 @@ Free archives can miss audible aircraft or parts of their paths. A complete
 download confirms the requested files and their integrity. Aircraft coverage
 still depends on the source network.
 
-The first-of-month sample uses 288 worldwide snapshots spaced five minutes
-apart. Short flights between snapshots can be absent. Missing traces appear in
-the report and cache manifest. This source permits testing and evaluation.
+The first-of-month sample checks 288 worldwide snapshot slots at five-minute
+intervals. If a snapshot is missing, it tries the preceding and following
+minute within the same day. The cache keeps the actual source filename and
+records the replacement. Short flights between snapshots can be absent.
+Missing traces and snapshot replacements appear in the report and cache
+manifest. Preparation stops if a slot and both neighboring minutes are
+unavailable. This source permits testing and evaluation.
 
 The free sample downloader retrieved all 288 snapshots and 97 Maho traces in
 validation. Every file matched an independent download. Cache reuse and recovery

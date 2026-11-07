@@ -281,6 +281,11 @@ struct Object {
     sha256: String,
     bytes: usize,
 }
+#[derive(Serialize, Deserialize, PartialEq, Debug)]
+struct SnapshotReplacement {
+    requested_file: String,
+    source_file: String,
+}
 #[derive(Serialize, Deserialize)]
 struct Manifest {
     schema: u32,
@@ -288,9 +293,51 @@ struct Manifest {
     bounds: Bounds,
     source: String,
     snapshots: Vec<Object>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    snapshot_replacements: Vec<SnapshotReplacement>,
     aircraft: Vec<String>,
     traces: Vec<Object>,
     missing_aircraft: Vec<String>,
+}
+
+fn snapshot_name(minute: usize) -> String {
+    format!("{:02}{:02}00Z.json.gz", minute / 60, minute % 60)
+}
+
+fn snapshot_choices(index: usize) -> Vec<usize> {
+    let minute = index * 5;
+    let mut choices = vec![minute];
+    if minute > 0 {
+        choices.push(minute - 1);
+    }
+    if minute + 1 < 1440 {
+        choices.push(minute + 1);
+    }
+    choices
+}
+
+fn snapshot_plan_valid(manifest: &Manifest, names: &[String]) -> bool {
+    if ![1, 2].contains(&manifest.schema) || manifest.snapshots.len() != names.len() {
+        return false;
+    }
+    let mut replacements = Vec::new();
+    for (index, (object, requested)) in manifest.snapshots.iter().zip(names).enumerate() {
+        if object.file == *requested {
+            continue;
+        }
+        if manifest.schema != 2
+            || !snapshot_choices(index)
+                .into_iter()
+                .any(|m| object.file == snapshot_name(m))
+        {
+            return false;
+        }
+        replacements.push(SnapshotReplacement {
+            requested_file: requested.clone(),
+            source_file: object.file.clone(),
+        });
+    }
+    replacements == manifest.snapshot_replacements
 }
 fn cached_aircraft_set_valid(manifest: &Manifest, allow_missing: bool) -> bool {
     if !allow_missing && !manifest.missing_aircraft.is_empty() {
@@ -457,21 +504,17 @@ async fn download(
     let shared = cache.join(format!("adsbx-sample-{date}-snapshots"));
     let traces = root.join("traces");
     let manifest_path = root.join("sample-manifest.json");
-    let names: Vec<_> = (0..288)
-        .map(|i| format!("{:02}{:02}00Z.json.gz", i / 12, (i % 12) * 5))
-        .collect();
+    let names: Vec<_> = (0..288).map(|i| snapshot_name(i * 5)).collect();
     if let Ok(bytes) = std::fs::read(&manifest_path)
         && let Ok(manifest) = serde_json::from_slice::<Manifest>(&bytes)
-        && manifest.schema == 1
         && manifest.date == date
         && serde_json::to_vec(&manifest.bounds)? == serde_json::to_vec(&bounds)?
-        && manifest.snapshots.len() == names.len()
+        && snapshot_plan_valid(&manifest, &names)
         && cached_aircraft_set_valid(&manifest, control.offline)
         && manifest
             .snapshots
             .iter()
-            .zip(&names)
-            .all(|(o, name)| o.file == *name && valid_object(&shared.join(name), o, control))
+            .all(|o| valid_object(&shared.join(&o.file), o, control))
         && manifest.traces.iter().all(|o| {
             let id = o
                 .file
@@ -489,11 +532,12 @@ async fn download(
     let start = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() as f64;
     let prefix = date.replace('-', "/");
     let mut manifest = Manifest {
-        schema: 1,
+        schema: 2,
         date: date.into(),
         bounds,
         source: "https://www.adsbexchange.com/data-products/sample-data/".into(),
         snapshots: vec![],
+        snapshot_replacements: vec![],
         aircraft: vec![],
         traces: vec![],
         missing_aircraft: vec![],
@@ -501,19 +545,27 @@ async fn download(
     let mut ids = BTreeSet::new();
     for (index, name) in names.iter().enumerate() {
         control.check()?;
-        let expected = start + index as f64 * 300.;
-        let result = object(
-            client,
-            &format!("readsb-hist/{prefix}/{name}"),
-            &shared.join(name),
-            &shared.join("rejected"),
-            control,
-            |v| snapshot(v, expected, bounds).map(|_| ()),
-        )
-        .await?;
-        let (record, value) = result.with_context(|| {
+        let mut selected = None;
+        for minute in snapshot_choices(index) {
+            let source_name = snapshot_name(minute);
+            let expected = start + minute as f64 * 60.;
+            let result = object(
+                client,
+                &format!("readsb-hist/{prefix}/{source_name}"),
+                &shared.join(&source_name),
+                &shared.join("rejected"),
+                control,
+                |v| snapshot(v, expected, bounds).map(|_| ()),
+            )
+            .await?;
+            if let Some((record, value)) = result {
+                selected = Some((record, value, expected));
+                break;
+            }
+        }
+        let (record, value, expected) = selected.with_context(|| {
             format!(
-                "Missing free sample snapshot {name} for {date}; no snapshot was silently omitted"
+                "Missing free sample snapshot {name} and neighboring minutes for {date}; no snapshot was silently omitted"
             )
         })?;
         ids.extend(snapshot(&value, expected, bounds)?);
@@ -521,6 +573,12 @@ async fn download(
             ids.len() <= 10000,
             "More than 10,000 aircraft were found; narrow the sample search area"
         );
+        if record.file != *name {
+            manifest.snapshot_replacements.push(SnapshotReplacement {
+                requested_file: name.clone(),
+                source_file: record.file.clone(),
+            });
+        }
         manifest.snapshots.push(record);
         progress(
             &format!(
@@ -566,7 +624,7 @@ async fn download(
     }
     control.check()?;
     atomic_write(&manifest_path, &serde_json::to_vec_pretty(&manifest)?)?;
-    atomic_write(&root.join("SOURCE.txt"), b"ADS-B Exchange free first-of-month testing/evaluation sample. https://www.adsbexchange.com/data-products/sample-data/ . Public sample bucket only; no private account. All 288 five-minute worldwide discovery snapshots were inspected; full-day traces were downloaded for regional identities. Flights entirely between discovery snapshots can be absent. Missing traces are listed in sample-manifest.json. Reference data is not bundled or redistributed by SoundGeo.\n")?;
+    atomic_write(&root.join("SOURCE.txt"), b"ADS-B Exchange free first-of-month testing/evaluation sample. https://www.adsbexchange.com/data-products/sample-data/ . All 288 discovery slots were checked. A missing snapshot can use an available neighboring minute from the same day. Actual source files and replacement mappings are recorded in sample-manifest.json. Full-day traces were downloaded for regional identities. Flights entirely between discovery snapshots can be absent. Missing traces are listed in the manifest. Reference data is not bundled or redistributed by SoundGeo.\n")?;
     progress(
         "Free sample download complete; coverage limits are in the manifest",
         1.,
@@ -585,12 +643,21 @@ pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
             .context("Missing sample cache directory")?
             .join("sample-manifest.json"),
     )?)?;
+    let replacements = if manifest.snapshot_replacements.is_empty() {
+        String::new()
+    } else {
+        format!(
+            " {} missing snapshots used neighboring minutes. The manifest records each requested and actual source filename.",
+            manifest.snapshot_replacements.len()
+        )
+    };
     Ok((
         format!(
-            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery used all 288 five-minute snapshots in the search area. Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
+            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery inspected 288 snapshots near five-minute intervals in the search area.{} Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
             manifest.date,
             manifest.traces.len(),
-            manifest.missing_aircraft.len()
+            manifest.missing_aircraft.len(),
+            replacements
         ),
         manifest.traces.is_empty(),
     ))
@@ -901,6 +968,68 @@ mod tests {
         );
     }
     #[test]
+    fn missing_snapshot_uses_recorded_neighbor_and_verifies_it_offline() {
+        assert_eq!(snapshot_choices(0), [0, 1]);
+        assert_eq!(snapshot_choices(287), [1435, 1434, 1436]);
+        let dir = tempfile::tempdir().unwrap();
+        let server = Server::new(|key| {
+            if key.ends_with("/000500Z.json.gz") {
+                (404, vec![], 0)
+            } else {
+                fixture(key)
+            }
+        });
+        let client = server.client();
+        let path = run(&client, dir.path()).unwrap();
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let mut manifest: Manifest =
+            serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
+        assert_eq!(manifest.schema, 2);
+        assert_eq!(manifest.snapshots.len(), 288);
+        assert_eq!(manifest.snapshots[1].file, "000400Z.json.gz");
+        assert_eq!(
+            manifest.snapshot_replacements,
+            [SnapshotReplacement {
+                requested_file: "000500Z.json.gz".into(),
+                source_file: "000400Z.json.gz".into(),
+            }]
+        );
+        assert!(
+            coverage_warning(&path)
+                .unwrap()
+                .contains("1 missing snapshots used neighboring minutes")
+        );
+        let shared = dir.path().join(format!("adsbx-sample-{DAY}-snapshots"));
+        assert!(!shared.join("000500Z.json.gz").exists());
+        assert!(shared.join("000400Z.json.gz").exists());
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let offline = Control::default().with_offline(true);
+        let calls = server.calls.load(Ordering::Relaxed);
+        let reuse = || {
+            runtime.block_on(download(
+                &client,
+                DAY,
+                dir.path(),
+                bounds(),
+                &offline,
+                &|_, _| {},
+            ))
+        };
+        assert_eq!(reuse().unwrap(), path);
+        manifest.snapshot_replacements[0].source_file = "000600Z.json.gz".into();
+        std::fs::write(&manifest_path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+        assert!(format!("{:#}", reuse().unwrap_err()).contains("Offline mode"));
+        manifest.snapshot_replacements[0].source_file = "000400Z.json.gz".into();
+        std::fs::write(&manifest_path, serde_json::to_vec(&manifest).unwrap()).unwrap();
+        std::fs::write(shared.join("000400Z.json.gz"), b"damaged alternative").unwrap();
+        assert!(format!("{:#}", reuse().unwrap_err()).contains("Offline mode"));
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+    }
+
+    #[test]
     fn missing_traces_are_recorded_but_missing_snapshots_stop_the_download() {
         let dir = tempfile::tempdir().unwrap();
         let server = Server::new(|key| {
@@ -960,7 +1089,7 @@ mod tests {
                 .to_string()
                 .contains("no snapshot was silently omitted")
         );
-        assert_eq!(absent.calls.load(Ordering::Relaxed), 1);
+        assert_eq!(absent.calls.load(Ordering::Relaxed), 2);
     }
     #[test]
     fn refused_public_access_does_not_retry_or_use_another_bucket() {
