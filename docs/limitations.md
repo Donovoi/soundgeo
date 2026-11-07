@@ -116,6 +116,9 @@ records the replacement. Short flights between snapshots can be absent.
 Historical snapshots can be delayed relative to their filenames. Preparation
 accepts offsets smaller than one five-minute discovery interval. Offsets over
 one minute appear in the manifest and report. Flight-trace times are preserved.
+Some historical traces include positions from the preceding UTC day. The cache
+keeps these source files and records the overlap. Sample analysis uses positions
+within the selected archive dates.
 Missing traces and snapshot replacements appear in the report and cache
 manifest. Preparation stops if a slot and both neighboring minutes are
 unavailable. This source permits testing and evaluation.

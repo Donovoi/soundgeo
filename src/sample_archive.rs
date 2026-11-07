@@ -129,7 +129,7 @@ fn snapshot(value: &Value, expected: f64, bounds: Bounds) -> Result<BTreeSet<Str
     }
     Ok(result)
 }
-fn trace(value: &Value, expected: f64, id: &str) -> Result<()> {
+fn trace(value: &Value, expected: f64, id: &str) -> Result<usize> {
     ensure!(
         value["icao"]
             .as_str()
@@ -143,24 +143,33 @@ fn trace(value: &Value, expected: f64, id: &str) -> Result<()> {
         .as_f64()
         .context("Sample trace lacks its date")?;
     ensure!(
-        (expected..expected + 86400.).contains(&timestamp),
+        (expected - 86400. ..expected + 86400.).contains(&timestamp),
         "Sample trace has the wrong date"
     );
     let positions = value["trace"]
         .as_array()
         .context("Sample trace lacks positions")?;
-    // Older traces use the first observation as their base time. Newer
-    // traces use midnight. In both formats, the importer adds each offset
-    // to the original base; no timestamp is rewritten here.
+    // Older traces can retain positions from the preceding day. Preserve the
+    // source and its time base; analysis filters to the selected archive dates.
     ensure!(
         positions
             .iter()
             .all(|row| row[0].as_f64().is_some_and(|offset| {
-                (expected..expected + 86400.).contains(&(timestamp + offset))
+                (expected - 86400. ..expected + 86400.).contains(&(timestamp + offset))
             })),
-        "Sample trace has an invalid observation time or a position outside the requested UTC day"
+        "Sample trace has an invalid observation time or a position outside the requested and preceding UTC days"
     );
-    Ok(())
+    ensure!(
+        (positions.is_empty() && timestamp >= expected)
+            || positions
+                .iter()
+                .any(|row| timestamp + row[0].as_f64().unwrap() >= expected),
+        "Sample trace has no positions on the requested UTC day"
+    );
+    Ok(positions
+        .iter()
+        .filter(|row| timestamp + row[0].as_f64().unwrap() < expected)
+        .count())
 }
 
 pub(crate) struct Client {
@@ -311,6 +320,11 @@ struct SnapshotClockOffset {
     seconds: f64,
 }
 #[derive(Serialize, Deserialize)]
+struct TraceCarryover {
+    file: String,
+    preceding_day_positions: usize,
+}
+#[derive(Serialize, Deserialize)]
 struct Manifest {
     schema: u32,
     date: String,
@@ -323,6 +337,8 @@ struct Manifest {
     snapshot_clock_offsets: Vec<SnapshotClockOffset>,
     aircraft: Vec<String>,
     traces: Vec<Object>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    trace_carryover: Vec<TraceCarryover>,
     missing_aircraft: Vec<String>,
 }
 
@@ -402,6 +418,10 @@ fn cached_aircraft_set_valid(manifest: &Manifest, allow_missing: bool) -> bool {
         && aircraft.iter().all(|id| ident(id).as_deref() == Some(id))
         && traced.is_disjoint(&missing)
         && traced.union(&missing).cloned().collect::<BTreeSet<_>>() == aircraft
+        && manifest.trace_carryover.iter().all(|carryover| {
+            carryover.preceding_day_positions > 0
+                && manifest.traces.iter().any(|o| o.file == carryover.file)
+        })
 }
 
 fn valid_object(path: &Path, object: &Object, control: &Control) -> bool {
@@ -583,6 +603,7 @@ async fn download(
         snapshot_clock_offsets: vec![],
         aircraft: vec![],
         traces: vec![],
+        trace_carryover: vec![],
         missing_aircraft: vec![],
     };
     let mut ids = BTreeSet::new();
@@ -648,16 +669,23 @@ async fn download(
             "traces/{prefix}/{}/trace_full_{id}.json",
             &id[id.len() - 2..]
         );
-        if let Some((record, _)) = object(
+        if let Some((record, value)) = object(
             client,
             &key,
             &traces.join(file),
             &root.join("rejected"),
             control,
-            |v| trace(v, start, id),
+            |v| trace(v, start, id).map(|_| ()),
         )
         .await?
         {
+            let preceding_day_positions = trace(&value, start, id)?;
+            if preceding_day_positions > 0 {
+                manifest.trace_carryover.push(TraceCarryover {
+                    file: record.file.clone(),
+                    preceding_day_positions,
+                });
+            }
             manifest.traces.push(record);
         } else {
             manifest.missing_aircraft.push(id.clone());
@@ -710,18 +738,32 @@ pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
             .map(|offset| offset.seconds.abs())
             .fold(0., f64::max);
         format!(
-            " {} discovery snapshots differ from their filename times by more than one minute (maximum {maximum:.1} seconds). The manifest records these offsets. Flight-trace times are unchanged.",
+            " Discovery snapshots with offsets over one minute: {} (maximum {maximum:.1} seconds). The manifest records these offsets. Flight-trace times are unchanged.",
             manifest.snapshot_clock_offsets.len()
+        )
+    };
+    let carryover = if manifest.trace_carryover.is_empty() {
+        String::new()
+    } else {
+        let positions: usize = manifest
+            .trace_carryover
+            .iter()
+            .map(|v| v.preceding_day_positions)
+            .sum();
+        format!(
+            " {} trace files also contain {positions} positions from the preceding UTC day. Original files are preserved; analysis uses positions within the selected archive dates.",
+            manifest.trace_carryover.len()
         )
     };
     Ok((
         format!(
-            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery inspected 288 snapshots near five-minute intervals in the search area.{}{} Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
+            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery inspected 288 snapshots near five-minute intervals in the search area.{}{}{} Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
             manifest.date,
             manifest.traces.len(),
             manifest.missing_aircraft.len(),
             replacements,
-            offsets
+            offsets,
+            carryover
         ),
         manifest.traces.is_empty(),
     ))
@@ -1023,7 +1065,7 @@ mod tests {
         assert_eq!(manifest.snapshot_clock_offsets[0].file, "000500Z.json.gz");
         assert!((manifest.snapshot_clock_offsets[0].seconds - 69.2).abs() < 1e-6);
         let warning = coverage_warning(&path).unwrap();
-        assert!(warning.contains("1 discovery snapshots"));
+        assert!(warning.contains("Discovery snapshots with offsets over one minute: 1"));
         assert!(warning.contains("maximum 69.2 seconds"));
         let data = crate::data::load(&path, &Control::default()).unwrap();
         assert_eq!(data.tracks[0].samples[0].time, start() + 10.);
@@ -1053,6 +1095,93 @@ mod tests {
         manifest.snapshot_clock_offsets[0].seconds = 69.2;
         manifest.snapshot_clock_offsets[0].file = "missing.json.gz".into();
         assert!(!snapshot_plan_valid(&manifest, &names));
+    }
+    #[test]
+    fn leading_previous_day_positions_are_preserved_and_filtered_for_analysis() {
+        let dir = tempfile::tempdir().unwrap();
+        let server = Server::new(|key| {
+            let (status, bytes, delay) = fixture(key);
+            if !key.contains("/traces/") {
+                return (status, bytes, delay);
+            }
+            let mut value = parse(&bytes).unwrap();
+            value["timestamp"] = json!(start() - 3600.);
+            let mut current = value["trace"].as_array().unwrap().clone();
+            for row in &mut current {
+                row[0] = json!(row[0].as_f64().unwrap() + 3600.);
+            }
+            value["trace"].as_array_mut().unwrap().extend(current);
+            (status, compressed(value), delay)
+        });
+        let client = server.client();
+        let path = run(&client, dir.path()).unwrap();
+        let manifest_bytes =
+            std::fs::read(path.parent().unwrap().join("sample-manifest.json")).unwrap();
+        let manifest: Manifest = serde_json::from_slice(&manifest_bytes).unwrap();
+        assert_eq!(manifest.trace_carryover.len(), 2);
+        assert!(
+            manifest
+                .trace_carryover
+                .iter()
+                .all(|v| v.preceding_day_positions == 10)
+        );
+        assert!(
+            coverage_warning(&path)
+                .unwrap()
+                .contains("20 positions from the preceding UTC day")
+        );
+        let raw = crate::data::load(&path, &Control::default()).unwrap();
+        assert_eq!(raw.tracks.len(), 4);
+        assert!(
+            raw.tracks
+                .iter()
+                .any(|t| t.samples[0].time == start() - 3590.)
+        );
+        let job = crate::Job {
+            tracks: path.clone(),
+            archive: Some(crate::archive::ArchiveRequest {
+                date_from: DAY.into(),
+                date_to: None,
+                cache: dir.path().to_owned(),
+                provider: crate::archive::ArchiveProvider::AdsbExchangeSample,
+            }),
+            ..crate::Job::default()
+        };
+        let offline = Control {
+            offline: true,
+            ..Control::default()
+        };
+        for _ in 0..2 {
+            let selected = crate::data::load_for_job(&job, 60., &offline).unwrap();
+            assert_eq!(selected.tracks.len(), 2);
+            assert!(selected.tracks.iter().all(|t| {
+                t.samples.len() == 10
+                    && t.samples[0].time == start() + 10.
+                    && t.samples[9].time == start() + 37.
+            }));
+        }
+        let mut other_date = job.clone();
+        other_date.archive.as_mut().unwrap().date_from = "2024-04-01".into();
+        assert!(crate::data::load_for_job(&other_date, 60., &offline).is_err());
+        assert_eq!(server.calls.load(Ordering::Relaxed), 290);
+        for object in &manifest.traces {
+            assert_eq!(
+                hash(&std::fs::read(path.join(&object.file)).unwrap()),
+                object.sha256
+            );
+        }
+        assert_eq!(
+            std::fs::read(path.parent().unwrap().join("sample-manifest.json")).unwrap(),
+            manifest_bytes
+        );
+        assert!(
+            trace(
+                &json!({"hex":"abcdef","timestamp":start()-3600.,"trace":[[0.]]}),
+                start(),
+                "abcdef"
+            )
+            .is_err()
+        );
     }
     #[test]
     fn cache_damage_is_repaired_and_original_bytes_are_kept() {

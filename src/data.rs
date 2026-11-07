@@ -58,6 +58,7 @@ pub fn load(path: &Path, control: &Control) -> Result<Dataset> {
 struct Filter {
     bounds: Option<Bounds>,
     time: Option<(f64, f64)>,
+    archive_days: Vec<(f64, f64)>,
     aircraft: AircraftFilter,
     catalog: Catalog,
     minimum_positions: usize,
@@ -67,6 +68,7 @@ impl Default for Filter {
         Self {
             bounds: None,
             time: None,
+            archive_days: Vec::new(),
             aircraft: AircraftFilter::default(),
             catalog: Catalog::default(),
             minimum_positions: 8,
@@ -76,6 +78,11 @@ impl Default for Filter {
 impl Filter {
     fn accepts(&self, p: Point, time: f64) -> bool {
         self.time.is_none_or(|(a, b)| time >= a && time <= b)
+            && (self.archive_days.is_empty()
+                || self
+                    .archive_days
+                    .iter()
+                    .any(|&(a, b)| time >= a && time < b))
             && self.bounds.is_none_or(|b| {
                 // Keep aircraft outside the observer's region: audible slant range can be large.
                 let lon_margin = 0.6 / p.lat.to_radians().cos().abs().max(0.05);
@@ -96,6 +103,21 @@ pub fn load_for_job_sources(
     control: &Control,
 ) -> Result<Dataset> {
     let filter = Filter {
+        archive_days: if let Some(archive) = &job.archive
+            && archive.provider == crate::archive::ArchiveProvider::AdsbExchangeSample
+        {
+            archive
+                .dates()?
+                .iter()
+                .map(|date| {
+                    let day = chrono::NaiveDate::parse_from_str(date, "%Y-%m-%d")?;
+                    let start = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() as f64;
+                    Ok((start, start + 86400.))
+                })
+                .collect::<Result<Vec<_>>>()?
+        } else {
+            Vec::new()
+        },
         // Passage timing uses consecutive position pairs, rather than a
         // sustained Doppler curve. Keep three real observations as a minimum.
         minimum_positions: match job.analysis_method {

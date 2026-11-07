@@ -90,6 +90,7 @@ impl PreparedCache {
             filter.bounds,
             filter.aircraft,
             filter.minimum_positions,
+            &filter.archive_days,
             objects,
             catalog,
         ))?;
