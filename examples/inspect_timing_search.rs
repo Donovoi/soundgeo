@@ -9,7 +9,7 @@ fn main() -> Result<()> {
     );
     let job: soundgeo::Job = serde_json::from_reader(std::fs::File::open(&args[1])?)?;
     job.validate()?;
-    let control = soundgeo::Control::default();
+    let control = soundgeo::Control::default().with_offline(job.offline);
     let (peaks, duration) = if args.len() == 5 {
         let peaks: Vec<f64> = serde_json::from_reader(std::fs::File::open(&args[3])?)?;
         let duration = args[4]

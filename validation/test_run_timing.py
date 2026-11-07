@@ -38,6 +38,39 @@ class BenchmarkGuards(unittest.TestCase):
                 with self.assertRaises(ValueError):
                     runner.under_root(root, path)
 
+    def test_unknown_date_uses_cache_and_removes_date_selected_imports(self):
+        self.case['paths'].update(tracks='selected-day/flights.csv', type_catalog='selected-day/types.json')
+        self.case['archive'] = {'cache': 'cache', 'provider': 'adsb_lol',
+                                'date_from': '2026-11-01', 'date_to': '2026-11-01'}
+        with tempfile.TemporaryDirectory() as directory:
+            job = runner.make_job(self.case, Path(directory), unknown_date=True, offline=True)
+        self.assertEqual(job['archive']['date_from'], '')
+        self.assertIsNone(job['archive']['date_to'])
+        self.assertNotIn('tracks', job)
+        self.assertNotIn('type_catalog', job)
+        self.assertTrue(job['offline'])
+        self.assertEqual(self.case['archive']['date_from'], '2026-11-01')
+
+    def test_unknown_date_requires_a_cache(self):
+        with self.assertRaises(ValueError):
+            runner.make_job(self.case, Path('.'), unknown_date=True)
+        job = runner.make_job(self.case, Path('.'), unknown_date=True,
+                              archive_override={'cache': 'prepared-cache', 'provider': 'adsb_lol'})
+        self.assertEqual(job['archive']['cache'], 'prepared-cache')
+
+    def test_unknown_date_and_offline_checks_also_apply_to_abstentions(self):
+        self.report['status'] = 'insufficient_evidence'
+        self.report['job'].update(offline=True, archive={'date_from': '', 'date_to': None})
+        runner.evaluate(self.report, 3, self.case, 1000, unknown_date=True, offline=True)
+        for update in [{'archive': {'date_from': '2026-11-01'}}, {'tracks': 'selected-day.csv'}, {'offline': False}]:
+            report = copy.deepcopy(self.report)
+            report['job'].update(update)
+            with self.assertRaises(ValueError):
+                runner.evaluate(report, 3, self.case, 1000, unknown_date=True, offline=True)
+        self.report['date_search'] = {'complete': False}
+        with self.assertRaises(ValueError):
+            runner.evaluate(self.report, 3, self.case, 1000, unknown_date=True, offline=True)
+
     def test_reference_allowance_is_part_of_accuracy(self):
         self.assertEqual(runner.evaluate(self.report, 0, self.case, 1000)['error_m'], 200.)
         self.report['timing']['region']['latitude'] += .008
