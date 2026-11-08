@@ -69,6 +69,16 @@ insufficient evidence. The runner returned 1 because two cases failed location
 acceptance. No processing error occurred. The proxy received no connections,
 and all source manifests stayed unchanged. These tests reuse existing recordings.
 
+[Source-gap recovery](snapshot-source-gaps.json) then prepared March 2017 with
+284 snapshots, four unavailable slots, two neighboring replacements, and six
+traces. The provider index independently confirmed the 23-minute snapshot gap.
+The cache records each unavailable slot. Offline preparation passed with no
+proxy connection. All three Maho cases completed across twelve dates, again
+with one accepted, one ambiguous, and one insufficient result. Maho B remained
+549.65 m from its reference. Build `ac17fdd` passed all 145 Rust tests, nine
+Python tests, and the required local checks. Wider source preparation continues;
+the resumed Chicago plan covers 90 dates, including older prepared data.
+
 A [channel audit](lake-channel-audit.json) checked all seven Lake Hood recordings
 at the original 44.1 kHz rate and the app's 8 kHz rate. Across 6.25 hours, the two
 channels were nearly identical. Difference-channel power was below -68.28 dB

@@ -1,0 +1,666 @@
+{
+  "scope": "Recover a free source day with confirmed unavailable discovery slots, then test three real Maho recordings offline across twelve dates without a supplied recording date or time.",
+  "build": {
+    "source_commit": "ac17fddb8ebc665fb105fe054b945388098e62c7",
+    "cli": "analysis-build/soundgeo-cli-gap-ac17fdd.exe",
+    "cli_sha256": "7eec2a13192ce888172fff47d566a87f7ee4b044af593d421d9013aa3432f17d",
+    "rust_tests_passed": 145,
+    "python_tests_passed": 9,
+    "checks": [
+      "fmt",
+      "clippy",
+      "tests",
+      "doc-tests",
+      "build",
+      "python"
+    ]
+  },
+  "checks": [
+    {
+      "check": "fmt",
+      "exit_code": 0,
+      "elapsed_s": 0.5327629000021261
+    },
+    {
+      "check": "clippy",
+      "exit_code": 0,
+      "elapsed_s": 5.653009700003167
+    },
+    {
+      "check": "tests",
+      "exit_code": 0,
+      "elapsed_s": 254.49110750000182
+    },
+    {
+      "check": "doc-tests",
+      "exit_code": 0,
+      "elapsed_s": 0.9418684000011126
+    },
+    {
+      "check": "build",
+      "exit_code": 0,
+      "elapsed_s": 0.5368238000010024
+    },
+    {
+      "check": "python",
+      "exit_code": 0,
+      "elapsed_s": 0.13271910000185017
+    }
+  ],
+  "failed_attempt": {
+    "exit_code": 1,
+    "elapsed_s": 296.92015329999776
+  },
+  "provider_listing": {
+    "url": "https://6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com/adsbx-sample-data/?delimiter=%2F&list-type=2&max-keys=1000&prefix=readsb-hist%2F2017%2F03%2F01%2F02",
+    "status": 200,
+    "bytes": 9029,
+    "sha256": "fc8c3e1e84a6edd4ac39aaead48a0c514291e246970317ece8eb01073b56b13d",
+    "keys": [
+      "readsb-hist/2017/03/01/020000Z.json.gz",
+      "readsb-hist/2017/03/01/020100Z.json.gz",
+      "readsb-hist/2017/03/01/020200Z.json.gz",
+      "readsb-hist/2017/03/01/020300Z.json.gz",
+      "readsb-hist/2017/03/01/020400Z.json.gz",
+      "readsb-hist/2017/03/01/020500Z.json.gz",
+      "readsb-hist/2017/03/01/020600Z.json.gz",
+      "readsb-hist/2017/03/01/020700Z.json.gz",
+      "readsb-hist/2017/03/01/020800Z.json.gz",
+      "readsb-hist/2017/03/01/020900Z.json.gz",
+      "readsb-hist/2017/03/01/023300Z.json.gz",
+      "readsb-hist/2017/03/01/023400Z.json.gz",
+      "readsb-hist/2017/03/01/023500Z.json.gz",
+      "readsb-hist/2017/03/01/023600Z.json.gz",
+      "readsb-hist/2017/03/01/023700Z.json.gz",
+      "readsb-hist/2017/03/01/023800Z.json.gz",
+      "readsb-hist/2017/03/01/023900Z.json.gz",
+      "readsb-hist/2017/03/01/024000Z.json.gz",
+      "readsb-hist/2017/03/01/024100Z.json.gz",
+      "readsb-hist/2017/03/01/024200Z.json.gz",
+      "readsb-hist/2017/03/01/024300Z.json.gz",
+      "readsb-hist/2017/03/01/024400Z.json.gz",
+      "readsb-hist/2017/03/01/024500Z.json.gz",
+      "readsb-hist/2017/03/01/024600Z.json.gz",
+      "readsb-hist/2017/03/01/024700Z.json.gz",
+      "readsb-hist/2017/03/01/024800Z.json.gz",
+      "readsb-hist/2017/03/01/024900Z.json.gz",
+      "readsb-hist/2017/03/01/025000Z.json.gz",
+      "readsb-hist/2017/03/01/025100Z.json.gz",
+      "readsb-hist/2017/03/01/025200Z.json.gz",
+      "readsb-hist/2017/03/01/025300Z.json.gz",
+      "readsb-hist/2017/03/01/025400Z.json.gz",
+      "readsb-hist/2017/03/01/025500Z.json.gz",
+      "readsb-hist/2017/03/01/025600Z.json.gz",
+      "readsb-hist/2017/03/01/025700Z.json.gz",
+      "readsb-hist/2017/03/01/025800Z.json.gz",
+      "readsb-hist/2017/03/01/025900Z.json.gz"
+    ],
+    "truncated": "false"
+  },
+  "archive_plan": {
+    "source_commit": "ac17fddb8ebc665fb105fe054b945388098e62c7",
+    "cli": "analysis-build/soundgeo-cli-gap-ac17fdd.exe",
+    "cli_sha256": "7eec2a13192ce888172fff47d566a87f7ee4b044af593d421d9013aa3432f17d",
+    "rust_tests_passed": 145,
+    "python_tests_passed": 9,
+    "checks": [
+      "fmt",
+      "clippy",
+      "tests",
+      "doc-tests",
+      "build",
+      "python"
+    ],
+    "prepared_day": "2017-03-01",
+    "bounds": {
+      "south": 17.85,
+      "north": 18.25,
+      "west": -63.35,
+      "east": -62.95
+    },
+    "original_snapshots": [
+      {
+        "file": "000000Z.json.gz",
+        "sha256": "ff50d7d8ec90da3b8172ce4cd330156beca0d932652b3b0bb5f83ec3c2e4c4f3"
+      },
+      {
+        "file": "000500Z.json.gz",
+        "sha256": "e887c901389a51ddff1b6e922c16d614eb1dbec57622a898fb0eeef4897a7b3c"
+      },
+      {
+        "file": "001000Z.json.gz",
+        "sha256": "df7eeebc3a8a82e148d05a306a60577ba213f7a3de96fd3ca5c82b5c56b54baa"
+      },
+      {
+        "file": "001500Z.json.gz",
+        "sha256": "db51883bd67573860086529ef5167c11f488c9543618daf297e4f8bc41ef4c18"
+      },
+      {
+        "file": "002000Z.json.gz",
+        "sha256": "92dbb039901a6eea627330561545596e9c8aed38cdd559dc4d40d610ae34a608"
+      },
+      {
+        "file": "002500Z.json.gz",
+        "sha256": "0f0ab662d441ed891c7caf845a5bf538cf5e39f30171fc78f8870fea7a4e0f55"
+      },
+      {
+        "file": "003000Z.json.gz",
+        "sha256": "e3ea8d86925b9c75af5be3e2038a661124a1697c1c5540ec814201f5b657f7e6"
+      },
+      {
+        "file": "003500Z.json.gz",
+        "sha256": "ab5be62f6eb282430c9564097b57050d1ee8140e318a554dfef1213df969a311"
+      },
+      {
+        "file": "004000Z.json.gz",
+        "sha256": "0dc7c71e133d89400f675b99a7250f8ab5f3456572b60793ab2ef7885c290535"
+      },
+      {
+        "file": "004500Z.json.gz",
+        "sha256": "48796563014ee37cc302db5791c2a5dca92a38277bc093102cd405abba660141"
+      },
+      {
+        "file": "005000Z.json.gz",
+        "sha256": "7408e35a567e3f8b59184088a18c8c880801ee7454f7a78c278c312c6c51d94e"
+      },
+      {
+        "file": "005500Z.json.gz",
+        "sha256": "ca6866ebdcf2d6809530d48ee4500cba5087be36dfcb096b6a8577e0875a36c9"
+      },
+      {
+        "file": "010000Z.json.gz",
+        "sha256": "12d2090cc4de7acf1d366ebea9fb76f0b3cb53e73dc64a84b4297b7e6699ef2f"
+      },
+      {
+        "file": "010500Z.json.gz",
+        "sha256": "984716361a4afdf2c5021f33c4a9dcd5062aa71ac962ebd3ac36d3cb80ac362d"
+      },
+      {
+        "file": "011000Z.json.gz",
+        "sha256": "d0cf7ed77cb92841bbb9f3e62bf415437037e409c715e24797b8001e44024d59"
+      },
+      {
+        "file": "011500Z.json.gz",
+        "sha256": "cdbc702bd972a2f946d9c852f2786b946edae5efe3e2d234f08e5d64ab96a774"
+      },
+      {
+        "file": "012000Z.json.gz",
+        "sha256": "545ab127005ade1da40d4a3fc4336db07c456893806f538eb22a848df59efd4e"
+      },
+      {
+        "file": "012500Z.json.gz",
+        "sha256": "f09ed1721d73e2b6440e2ae6e17ae614c163b49d945294f70d9a7f988369e655"
+      },
+      {
+        "file": "013000Z.json.gz",
+        "sha256": "fda1b953a161c45948b590a25c1f68892b1da4c22c74f967dae37a9a6024680b"
+      },
+      {
+        "file": "013500Z.json.gz",
+        "sha256": "0ced7f7efab0e6b4223270f00893bafafc971b3f56d444b3fd7f5ade449db506"
+      },
+      {
+        "file": "014000Z.json.gz",
+        "sha256": "516a1d7bffd7688cb29c3c650dd3f3cbad7bab232d6024f153c2298e37e86e00"
+      },
+      {
+        "file": "014500Z.json.gz",
+        "sha256": "8216554c3ed7e1501c37607c6b163857e9c9428edac595773eadf76d2b219d8b"
+      },
+      {
+        "file": "015000Z.json.gz",
+        "sha256": "6a11a0cb5b062b5f014b65d43cfc47fc78b2a085d0c64e2422f092e76041f99b"
+      },
+      {
+        "file": "015500Z.json.gz",
+        "sha256": "b93bc1d930d996bd8082028bdf1b5d0b1f9bddeeee34ce8e649fc2980f9d1a3e"
+      },
+      {
+        "file": "020000Z.json.gz",
+        "sha256": "63e454c6ca81bf224f196ff6c75007331f0730fd566ff0137d910137f81f0617"
+      },
+      {
+        "file": "020500Z.json.gz",
+        "sha256": "bd9ab7c4c0d37aca33d33b69e2098ebfc2a6e40ed766c761e2ac83b121e01329"
+      },
+      {
+        "file": "020900Z.json.gz",
+        "sha256": "42d71b2a1de12bd618aac8d4464df350479fdb3ef1ca806519fff141550327a5"
+      }
+    ],
+    "recording_date_supplied": false,
+    "recording_clock_supplied": false,
+    "target_error_m": 1000,
+    "prior_failure": "maho-available-window/attempt-4-download-result.json",
+    "created_utc": "2026-11-08T23:21:07.671975+00:00"
+  },
+  "archive_download": {
+    "exit_code": 0,
+    "elapsed_s": 182.7320170999992
+  },
+  "source_check": {
+    "manifest_sha256": "6b75ad685c963af5d396c851df8620e200f9ef86de1d9e7075115c0c13cf6db5",
+    "snapshots": 284,
+    "missing_snapshot_slots": [
+      "021500Z.json.gz",
+      "022000Z.json.gz",
+      "022500Z.json.gz",
+      "023000Z.json.gz"
+    ],
+    "replacements": [
+      {
+        "requested_file": "021000Z.json.gz",
+        "source_file": "020900Z.json.gz"
+      },
+      {
+        "requested_file": "142500Z.json.gz",
+        "source_file": "142600Z.json.gz"
+      }
+    ],
+    "traces": 6,
+    "original_snapshots_unchanged": true,
+    "all_snapshot_hashes_match_manifest": true
+  },
+  "audio_plan": {
+    "source_manifests": [
+      {
+        "date": "2016-07-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2016-07-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "7428bbdc28aa23d3c1b8ffca86f1549956370dc145bb3c65720ee35fc897f2e7"
+      },
+      {
+        "date": "2016-08-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2016-08-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "674f764099d244852df54177cc6dcac629af418720247aa3a340d7082a3f9d11"
+      },
+      {
+        "date": "2016-09-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2016-09-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "51ed082f29e0030e7c107da8c507364781e6550f6a3207195b8e327595b1de57"
+      },
+      {
+        "date": "2016-10-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2016-10-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "88db2734e1f5db70a7744e4e0e8c5831bebecdf754655069fd05430894f56dd2"
+      },
+      {
+        "date": "2016-11-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2016-11-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "e85c7a8777fb9943d8c58a10971cbe760aa8d95481dd236dd810c6e0b1a2554e"
+      },
+      {
+        "date": "2016-12-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2016-12-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "dd67f78f4fe26ed5fbf3ff792b5628deda998ee4ea816532a6381c5627e1ea4b"
+      },
+      {
+        "date": "2017-01-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2017-01-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "fe9e4b974d5739b63a7b11682383a391633066f5b35bbc0acff1e124a8e7c3d5"
+      },
+      {
+        "date": "2017-02-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2017-02-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "95baaab538c50a708fbb2a6b9af27a7df82305d5be1bc69b278d79c8dab91da0"
+      },
+      {
+        "date": "2017-03-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2017-03-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "6b75ad685c963af5d396c851df8620e200f9ef86de1d9e7075115c0c13cf6db5"
+      },
+      {
+        "date": "2026-09-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2026-09-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "35abb01059fc82172e286613ff13bd3022e93143ad6155e3679d54decadb275a"
+      },
+      {
+        "date": "2026-10-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2026-10-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "3752fa324f614d357eadc33c9af52b9f7017ca6e0ae2dd3645c98b953df2fdcb"
+      },
+      {
+        "date": "2026-11-01",
+        "file": "sample-gap-twelve-date-cache/adsbx-sample-2026-11-01-adbd76249b092139/sample-manifest.json",
+        "sha256": "083a06ea7eaf789413df519110b18b7ec278509eafd1c98cdfd4d523effe2f25"
+      }
+    ],
+    "cases": [
+      "maho-nov1-a",
+      "maho-nov1-b",
+      "maho-continuous-c"
+    ],
+    "offline": true,
+    "recording_date_supplied": false,
+    "recording_clock_supplied": false,
+    "target_error_m": 1000
+  },
+  "execution": {
+    "runner_exit_code": 1,
+    "offline_prepare_exit_code": 0,
+    "proxy_connections": 0,
+    "source_manifests_unchanged": true
+  },
+  "results": {
+    "cli_sha256": "7eec2a13192ce888172fff47d566a87f7ee4b044af593d421d9013aa3432f17d",
+    "manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+    "runner_sha256": "1819fac35d2464d9c527bce26829408bd2c2cc42371e0498e2575f891785b907",
+    "target_error_m": 1000,
+    "selected_cases": [
+      "maho-nov1-a",
+      "maho-nov1-b",
+      "maho-continuous-c"
+    ],
+    "all_cases_selected": false,
+    "workers": 1,
+    "timeout_s": 1800.0,
+    "recording_clock_supplied": false,
+    "recording_date_supplied": false,
+    "offline": true,
+    "archive_override": {
+      "cache": "sample-gap-twelve-date-cache",
+      "provider": "adsb_exchange_sample"
+    },
+    "all_cases_are_replays": true,
+    "completed_cases": 3,
+    "planned_cases": 3,
+    "accepted": 1,
+    "wrong_screened": 0,
+    "processing_errors": 0,
+    "cases": [
+      {
+        "case": "maho-continuous-c",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "633019654cc435d003a6e5b9ed491e132e47af4ee7b962e775b240707bd72afc",
+        "media_sha256": "75c0e04d7940f3b855ec598018861866b0ac40f07351e18eb400adaa94d30795",
+        "exit_code": 3,
+        "report_sha256": "a40ca610946b0bce5b5c739ebb92e9d236a2cc08203fb28ba3cf7223220238c2",
+        "status": "insufficient_evidence",
+        "sound_peaks": 42,
+        "track_count": 836,
+        "date_search": {
+          "dates": [
+            "2016-07-01",
+            "2016-08-01",
+            "2016-09-01",
+            "2016-10-01",
+            "2016-11-01",
+            "2016-12-01",
+            "2017-01-01",
+            "2017-02-01",
+            "2017-03-01",
+            "2026-09-01",
+            "2026-10-01",
+            "2026-11-01"
+          ],
+          "completed_batches": 12,
+          "complete": true,
+          "track_count_includes_overlap": true
+        },
+        "elapsed_s": 10.626115499999287
+      },
+      {
+        "case": "maho-nov1-a",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "1b1f22bfe2dc135de03360b5de1269ef904bc1f7321476419f687b0fd179cfe9",
+        "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+        "exit_code": 4,
+        "report_sha256": "05463db4477ec3c2858acf32fd4ca03f7ba2d2ee0fd469aea8de9f0b10227290",
+        "status": "ambiguous",
+        "sound_peaks": 86,
+        "track_count": 836,
+        "date_search": {
+          "dates": [
+            "2016-07-01",
+            "2016-08-01",
+            "2016-09-01",
+            "2016-10-01",
+            "2016-11-01",
+            "2016-12-01",
+            "2017-01-01",
+            "2017-02-01",
+            "2017-03-01",
+            "2026-09-01",
+            "2026-10-01",
+            "2026-11-01"
+          ],
+          "completed_batches": 12,
+          "complete": true,
+          "track_count_includes_overlap": true
+        },
+        "elapsed_s": 21.523584200000187
+      },
+      {
+        "case": "maho-nov1-b",
+        "accepted": true,
+        "screened": true,
+        "job_sha256": "8cfb2fac6b4f0ff34dce0fefc28ed502f31bf32ce5bda5d4cd1277afd97d622f",
+        "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+        "exit_code": 0,
+        "report_sha256": "dd59e87c69dc26a7dd3bca625bb635034c092a9b0d8d90310a189481cfff3e88",
+        "status": "candidates_found",
+        "sound_peaks": 117,
+        "track_count": 836,
+        "region": {
+          "latitude": 18.04328859060403,
+          "longitude": -63.121830985915494,
+          "enclosing_radius_m": 0.0,
+          "competitive_points": 1
+        },
+        "error_m": 549.649056637247,
+        "matched_flights": 16,
+        "score": 31.0335629455301,
+        "controls": 19,
+        "date_search": {
+          "dates": [
+            "2016-07-01",
+            "2016-08-01",
+            "2016-09-01",
+            "2016-10-01",
+            "2016-11-01",
+            "2016-12-01",
+            "2017-01-01",
+            "2017-02-01",
+            "2017-03-01",
+            "2026-09-01",
+            "2026-10-01",
+            "2026-11-01"
+          ],
+          "completed_batches": 12,
+          "complete": true,
+          "track_count_includes_overlap": true
+        },
+        "elapsed_s": 22.167157300002145
+      }
+    ]
+  },
+  "coverage_warnings": {
+    "maho-continuous-c": [
+      "ADS-B Exchange free evaluation sample for 2017-03-01: 6 full-day traces, 0 unavailable. Discovery inspected 284 snapshots across 288 five-minute slots in the search area. Missing snapshot slots filled from neighboring minutes: 2. The manifest records each requested and actual source filename. Unavailable discovery slots: 4. Each slot and its neighboring minutes returned HTTP 404. The manifest lists these source gaps; flights during these gaps may be absent. Discovery snapshots with offsets over one minute: 94 (maximum 96.3 seconds). The manifest records these offsets. Flight-trace times are unchanged. Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month."
+    ],
+    "maho-nov1-a": [
+      "ADS-B Exchange free evaluation sample for 2017-03-01: 6 full-day traces, 0 unavailable. Discovery inspected 284 snapshots across 288 five-minute slots in the search area. Missing snapshot slots filled from neighboring minutes: 2. The manifest records each requested and actual source filename. Unavailable discovery slots: 4. Each slot and its neighboring minutes returned HTTP 404. The manifest lists these source gaps; flights during these gaps may be absent. Discovery snapshots with offsets over one minute: 94 (maximum 96.3 seconds). The manifest records these offsets. Flight-trace times are unchanged. Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month."
+    ],
+    "maho-nov1-b": [
+      "ADS-B Exchange free evaluation sample for 2017-03-01: 6 full-day traces, 0 unavailable. Discovery inspected 284 snapshots across 288 five-minute slots in the search area. Missing snapshot slots filled from neighboring minutes: 2. The manifest records each requested and actual source filename. Unavailable discovery slots: 4. Each slot and its neighboring minutes returned HTTP 404. The manifest lists these source gaps; flights during these gaps may be absent. Discovery snapshots with offsets over one minute: 94 (maximum 96.3 seconds). The manifest records these offsets. Flight-trace times are unchanged. Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month."
+    ]
+  },
+  "resumed_preparation": {
+    "source_commit": "ac17fddb8ebc665fb105fe054b945388098e62c7",
+    "cli": "analysis-build/soundgeo-cli-gap-ac17fdd.exe",
+    "cli_sha256": "7eec2a13192ce888172fff47d566a87f7ee4b044af593d421d9013aa3432f17d",
+    "rust_tests_passed": 145,
+    "python_tests_passed": 9,
+    "checks": [
+      "fmt",
+      "clippy",
+      "tests",
+      "doc-tests",
+      "build",
+      "python"
+    ],
+    "original_plan_sha256": "c95eabda28b4478cd9a46d849756ecf66ea4d109763fd91be9f6ea2a76dd48cf",
+    "prepared_dates_at_resume": [
+      "2016-07-01",
+      "2016-08-01",
+      "2016-09-01",
+      "2016-10-01",
+      "2016-11-01",
+      "2016-12-01",
+      "2017-01-01",
+      "2017-02-01",
+      "2017-03-01",
+      "2026-09-01",
+      "2026-10-01",
+      "2026-11-01"
+    ],
+    "preceding_audio_result": {
+      "cli_sha256": "7eec2a13192ce888172fff47d566a87f7ee4b044af593d421d9013aa3432f17d",
+      "manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+      "runner_sha256": "1819fac35d2464d9c527bce26829408bd2c2cc42371e0498e2575f891785b907",
+      "target_error_m": 1000,
+      "selected_cases": [
+        "maho-nov1-a",
+        "maho-nov1-b",
+        "maho-continuous-c"
+      ],
+      "all_cases_selected": false,
+      "workers": 1,
+      "timeout_s": 1800.0,
+      "recording_clock_supplied": false,
+      "recording_date_supplied": false,
+      "offline": true,
+      "archive_override": {
+        "cache": "sample-gap-twelve-date-cache",
+        "provider": "adsb_exchange_sample"
+      },
+      "all_cases_are_replays": true,
+      "completed_cases": 3,
+      "planned_cases": 3,
+      "accepted": 1,
+      "wrong_screened": 0,
+      "processing_errors": 0,
+      "cases": [
+        {
+          "case": "maho-continuous-c",
+          "accepted": false,
+          "screened": false,
+          "job_sha256": "633019654cc435d003a6e5b9ed491e132e47af4ee7b962e775b240707bd72afc",
+          "media_sha256": "75c0e04d7940f3b855ec598018861866b0ac40f07351e18eb400adaa94d30795",
+          "exit_code": 3,
+          "report_sha256": "a40ca610946b0bce5b5c739ebb92e9d236a2cc08203fb28ba3cf7223220238c2",
+          "status": "insufficient_evidence",
+          "sound_peaks": 42,
+          "track_count": 836,
+          "date_search": {
+            "dates": [
+              "2016-07-01",
+              "2016-08-01",
+              "2016-09-01",
+              "2016-10-01",
+              "2016-11-01",
+              "2016-12-01",
+              "2017-01-01",
+              "2017-02-01",
+              "2017-03-01",
+              "2026-09-01",
+              "2026-10-01",
+              "2026-11-01"
+            ],
+            "completed_batches": 12,
+            "complete": true,
+            "track_count_includes_overlap": true
+          },
+          "elapsed_s": 10.626115499999287
+        },
+        {
+          "case": "maho-nov1-a",
+          "accepted": false,
+          "screened": false,
+          "job_sha256": "1b1f22bfe2dc135de03360b5de1269ef904bc1f7321476419f687b0fd179cfe9",
+          "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+          "exit_code": 4,
+          "report_sha256": "05463db4477ec3c2858acf32fd4ca03f7ba2d2ee0fd469aea8de9f0b10227290",
+          "status": "ambiguous",
+          "sound_peaks": 86,
+          "track_count": 836,
+          "date_search": {
+            "dates": [
+              "2016-07-01",
+              "2016-08-01",
+              "2016-09-01",
+              "2016-10-01",
+              "2016-11-01",
+              "2016-12-01",
+              "2017-01-01",
+              "2017-02-01",
+              "2017-03-01",
+              "2026-09-01",
+              "2026-10-01",
+              "2026-11-01"
+            ],
+            "completed_batches": 12,
+            "complete": true,
+            "track_count_includes_overlap": true
+          },
+          "elapsed_s": 21.523584200000187
+        },
+        {
+          "case": "maho-nov1-b",
+          "accepted": true,
+          "screened": true,
+          "job_sha256": "8cfb2fac6b4f0ff34dce0fefc28ed502f31bf32ce5bda5d4cd1277afd97d622f",
+          "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+          "exit_code": 0,
+          "report_sha256": "dd59e87c69dc26a7dd3bca625bb635034c092a9b0d8d90310a189481cfff3e88",
+          "status": "candidates_found",
+          "sound_peaks": 117,
+          "track_count": 836,
+          "region": {
+            "latitude": 18.04328859060403,
+            "longitude": -63.121830985915494,
+            "enclosing_radius_m": 0.0,
+            "competitive_points": 1
+          },
+          "error_m": 549.649056637247,
+          "matched_flights": 16,
+          "score": 31.0335629455301,
+          "controls": 19,
+          "date_search": {
+            "dates": [
+              "2016-07-01",
+              "2016-08-01",
+              "2016-09-01",
+              "2016-10-01",
+              "2016-11-01",
+              "2016-12-01",
+              "2017-01-01",
+              "2017-02-01",
+              "2017-03-01",
+              "2026-09-01",
+              "2026-10-01",
+              "2026-11-01"
+            ],
+            "completed_batches": 12,
+            "complete": true,
+            "track_count_includes_overlap": true
+          },
+          "elapsed_s": 22.167157300002145
+        }
+      ]
+    },
+    "preceding_execution": {
+      "runner_exit_code": 1,
+      "offline_prepare_exit_code": 0,
+      "proxy_connections": 0,
+      "source_manifests_unchanged": true
+    },
+    "reason": "Resume after March source-gap recovery. All three twelve-date cases completed offline without processing errors, wrong accepted locations, or proxy connections. The attached results retain each location acceptance outcome. Broader reliability remains unproven.",
+    "recording_date_supplied": false,
+    "recording_clock_supplied": false,
+    "download_dates_supplied": false,
+    "created_utc": "2026-11-08T23:26:05.342421+00:00"
+  },
+  "interpretation": "The March archive contains 284 snapshots and four declared source gaps. Two other slots use recorded neighboring minutes. Six aircraft traces were obtained. Offline preparation and all three audio searches completed with unchanged source manifests and zero proxy connections. Maho B remains within 1 km at 549.65 m; Maho A is ambiguous and the continuous clip has insufficient evidence. The runner returns 1 because two cases fail location acceptance. These are existing recordings; overall reliability and Lake Hood remain unresolved."
+}

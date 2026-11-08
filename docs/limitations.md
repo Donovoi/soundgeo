@@ -47,12 +47,13 @@ remained ambiguous. The first 15 minutes of all three recordings remained
 unresolved. These checks cover a small part of the variation in internet audio.
 
 Lake Hood, Southampton, and LAX returned no accepted audio location. Expanded
-Maho tests searched three and ten prepared sample dates with the same result:
+Maho tests searched three, ten, and twelve prepared sample dates with the same result:
 one accepted recording, one ambiguous, and one insufficient.
 The app has not been verified against a complete historical flight archive.
 
-All 144 Rust tests and the required checks passed locally and in
+Revision `12ef5bf` passed all 144 Rust tests and the required checks locally and in
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42367454627).
+Revision `ac17fdd` passed all 145 Rust tests and the required local checks.
 Nine Python tests check the benchmark runner.
 Location accuracy needs separate tests against known positions.
 
@@ -121,8 +122,8 @@ within the selected archive dates.
 Missing traces, snapshot replacements, and unavailable discovery slots appear
 in the report and cache manifest. A slot is recorded as unavailable when its
 file and the checked neighboring files all return HTTP 404. Online preparation
-retries recorded gaps. Offline reuse preserves them. Lost or damaged downloaded
-files remain cache errors. Preparation stops if no discovery snapshot is
+retries recorded gaps. Offline reuse preserves them and rejects missing or
+damaged downloaded files. Preparation stops if no discovery snapshot is
 available for the day. This source permits testing and evaluation.
 
 The free sample downloader retrieved all 288 snapshots and 97 Maho traces in
