@@ -46,14 +46,13 @@ Full-length 16 kbit/s Opus audio passed for Maho and Midway. Compressed Lake Hoo
 remained ambiguous. The first 15 minutes of all three recordings remained
 unresolved. These checks cover a small part of the variation in internet audio.
 
-Lake Hood, Southampton, and LAX returned no accepted audio location. A separate
-Maho test searched free samples for September 1, October 1, and November 1 with
-the same result: one accepted recording, one ambiguous, and one insufficient.
+Lake Hood, Southampton, and LAX returned no accepted audio location. Expanded
+Maho tests searched three and ten prepared sample dates with the same result:
+one accepted recording, one ambiguous, and one insufficient.
 The app has not been verified against a complete historical flight archive.
 
-All 130 Rust tests and the required checks passed locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42351026350).
-The downloaded Windows executable reproduced the expanded Maho result.
+All 144 Rust tests and the required checks passed locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42367454627).
 Nine Python tests check the benchmark runner.
 Location accuracy needs separate tests against known positions.
 
@@ -119,9 +118,12 @@ one minute appear in the manifest and report. Flight-trace times are preserved.
 Some historical traces include positions from the preceding UTC day. The cache
 keeps these source files and records the overlap. Sample analysis uses positions
 within the selected archive dates.
-Missing traces and snapshot replacements appear in the report and cache
-manifest. Preparation stops if a slot and both neighboring minutes are
-unavailable. This source permits testing and evaluation.
+Missing traces, snapshot replacements, and unavailable discovery slots appear
+in the report and cache manifest. A slot is recorded as unavailable when its
+file and the checked neighboring files all return HTTP 404. Online preparation
+retries recorded gaps. Offline reuse preserves them. Lost or damaged downloaded
+files remain cache errors. Preparation stops if no discovery snapshot is
+available for the day. This source permits testing and evaluation.
 
 The free sample downloader retrieved all 288 snapshots and 97 Maho traces in
 validation. Every file matched an independent download. Cache reuse and recovery
