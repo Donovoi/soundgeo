@@ -59,7 +59,7 @@ For a first-of-month recording, you can also select **Free evaluation sample:
 first of each month**. Set a search area. This source is limited to testing and
 evaluation. It downloads the full day's traces for aircraft found in 288
 worldwide snapshots near five-minute intervals. The report and cache manifest
-list missing traces and any snapshots taken from neighboring minutes.
+list missing traces, unavailable snapshot slots, and snapshots taken from neighboring minutes.
 For a recording near Chicago, you can select **Chicago: public airport replay**.
 For a recording near Los Angeles, select **LAX: public airport replay**.
 The Chicago source contains local airport radar data. It keeps about 90 days of history.
@@ -222,12 +222,13 @@ For the free first-of-month evaluation sample, specify a search area:
 soundgeo-cli.exe download --date 2026-11-01 --provider adsb-exchange-sample --south 17.85 --north 18.25 --west -63.35 --east -62.95 --output "flight-cache"
 ```
 
-To download during analysis, use `--provider adsb-exchange-sample` with `--date`
-and `--cache`. Put the search bounds in the job file. Leave `start_utc` as `null`.
+To download during analysis, use `--provider adsb-exchange-sample` and `--cache`.
+Leave dates blank to discover available archives. Put the search bounds in the
+job file. Leave `start_utc` as `null`.
 The app uses the provider's [public sample access](https://www.adsbexchange.com/pull-data/).
 The [sample page](https://www.adsbexchange.com/data-products/sample-data/)
-sets out the dates and terms of use. A missing snapshot stops the download. Missing
-aircraft traces are listed in `sample-manifest.json` and in the report warning.
+sets out the dates and terms of use. Source gaps are listed in
+`sample-manifest.json` and in the report warning.
 The app checks cached file hashes and keeps damaged cache bytes before repair.
 
 To search more than one possible date, add `--date-to`:

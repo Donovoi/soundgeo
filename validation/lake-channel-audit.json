@@ -1,0 +1,336 @@
+{
+  "scope": "Channel audit of the seven existing Lake Hood recordings, using no flight data or known recording times or locations. This measures audio similarity; it does not estimate location.",
+  "audits": [
+    {
+      "plan": {
+        "created_utc": "2026-11-08T23:08:43.074606+00:00",
+        "cases": [
+          {
+            "id": "lake-hood",
+            "media": "real-validation/lake-hood/recording.mp4",
+            "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42"
+          },
+          {
+            "id": "lake-hood-nov1",
+            "media": "real-validation/lake-hood-nov1/recording.mp4",
+            "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414"
+          },
+          {
+            "id": "lake-hood-nov1-later",
+            "media": "real-validation/lake-hood-nov1-later/recording.mp4",
+            "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff"
+          },
+          {
+            "id": "lake-hood-nov4-a",
+            "media": "fresh-validation/lake-hood-nov4-a/recording.mp4",
+            "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea"
+          },
+          {
+            "id": "lake-hood-nov4-b",
+            "media": "fresh-validation/lake-hood-nov4-b/recording.mp4",
+            "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a"
+          },
+          {
+            "id": "lake-new-a",
+            "media": "lake-nov6-heldout/lake-new-a/recording.mp4",
+            "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05"
+          },
+          {
+            "id": "lake-new-b",
+            "media": "lake-nov6-heldout/lake-new-b/recording.mp4",
+            "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c"
+          }
+        ],
+        "sample_rate_hz": 8000,
+        "channels": 2,
+        "window_s": 10,
+        "scope": "Full recordings; channel energy, correlation, and sample equality. No flight data, recording date, time, or location is used.",
+        "ffmpeg_sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+        "script_sha256": "7232b9f77af48d0ab978287e27e036b661a2bb07ec9442cf3db62e089ca80cb7",
+        "numpy_version": "2.4.3"
+      },
+      "results": [
+        {
+          "case": "lake-hood",
+          "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+          "frames": 28799989,
+          "duration_s": 3599.998625,
+          "unequal_frames": 861851,
+          "left_rms": 0.008677798099808978,
+          "right_rms": 0.008677798099671863,
+          "correlation": 0.9999999999035214,
+          "side_to_mid_power": 4.823925623523366e-11,
+          "elapsed_s": 3.741416599998047
+        },
+        {
+          "case": "lake-hood-nov1",
+          "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+          "frames": 28799989,
+          "duration_s": 3599.998625,
+          "unequal_frames": 1155508,
+          "left_rms": 0.008357317970348272,
+          "right_rms": 0.008357317970122794,
+          "correlation": 0.9999999999377737,
+          "side_to_mid_power": 3.1113182072086636e-11,
+          "elapsed_s": 3.7720227999998315
+        },
+        {
+          "case": "lake-hood-nov1-later",
+          "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+          "frames": 28799989,
+          "duration_s": 3599.998625,
+          "unequal_frames": 1040087,
+          "left_rms": 0.018965974943744426,
+          "right_rms": 0.01896597494397571,
+          "correlation": 0.9999999999878253,
+          "side_to_mid_power": 6.0870679190375915e-12,
+          "elapsed_s": 3.718806200002291
+        },
+        {
+          "case": "lake-hood-nov4-a",
+          "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+          "frames": 28799989,
+          "duration_s": 3599.998625,
+          "unequal_frames": 1025845,
+          "left_rms": 0.015336429240742687,
+          "right_rms": 0.015336429240660678,
+          "correlation": 0.9999999999811705,
+          "side_to_mid_power": 9.414496014650726e-12,
+          "elapsed_s": 3.6625444999990577
+        },
+        {
+          "case": "lake-hood-nov4-b",
+          "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+          "frames": 28800174,
+          "duration_s": 3600.02175,
+          "unequal_frames": 921622,
+          "left_rms": 0.007482243772124408,
+          "right_rms": 0.007482243772514021,
+          "correlation": 0.9999999998075828,
+          "side_to_mid_power": 9.620822296246545e-11,
+          "elapsed_s": 3.5913804000010714
+        },
+        {
+          "case": "lake-new-a",
+          "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+          "frames": 14400087,
+          "duration_s": 1800.010875,
+          "unequal_frames": 577165,
+          "left_rms": 0.00775521340117247,
+          "right_rms": 0.007755213401363065,
+          "correlation": 0.9999999998591423,
+          "side_to_mid_power": 7.042862658111341e-11,
+          "elapsed_s": 1.8745404000001145
+        },
+        {
+          "case": "lake-new-b",
+          "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c",
+          "frames": 21599945,
+          "duration_s": 2699.993125,
+          "unequal_frames": 904854,
+          "left_rms": 0.013350418459406833,
+          "right_rms": 0.013350418459253997,
+          "correlation": 0.999999999991371,
+          "side_to_mid_power": 4.314421024741185e-12,
+          "elapsed_s": 2.8723581000012928
+        }
+      ],
+      "window_files": [
+        {
+          "file": "lake-stereo-audit/lake-hood.json",
+          "sha256": "b8d353da5c746d5631b28f2ea47030740bbbfe526f7110ea611f37110beef45f"
+        },
+        {
+          "file": "lake-stereo-audit/lake-hood-nov1.json",
+          "sha256": "b17d6f7676e6367e75e99294b7f78b1ab217777631e9813bd5bc2701e6fc1de9"
+        },
+        {
+          "file": "lake-stereo-audit/lake-hood-nov1-later.json",
+          "sha256": "2d0b9bb774f9d65f5968e08e7d5a75e570a545f74cb65b3286f702874382e32c"
+        },
+        {
+          "file": "lake-stereo-audit/lake-hood-nov4-a.json",
+          "sha256": "c98678f7f656d9bb930654ddca88e78af478cf4e172b4aecbe4bd12e30f0c8c6"
+        },
+        {
+          "file": "lake-stereo-audit/lake-hood-nov4-b.json",
+          "sha256": "d4aba54d514b537b52d8cad5b89597db2d6915dc0e47467b49d80d028845d5ba"
+        },
+        {
+          "file": "lake-stereo-audit/lake-new-a.json",
+          "sha256": "8ac58a3cf4fe01e7b5d2320dfae4437aae27103eea9aef4d609e69ecc0bb46d2"
+        },
+        {
+          "file": "lake-stereo-audit/lake-new-b.json",
+          "sha256": "9d4b9e9771595d7a4a7ad0af67b31b80d315c47c1137b550d3c062f4ca265957"
+        }
+      ]
+    },
+    {
+      "plan": {
+        "created_utc": "2026-11-08T23:09:40.017190+00:00",
+        "cases": [
+          {
+            "id": "lake-hood",
+            "media": "real-validation/lake-hood/recording.mp4",
+            "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42"
+          },
+          {
+            "id": "lake-hood-nov1",
+            "media": "real-validation/lake-hood-nov1/recording.mp4",
+            "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414"
+          },
+          {
+            "id": "lake-hood-nov1-later",
+            "media": "real-validation/lake-hood-nov1-later/recording.mp4",
+            "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff"
+          },
+          {
+            "id": "lake-hood-nov4-a",
+            "media": "fresh-validation/lake-hood-nov4-a/recording.mp4",
+            "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea"
+          },
+          {
+            "id": "lake-hood-nov4-b",
+            "media": "fresh-validation/lake-hood-nov4-b/recording.mp4",
+            "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a"
+          },
+          {
+            "id": "lake-new-a",
+            "media": "lake-nov6-heldout/lake-new-a/recording.mp4",
+            "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05"
+          },
+          {
+            "id": "lake-new-b",
+            "media": "lake-nov6-heldout/lake-new-b/recording.mp4",
+            "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c"
+          }
+        ],
+        "sample_rate_hz": 44100,
+        "channels": 2,
+        "window_s": 10,
+        "scope": "Full recordings; channel energy, correlation, and sample equality. No flight data, recording date, time, or location is used.",
+        "ffmpeg_sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+        "script_sha256": "c134a8f5723d2398aaff44bde6a26b8c652f1f9257daf6d55f4dac734bc03c3e",
+        "numpy_version": "2.4.3"
+      },
+      "results": [
+        {
+          "case": "lake-hood",
+          "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+          "frames": 158759936,
+          "duration_s": 3599.9985487528343,
+          "unequal_frames": 8196747,
+          "left_rms": 0.008679694707630551,
+          "right_rms": 0.008679694707619236,
+          "correlation": 0.9999998598739779,
+          "side_to_mid_power": 7.006301555266654e-08,
+          "elapsed_s": 5.943330599999172
+        },
+        {
+          "case": "lake-hood-nov1",
+          "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+          "frames": 158759936,
+          "duration_s": 3599.9985487528343,
+          "unequal_frames": 11050130,
+          "left_rms": 0.008357523376867501,
+          "right_rms": 0.00835752337688173,
+          "correlation": 0.9999999355544368,
+          "side_to_mid_power": 3.2222782602684006e-08,
+          "elapsed_s": 5.780038400000194
+        },
+        {
+          "case": "lake-hood-nov1-later",
+          "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+          "frames": 158759936,
+          "duration_s": 3599.9985487528343,
+          "unequal_frames": 10245505,
+          "left_rms": 0.018966033954379367,
+          "right_rms": 0.018966033954302287,
+          "correlation": 0.9999999945698672,
+          "side_to_mid_power": 2.7150667933252944e-09,
+          "elapsed_s": 6.171175600000424
+        },
+        {
+          "case": "lake-hood-nov4-a",
+          "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+          "frames": 158759936,
+          "duration_s": 3599.9985487528343,
+          "unequal_frames": 9971194,
+          "left_rms": 0.015336523635627304,
+          "right_rms": 0.015336523635574527,
+          "correlation": 0.9999999772384824,
+          "side_to_mid_power": 1.1380758592676641e-08,
+          "elapsed_s": 5.76718880000044
+        },
+        {
+          "case": "lake-hood-nov4-b",
+          "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+          "frames": 158760960,
+          "duration_s": 3600.021768707483,
+          "unequal_frames": 8426134,
+          "left_rms": 0.007649804725727388,
+          "right_rms": 0.007649804725702137,
+          "correlation": 0.9999997031452362,
+          "side_to_mid_power": 1.484274036379371e-07,
+          "elapsed_s": 5.734870500000397
+        },
+        {
+          "case": "lake-new-a",
+          "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+          "frames": 79380480,
+          "duration_s": 1800.0108843537414,
+          "unequal_frames": 5622348,
+          "left_rms": 0.007755332015886385,
+          "right_rms": 0.007755332015918316,
+          "correlation": 0.9999999336973091,
+          "side_to_mid_power": 3.315134627112483e-08,
+          "elapsed_s": 3.233921199996985
+        },
+        {
+          "case": "lake-new-b",
+          "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c",
+          "frames": 119069696,
+          "duration_s": 2699.993106575964,
+          "unequal_frames": 8649157,
+          "left_rms": 0.013382200086126372,
+          "right_rms": 0.013382200086049425,
+          "correlation": 0.9999999647006887,
+          "side_to_mid_power": 1.7649655766457458e-08,
+          "elapsed_s": 4.349992600000405
+        }
+      ],
+      "window_files": [
+        {
+          "file": "lake-stereo-audit-original-rate/lake-hood.json",
+          "sha256": "b26735e85c5928202ecf4958767d2771f38941b46d0a578390366a67c85d4051"
+        },
+        {
+          "file": "lake-stereo-audit-original-rate/lake-hood-nov1.json",
+          "sha256": "956e35c83f8bf91da02c8f6ed324780f408f158cd823e5871b79874fff2558f3"
+        },
+        {
+          "file": "lake-stereo-audit-original-rate/lake-hood-nov1-later.json",
+          "sha256": "4d0c1f63d2311fa9c3ab0529e6909b770212664826d5e369aa677116371b6d97"
+        },
+        {
+          "file": "lake-stereo-audit-original-rate/lake-hood-nov4-a.json",
+          "sha256": "1b11436a7e2070df2f35449b0c116ad12b349af9da01624f1a85b35575a1a544"
+        },
+        {
+          "file": "lake-stereo-audit-original-rate/lake-hood-nov4-b.json",
+          "sha256": "0455d365a4aca1161fba5be07fc278da38828e9cf2ce2d1a8a31c3dabacdf0e3"
+        },
+        {
+          "file": "lake-stereo-audit-original-rate/lake-new-a.json",
+          "sha256": "a1b1ae2a7067dae313384aca03b9a92278752c489ce77152006672d3d95f2593"
+        },
+        {
+          "file": "lake-stereo-audit-original-rate/lake-new-b.json",
+          "sha256": "9ef468ab0ec4f7c48485d6a5c3949626017cf3149aa733c83e190cf577ab5cad"
+        }
+      ]
+    }
+  ],
+  "interpretation": "Across 6.25 hours, left/right correlation exceeded 0.9999997 at the original 44.1 kHz rate. Difference-channel power relative to sum-channel power was below -68.28 dB. At the application 8 kHz rate it was below -100.16 dB. These measurements give no basis for a stereo-localization change on these recordings. The existing mono decoder was retained. Lake Hood remains unresolved."
+}
