@@ -56,8 +56,34 @@ time supplied and no connections to the test proxy.
 from the preceding evening. Build `1c948eb` records these offsets and overlaps,
 preserves source bytes and times, and filters sample analysis to the selected
 archive dates. It passed all 144 Rust tests, nine Python tests, formatting,
-strict Clippy, doc tests, and both release builds. The repaired January download
-and ten-date real-video replay remain unverified on this build.
+strict Clippy, doc tests, and both release builds.
+
+The [ten-date offline replay](ten-date-offline-replay.json) verified the repaired
+January archive and tested all three original Maho sample recordings. All 288
+snapshots and 13 traces passed preparation. Seven traces retained 897 positions
+from the preceding evening. The source hashes matched independent downloads.
+
+All three audio cases completed with no recording date or time supplied. Maho B
+passed at 549.65 m. Maho A remained ambiguous, and the continuous clip had
+insufficient evidence. The runner returned 1 because two cases failed location
+acceptance. No processing error occurred. The proxy received no connections,
+and all source manifests stayed unchanged. These tests reuse existing recordings.
+
+[Source-gap recovery](snapshot-source-gaps.json) then prepared March 2017 with
+284 snapshots, four unavailable slots, two neighboring replacements, and six
+traces. The provider index independently confirmed the 23-minute snapshot gap.
+The cache records each unavailable slot. Offline preparation passed with no
+proxy connection. All three Maho cases completed across twelve dates, again
+with one accepted, one ambiguous, and one insufficient result. Maho B remained
+549.65 m from its reference. Build `ac17fdd` passed all 145 Rust tests, nine
+Python tests, and the required local checks. Wider source preparation continues;
+the resumed Chicago plan covers 90 dates, including older prepared data.
+
+A [channel audit](lake-channel-audit.json) checked all seven Lake Hood recordings
+at the original 44.1 kHz rate and the app's 8 kHz rate. Across 6.25 hours, the two
+channels were nearly identical. Difference-channel power was below -68.28 dB
+relative to sum-channel power at the original rate. These measurements gave no
+basis for a stereo-localization change. Lake Hood remains unresolved.
 
 Revision `99588f3` passed [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42364660722)
 with 142 Rust tests and nine Python tests on each platform.
