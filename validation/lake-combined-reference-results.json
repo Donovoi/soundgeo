@@ -1,0 +1,346 @@
+{
+  "scope": "Paired offline passage-timing replay using all four prepared free archive dates over the original broad Lake Hood area.",
+  "plan": {
+    "scope": "Paired direct-reference diagnostic. Provider discovery and automatic download are assessed separately.",
+    "source_commit": "598691d5098fad3f52bcc7fbc9fa898e6f04b1fa",
+    "cli_sha256": "fb9c7aa3c32556769642a3631329ccdb383216684d3fbb0bc69fc62fe943f2c9",
+    "exporter_sha256": "8c3ba87673563ec0e744710de57b9194024292c1e5488f932465bb25abc050b3",
+    "script_sha256": "4f065d74a8555ab5ff6a8a55b5f2737109610093e999cd44b59cb7789a3e5008",
+    "original_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+    "dates_from_prepared_cache": [
+      "2026-11-01",
+      "2026-11-03",
+      "2026-11-04",
+      "2026-11-06"
+    ],
+    "date_selection": "Every date already present in the prepared Lake Hood flight cache.",
+    "bounds": {
+      "south": 61.0,
+      "north": 61.36,
+      "west": -150.36,
+      "east": -149.62
+    },
+    "recording_date_supplied": false,
+    "recording_clock_supplied": false,
+    "camera_position_supplied_to_app": false,
+    "video_clues": false,
+    "offline": true,
+    "target_error_m": 1000,
+    "case_ids": [
+      "lake-hood",
+      "lake-hood-nov1",
+      "lake-hood-nov1-later",
+      "lake-hood-nov4-a",
+      "lake-hood-nov4-b",
+      "lake-new-a",
+      "lake-new-b"
+    ],
+    "variants": [
+      "production",
+      "merged"
+    ],
+    "workers": 2,
+    "timeout_per_case_s": 3600,
+    "export_smoothing": false,
+    "analysis_smoothing": "Original case setting",
+    "source_order": "Production paths precede staging paths. The native importer handles timestamp duplicates and reception gaps.",
+    "original_source_bytes_preserved": true
+  },
+  "exports": [
+    {
+      "variant": "production",
+      "sha256": "322a6308a64f8dfe4441876bc251eced74da0682382611ceca9acca40978cb3a",
+      "points": 936007,
+      "tracks": 6992,
+      "first_flight_position_utc": 1793491200.01,
+      "last_flight_position_utc": 1794009599.63,
+      "elapsed_s": 2276.772178899999
+    },
+    {
+      "variant": "merged",
+      "sha256": "51920e7718bc139d596dd540738dcd7a81eedd8e774319b52d492eb8c1e5600e",
+      "points": 964488,
+      "tracks": 7075,
+      "first_flight_position_utc": 1793491200.01,
+      "last_flight_position_utc": 1794009599.63,
+      "elapsed_s": 1757.0104120000033
+    }
+  ],
+  "completion": {
+    "runner_exit_code": 1,
+    "proxy_connections": 0,
+    "source_bytes_unchanged": true,
+    "exports_unchanged": true,
+    "recording_date_supplied": false,
+    "recording_clock_supplied": false
+  },
+  "completed_cases": 14,
+  "accepted": 0,
+  "processing_errors": 0,
+  "wrong_accepted": 0,
+  "status_counts": {
+    "insufficient_evidence": 12,
+    "ambiguous": 2
+  },
+  "cases": [
+    {
+      "case": "merged--lake-hood",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "bda572c477f99de4a999d5e008c23b40cafd8561168102e2d7dbfe2a05a29d75",
+      "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+      "exit_code": 3,
+      "report_sha256": "c596b2fd208b1af2c7f19e5003305b2c0666d9bd4d3dc0a4c622e2e33bdd8404",
+      "status": "insufficient_evidence",
+      "sound_peaks": 48,
+      "track_count": 7075,
+      "date_search": null,
+      "elapsed_s": 18.41681800000515,
+      "top_score": 11.125242568415086,
+      "top_matches": 5
+    },
+    {
+      "case": "merged--lake-hood-nov1",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "cf390d364c2356bbf5743ec420bcbdd2c2544d37f0568662c2be09a4013615f8",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "exit_code": 3,
+      "report_sha256": "93efe9ef4205c978b1c7bf0fe388b750a5cfc24c0b6c15f864db7b81fca761dc",
+      "status": "insufficient_evidence",
+      "sound_peaks": 56,
+      "track_count": 7075,
+      "date_search": null,
+      "elapsed_s": 347.2249870999949,
+      "top_score": 12.844612693530278,
+      "top_matches": 10
+    },
+    {
+      "case": "merged--lake-hood-nov1-later",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "dc8f1d8986ce58fd63a7c7d175d21149007712f0f3ecc30fc8574db3a49fa354",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "exit_code": 3,
+      "report_sha256": "03ff320b8fc2882d38f311917d19d31b307dc403fc1ef98b310fa8999308806c",
+      "status": "insufficient_evidence",
+      "sound_peaks": 40,
+      "track_count": 7075,
+      "date_search": null,
+      "elapsed_s": 206.36390720000054,
+      "top_score": 12.23809892140329,
+      "top_matches": 10
+    },
+    {
+      "case": "merged--lake-hood-nov4-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "6c4902c6259cdfe019b182e85972f7bd671303536f37496ff36d4599e0d690f8",
+      "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "exit_code": 3,
+      "report_sha256": "bb691f8b217a74536a54605bdc3c0a26f63dcee0a56f8bdb6460bf1ba5b63cf0",
+      "status": "insufficient_evidence",
+      "sound_peaks": 22,
+      "track_count": 7075,
+      "date_search": null,
+      "elapsed_s": 177.25326900000073,
+      "top_score": 14.578691561686384,
+      "top_matches": 6
+    },
+    {
+      "case": "merged--lake-hood-nov4-b",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "4dd18ea8638f6b088594ef2ad01e442dbad1d4f4d03fefed714e0886f8d702a7",
+      "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+      "exit_code": 3,
+      "report_sha256": "6aed7bef106be5d412fa9a1ae573e41ea37d416827b37d7f1b40a6aff3f48732",
+      "status": "insufficient_evidence",
+      "sound_peaks": 26,
+      "track_count": 7075,
+      "date_search": null,
+      "elapsed_s": 289.0576919000014,
+      "top_score": 12.79933332577969,
+      "top_matches": 8
+    },
+    {
+      "case": "merged--lake-new-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "44b14728e895e6654a57978c0be29805bfc391ea188aec63f80b82c1c0c6dec0",
+      "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+      "exit_code": 4,
+      "report_sha256": "72b37ae4dc66a00c22531789f0d617d3a9f27ce6a498ffd2f3ac7e3a6e606b02",
+      "status": "ambiguous",
+      "sound_peaks": 19,
+      "track_count": 7075,
+      "date_search": null,
+      "elapsed_s": 150.63384979999682,
+      "top_score": 15.884696112400334,
+      "top_matches": 7
+    },
+    {
+      "case": "merged--lake-new-b",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "e5968c72b78b87f23282a785e8d8c50c76782a6e5f7a9fff8555d7e2bf57c27e",
+      "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c",
+      "exit_code": 3,
+      "report_sha256": "79162b7a8a6900c273188317eca81d2e7948bbe1aabf3a3b2fea1e305ce3174f",
+      "status": "insufficient_evidence",
+      "sound_peaks": 25,
+      "track_count": 7075,
+      "date_search": null,
+      "elapsed_s": 15.642774899999495,
+      "top_score": 12.262736746498618,
+      "top_matches": 5
+    },
+    {
+      "case": "production--lake-hood",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "aceb09e9753659b35c9f4fdb90bc167a89cfbbdc97cd8196c4b136009fe33928",
+      "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+      "exit_code": 3,
+      "report_sha256": "17e45b379735e790ae6f620ae9eb0803a172274c6339e0761789273b2b1664d4",
+      "status": "insufficient_evidence",
+      "sound_peaks": 48,
+      "track_count": 6992,
+      "date_search": null,
+      "elapsed_s": 18.56492120000621,
+      "top_score": 11.125242568415086,
+      "top_matches": 5
+    },
+    {
+      "case": "production--lake-hood-nov1",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "4898655da59fea5432954a729466a333648cd1f0259826310f5a4be74e9f30c4",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "exit_code": 3,
+      "report_sha256": "3f38fa6805c83fae6ec77ad7a12843b8d7817f3160b1f00055c880fe109db6b3",
+      "status": "insufficient_evidence",
+      "sound_peaks": 56,
+      "track_count": 6992,
+      "date_search": null,
+      "elapsed_s": 315.071328500002,
+      "top_score": 12.844612693530278,
+      "top_matches": 10
+    },
+    {
+      "case": "production--lake-hood-nov1-later",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "86bc7b6126a9129c28edcd31e9cbb231648894212382772ff3c2ddcd5983e56d",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "exit_code": 3,
+      "report_sha256": "98ea9eca26cc281a8e7709cdfd531c49fd3916c884abe1700a960213220d0ea1",
+      "status": "insufficient_evidence",
+      "sound_peaks": 40,
+      "track_count": 6992,
+      "date_search": null,
+      "elapsed_s": 206.00638619999518,
+      "top_score": 12.23809892140329,
+      "top_matches": 10
+    },
+    {
+      "case": "production--lake-hood-nov4-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "786776610021de8b13e9675bb5bdd366b83b202196170ec0e1867a5cd6d40b97",
+      "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+      "exit_code": 3,
+      "report_sha256": "6c14dcb8e1f97b931755728b14ce28fb1e54d86a5aec260de044ed79660fb35a",
+      "status": "insufficient_evidence",
+      "sound_peaks": 22,
+      "track_count": 6992,
+      "date_search": null,
+      "elapsed_s": 174.99671459999809,
+      "top_score": 14.559563612951784,
+      "top_matches": 6
+    },
+    {
+      "case": "production--lake-hood-nov4-b",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "41a01d0f8534d30edf93f96c3f6e9d22bd27af2061a3c1704b9b9c71caf681d6",
+      "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+      "exit_code": 3,
+      "report_sha256": "0202c844d81e43ec2139421cf3509421956a2ff655c68942b9c059a920a2ff05",
+      "status": "insufficient_evidence",
+      "sound_peaks": 26,
+      "track_count": 6992,
+      "date_search": null,
+      "elapsed_s": 282.26352079999924,
+      "top_score": 12.841577600719086,
+      "top_matches": 8
+    },
+    {
+      "case": "production--lake-new-a",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "3d6d901923beefcebfd13ad9e17c047d2d0fd51eec7d99dc20b02d0b4998c753",
+      "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+      "exit_code": 4,
+      "report_sha256": "a775f62f4faa57633cf9acfd33332f1924a9d3a96e85f09c68b14ef6e4d4d50c",
+      "status": "ambiguous",
+      "sound_peaks": 19,
+      "track_count": 6992,
+      "date_search": null,
+      "elapsed_s": 171.5107261000012,
+      "top_score": 15.981537721165864,
+      "top_matches": 7
+    },
+    {
+      "case": "production--lake-new-b",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "1e692310fb61dfa6e66dbec90b8c521b855d046617d60c4ae1c671e9ae9ca697",
+      "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c",
+      "exit_code": 3,
+      "report_sha256": "b6603a7376b8f68a663232d558780d00e6626d45c9e0012c861cfb2503f201dc",
+      "status": "insufficient_evidence",
+      "sound_peaks": 25,
+      "track_count": 6992,
+      "date_search": null,
+      "elapsed_s": 15.810150199999043,
+      "top_score": 12.262736746498618,
+      "top_matches": 5
+    }
+  ],
+  "verified_job_metadata": {
+    "recording_date_argument_supplied": false,
+    "recording_clock_supplied": false,
+    "known_position_supplied_to_app": false,
+    "video_clues": false,
+    "offline": true
+  },
+  "runner_metadata_issue": {
+    "original_recording_date_supplied": true,
+    "reason": "The original runner inferred this flag from its command-line mode. Direct CSV jobs contained no archive date argument. All saved jobs and reports were checked.",
+    "fixed_in_commit": "b63138dd0705d4aa9a5e2627b6ff73b1b76d8e78",
+    "original_results_preserved": true
+  },
+  "artifacts": [
+    {
+      "file": "lake-combined-reference/plan.json",
+      "sha256": "14cf28cba4446761ab4d81c3f725b32c041ec82a48eb5a3006972800fcbafd59"
+    },
+    {
+      "file": "lake-combined-reference/exports.json",
+      "sha256": "b4a55feffa23b6940757420cb911f6d7e00da4c574e5720d9b503d88a3ae9f21"
+    },
+    {
+      "file": "lake-combined-reference/result.json",
+      "sha256": "8bad5cd5d82838aff22dbff127a010a36e099b3d0ddfee6a39450cd3351a4df4"
+    },
+    {
+      "file": "lake-combined-reference/audio/results.json",
+      "sha256": "abd16f80b907068debdf6e28a42e922ade43183d37cf352a00bea7eb977ad104"
+    },
+    {
+      "file": "lake-combined-reference/proxy-observation.json",
+      "sha256": "cc613c5b17db29f551703bba2fc9294d055621569ef8f77906a5415a16bd688f"
+    }
+  ]
+}

@@ -148,5 +148,397 @@
   "known_position_supplied_to_app": false,
   "video_clues": false,
   "reference_scope": "The complete prepared November 1 free sample day, searched over the original broad bounds.",
-  "location_acceptance": "Pending. A successful budget check does not establish a location."
+  "location_acceptance": "Pending. A successful budget check does not establish a location.",
+  "followup_qualification": {
+    "change": "Use array chunks in the regression helper and assert complete proposal pairs. Production source is unchanged.",
+    "production_index_source_sha256": "43dd5bbd7434e72d6e7d45088385aff593b1409f45e2c630686d6cdb07c08e86",
+    "build": {
+      "source_commit": "490cbef06d961dfaa97ddf7936d8629cfa915e23",
+      "source_tree": "8fe8e1eb4eb278dcccfe52535224929edabea757",
+      "cli": "analysis-build/soundgeo-cli-spacing-v2-490cbef.exe",
+      "cli_sha256": "74373ef83349add73297527b367d4fd387400f5e61fa610bc65ec065d6e0db48",
+      "rust_tests_passed": 156,
+      "python_tests_passed": 10,
+      "checks": [
+        {
+          "check": "fmt",
+          "exit_code": 0,
+          "elapsed_s": 0.8076712999973097
+        },
+        {
+          "check": "clippy",
+          "exit_code": 0,
+          "elapsed_s": 11.415281299996423
+        },
+        {
+          "check": "tests",
+          "exit_code": 0,
+          "elapsed_s": 442.0245098999949
+        },
+        {
+          "check": "doc-tests",
+          "exit_code": 0,
+          "elapsed_s": 1.5499683000016375
+        },
+        {
+          "check": "build",
+          "exit_code": 0,
+          "elapsed_s": 0.8933058999973582
+        },
+        {
+          "check": "python",
+          "exit_code": 0,
+          "elapsed_s": 0.33954300000186777
+        }
+      ],
+      "logs": [
+        {
+          "file": "corridor-spacing-v2-fmt.log",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "file": "corridor-spacing-v2-clippy.log",
+          "sha256": "0b8324df5abec234f80364b2ac03354a947816374179b78c29dd8947222e9817"
+        },
+        {
+          "file": "corridor-spacing-v2-tests.log",
+          "sha256": "45195f9e827424a3ef2290a07153e697c4e8a708c93a5e7e0652c2daf37197be"
+        },
+        {
+          "file": "corridor-spacing-v2-doc-tests.log",
+          "sha256": "b64120265a7ba74b1a8eff86605e7347cb16599a0a439d5a868bd37d17cf4fb5"
+        },
+        {
+          "file": "corridor-spacing-v2-build.log",
+          "sha256": "89aa4769e54bb50d65a67dd340ec1c8feb3090a58fc5bd94727365ba94745770"
+        },
+        {
+          "file": "corridor-spacing-v2-python.log",
+          "sha256": "dab0f3593b77a705c01d5ef043726c17588861a41137589ed05413858bc6dabb"
+        }
+      ]
+    },
+    "ci": {
+      "run": 42549220092,
+      "url": "https://github.com/Donovoi/soundgeo/actions/runs/42549220092",
+      "source_commit": "490cbef06d961dfaa97ddf7936d8629cfa915e23",
+      "platforms": [
+        {
+          "platform": "windows-latest",
+          "rust_tests": [
+            156,
+            0,
+            0
+          ],
+          "python_tests": 10
+        },
+        {
+          "platform": "ubuntu-latest",
+          "rust_tests": [
+            156,
+            0,
+            0
+          ],
+          "python_tests": 10
+        }
+      ],
+      "all_required_steps_passed": true,
+      "log_sha256": "b1809fb31785db3d89d0fc520298599fb5974bfdc3aaf80fd9372d719c46ca31",
+      "jobs": [
+        {
+          "name": "check (windows-latest)",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run Swatinem/rust-cache@v2",
+              "conclusion": "success"
+            },
+            {
+              "name": "Linux dependencies",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Windows FFmpeg",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo fmt --all -- --check",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo test --release --locked --all-targets",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo test --release --locked --doc",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo build --release --locked --bins",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run Swatinem/rust-cache@v2",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "check (ubuntu-latest)",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run dtolnay/rust-toolchain@stable",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run Swatinem/rust-cache@v2",
+              "conclusion": "success"
+            },
+            {
+              "name": "Linux dependencies",
+              "conclusion": "success"
+            },
+            {
+              "name": "Windows FFmpeg",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Run cargo fmt --all -- --check",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo test --release --locked --all-targets",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo test --release --locked --doc",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo build --release --locked --bins",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run actions/upload-artifact@v4",
+              "conclusion": "skipped"
+            },
+            {
+              "name": "Post Run Swatinem/rust-cache@v2",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Run actions/checkout@v4",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    "previous_ci_failure": {
+      "run": 42548810905,
+      "url": "https://github.com/Donovoi/soundgeo/actions/runs/42548810905",
+      "reason": "Clippy 1.99 rejected constant chunks_exact in the new test helper. Local Clippy 1.95 did not flag this lint.",
+      "log": {
+        "file": "corridor-spacing-ci-failed.log",
+        "sha256": "4206e3f495b0d69f71a42a784e071d811ae6d11649824d471536d6a678422e41"
+      }
+    }
+  },
+  "offline_positive_controls": [
+    {
+      "source_commit": "b63138dd0705d4aa9a5e2627b6ff73b1b76d8e78",
+      "scope": "Replay of the original successful Maho recording.",
+      "result": {
+        "cli_sha256": "3d03c47e0f0aa8395d5a399fe3f87020900469f78387e027168b27b4a328825b",
+        "manifest_sha256": "b411d2cbcfa3163e34e74e29c625d415074775d65476731438e730215f8db5c3",
+        "runner_sha256": "56bc882021aedb1312f0b0490285da6f58ac6994eee5987c2eade6cdc1c66323",
+        "target_error_m": 1000,
+        "selected_cases": [
+          "maho-nov1-b"
+        ],
+        "all_cases_selected": true,
+        "workers": 2,
+        "timeout_s": 3600.0,
+        "recording_clock_supplied": false,
+        "recording_date_supplied": false,
+        "date_argument_case_ids": [],
+        "imported_reference_case_ids": [],
+        "offline": true,
+        "archive_override": null,
+        "all_cases_are_replays": true,
+        "completed_cases": 1,
+        "planned_cases": 1,
+        "accepted": 1,
+        "wrong_screened": 0,
+        "processing_errors": 0,
+        "cases": [
+          {
+            "case": "maho-nov1-b",
+            "accepted": true,
+            "screened": true,
+            "job_sha256": "2bcf35f546d4a4b3fd44a2020ba41f2a4203219cdd330e3b1c9e37d88fd8f00b",
+            "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+            "exit_code": 0,
+            "report_sha256": "71d2ad8c501c0fd8c22dadef445ae085d7b6fda3961d00f97c445e40ee915b0a",
+            "status": "candidates_found",
+            "sound_peaks": 117,
+            "track_count": 597,
+            "region": {
+              "latitude": 18.04328859060403,
+              "longitude": -63.121830985915494,
+              "enclosing_radius_m": 0.0,
+              "competitive_points": 1
+            },
+            "error_m": 549.649056637247,
+            "matched_flights": 16,
+            "score": 31.0335629455301,
+            "controls": 19,
+            "date_search": null,
+            "elapsed_s": 18.546941500004323
+          }
+        ]
+      },
+      "completion": {
+        "runner_exit_code": 0,
+        "elapsed_s": 19.332096999998612,
+        "proxy_connections": 0,
+        "source_manifests_unchanged": true,
+        "audio_results_sha256": "5155ea458f03b84b92bc28713be6a8841af068b755d671659f6fad6618b7fccb"
+      },
+      "changed_report_fields": [
+        "created_utc"
+      ],
+      "previous_report": {
+        "file": "reception-gap-native/audio/maho-nov1-b/report.json",
+        "sha256": "bd0a8d79a443caf5bd8f75286ebe2f1edde3183ae298cf392e6fb5da69a3cbe3"
+      },
+      "current_report": {
+        "file": "corridor-spacing-offline-control/audio/maho-nov1-b/report.json",
+        "sha256": "71d2ad8c501c0fd8c22dadef445ae085d7b6fda3961d00f97c445e40ee915b0a"
+      }
+    },
+    {
+      "source_commit": "490cbef06d961dfaa97ddf7936d8629cfa915e23",
+      "scope": "Replay of the original successful Maho recording.",
+      "result": {
+        "cli_sha256": "74373ef83349add73297527b367d4fd387400f5e61fa610bc65ec065d6e0db48",
+        "manifest_sha256": "b411d2cbcfa3163e34e74e29c625d415074775d65476731438e730215f8db5c3",
+        "runner_sha256": "56bc882021aedb1312f0b0490285da6f58ac6994eee5987c2eade6cdc1c66323",
+        "target_error_m": 1000,
+        "selected_cases": [
+          "maho-nov1-b"
+        ],
+        "all_cases_selected": true,
+        "workers": 2,
+        "timeout_s": 3600.0,
+        "recording_clock_supplied": false,
+        "recording_date_supplied": false,
+        "date_argument_case_ids": [],
+        "imported_reference_case_ids": [],
+        "offline": true,
+        "archive_override": null,
+        "all_cases_are_replays": true,
+        "completed_cases": 1,
+        "planned_cases": 1,
+        "accepted": 1,
+        "wrong_screened": 0,
+        "processing_errors": 0,
+        "cases": [
+          {
+            "case": "maho-nov1-b",
+            "accepted": true,
+            "screened": true,
+            "job_sha256": "2bcf35f546d4a4b3fd44a2020ba41f2a4203219cdd330e3b1c9e37d88fd8f00b",
+            "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+            "exit_code": 0,
+            "report_sha256": "07bfcd10a8294822ad583447495e5230ceef4498aa136c9aeb0aca2314fa7a8a",
+            "status": "candidates_found",
+            "sound_peaks": 117,
+            "track_count": 597,
+            "region": {
+              "latitude": 18.04328859060403,
+              "longitude": -63.121830985915494,
+              "enclosing_radius_m": 0.0,
+              "competitive_points": 1
+            },
+            "error_m": 549.649056637247,
+            "matched_flights": 16,
+            "score": 31.0335629455301,
+            "controls": 19,
+            "date_search": null,
+            "elapsed_s": 16.741581599999336
+          }
+        ]
+      },
+      "completion": {
+        "runner_exit_code": 0,
+        "elapsed_s": 17.50929379999434,
+        "proxy_connections": 0,
+        "source_manifests_unchanged": true,
+        "audio_results_sha256": "93ed42d97b8d9d24ce46fa98b8440e3b9e08da64d217da505681f0bdba1a3e2f"
+      },
+      "changed_report_fields": [
+        "created_utc"
+      ],
+      "previous_report": {
+        "file": "reception-gap-native/audio/maho-nov1-b/report.json",
+        "sha256": "bd0a8d79a443caf5bd8f75286ebe2f1edde3183ae298cf392e6fb5da69a3cbe3"
+      },
+      "current_report": {
+        "file": "corridor-spacing-v2-offline-control/audio/maho-nov1-b/report.json",
+        "sha256": "07bfcd10a8294822ad583447495e5230ceef4498aa136c9aeb0aca2314fa7a8a"
+      }
+    }
+  ]
 }

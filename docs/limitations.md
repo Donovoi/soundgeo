@@ -51,9 +51,9 @@ Maho tests searched three, ten, and twelve prepared sample dates with the same r
 one accepted recording, one ambiguous, and one insufficient.
 The app has not been verified against a complete historical flight archive.
 
-Revision `b63138d` passed all 156 Rust tests, 10 Python tests, and the required
-local checks. Its [CI run](https://github.com/Donovoi/soundgeo/actions/runs/42548810905)
-checks Windows and Ubuntu.
+Revision `490cbef` passed all 156 Rust tests, 10 Python tests, and the required
+checks locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42549220092).
 Location accuracy needs separate tests against known positions.
 
 Optional video text tests matched an airport name within 31.06 m of the camera

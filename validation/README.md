@@ -12,8 +12,11 @@ New results must state which target they use.
 proposals from dense flight traces. Proposals now keep their metre spacing
 along each continuous eligible path. The spacing follows turns and restarts
 after gaps or unsuitable motion. Curve fitting keeps the original positions.
-Revision `b63138d` passed all 156 Rust tests, 10 Python tests, and every required
-local check.
+Revision `490cbef` passed all 156 Rust tests, 10 Python tests, and every required
+check locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42549220092).
+The record preserves an earlier CI failure from a newer Clippy rule in the
+regression helper and the correction.
 
 For the first November 1 Lake Hood clip, standard traces now need 15,277,836
 proposals, down from 19,816,431. High-resolution traces need 15,274,007 and fit
@@ -25,6 +28,11 @@ The benchmark runner also records date arguments from the actual jobs and
 lists imported reference files separately. Earlier direct-file diagnostics
 could set the supplied-date flag when no date argument was present. Their
 original records remain saved with this issue documented.
+
+Both spacing builds repeated the original Maho recording offline with no
+supplied date or time. Each remained within 549.65 m, including the reference
+allowance. All report fields except creation time matched the preceding build.
+The test proxy saw no connections, and source manifests stayed unchanged.
 
 [Flight reference checks](flight-reference-fixes.json) found two lost-data
 problems. Passage timing kept only one visit when an aircraft left the search
@@ -45,12 +53,23 @@ processing error occurred. Each job searched its prepared cache with empty
 date fields and no recording start time. The test proxy saw no connections,
 and the saved source manifests stayed unchanged.
 
+The earlier passage-only build, `5ec1283`, completed all 27 fixed recordings.
+Eight remained within 1 km, five were ambiguous, and fourteen had insufficient
+evidence. All seven Lake Hood recordings remained unresolved. The same record
+keeps both replays with their separate executable hashes and case selections.
+
 A [free archive comparison](lake-free-archive-comparison.json) checked the
 production and staging sources for all four prepared Lake Hood dates. All
 16 archive parts matched their published sizes and hashes. Staging added
 3,067 rounded position-seconds across the broad search area. Production held
-more regional positions overall. A paired audio replay checks whether combining
-the sources helps locate the recordings.
+more regional positions overall.
+
+The [completed archive replay](lake-combined-reference-results.json) searched
+all seven Lake Hood recordings against production data and the combined data.
+All 14 runs finished offline: twelve reported insufficient evidence and two
+remained ambiguous. No location was accepted. Each search used all four prepared
+dates, the original broad area, and no recording date or time argument. Source
+bytes and exported flight files stayed unchanged. The test proxy saw no connections.
 
 [High-resolution sample checks](lake-high-resolution-reference.json) downloaded
 both standard and high-resolution free traces for 570 aircraft on November 1.
