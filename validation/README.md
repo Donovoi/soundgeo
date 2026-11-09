@@ -24,6 +24,25 @@ the same 20-million-proposal budget. They previously exceeded that budget.
 The paired searches continue offline with identical input jobs and no recording
 date or start time argument. These counts cover search preparation.
 
+The [preceding Doppler source test](lake-doppler-source-baseline.json) completed
+one of four planned analyses. Its first candidate was within 46 m of Lake Hood.
+Five of 24 detected sounds matched three aircraft, and distant candidates
+remained. The result was ambiguous. The other three analyses exceeded the
+proposal budget before curve matching. The record preserves those failures.
+
+[Local fit checks](lake-doppler-local-profiles.json) used the five matches from
+that result and the completed standard-trace spacing result. Both checks
+reproduced the original fit and found lower-error fits nearby. Each kept all
+five matches at 11 of 41 sampled points, up to 250 m from its computed position.
+These checks used the computed positions and clocks. They add no accepted
+locations. Other flight associations and distant alternatives remain unresolved.
+
+The refinement check found a lost-fit case: improving the three-curve objective
+can worsen the full fit while keeping the same number of supported sounds.
+Refinement now retains the earlier lower-error fit for candidate ranking.
+Each fit still receives its own quiet-gap checks. A four-curve regression failed
+before this change and passed afterward. Location acceptance rules are unchanged.
+
 The benchmark runner also records date arguments from the actual jobs and
 lists imported reference files separately. Earlier direct-file diagnostics
 could set the supplied-date flag when no date argument was present. Their

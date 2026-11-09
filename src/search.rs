@@ -164,6 +164,36 @@ fn unit_clock_rate() -> f64 {
     1.
 }
 
+fn refinement_fits(
+    seed: Seed,
+    events: &[Event],
+    objective: f64,
+    matches: Vec<Match>,
+    corroborated: Option<CorroboratedFit>,
+) -> Vec<CorroboratedFit> {
+    let final_error = accepted_fit_error(&seed, events, objective, &matches);
+    let final_count = final_error.map_or(0, |_| matches.len());
+    let mut fits = Vec::with_capacity(2);
+    if let Some(error) = final_error {
+        fits.push(CorroboratedFit {
+            seed,
+            matches,
+            error,
+        });
+    }
+    // Keep the endpoint so each fit receives its own quiet-gap checks. The
+    // minimum-consensus objective can worsen the full fit without losing a
+    // supported sound, so also retain lower error with equal corroboration.
+    if let Some(best) = corroborated
+        && (best.matches.len() > final_count
+            || (best.matches.len() == final_count
+                && final_error.is_some_and(|error| best.error < error)))
+    {
+        fits.push(best);
+    }
+    fits
+}
+
 /// Bound the coarse beam before expensive curve fitting.
 pub(crate) fn prune_coarse_seeds(seeds: &mut Vec<Seed>, limit: usize, spacing: f64) {
     seeds.sort_by(|a, b| a.score.total_cmp(&b.score));
@@ -784,23 +814,7 @@ pub fn locate(
         if !objective.is_finite() {
             incomplete_references += 1;
         }
-        let final_error = accepted_fit_error(&seed, events, objective, &matches);
-        let final_count = final_error.map_or(0, |_| matches.len());
-        let mut fits = Vec::with_capacity(2);
-        if let Some(error) = final_error {
-            fits.push(CorroboratedFit {
-                seed,
-                matches,
-                error,
-            });
-        }
-        // Keep the original endpoint, including its quiet-gap checks. An extra
-        // result is considered only when refinement lost valid corroboration.
-        if let Some(best) = corroborated
-            && best.matches.len() > final_count
-        {
-            fits.push(best);
-        }
+        let fits = refinement_fits(seed, events, objective, matches, corroborated);
         for CorroboratedFit {
             seed,
             matches,
@@ -1156,8 +1170,7 @@ mod tests {
         );
     }
 
-    #[test]
-    fn refinement_preserves_additional_supported_curves() {
+    fn corroboration_fixture() -> (Vec<Event>, Vec<Track>) {
         let truth = demo::TRUTH;
         let shifted = Point {
             lat: truth.lat + 500. / 111320.,
@@ -1226,6 +1239,18 @@ mod tests {
             });
             tracks.push(track);
         }
+        (events, tracks)
+    }
+
+    #[test]
+    fn refinement_preserves_additional_supported_curves() {
+        let truth = demo::TRUTH;
+        let shifted = Point {
+            lat: truth.lat + 500. / 111320.,
+            ..truth
+        };
+        let c = Job::default().sound_speed();
+        let (events, tracks) = corroboration_fixture();
         let mut seed = Seed {
             point: truth,
             start: demo::EPOCH,
@@ -1305,6 +1330,55 @@ mod tests {
             .distance(truth)
                 < 250.
         );
+    }
+
+    #[test]
+    fn refinement_preserves_lower_error_with_equal_corroboration() {
+        let truth = demo::TRUTH;
+        let (events, tracks) = corroboration_fixture();
+        let initial = Point {
+            lat: truth.lat + 20. / 111320.,
+            ..truth
+        };
+        let seed = Seed {
+            point: initial,
+            start: demo::EPOCH,
+            clock_rate: 1.,
+            anchor: 0,
+            indices: vec![0, 1, 2, 3],
+            alternatives: Default::default(),
+            score: 0.,
+            coarse_profiled: false,
+        };
+        let c = Job::default().sound_speed();
+        let original = exact_score(&seed, &events, &tracks, c);
+        assert_eq!(original.1.len(), 4);
+        let error = accepted_fit_error(&seed, &events, original.0, &original.1).unwrap();
+        let mut endpoint = seed.clone();
+        endpoint.point.lat = truth.lat + 50. / 111320.;
+        let final_score = exact_score(&endpoint, &events, &tracks, c);
+        assert_eq!(final_score.1.len(), 4);
+        assert!(final_score.0 < original.0);
+        assert!(match_error(&final_score.1) > error);
+
+        // Minimizing the three-curve objective can worsen the full four-curve
+        // fit without losing a match. The lower-error fit must reach ranking.
+        let mut retained = None;
+        retain_corroborated_fit(&mut retained, &seed, &events, original.0, original.1);
+        retain_corroborated_fit(
+            &mut retained,
+            &endpoint,
+            &events,
+            final_score.0,
+            final_score.1.clone(),
+        );
+        let fits = refinement_fits(endpoint, &events, final_score.0, final_score.1, retained);
+        assert!(
+            fits.iter()
+                .any(|fit| fit.matches.len() == 4 && fit.error <= error + 1e-9),
+            "Refinement lost the better four-curve fit"
+        );
+        assert!(fits.iter().any(|fit| fit.error > error));
     }
 
     #[test]
