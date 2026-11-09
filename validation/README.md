@@ -8,6 +8,20 @@ New results must state which target they use.
 
 ## Current checks
 
+Revision `7d979b7` passes all 196 Rust tests, 10 Python tests, formatting,
+strict Clippy, doc tests, and release builds locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42709059233).
+The local control-tool build also passes.
+
+The [nearby-flight discovery check](flight-discovery-area.json) used the verified
+Windows CI executable to prepare a real Lake Hood reference cache. It selected
+565 aircraft, reused 387 traces, and downloaded 176 additional traces from the
+free source. Two daily traces remained unavailable. All 563 downloaded traces
+match independent source downloads. Offline reuse passed with no date arguments
+and no connections to the test proxy. The original cache stayed unchanged.
+This checks data preparation. The new offline video replay and wider-date
+location tests are still running.
+
 Revised Doppler ranking sums the covered improvement over linear frequency
 drift, with each sound capped at one unit. Proposal retention, refinement, and
 date merging use that score. Ambiguity checks inspect all retained competitors.
