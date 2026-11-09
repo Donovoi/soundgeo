@@ -123,12 +123,7 @@ pub(crate) fn run(
 }
 
 fn rank_doppler(report: &mut Report) {
-    report.candidates.sort_by(|a, b| {
-        b.matches.len().cmp(&a.matches.len()).then_with(|| {
-            (a.relative_error_percent + 0.25 * a.silence_conflicts.len() as f64)
-                .total_cmp(&(b.relative_error_percent + 0.25 * b.silence_conflicts.len() as f64))
-        })
-    });
+    report.candidates.sort_by(crate::search::candidate_order);
     let mut distinct: Vec<crate::search::Candidate> = Vec::new();
     for candidate in report.candidates.drain(..) {
         let point = Point {
@@ -227,6 +222,31 @@ fn merge_timing(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn date_merge_uses_curve_support_order() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../tests/fixtures/doppler-ranking-counterexample.json"
+        ))
+        .unwrap();
+        let mut candidates = fixture["control"].as_array().unwrap().clone();
+        candidates.extend(fixture["baseline"].as_array().unwrap().iter().cloned());
+        let mut report: Report = serde_json::from_value(serde_json::json!({
+            "version": "test", "status": "ambiguous", "media": "test.wav",
+            "job": Job::default(), "duration_s": 1000., "track_count": 4,
+            "events": [], "candidates": candidates, "warnings": [],
+            "search_grid_m": 100., "created_utc": "1970-01-01T00:00:00Z"
+        }))
+        .unwrap();
+        rank_doppler(&mut report);
+        assert!((report.candidates[0].curve_support() - 3.612180221766192).abs() < 1e-12);
+        assert!(
+            report
+                .candidates
+                .windows(2)
+                .all(|pair| { !crate::search::candidate_order(&pair[0], &pair[1]).is_gt() })
+        );
+    }
+
     fn assessment(score: f64, lon: f64, null: f64) -> timing::Assessment {
         let mut value = timing::Assessment::pending(vec![]);
         value.control_permutation_seeds = (0..19).collect();

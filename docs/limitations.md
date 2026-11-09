@@ -157,6 +157,14 @@ the report status. A clock-rate fit with only three matched sounds remains
 provisional.
 
 Error percentages measure residual fit. Signal contrast controls detection.
+Doppler candidates are ranked by their improvement over a straight-line
+frequency drift. Each matched sound contributes its covered fraction multiplied
+by `1 - (model RMSE / linear RMSE)^2`, bounded between zero and one. Contributions
+are added across sounds. Match count and residual error break ties; quiet-gap
+conflicts retain their residual penalty. Missing or invalid baseline measurements
+contribute zero. This score still needs full-search testing on further recordings
+and shuffled controls. The existing ambiguity checks remain in effect.
+
 The timing region encloses competitive search points, and `enclosing_radius_m`
 describes that region. Calibrated probabilities and location error bounds remain
 unavailable. Decimal places and grid spacing describe numerical precision.

@@ -8,6 +8,32 @@ New results must state which target they use.
 
 ## Current checks
 
+Revised Doppler ranking sums the covered improvement over linear frequency
+drift, with each sound capped at one unit. Proposal retention, refinement, and
+date merging use that score. Ambiguity checks inspect all retained competitors.
+The regression fixture below preserves the measured failure that prompted this
+change. Full-search testing of the revised score is pending.
+
+The [first full-search control](lake-doppler-counterexample.json) found a
+counterexample. Reordered audio matched five activities with 0.565% relative
+error, ahead of the original baseline's five matches and 0.810% error. Its top
+candidate was 8.53 km from the original camera. The experiment stopped under
+its recorded rule. All observations and alternatives stayed intact, with whole
+activity blocks moved in time. Inputs stayed unchanged, and the proxy recorded
+no connections. The count-and-error score failed this signal check. Acceptance rules
+remain unchanged.
+
+The [separate retries](lake-doppler-retry-results.json) completed within their
+four-hour limits. High-resolution traces placed the first Lake Hood clip
+56.34 m from the reference, with five matched activities. Its report remains
+ambiguous. The first control baseline also reproduced the earlier full report,
+apart from creation time: 89.81 m, five matches, and ambiguous status. Both
+original two-hour failures remain preserved. Expanded-date tests continue.
+
+The evidence commit `9cec17f` passed all required checks on Windows and Ubuntu:
+173 Rust tests and 10 Python tests passed on each platform, with no failed or
+ignored tests. That run covered application source `512c645`.
+
 The [corridor worker checks](corridor-worker-checks.json) cover the CLI override,
 saved jobs, and the desktop setting. Revision `512c645` passed all 173 Rust
 tests, 10 Python tests, formatting, strict Clippy, doc tests, and both release

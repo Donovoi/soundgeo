@@ -507,9 +507,7 @@ pub(crate) fn set_doppler_status(report: &mut Report) {
         let ambiguous = report.events.len() < 2
             || provisional_clock
             || report.candidates[0].matches.len() < report.events.len()
-            || (report.candidates.len() > 1
-                && report.candidates[1].relative_error_percent
-                    < report.candidates[0].relative_error_percent * 1.5 + 0.05);
+            || search::has_competing_fit(&report.candidates);
         report.status = if !ambiguous {
             "candidates_found"
         } else {

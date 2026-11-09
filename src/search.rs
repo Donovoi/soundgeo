@@ -65,6 +65,12 @@ pub struct Candidate {
     pub silence_conflicts: Vec<SilenceConflict>,
 }
 impl Candidate {
+    /// Sum of coverage-weighted improvement over linear drift. Each matched
+    /// activity contributes at most one unit. This is a ranking score.
+    pub fn curve_support(&self) -> f64 {
+        curve_support(&self.matches)
+    }
+
     /// Three sounds can fit the extra clock-rate parameter without providing
     /// further corroboration. A real negative control passed that minimum.
     /// This conservative guard is not a calibrated probability of correctness.
@@ -98,8 +104,74 @@ pub(crate) struct Seed {
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 struct Corroboration {
+    support: f64,
     matches: usize,
     error: f64,
+}
+
+fn curve_support(matches: &[Match]) -> f64 {
+    matches
+        .iter()
+        .map(|m| {
+            let Some(linear) = m.linear_baseline_rmse_hz else {
+                return 0.;
+            };
+            if !linear.is_finite()
+                || linear <= f64::EPSILON
+                || !m.rmse_hz.is_finite()
+                || m.rmse_hz < 0.
+                || !m.coverage.is_finite()
+                || !(0. ..=1.).contains(&m.coverage)
+            {
+                return 0.;
+            }
+            m.coverage * (1. - (m.rmse_hz / linear).powi(2)).clamp(0., 1.)
+        })
+        .sum()
+}
+
+impl Corroboration {
+    fn from_matches(matches: &[Match], error: f64) -> Self {
+        Self {
+            support: curve_support(matches),
+            matches: matches.len(),
+            error,
+        }
+    }
+
+    fn order(self, other: Self) -> std::cmp::Ordering {
+        other
+            .support
+            .total_cmp(&self.support)
+            .then_with(|| other.matches.cmp(&self.matches))
+            .then_with(|| self.error.total_cmp(&other.error))
+    }
+}
+
+pub(crate) fn candidate_order(a: &Candidate, b: &Candidate) -> std::cmp::Ordering {
+    // Quiet-gap conflicts retain their existing residual penalty as a tie
+    // breaker. Strict quiet-gap rejection happens before candidates are ranked.
+    Corroboration::from_matches(
+        &a.matches,
+        a.relative_error_percent + 0.25 * a.silence_conflicts.len() as f64,
+    )
+    .order(Corroboration::from_matches(
+        &b.matches,
+        b.relative_error_percent + 0.25 * b.silence_conflicts.len() as f64,
+    ))
+    .then_with(|| a.recording_start_unix.total_cmp(&b.recording_start_unix))
+    .then_with(|| a.latitude.total_cmp(&b.latitude))
+    .then_with(|| a.longitude.total_cmp(&b.longitude))
+    .then_with(|| a.recording_clock_rate.total_cmp(&b.recording_clock_rate))
+}
+
+pub(crate) fn has_competing_fit(candidates: &[Candidate]) -> bool {
+    candidates.first().is_some_and(|first| {
+        candidates
+            .iter()
+            .skip(1)
+            .any(|other| other.relative_error_percent < first.relative_error_percent * 1.5 + 0.05)
+    })
 }
 
 struct CorroboratedFit {
@@ -157,8 +229,12 @@ fn retain_corroborated_fit(
         return;
     };
     if best.as_ref().is_none_or(|previous| {
-        matches.len() > previous.matches.len()
-            || (matches.len() == previous.matches.len() && error < previous.error)
+        Corroboration::from_matches(&matches, error)
+            .order(Corroboration::from_matches(
+                &previous.matches,
+                previous.error,
+            ))
+            .is_lt()
     }) {
         *best = Some(CorroboratedFit {
             seed: seed.clone(),
@@ -180,7 +256,7 @@ fn refinement_fits(
     corroborated: Option<CorroboratedFit>,
 ) -> Vec<CorroboratedFit> {
     let final_error = accepted_fit_error(&seed, events, objective, &matches);
-    let final_count = final_error.map_or(0, |_| matches.len());
+    let final_support = final_error.map(|error| Corroboration::from_matches(&matches, error));
     let mut fits = Vec::with_capacity(2);
     if let Some(error) = final_error {
         fits.push(CorroboratedFit {
@@ -190,12 +266,14 @@ fn refinement_fits(
         });
     }
     // Keep the endpoint so each fit receives its own quiet-gap checks. The
-    // minimum-consensus objective can worsen the full fit without losing a
-    // supported sound, so also retain lower error with equal corroboration.
+    // minimum-consensus objective can weaken the full curve evidence without
+    // losing a supported sound. Retain the stronger fit for final ranking.
     if let Some(best) = corroborated
-        && (best.matches.len() > final_count
-            || (best.matches.len() == final_count
-                && final_error.is_some_and(|error| best.error < error)))
+        && final_support.is_none_or(|endpoint| {
+            Corroboration::from_matches(&best.matches, best.error)
+                .order(endpoint)
+                .is_lt()
+        })
     {
         fits.push(best);
     }
@@ -235,19 +313,15 @@ fn corroboration_for_fit(
     if matches.len() <= events.len().min(3) {
         return None;
     }
-    accepted_fit_error(seed, events, objective, matches).map(|error| Corroboration {
-        matches: matches.len(),
-        error,
-    })
+    accepted_fit_error(seed, events, objective, matches)
+        .map(|error| Corroboration::from_matches(matches, error))
 }
 
 fn corroboration_order(a: &Seed, b: &Seed) -> std::cmp::Ordering {
     let a_support = a.corroboration.expect("Only corroborated seeds are ranked");
     let b_support = b.corroboration.expect("Only corroborated seeds are ranked");
-    b_support
-        .matches
-        .cmp(&a_support.matches)
-        .then_with(|| a_support.error.total_cmp(&b_support.error))
+    a_support
+        .order(b_support)
         .then_with(|| a.score.total_cmp(&b.score))
 }
 
@@ -990,12 +1064,7 @@ pub fn locate(
             });
         }
     }
-    candidates.sort_by(|a, b| {
-        b.matches.len().cmp(&a.matches.len()).then_with(|| {
-            (a.relative_error_percent + 0.25 * a.silence_conflicts.len() as f64)
-                .total_cmp(&(b.relative_error_percent + 0.25 * b.silence_conflicts.len() as f64))
-        })
-    });
+    candidates.sort_by(candidate_order);
     let mut distinct: Vec<Candidate> = vec![];
     for candidate in candidates {
         let p = Point {
@@ -1044,9 +1113,7 @@ pub fn locate(
     if incomplete_references > 0 {
         warnings.push(format!("{incomplete_references} of {count} final refinement points lacked enough independent events with at least 90% reference-position coverage. A downloaded archive can still have receiver-coverage gaps; a denser reference source may be needed."));
     }
-    if distinct.len() > 1
-        && distinct[1].relative_error_percent < distinct[0].relative_error_percent * 1.5 + 0.05
-    {
+    if has_competing_fit(&distinct) {
         warnings.push(
             "Several distinct locations or times fit similarly well. The result is ambiguous."
                 .into(),
@@ -1250,6 +1317,185 @@ fn exact_score(seed: &Seed, events: &[Event], tracks: &[Track], c: f64) -> (f64,
 mod tests {
     use super::*;
     use crate::{audio::RidgePoint, demo};
+
+    fn ranking_match(index: usize, ratio: f64) -> Match {
+        Match {
+            event_index: Some(index),
+            event_variant: 0,
+            aircraft: format!("flight-{index}"),
+            rmse_hz: ratio * 10.,
+            fitted_tone_hz: 1000.,
+            coverage: 1.,
+            linear_baseline_rmse_hz: Some(10.),
+            modeled_hz: vec![],
+        }
+    }
+
+    #[test]
+    fn measured_shuffled_counterexample_does_not_outrank_stronger_curves() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../tests/fixtures/doppler-ranking-counterexample.json"
+        ))
+        .unwrap();
+        let baseline: Vec<Candidate> = serde_json::from_value(fixture["baseline"].clone()).unwrap();
+        let mut controls: Vec<Candidate> =
+            serde_json::from_value(fixture["control"].clone()).unwrap();
+        let observed = &baseline[0];
+        assert_eq!(controls[0].matches.len(), observed.matches.len());
+        assert!(controls[0].relative_error_percent < observed.relative_error_percent);
+        assert!((observed.curve_support() - 3.612180221766192).abs() < 1e-12);
+        assert!((controls[0].curve_support() - 2.8771838062062884).abs() < 1e-12);
+        controls.sort_by(candidate_order);
+        assert!((controls[0].curve_support() - 3.129532756746002).abs() < 1e-12);
+        assert!(candidate_order(observed, &controls[0]).is_lt());
+        // These are the candidates retained by the old search. This fixture
+        // reproduces its scoring defect; full-search validation is separate.
+    }
+
+    #[test]
+    fn curve_support_bounds_each_sound_and_weights_observation_coverage() {
+        let strong: Vec<_> = (0..4).map(|i| ranking_match(i, 0.2)).collect();
+        let weak: Vec<_> = (0..5).map(|i| ranking_match(i, 0.7)).collect();
+        assert!(
+            Corroboration::from_matches(&strong, 0.9)
+                .order(Corroboration::from_matches(&weak, 0.1))
+                .is_lt()
+        );
+        let perfect: Vec<_> = (0..3).map(|i| ranking_match(i, 0.)).collect();
+        assert_eq!(curve_support(&perfect), 3.);
+        assert!(curve_support(&strong) > curve_support(&perfect));
+        let mut partial = ranking_match(0, 0.5);
+        partial.coverage = 0.9;
+        assert!((curve_support(&[partial.clone()]) - 0.675).abs() < 1e-12);
+        // Frequency units and carrier pitch cannot change the measured support.
+        partial.rmse_hz *= 100.;
+        partial.linear_baseline_rmse_hz = partial.linear_baseline_rmse_hz.map(|v| v * 100.);
+        partial.fitted_tone_hz *= 100.;
+        assert!((curve_support(&[partial]) - 0.675).abs() < 1e-12);
+    }
+
+    #[test]
+    fn missing_or_invalid_curve_metrics_supply_no_support() {
+        for linear in [
+            None,
+            Some(0.),
+            Some(-1.),
+            Some(f64::NAN),
+            Some(f64::INFINITY),
+        ] {
+            let mut m = ranking_match(0, 0.5);
+            m.linear_baseline_rmse_hz = linear;
+            assert_eq!(curve_support(&[m]), 0.);
+        }
+        for value in [-1., f64::NAN, f64::INFINITY] {
+            let mut m = ranking_match(0, 0.5);
+            m.rmse_hz = value;
+            assert_eq!(curve_support(&[m]), 0.);
+        }
+        for coverage in [-1., 1.1, f64::NAN, f64::INFINITY] {
+            let mut m = ranking_match(0, 0.5);
+            m.coverage = coverage;
+            assert_eq!(curve_support(&[m]), 0.);
+        }
+        assert_eq!(curve_support(&[ranking_match(0, 2.)]), 0.);
+    }
+
+    #[test]
+    fn curve_ranking_remains_transitive_with_legacy_reports_and_silence() {
+        let value = serde_json::json!({
+            "latitude": 0., "longitude": 0., "ground_m": 0.,
+            "recording_start_utc": "1970-01-01T00:00:00Z", "recording_start_unix": 0.,
+            "relative_error_percent": 0.5, "matches": []
+        });
+        let template: Candidate = serde_json::from_value(value).unwrap();
+        let mut candidates = vec![];
+        for i in 0..8 {
+            let mut candidate = template.clone();
+            candidate.latitude = i as f64;
+            candidate.matches = (0..3 + i % 3).map(|j| ranking_match(j, 0.5)).collect();
+            if i % 2 == 0 {
+                for m in &mut candidate.matches {
+                    m.linear_baseline_rmse_hz = None;
+                }
+            }
+            if i % 3 == 0 {
+                candidate.silence_conflicts.push(SilenceConflict {
+                    aircraft: "quiet-flight".into(),
+                    time_in_recording_s: 0.,
+                    slant_m: 10.,
+                });
+            }
+            candidates.push(candidate);
+        }
+        for a in &candidates {
+            for b in &candidates {
+                assert_eq!(candidate_order(a, b), candidate_order(b, a).reverse());
+                for c in &candidates {
+                    if candidate_order(a, b).is_le() && candidate_order(b, c).is_le() {
+                        assert!(candidate_order(a, c).is_le());
+                    }
+                }
+            }
+        }
+        let mut silent = candidates[1].clone();
+        silent.silence_conflicts.push(SilenceConflict {
+            aircraft: "quiet-flight".into(),
+            time_in_recording_s: 0.,
+            slant_m: 10.,
+        });
+        assert!(candidate_order(&candidates[1], &silent).is_lt());
+    }
+
+    #[test]
+    fn corroboration_and_refinement_retain_stronger_curves_over_weak_extra_match() {
+        let (mut events, _) = corroboration_fixture();
+        events.push(events[3].clone());
+        let first = corroboration_seed(demo::TRUTH);
+        let mut second = first.clone();
+        second.point.lat += 0.01;
+        let strong: Vec<_> = (0..4).map(|i| ranking_match(i, 0.2)).collect();
+        let weak: Vec<_> = (0..5).map(|i| ranking_match(i, 0.7)).collect();
+        let mut strong_seed = first.clone();
+        strong_seed.corroboration = corroboration_for_fit(&first, &events, 0.2, &strong);
+        let mut weak_seed = second.clone();
+        weak_seed.corroboration = corroboration_for_fit(&second, &events, 0.1, &weak);
+        assert!(corroboration_order(&strong_seed, &weak_seed).is_lt());
+        let mut best = None;
+        retain_corroborated_fit(&mut best, &first, &events, 0.2, strong);
+        retain_corroborated_fit(&mut best, &second, &events, 0.1, weak.clone());
+        let fits = refinement_fits(second, &events, 0.1, weak, best);
+        assert_eq!(fits.len(), 2);
+        assert!(fits.iter().any(|fit| fit.seed.point.lat == first.point.lat));
+    }
+
+    #[test]
+    fn ambiguity_includes_competitors_beyond_second_rank() {
+        let (events, _) = corroboration_fixture();
+        let candidate: Candidate = serde_json::from_value(serde_json::json!({
+            "latitude": 0., "longitude": 0., "ground_m": 0.,
+            "recording_start_utc": "1970-01-01T00:00:00Z", "recording_start_unix": 0.,
+            "relative_error_percent": 0.5,
+            "matches": (0..events.len()).map(|i| ranking_match(i, 0.2)).collect::<Vec<_>>()
+        }))
+        .unwrap();
+        let mut distant_second = candidate.clone();
+        distant_second.relative_error_percent = 0.9;
+        let mut competitor = candidate.clone();
+        competitor.relative_error_percent = 0.6;
+        let mut report: crate::Report = serde_json::from_value(serde_json::json!({
+            "version": "test", "status": "insufficient_evidence", "media": "test.wav",
+            "job": Job::default(), "duration_s": 1000., "track_count": 4,
+            "events": events, "candidates": [candidate, distant_second], "warnings": [],
+            "search_grid_m": 100., "created_utc": "1970-01-01T00:00:00Z"
+        }))
+        .unwrap();
+        crate::set_doppler_status(&mut report);
+        assert_eq!(report.status, "candidates_found");
+        report.candidates.push(competitor);
+        assert!(has_competing_fit(&report.candidates));
+        crate::set_doppler_status(&mut report);
+        assert_eq!(report.status, "ambiguous");
+    }
 
     #[test]
     fn proposal_assembly_preserves_competing_flight_choices() {
