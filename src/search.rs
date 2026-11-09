@@ -92,6 +92,14 @@ pub(crate) struct Seed {
     // Profile new proposals once instead of repeating the same clock search
     // whenever another worker batch is merged into the beam.
     pub coarse_profiled: bool,
+    // Full-curve evidence at the coarse point and shared clock.
+    corroboration: Option<Corroboration>,
+}
+
+#[derive(Clone, Copy, Debug, PartialEq)]
+struct Corroboration {
+    matches: usize,
+    error: f64,
 }
 
 struct CorroboratedFit {
@@ -194,27 +202,150 @@ fn refinement_fits(
     fits
 }
 
+fn full_corroboration(
+    seed: &Seed,
+    events: &[Event],
+    tracks: &[Track],
+    c: f64,
+) -> Option<Corroboration> {
+    let (objective, matches) = exact_score(seed, events, tracks, c);
+    corroboration_for_fit(seed, events, objective, &matches)
+}
+
+fn corroboration_for_fit(
+    seed: &Seed,
+    events: &[Event],
+    objective: f64,
+    matches: &[Match],
+) -> Option<Corroboration> {
+    if matches.len() <= events.len().min(3) {
+        return None;
+    }
+    accepted_fit_error(seed, events, objective, matches).map(|error| Corroboration {
+        matches: matches.len(),
+        error,
+    })
+}
+
+fn corroboration_order(a: &Seed, b: &Seed) -> std::cmp::Ordering {
+    let a_support = a.corroboration.expect("Only corroborated seeds are ranked");
+    let b_support = b.corroboration.expect("Only corroborated seeds are ranked");
+    b_support
+        .matches
+        .cmp(&a_support.matches)
+        .then_with(|| a_support.error.total_cmp(&b_support.error))
+        .then_with(|| a.score.total_cmp(&b.score))
+}
+
+fn coarse_cell(seed: &Seed, spacing: f64) -> (Vec<usize>, i64, i64, i64, i64) {
+    let xyz = seed.point.ecef();
+    let cell = spacing * 0.8;
+    (
+        seed.indices.clone(),
+        (seed.start / 20.).floor() as i64,
+        (xyz.0 / cell).floor() as i64,
+        (xyz.1 / cell).floor() as i64,
+        (xyz.2 / cell).floor() as i64,
+    )
+}
+
+fn coarse_indices(
+    seeds: &[Seed],
+    order: impl Iterator<Item = usize>,
+    limit: usize,
+    spacing: f64,
+) -> Vec<usize> {
+    let mut seen = std::collections::HashSet::new();
+    let mut selected = vec![];
+    for i in order {
+        if selected.len() == limit {
+            break;
+        }
+        if seen.insert(coarse_cell(&seeds[i], spacing)) {
+            selected.push(i);
+        }
+    }
+    selected
+}
+
+fn combine_beams(seeds: &mut Vec<Seed>, primary: Vec<usize>, additional: Vec<usize>) {
+    let mut seen = std::collections::HashSet::new();
+    let selected = primary
+        .into_iter()
+        .chain(additional)
+        .filter(|&i| seen.insert(i))
+        .map(|i| seeds[i].clone())
+        .collect();
+    *seeds = selected;
+}
+
 /// Bound the coarse beam before expensive curve fitting.
 pub(crate) fn prune_coarse_seeds(seeds: &mut Vec<Seed>, limit: usize, spacing: f64) {
     seeds.sort_by(|a, b| a.score.total_cmp(&b.score));
     // Repeated segment/anchor proposals for the same basin must not consume
     // the entire beam before full curves are considered. ECEF cells avoid
     // latitude-dependent sizes; flight identities and clock bins stay distinct.
-    let cell = spacing * 0.8;
     let mut seen = std::collections::HashSet::new();
     seeds.retain(|seed| {
         if seen.len() == limit {
             return false;
         }
-        let xyz = seed.point.ecef();
-        seen.insert((
-            seed.indices.clone(),
-            (seed.start / 20.).floor() as i64,
-            (xyz.0 / cell).floor() as i64,
-            (xyz.1 / cell).floor() as i64,
-            (xyz.2 / cell).floor() as i64,
-        ))
+        seen.insert(coarse_cell(seed, spacing))
     });
+}
+
+fn prune_coarse_with_corroboration(seeds: &mut Vec<Seed>, limit: usize, spacing: f64) {
+    if !seeds.iter().any(|seed| seed.corroboration.is_some()) {
+        prune_coarse_seeds(seeds, limit, spacing);
+        return;
+    }
+    seeds.sort_by(|a, b| a.score.total_cmp(&b.score));
+    let primary = coarse_indices(seeds, 0..seeds.len(), limit, spacing);
+    let mut support_order: Vec<_> = (0..seeds.len())
+        .filter(|&i| seeds[i].corroboration.is_some())
+        .collect();
+    support_order.sort_by(|&a, &b| corroboration_order(&seeds[a], &seeds[b]));
+    // Preserve the error-ranked beam, with a separately bounded alternative.
+    // A lower three-curve residual must not erase extra verified curves.
+    let additional = coarse_indices(seeds, support_order.into_iter(), limit.div_ceil(4), spacing);
+    combine_beams(seeds, primary, additional);
+}
+
+fn refinement_indices(
+    seeds: &[Seed],
+    order: impl Iterator<Item = usize>,
+    limit: usize,
+    spacing: f64,
+) -> Vec<usize> {
+    let mut selected: Vec<usize> = vec![];
+    for i in order {
+        if selected.len() == limit {
+            break;
+        }
+        let seed = &seeds[i];
+        if selected.iter().any(|&j| {
+            let previous = &seeds[j];
+            previous.indices == seed.indices
+                && previous.point.distance(seed.point) < spacing * 0.8
+                && (previous.start - seed.start).abs() < 20.
+        }) {
+            continue;
+        }
+        selected.push(i);
+    }
+    selected
+}
+
+fn select_refinement_seeds(seeds: &mut Vec<Seed>, limit: usize, spacing: f64) {
+    seeds.sort_by(|a, b| a.score.total_cmp(&b.score));
+    let primary = refinement_indices(seeds, 0..seeds.len(), limit, spacing);
+    let mut support_order: Vec<_> = (0..seeds.len())
+        .filter(|&i| seeds[i].corroboration.is_some())
+        .collect();
+    support_order.sort_by(|&a, &b| corroboration_order(&seeds[a], &seeds[b]));
+    let additional =
+        refinement_indices(seeds, support_order.into_iter(), limit.div_ceil(4), spacing);
+    combine_beams(seeds, primary, additional);
 }
 
 pub(crate) fn score_and_prune_seeds(
@@ -229,6 +360,7 @@ pub(crate) fn score_and_prune_seeds(
         control.check()?;
         if !seed.coarse_profiled {
             profile_seed_clock(seed, job, events, tracks);
+            seed.corroboration = full_corroboration(seed, events, tracks, job.sound_speed());
             seed.coarse_profiled = true;
         }
         Ok(())
@@ -243,7 +375,7 @@ pub(crate) fn score_and_prune_seeds(
             evaluate(seed)?;
         }
     }
-    prune_coarse_seeds(seeds, limit, job.grid_m);
+    prune_coarse_with_corroboration(seeds, limit, job.grid_m);
     Ok(())
 }
 
@@ -555,6 +687,7 @@ pub(crate) fn complete_seed(
         // out three precise matches before they ever reach refinement.
         score: score.powi(2),
         coarse_profiled: false,
+        corroboration: None,
     })
 }
 
@@ -710,26 +843,15 @@ pub fn locate(
     for seed in &mut seeds {
         control.check()?;
         profile_seed_clock(seed, job, events, tracks);
-        seed.score = exact_score(seed, events, tracks, c).0;
+        let (objective, matches) = exact_score(seed, events, tracks, c);
+        seed.score = objective;
+        seed.corroboration = corroboration_for_fit(seed, events, objective, &matches);
     }
-    seeds.sort_by(|a, b| a.score.total_cmp(&b.score));
     // Keep multiple basins/flight identities so the refinement is not all one grid cell.
-    let mut diverse: Vec<Seed> = vec![];
-    for seed in seeds {
-        if diverse.iter().any(|s| {
-            s.indices == seed.indices
-                && s.point.distance(seed.point) < spacing * 0.8
-                && (s.start - seed.start).abs() < 20.
-        }) {
-            continue;
-        }
-        diverse.push(seed);
-        // Real long recordings admit many accidental coarse associations.
-        // Preserve more basins before applying the full observed-curve model.
-        if diverse.len() == 512 {
-            break;
-        }
-    }
+    // Keep the original error-ranked set and add a bounded set ranked by
+    // full-curve support.
+    select_refinement_seeds(&mut seeds, 512, spacing);
+    let diverse = seeds;
     let mut candidates = vec![];
     let count = diverse.len();
     let mut incomplete_references = 0;
@@ -1242,6 +1364,144 @@ mod tests {
         (events, tracks)
     }
 
+    fn corroboration_seed(point: Point) -> Seed {
+        Seed {
+            point,
+            start: demo::EPOCH,
+            clock_rate: 1.,
+            anchor: 0,
+            indices: vec![0, 1, 2, 3],
+            alternatives: Default::default(),
+            score: 0.,
+            coarse_profiled: false,
+            corroboration: None,
+        }
+    }
+
+    #[test]
+    fn coarse_pruning_keeps_extra_verified_curves() {
+        let (events, tracks) = corroboration_fixture();
+        let truth = demo::TRUTH;
+        let shifted = Point {
+            lat: truth.lat + 500. / 111320.,
+            ..truth
+        };
+        let job = Job {
+            max_clock_drift_ppm: 0.,
+            ..Default::default()
+        };
+        let mut seeds = vec![corroboration_seed(truth), corroboration_seed(shifted)];
+        score_and_prune_seeds(&mut seeds, 1, &job, &events, &tracks, &Control::default()).unwrap();
+        // The exact three-curve fit still keeps its original place. The
+        // four-curve fit must independently survive the small resource limit.
+        assert_eq!(seeds.len(), 2);
+        assert!(seeds[0].point.distance(shifted) < 1.);
+        assert!(seeds[0].corroboration.is_none());
+        assert!(seeds[1].point.distance(truth) < 1.);
+        assert_eq!(seeds[1].corroboration.unwrap().matches, 4);
+        for seed in &mut seeds {
+            seed.score = exact_score(seed, &events, &tracks, job.sound_speed()).0;
+        }
+        select_refinement_seeds(&mut seeds, 1, job.grid_m);
+        assert_eq!(seeds.len(), 2);
+        assert!(seeds.iter().any(|seed| seed.point.distance(truth) < 1.));
+    }
+
+    #[test]
+    fn extra_beam_requires_full_curve_coverage_and_curvature() {
+        let (mut events, mut tracks) = corroboration_fixture();
+        let truth = demo::TRUTH;
+        let seed = corroboration_seed(truth);
+        let c = Job::default().sound_speed();
+        assert_eq!(
+            full_corroboration(&seed, &events, &tracks, c)
+                .unwrap()
+                .matches,
+            4
+        );
+        let original = events[3].clone();
+        let pivot = original.cpa_s;
+        for sample in &mut events[3].ridge {
+            sample.hz = 150. - 0.5 * (sample.time_s - pivot);
+        }
+        assert!(full_corroboration(&seed, &events, &tracks, c).is_none());
+        events[3] = original;
+        tracks[3]
+            .samples
+            .retain(|sample| sample.time > demo::EPOCH + pivot);
+        assert!(full_corroboration(&seed, &events, &tracks, c).is_none());
+    }
+
+    #[test]
+    fn corroboration_beams_are_bounded_and_parallel_deterministic() {
+        let (events, tracks) = corroboration_fixture();
+        let truth = demo::TRUTH;
+        let job = Job {
+            grid_m: 50.,
+            max_clock_drift_ppm: 0.,
+            ..Default::default()
+        };
+        let seeds: Vec<_> = (0..64)
+            .map(|i| {
+                corroboration_seed(Point {
+                    lat: truth.lat + (i as f64 - 32.) * 20. / 111320.,
+                    ..truth
+                })
+            })
+            .collect();
+        let mut serial = seeds.clone();
+        let mut parallel = seeds.clone();
+        let control = Control::default();
+        score_and_prune_seeds(&mut serial, 4, &job, &events, &tracks, &control).unwrap();
+        let pool = rayon::ThreadPoolBuilder::new()
+            .num_threads(4)
+            .build()
+            .unwrap();
+        pool.install(|| score_and_prune_seeds(&mut parallel, 4, &job, &events, &tracks, &control))
+            .unwrap();
+        let signature = |seeds: &[Seed]| {
+            seeds
+                .iter()
+                .map(|seed| {
+                    (
+                        seed.point.lat.to_bits(),
+                        seed.point.lon.to_bits(),
+                        seed.start.to_bits(),
+                        seed.clock_rate.to_bits(),
+                        seed.score.to_bits(),
+                        seed.indices.clone(),
+                        seed.corroboration
+                            .map(|support| (support.matches, support.error.to_bits())),
+                    )
+                })
+                .collect::<Vec<_>>()
+        };
+        assert_eq!(serial.len(), 5);
+        assert_eq!(signature(&serial), signature(&parallel));
+        let before = signature(&serial);
+        score_and_prune_seeds(&mut serial, 4, &job, &events, &tracks, &control).unwrap();
+        assert_eq!(signature(&serial), before);
+
+        // All original error-ranked proposals remain in the combined beam.
+        let mut legacy = seeds;
+        for seed in &mut legacy {
+            profile_seed_clock(seed, &job, &events, &tracks);
+        }
+        prune_coarse_seeds(&mut legacy, 4, job.grid_m);
+        for seed in legacy {
+            assert!(serial.iter().any(|retained| retained.point.lat.to_bits()
+                == seed.point.lat.to_bits()
+                && retained.start.to_bits() == seed.start.to_bits()
+                && retained.indices == seed.indices));
+        }
+        for seed in &mut serial {
+            seed.score = exact_score(seed, &events, &tracks, job.sound_speed()).0;
+        }
+        select_refinement_seeds(&mut serial, 4, job.grid_m);
+        assert!(serial.len() <= 5);
+        assert!(serial.iter().any(|seed| seed.corroboration.is_some()));
+    }
+
     #[test]
     fn refinement_preserves_additional_supported_curves() {
         let truth = demo::TRUTH;
@@ -1260,6 +1520,7 @@ mod tests {
             alternatives: Default::default(),
             score: 0.,
             coarse_profiled: false,
+            corroboration: None,
         };
         let first = exact_score(&seed, &events, &tracks, c);
         seed.point = shifted;
@@ -1349,6 +1610,7 @@ mod tests {
             alternatives: Default::default(),
             score: 0.,
             coarse_profiled: false,
+            corroboration: None,
         };
         let c = Job::default().sound_speed();
         let original = exact_score(&seed, &events, &tracks, c);
@@ -1503,6 +1765,7 @@ mod tests {
             alternatives: Default::default(),
             score: 0.,
             coarse_profiled: false,
+            corroboration: None,
         };
         let (_, matches) = exact_score(&seed, &[event], &tracks, 340.39);
         assert!(
@@ -1560,6 +1823,7 @@ mod tests {
             alternatives: Default::default(),
             score: 0.,
             coarse_profiled: false,
+            corroboration: None,
         };
         let (core_error, matches) = exact_score(&seed, &events, &tracks, 340.39);
         assert!(core_error < 1., "The three-flight core must pass");
@@ -1583,6 +1847,7 @@ mod tests {
             alternatives: Default::default(),
             score: 0.,
             coarse_profiled: false,
+            corroboration: None,
         };
         let mut seeds: Vec<_> = (0..9000)
             .map(|i| {
@@ -1649,6 +1914,7 @@ mod tests {
             alternatives: Default::default(),
             score: 1.,
             coarse_profiled: false,
+            corroboration: None,
         };
         let mut wrong = correct.clone();
         wrong.point.lat += 0.03;
@@ -2058,6 +2324,7 @@ mod tests {
             ]),
             score: 0.,
             coarse_profiled: false,
+            corroboration: None,
         };
         profile_seed_clock(&mut seed, &job, &events, &tracks);
         assert!(
@@ -2117,6 +2384,7 @@ mod tests {
             alternatives: Default::default(),
             score: 0.,
             coarse_profiled: false,
+            corroboration: None,
         };
         assert!(exact_score(&seed, &events, &tracks, 340.39).0 > 1.);
         let mut seeds = vec![seed.clone()];
