@@ -13,10 +13,21 @@ fn gap_refresh_rejects_offline_and_unsupported_providers_before_network() {
                 "--provider",
                 "adsb-exchange-sample",
             ],
-            "cannot be used with",
+            "offline",
         ),
         (
             1,
+            vec![
+                "download",
+                "--refresh-gaps",
+                "--offline",
+                "--provider",
+                "adsb-exchange-sample",
+            ],
+            "offline",
+        ),
+        (
+            2,
             vec!["download", "--refresh-gaps", "--provider", "adsb-lol"],
             "free sample providers",
         ),
