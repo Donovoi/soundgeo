@@ -151,7 +151,8 @@ fn snapshot(value: &Value, expected: f64, bounds: Bounds) -> Result<BTreeSet<Str
         ) else {
             continue;
         };
-        if bounds.contains(crate::geo::Point { lat, lon, alt: 0. }) {
+        let point = crate::geo::Point { lat, lon, alt: 0. };
+        if point.valid() && bounds.contains_flight(point) {
             result.insert(id);
         }
     }
@@ -361,6 +362,13 @@ struct TraceCarryover {
     #[serde(default)]
     following_day_positions: usize,
 }
+#[derive(Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum DiscoveryArea {
+    #[default]
+    ObserverBounds,
+    NearbyFlightsV1,
+}
 #[derive(Serialize, Deserialize)]
 struct Manifest {
     schema: u32,
@@ -368,6 +376,8 @@ struct Manifest {
     resolution: TraceResolution,
     date: String,
     bounds: Bounds,
+    #[serde(default)]
+    discovery_area: DiscoveryArea,
     source: String,
     snapshots: Vec<Object>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -503,6 +513,39 @@ fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
     temporary.persist(destination)?;
     Ok(())
 }
+
+fn reuse_legacy_trace(
+    legacy: &Path,
+    destination: &Path,
+    record: &Object,
+    start: f64,
+    id: &str,
+    control: &Control,
+) -> Result<()> {
+    // Publish only into the new discovery generation. An interrupted upgrade
+    // must not add unlisted files to the old, still usable offline cache.
+    let source = legacy.join("traces").join(&record.file);
+    if destination.exists() || !valid_object(&source, record, control) {
+        return Ok(());
+    }
+    let bytes = std::fs::read(&source)?;
+    if hash(&bytes) != record.sha256 {
+        return Ok(());
+    }
+    let Ok(value) = parse(&bytes) else {
+        return Ok(());
+    };
+    if trace(&value, start, id).is_err() {
+        return Ok(());
+    }
+    control.check()?;
+    atomic_write(destination, &bytes)?;
+    atomic_write(
+        &destination.with_file_name(format!("receipt-{}.json", record.file)),
+        &serde_json::to_vec(record)?,
+    )
+}
+
 async fn object<F: Fn(&Value) -> Result<()>>(
     client: &Client,
     key: &str,
@@ -529,6 +572,11 @@ async fn object<F: Fn(&Value) -> Result<()>>(
         return Ok(Some((stamp, value)));
     }
     let Some(bytes) = client.get(key, control).await? else {
+        ensure!(
+            !path.exists(),
+            "Cached sample object failed verification and its source returned HTTP 404: {}. Existing bytes were preserved.",
+            path.display()
+        );
         return Ok(None);
     };
     let value = parse(&bytes).with_context(|| format!("Invalid free sample object {key}"))?;
@@ -640,11 +688,29 @@ async fn download(
         "Source gaps cannot be refreshed in offline mode"
     );
     let tag = hash(&serde_json::to_vec(&bounds)?);
-    let root = cache.join(format!(
+    let legacy = cache.join(format!(
         "{}-{date}-{}",
         resolution.cache_prefix(),
         &tag[..16]
     ));
+    let tag = hash(&serde_json::to_vec(&(
+        bounds,
+        DiscoveryArea::NearbyFlightsV1,
+    ))?);
+    let current = cache.join(format!(
+        "{}-{date}-{}",
+        resolution.cache_prefix(),
+        &tag[..16]
+    ));
+    let legacy_offline = control.offline
+        && !current.join("sample-manifest.json").exists()
+        && legacy.join("sample-manifest.json").is_file();
+    let root = if legacy_offline { &legacy } else { &current };
+    let discovery_area = if legacy_offline {
+        DiscoveryArea::ObserverBounds
+    } else {
+        DiscoveryArea::NearbyFlightsV1
+    };
     let shared = cache.join(format!("adsbx-sample-{date}-snapshots"));
     let traces = root.join("traces");
     let manifest_path = root.join("sample-manifest.json");
@@ -655,6 +721,7 @@ async fn download(
         && let Ok(mut manifest) = serde_json::from_slice::<Manifest>(&bytes)
         && manifest.date == date
         && manifest.resolution == resolution
+        && manifest.discovery_area == discovery_area
         && serde_json::to_vec(&manifest.bounds)? == serde_json::to_vec(&bounds)?
         && snapshot_plan_valid(&manifest, &names)
         && cached_aircraft_set_valid(&manifest, !control.refresh_source_gaps)
@@ -683,7 +750,7 @@ async fn download(
             &mut manifest,
             &bytes,
             start,
-            &root,
+            root,
             control,
             progress,
         )
@@ -691,12 +758,30 @@ async fn download(
         progress("Using verified full-day free sample cache", 1.);
         return Ok(traces);
     }
+    ensure!(
+        !legacy_offline,
+        "The older free sample cache failed verification; prepare it online before using it offline"
+    );
+    // Reuse verified old objects and recorded 404s while preparing the wider
+    // area. Keep the original manifest and files intact, including on failure.
+    let prior = std::fs::read(legacy.join("sample-manifest.json"))
+        .ok()
+        .and_then(|bytes| serde_json::from_slice::<Manifest>(&bytes).ok())
+        .filter(|m| {
+            m.date == date
+                && m.resolution == resolution
+                && m.discovery_area == DiscoveryArea::ObserverBounds
+                && serde_json::to_vec(&m.bounds).ok() == serde_json::to_vec(&bounds).ok()
+                && snapshot_plan_valid(m, &names)
+                && cached_aircraft_set_valid(m, true)
+        });
     let prefix = date.replace('-', "/");
     let mut manifest = Manifest {
         schema: 5,
         resolution,
         date: date.into(),
         bounds,
+        discovery_area: DiscoveryArea::NearbyFlightsV1,
         source: "https://www.adsbexchange.com/data-products/sample-data/".into(),
         snapshots: vec![],
         missing_snapshot_slots: vec![],
@@ -781,6 +866,17 @@ async fn download(
     for (index, id) in ids.iter().enumerate() {
         control.check()?;
         let file = format!("trace_full_{id}.json.gz");
+        if let Some(prior) = &prior {
+            if let Some(record) = prior.traces.iter().find(|record| record.file == file) {
+                reuse_legacy_trace(&legacy, &traces.join(&file), record, start, id, control)?;
+            } else if !control.refresh_source_gaps
+                && prior.missing_aircraft.contains(id)
+                && !traces.join(&file).exists()
+            {
+                manifest.missing_aircraft.push(id.clone());
+                continue;
+            }
+        }
         let key = format!(
             "{}/{prefix}/{}/trace_full_{id}.json",
             resolution.object_prefix(),
@@ -823,14 +919,14 @@ async fn download(
         &mut manifest,
         recovery_plan,
         start,
-        &root,
+        root,
         control,
         progress,
     )
     .await?;
     control.check()?;
     atomic_write(&manifest_path, &serde_json::to_vec_pretty(&manifest)?)?;
-    atomic_write(&root.join("SOURCE.txt"), b"ADS-B Exchange free first-of-month testing/evaluation sample. https://www.adsbexchange.com/data-products/sample-data/ . All 288 discovery slots were checked. A missing snapshot can use an available neighboring minute from the same day. Actual source files, replacement mappings, and slots unavailable at the scheduled and checked neighboring filenames are recorded in sample-manifest.json. Full-day traces were downloaded for regional identities. Missing traces with an airborne discovery position are recovered from five-second snapshots within five minutes of that position. Derived traces, original snapshot objects, attempted slots and source gaps are recorded separately. Flights entirely between discovery snapshots can be absent. Missing full-day traces remain listed in the manifest. Reference data is not bundled or redistributed by SoundGeo.\n")?;
+    atomic_write(&root.join("SOURCE.txt"), b"ADS-B Exchange free first-of-month testing/evaluation sample. https://www.adsbexchange.com/data-products/sample-data/ . All 288 discovery slots were checked. A missing snapshot can use an available neighboring minute from the same day. Actual source files, replacement mappings, and slots unavailable at the scheduled and checked neighboring filenames are recorded in sample-manifest.json. Full-day traces were downloaded for identities in the nearby flight area used by the flight reader. Missing traces with an airborne discovery position are recovered from five-second snapshots within five minutes of that position. Derived traces, original snapshot objects, attempted slots and source gaps are recorded separately. Flights entirely between discovery snapshots can be absent. Missing full-day traces remain listed in the manifest. Reference data is not bundled or redistributed by SoundGeo.\n")?;
     progress(
         "Free sample download complete; coverage limits are in the manifest",
         1.,
@@ -917,9 +1013,17 @@ pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
             manifest.snapshot_recoveries.len()
         )
     };
+    let discovery = match manifest.discovery_area {
+        DiscoveryArea::ObserverBounds => {
+            " This older cache selected aircraft only inside the observer bounds. Online preparation can add nearby flights."
+        }
+        DiscoveryArea::NearbyFlightsV1 => {
+            " Discovery includes the nearby flight area used by the flight reader."
+        }
+    };
     Ok((
         format!(
-            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery inspected {} snapshots across 288 five-minute slots in the search area.{}{}{}{}{} Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
+            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery inspected {} snapshots across 288 five-minute slots in the search area.{}{}{}{}{}{} Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
             manifest.date,
             manifest.traces.len(),
             manifest.missing_aircraft.len(),
@@ -928,7 +1032,8 @@ pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
             gaps,
             offsets,
             carryover,
-            recovery
+            recovery,
+            discovery
         ),
         manifest.traces.is_empty() && recovered == 0,
     ))
@@ -1217,6 +1322,194 @@ mod tests {
             )
             .is_err()
         );
+    }
+    #[test]
+    fn discovery_includes_nearby_flights_at_high_latitudes() {
+        let bounds = Bounds {
+            south: 60.,
+            north: 61.,
+            west: 20.,
+            east: 21.,
+        };
+        let value = json!({"now":start(),"aircraft":[
+            {"hex":"aaaaaa","lat":61.3,"lon":20.5},
+            {"hex":"bbbbbb","lat":60.5,"lon":22.1},
+            {"hex":"cccccc","lat":61.7,"lon":20.5},
+            {"hex":"dddddd","lat":60.5,"lon":23.},
+            {"hex":"eeeeee","lat":60.5,"lon":181.}
+        ]});
+        assert_eq!(
+            snapshot(&value, start(), bounds).unwrap(),
+            BTreeSet::from(["aaaaaa".into(), "bbbbbb".into()])
+        );
+    }
+
+    #[test]
+    fn wider_discovery_preserves_legacy_cache_on_cancel_and_reuses_it_offline() {
+        let directory = tempfile::tempdir().unwrap();
+        let unavailable = Arc::new(AtomicBool::new(false));
+        let refused = unavailable.clone();
+        let server = Server::new(move |key| {
+            if key.ends_with("trace_full_~abc123.json")
+                || (refused.load(Ordering::Relaxed) && key.ends_with("trace_full_fedcba.json"))
+            {
+                return (404, vec![], 0);
+            }
+            let (status, bytes, delay) = fixture(key);
+            let mut value = parse(&bytes).unwrap();
+            if key.contains("/readsb-hist/") {
+                value["aircraft"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(json!({"hex":"fedcba","lat":11.3,"lon":20.5}));
+            } else if key.ends_with("trace_full_fedcba.json") {
+                for row in value["trace"].as_array_mut().unwrap() {
+                    row[1] = json!(11.3);
+                }
+            }
+            (status, compressed(value), delay)
+        });
+        let client = server.client();
+        let initial = run(&client, directory.path()).unwrap();
+        assert_eq!(server.calls.load(Ordering::Relaxed), 291);
+        let current_root = initial.parent().unwrap().to_path_buf();
+        let tag = hash(&serde_json::to_vec(&bounds()).unwrap());
+        let legacy = directory
+            .path()
+            .join(format!("adsbx-sample-{DAY}-{}", &tag[..16]));
+        std::fs::rename(&current_root, &legacy).unwrap();
+        let legacy_manifest = legacy.join("sample-manifest.json");
+        let mut manifest: Manifest =
+            serde_json::from_slice(&std::fs::read(&legacy_manifest).unwrap()).unwrap();
+        manifest.discovery_area = DiscoveryArea::ObserverBounds;
+        manifest.aircraft.retain(|id| id != "fedcba");
+        manifest
+            .traces
+            .retain(|object| object.file != "trace_full_fedcba.json.gz");
+        // Reproduce a legacy cache whose world snapshots contained an aircraft
+        // outside the observer bounds, so its daily trace was never requested.
+        for file in [
+            "trace_full_fedcba.json.gz",
+            "receipt-trace_full_fedcba.json.gz.json",
+        ] {
+            std::fs::remove_file(legacy.join("traces").join(file)).unwrap();
+        }
+        let mut value = serde_json::to_value(&manifest).unwrap();
+        value.as_object_mut().unwrap().remove("discovery_area");
+        std::fs::write(&legacy_manifest, serde_json::to_vec(&value).unwrap()).unwrap();
+        let inventory = || {
+            walkdir::WalkDir::new(&legacy)
+                .into_iter()
+                .map(|entry| entry.unwrap())
+                .filter(|entry| entry.file_type().is_file())
+                .map(|entry| {
+                    (
+                        entry.path().strip_prefix(&legacy).unwrap().to_owned(),
+                        hash(&std::fs::read(entry.path()).unwrap()),
+                    )
+                })
+                .collect::<std::collections::BTreeMap<_, _>>()
+        };
+        let original = inventory();
+        let offline = Control::default().with_offline(true);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            legacy.join("traces")
+        );
+        assert!(
+            coverage_warning(&legacy.join("traces"))
+                .unwrap()
+                .contains("older cache")
+        );
+        let control = Control::default();
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let error = runtime
+            .block_on(download(
+                &client,
+                DAY,
+                directory.path(),
+                bounds(),
+                &control,
+                &|message, _| {
+                    if message.starts_with("Full-day free traces: 1/") {
+                        control.stop();
+                    }
+                },
+            ))
+            .unwrap_err();
+        assert!(format!("{error:#}").contains("Cancelled"));
+        assert!(!current_root.join("sample-manifest.json").exists());
+        assert!(
+            current_root
+                .join("traces/trace_full_abcdef.json.gz")
+                .is_file()
+        );
+        assert_eq!(inventory(), original);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            legacy.join("traces")
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 291);
+
+        let wider = run(&client, directory.path()).unwrap();
+        assert_eq!(wider, current_root.join("traces"));
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+        assert_eq!(inventory(), original);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            wider
+        );
+        let upgraded: Manifest = serde_json::from_slice(
+            &std::fs::read(current_root.join("sample-manifest.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(upgraded.missing_aircraft, ["~abc123"]);
+        let job = crate::Job {
+            tracks: wider.clone(),
+            bounds: Some(bounds()),
+            ..Default::default()
+        };
+        let dataset = crate::data::load_for_job(&job, 3600., &offline).unwrap();
+        assert!(
+            dataset
+                .tracks
+                .iter()
+                .any(|track| track.id.starts_with("fedcba"))
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+        let refresh = Control {
+            refresh_source_gaps: true,
+            ..Default::default()
+        };
+        assert_eq!(
+            run_controlled(&client, directory.path(), &refresh).unwrap(),
+            wider
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 293);
+        // A damaged completed generation must fail verification, even when a
+        // usable older generation still exists beside it.
+        std::fs::write(wider.join("trace_full_fedcba.json.gz"), b"damaged").unwrap();
+        assert!(run_controlled(&client, directory.path(), &offline).is_err());
+        assert_eq!(server.calls.load(Ordering::Relaxed), 293);
+        unavailable.store(true, Ordering::Relaxed);
+        let saved_manifest = std::fs::read(current_root.join("sample-manifest.json")).unwrap();
+        let error = run(&client, directory.path()).unwrap_err();
+        assert!(
+            format!("{error:#}").contains("failed verification and its source returned HTTP 404")
+        );
+        assert_eq!(
+            std::fs::read(current_root.join("sample-manifest.json")).unwrap(),
+            saved_manifest
+        );
+        assert_eq!(
+            std::fs::read(wider.join("trace_full_fedcba.json.gz")).unwrap(),
+            b"damaged"
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 294);
+        assert_eq!(inventory(), original);
     }
     #[test]
     fn high_resolution_download_keeps_separate_traces_and_reuses_discovery_offline() {

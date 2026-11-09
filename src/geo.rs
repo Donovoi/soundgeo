@@ -115,6 +115,15 @@ impl Bounds {
     pub fn contains(self, p: Point) -> bool {
         p.lat >= self.south && p.lat <= self.north && p.lon >= self.west && p.lon <= self.east
     }
+    /// Reference positions can be outside the observer's region: audible slant
+    /// range can be large. Discovery and import must keep the same flight area.
+    pub(crate) fn contains_flight(self, p: Point) -> bool {
+        let lon_margin = 0.6 / p.lat.to_radians().cos().abs().max(0.05);
+        p.lat >= self.south - 0.6
+            && p.lat <= self.north + 0.6
+            && p.lon >= self.west - lon_margin
+            && p.lon <= self.east + lon_margin
+    }
     pub fn grid(self, requested: f64, limit: usize) -> (Vec<Point>, f64) {
         let lat_m = 111_320.;
         let lon_m = lat_m

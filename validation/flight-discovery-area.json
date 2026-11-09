@@ -1,0 +1,59 @@
+{
+  "scope": "Free flight-data discovery over a complete prepared UTC day. No recording clock, recording date, video or known camera position was supplied. This is a coverage diagnostic; it does not establish video location accuracy.",
+  "source": "https://www.adsbexchange.com/pull-data/",
+  "source_manifest_sha256": "7c3faef26c9a84c654c4f7198c41e2745b10393a2827421a438c7096e735f768",
+  "observer_bounds": {
+    "south": 61.0,
+    "north": 61.36,
+    "west": -150.36,
+    "east": -149.62
+  },
+  "defect": "Sample discovery selected aircraft only inside observer bounds. The flight reader retained positions beyond those bounds, so automatic preparation omitted useful nearby flights.",
+  "selection_rule": "Use the existing flight importer area: 0.6 degrees beyond latitude bounds and 0.6 / max(abs(cos(latitude)), 0.05) degrees beyond longitude bounds. Accept valid source coordinates only. No generated positions or speed extrapolation.",
+  "snapshot_objects_checked": 288,
+  "original_aircraft": 388,
+  "wider_selection_aircraft": 565,
+  "additional_aircraft": 177,
+  "independent_minute_discovery_airborne_ids_recovered": [
+    "781060",
+    "840a64",
+    "842370",
+    "86951c",
+    "86d5b6",
+    "86dca2",
+    "a2a3b6",
+    "a4871c",
+    "a6905a",
+    "ab5257"
+  ],
+  "independent_minute_discovery_airborne_ids_still_missing": [],
+  "source_objects_hash_verified": true,
+  "original_cache_unchanged": true,
+  "network_requests": 0,
+  "manual_imported_aircraft_not_selected": [
+    "aa6b9f",
+    "~26c4ec",
+    "~26cc01"
+  ],
+  "remaining_coverage_gap": "Aircraft can still pass through the reference area between five-minute snapshots.",
+  "plan_sha256": "dab7ccbfc14515d9ae24958e83d1040c9b122e2179e372c827f8030ca6808a47",
+  "selection_sha256": "7e7dd3555f52573875083b6e2fadf8aef0908d8bdec8099468cfb895477ee0ee",
+  "result_sha256": "862b05c47d4ecb92e702a9d168d094b6109317754f4a5d640e79b27f947ab999",
+  "script_sha256": "71ebaf13f5b8ee1ce2beca6bef38116525278fb49b8a6122e3fe056c8c136b05",
+  "speed_reach_diagnostic": {
+    "scope": "Separate offline experiment; not applied to the application. Recorded ground speed and source observation time were used to select possible crossings between snapshot cells. No positions were generated.",
+    "original_aircraft": 388,
+    "selected_aircraft": 420,
+    "additional_aircraft": 32,
+    "minute_discovery_airborne_ids_recovered": 10,
+    "result_sha256": "632028c81435e4e1a760543535ad3bc9f1fdb53d637a1b74ebfccb10dfb56713"
+  },
+  "duplicate_reference_attempt": {
+    "scope": "Ten newly downloaded airborne traces were byte-identical to files in the earlier manual reference. Two additional ground-only identities produced no exported tracks.",
+    "combined_csv_created": false,
+    "additional_audio_run_started": false,
+    "receipt_sha256": "b9031b5f6d72d3d48795384dec5daca2ac51024a40380853d7945b41c278c279"
+  },
+  "native_migration_validation": "Pending qualified executable replay",
+  "video_accuracy_accepted": false
+}

@@ -63,7 +63,7 @@ pub(super) fn discover(plan: &mut Plan, value: &Value, start: f64, bounds: Bound
         let Some((time, point)) = position(aircraft, now, start) else {
             continue;
         };
-        if !bounds.contains(point) {
+        if !bounds.contains_flight(point) {
             continue;
         }
         // Keep discovery times compact. Expand only identities whose daily

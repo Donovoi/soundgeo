@@ -139,6 +139,14 @@ daily traces. It keeps the original manifest and reuses saved source files.
 Offline reads leave older caches unchanged; prepare them online to add recovery
 data before offline use.
 
+Discovery uses the same nearby flight area as the flight reader. It extends
+0.6 degrees beyond the observer's latitude bounds and adjusts the longitude
+margin for latitude. Older caches selected aircraft only inside the observer
+bounds. Online preparation builds a separate cache with the wider selection.
+It reuses verified source files and recorded source gaps. The older cache stays
+available for offline use if preparation stops. A completed wider cache must
+pass its own integrity checks before offline use.
+
 Recovered positions use the snapshot time minus the reported position age.
 Geometric and barometric altitude remain separate. Duplicate position times
 are counted once, and gaps over 20 seconds split the path. Ground records do

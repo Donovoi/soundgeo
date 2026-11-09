@@ -89,14 +89,7 @@ impl Filter {
                     .archive_days
                     .iter()
                     .any(|&(a, b)| time >= a && time < b))
-            && self.bounds.is_none_or(|b| {
-                // Keep aircraft outside the observer's region: audible slant range can be large.
-                let lon_margin = 0.6 / p.lat.to_radians().cos().abs().max(0.05);
-                p.lat >= b.south - 0.6
-                    && p.lat <= b.north + 0.6
-                    && p.lon >= b.west - lon_margin
-                    && p.lon <= b.east + lon_margin
-            })
+            && self.bounds.is_none_or(|b| b.contains_flight(p))
     }
 }
 pub fn load_for_job(job: &Job, duration: f64, control: &Control) -> Result<Dataset> {
