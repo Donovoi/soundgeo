@@ -126,6 +126,9 @@ enum Commands {
     },
     /// Prepare flight data and optional terrain for later offline analysis.
     Download {
+        /// Retry source files recorded as unavailable in prepared free sample days.
+        #[arg(long, conflicts_with = "offline")]
+        refresh_gaps: bool,
         /// First date. Omit both dates to discover the provider's available days.
         #[arg(long)]
         date: Option<String>,
@@ -411,6 +414,7 @@ fn run(args: Args) -> Result<u8> {
             }
         }
         Some(Commands::Download {
+            refresh_gaps,
             date,
             date_to,
             terrain_cache,
@@ -443,7 +447,12 @@ fn run(args: Args) -> Result<u8> {
                 offline: args.offline,
                 ..Default::default()
             };
-            let prepared = soundgeo::prepare_data(&job, &control, &progress)?;
+            let download_control = if refresh_gaps {
+                control.with_source_gap_refresh()
+            } else {
+                control.clone()
+            };
+            let prepared = soundgeo::prepare_data(&job, &download_control, &progress)?;
             let paths = prepared.flight_sources;
             if !args.quiet {
                 for path in paths {

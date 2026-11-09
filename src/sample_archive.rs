@@ -635,6 +635,10 @@ async fn download(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<PathBuf> {
+    ensure!(
+        !control.offline || !control.refresh_source_gaps,
+        "Source gaps cannot be refreshed in offline mode"
+    );
     let tag = hash(&serde_json::to_vec(&bounds)?);
     let root = cache.join(format!(
         "{}-{date}-{}",
@@ -653,7 +657,7 @@ async fn download(
         && manifest.resolution == resolution
         && serde_json::to_vec(&manifest.bounds)? == serde_json::to_vec(&bounds)?
         && snapshot_plan_valid(&manifest, &names)
-        && cached_aircraft_set_valid(&manifest, control.offline)
+        && cached_aircraft_set_valid(&manifest, !control.refresh_source_gaps)
         && recovery::cache_valid(&manifest, &traces, &shared, control)
         && manifest
             .snapshots
@@ -1083,18 +1087,15 @@ mod tests {
     }
 
     fn run(client: &Client, cache: &Path) -> Result<PathBuf> {
+        run_controlled(client, cache, &Control::default())
+    }
+
+    fn run_controlled(client: &Client, cache: &Path, control: &Control) -> Result<PathBuf> {
         tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
             .unwrap()
-            .block_on(download(
-                client,
-                DAY,
-                cache,
-                bounds(),
-                &Control::default(),
-                &|_, _| {},
-            ))
+            .block_on(download(client, DAY, cache, bounds(), control, &|_, _| {}))
     }
 
     #[test]
@@ -1747,7 +1748,7 @@ mod tests {
     }
 
     #[test]
-    fn snapshot_source_gaps_replay_offline_and_are_retried_online() {
+    fn snapshot_source_gaps_replay_offline_and_refresh_on_request() {
         let missing = Arc::new(AtomicBool::new(true));
         let source_missing = missing.clone();
         let server = Server::new(move |key| {
@@ -1812,12 +1813,75 @@ mod tests {
         assert!(!snapshot_plan_valid(&manifest, &names));
         missing.store(false, Ordering::Relaxed);
         assert_eq!(run(&client, dir.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), bytes);
+        assert_eq!(
+            run_controlled(
+                &client,
+                dir.path(),
+                &Control::default().with_source_gap_refresh()
+            )
+            .unwrap(),
+            path
+        );
         assert_eq!(server.calls.load(Ordering::Relaxed), calls + 1);
         let repaired: Manifest =
             serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
         assert!(repaired.missing_snapshot_slots.is_empty());
         assert_eq!(repaired.snapshots.len(), 288);
     }
+    #[test]
+    fn completed_missing_trace_cache_resumes_online_and_refreshes_on_request() {
+        let available = Arc::new(AtomicBool::new(false));
+        let state = available.clone();
+        let server = Server::new(move |key| {
+            if key.contains("trace_full_~abc123") && !state.load(Ordering::Relaxed) {
+                (404, vec![], 0)
+            } else {
+                fixture(key)
+            }
+        });
+        let directory = tempfile::tempdir().unwrap();
+        let client = server.client();
+        let path = run(&client, directory.path()).unwrap();
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let original_manifest = std::fs::read(&manifest_path).unwrap();
+        let calls = server.calls.load(Ordering::Relaxed);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), original_manifest);
+
+        let downloaded = path.join("trace_full_abcdef.json.gz");
+        let original_trace = std::fs::read(&downloaded).unwrap();
+        std::fs::remove_file(&downloaded).unwrap();
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(std::fs::read(&downloaded).unwrap(), original_trace);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 2);
+
+        available.store(true, Ordering::Relaxed);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 2);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), original_manifest);
+        let refresh = Control::default().with_source_gap_refresh();
+        let offline = refresh.with_offline(true);
+        let error = run_controlled(&client, directory.path(), &offline).unwrap_err();
+        assert!(
+            error
+                .to_string()
+                .contains("cannot be refreshed in offline mode")
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 2);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &refresh).unwrap(),
+            path
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 3);
+        let updated: Manifest =
+            serde_json::from_slice(&std::fs::read(manifest_path).unwrap()).unwrap();
+        assert!(updated.missing_aircraft.is_empty());
+        assert_eq!(updated.traces.len(), 2);
+    }
+
     #[test]
     fn missing_traces_are_recorded_and_empty_snapshot_days_are_rejected() {
         let dir = tempfile::tempdir().unwrap();
@@ -1984,6 +2048,17 @@ mod tests {
         assert_eq!(server.calls.load(Ordering::Relaxed), calls);
         available.store(true, Ordering::Relaxed);
         assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), original_manifest);
+        assert_eq!(
+            run_controlled(
+                &client,
+                directory.path(),
+                &Control::default().with_source_gap_refresh()
+            )
+            .unwrap(),
+            path
+        );
         let upgraded: Manifest =
             serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
         assert!(upgraded.missing_aircraft.is_empty());

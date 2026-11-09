@@ -120,9 +120,12 @@ keeps these source files and records the overlap. Sample analysis uses positions
 within the selected archive dates.
 Missing traces, snapshot replacements, and unavailable discovery slots appear
 in the report and cache manifest. A slot is recorded as unavailable when its
-file and the checked neighboring files all return HTTP 404. Online preparation
-retries recorded gaps. Offline reuse preserves them and rejects missing or
-damaged downloaded files. Preparation stops if no discovery snapshot is
+file and the checked neighboring files all return HTTP 404. Preparation reuses
+verified completed days, including their recorded source gaps. The download
+option `--refresh-gaps` retries unavailable source files. The desktop provides
+the same action with **Retry unavailable source files**. Offline reuse preserves
+recorded gaps and rejects missing or damaged downloaded files. Online preparation
+repairs missing or damaged cache files. Preparation stops if no discovery snapshot is
 available for the day. This source permits testing and evaluation.
 
 When a daily trace is unavailable, the downloader checks for an airborne

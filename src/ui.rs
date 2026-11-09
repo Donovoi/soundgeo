@@ -283,11 +283,15 @@ impl App {
             file_field(ui,&mut self.job.tracks,"Choose flight data…",&["csv","json","gz","aa","tar"]);
             if ui.small_button("Or choose an archive folder").clicked()&& let Some(p)=rfd::FileDialog::new().pick_folder(){self.job.tracks=p;}
             }
-            if self.job.archive.is_some() && ui.add_enabled(!self.job.offline, egui::Button::new("Prepare data for offline use")).clicked() {
+            let prepare_data = self.job.archive.is_some() && ui.add_enabled(!self.job.offline, egui::Button::new("Prepare data for offline use")).clicked();
+            let refresh_gaps = self.job.archive.as_ref().is_some_and(|request| request.provider.sample_resolution().is_some())
+                && ui.add_enabled(!self.job.offline, egui::Button::new("Retry unavailable source files")).clicked();
+            if prepare_data || refresh_gaps {
                 let mut job = self.job.clone();
                 job.bounds = self.use_bounds.then_some(self.bounds);
-                self.status = "Preparing offline data".into();
+                self.status = if refresh_gaps { "Retrying unavailable source files" } else { "Preparing offline data" }.into();
                 self.worker(ctx, move |tx, control| {
+                    let control = if refresh_gaps { control.with_source_gap_refresh() } else { control };
                     let result = soundgeo::prepare_data(&job, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
                     let _ = tx.send(match result { Ok(data) => Message::Prepared(data.flight_sources.len()), Err(e) => Message::Error(format!("{e:#}")) });
                 });

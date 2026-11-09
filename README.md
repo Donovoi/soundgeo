@@ -230,6 +230,9 @@ The [sample page](https://www.adsbexchange.com/data-products/sample-data/)
 sets out the dates and terms of use. Source gaps are listed in
 `sample-manifest.json` and in the report warning.
 The app checks cached file hashes and keeps damaged cache bytes before repair.
+Repeat the download command to resume preparation. Verified completed days are
+reused. Add `--refresh-gaps` to retry source files listed as unavailable.
+In the desktop app, use **Retry unavailable source files** for this action.
 
 For the sample's high-resolution flight traces, use
 `--provider adsb-exchange-sample-hires` in the download or analysis command.

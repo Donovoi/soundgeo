@@ -212,6 +212,8 @@ impl Job {
 pub struct Control {
     pub cancel: Arc<AtomicBool>,
     pub offline: bool,
+    /// Retry source files previously recorded as unavailable in a verified cache.
+    pub refresh_source_gaps: bool,
 }
 impl Control {
     pub fn require_network(&self, resource: &str) -> Result<()> {
@@ -225,8 +227,14 @@ impl Control {
     }
     pub fn with_offline(&self, offline: bool) -> Self {
         Self {
-            cancel: self.cancel.clone(),
             offline: self.offline || offline,
+            ..self.clone()
+        }
+    }
+    pub fn with_source_gap_refresh(&self) -> Self {
+        Self {
+            refresh_source_gaps: true,
+            ..self.clone()
         }
     }
     pub fn check(&self) -> Result<()> {
@@ -548,6 +556,16 @@ pub fn prepare_data(job: &Job, control: &Control, progress: &Progress<'_>) -> Re
         .archive
         .as_ref()
         .context("Select a flight provider and cache folder")?;
+    if control.refresh_source_gaps {
+        anyhow::ensure!(
+            !control.offline,
+            "Source gaps cannot be refreshed in offline mode"
+        );
+        anyhow::ensure!(
+            request.provider.sample_resolution().is_some(),
+            "Source-gap refresh is available for the free sample providers"
+        );
+    }
     if request.provider.sample_resolution().is_some() {
         sample_archive::validate_bounds(job.bounds)?;
     }
