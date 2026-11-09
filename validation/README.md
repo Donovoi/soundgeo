@@ -8,6 +8,15 @@ New results must state which target they use.
 
 ## Current checks
 
+[Native high-resolution sample checks](native-high-resolution-checks.json) cover
+the new download option in the CLI and desktop app. Standard and high-resolution
+traces have separate caches and share discovery snapshots. Offline date discovery
+skips unfinished sample folders. Tests cover download routing, cache separation,
+offline reuse, missing-file recovery, date catalogs, and CLI input checks.
+Revision `bdcb23b` passed all 160 Rust tests, 10 Python tests, formatting, strict
+Clippy, doc tests, and both release builds locally. Native source checks for the
+Lake Hood and Maho regions are running. These checks add no accepted locations.
+
 [Corridor spacing checks](corridor-spacing-checks.json) fixed excess search
 proposals from dense flight traces. Proposals now keep their metre spacing
 along each continuous eligible path. The spacing follows turns and restarts
@@ -46,6 +55,8 @@ before this change and passed afterward. Location acceptance rules are unchanged
 10 Python tests, formatting, strict Clippy, doc tests, and both release builds
 locally. Its four-case offline replay uses the same input jobs and waits for the
 preceding comparison to finish.
+The same source passed all 157 Rust tests, 10 Python tests, and required steps in
+[Windows and Ubuntu CI](equal-corroboration-ci-checks.json) at `5348434`.
 
 The benchmark runner also records date arguments from the actual jobs and
 lists imported reference files separately. Earlier direct-file diagnostics

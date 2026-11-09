@@ -1,0 +1,119 @@
+{
+  "source": "https://www.adsbexchange.com/data-products/sample-data/",
+  "change": "Add the high-resolution free sample to native CLI and desktop downloads, date discovery, and offline analysis. Keep its traces separate from standard traces and share discovery snapshots. Cached-date discovery requires a sample manifest.",
+  "cli_provider": "adsb-exchange-sample-hires",
+  "job_provider": "adsb_exchange_sample_hires",
+  "local_checks": {
+    "source_commit": "bdcb23b3e7fccb873ea8812ce18ee0c4b3921316",
+    "source_tree": "7ef73e3a89c17b673db50f9a017bb3c32e76f557",
+    "cli": "analysis-build/soundgeo-cli-hires-bdcb23b.exe",
+    "cli_sha256": "2db675f63ea7663ce4245aebc255cd43904fa9781016381660cc827eb169f273",
+    "rust_tests_passed": 160,
+    "python_tests_passed": 10,
+    "checks": [
+      {
+        "check": "fmt",
+        "exit_code": 0,
+        "elapsed_s": 0.5012950000018463
+      },
+      {
+        "check": "clippy",
+        "exit_code": 0,
+        "elapsed_s": 4.359277300005488
+      },
+      {
+        "check": "tests",
+        "exit_code": 0,
+        "elapsed_s": 287.06250340000406
+      },
+      {
+        "check": "doc-tests",
+        "exit_code": 0,
+        "elapsed_s": 0.9285995999962324
+      },
+      {
+        "check": "build",
+        "exit_code": 0,
+        "elapsed_s": 0.4964128999999957
+      },
+      {
+        "check": "python",
+        "exit_code": 0,
+        "elapsed_s": 0.1925993000040762
+      }
+    ],
+    "logs": [
+      {
+        "file": "native-hires-fmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "native-hires-clippy.log",
+        "sha256": "2ad27fe878e400f5f7794f60bee711b3b830c1e17bc4a1bdd67d497c75fb356c"
+      },
+      {
+        "file": "native-hires-tests.log",
+        "sha256": "cc2fca192b20a3953c46568eba9986ff70ba882b6316632d433e2f71c9246fe4"
+      },
+      {
+        "file": "native-hires-doc-tests.log",
+        "sha256": "d4279ab9e738f26ff7c2bd8526797ace8e6f117291dee24bf9fd22e98fd0e859"
+      },
+      {
+        "file": "native-hires-build.log",
+        "sha256": "b1bfdc52d1cea2d4e4c6812dd29fa654959a50500fdd854457dc805c093d389b"
+      },
+      {
+        "file": "native-hires-python.log",
+        "sha256": "4f5da42f675ed92b07034fa1c4c4cbb40875051901d8a6df6941cbdd44b49f60"
+      }
+    ]
+  },
+  "new_regressions": [
+    "high_resolution_download_keeps_separate_traces_and_reuses_discovery_offline",
+    "sample_cache_dates_keep_resolutions_separate_and_skip_unfinished_days",
+    "high_resolution_date_catalog_preserves_provider_and_monthly_coverage"
+  ],
+  "existing_cli_guard_test": "Both sample providers reject unsupported dates and missing bounds before network access.",
+  "first_preflight": {
+    "outcome": "Strict Clippy rejected a cloned one-element slice in the test. The test now uses std::slice::from_ref; the complete required checks pass.",
+    "log": "native-hires-preflight-clippy.log",
+    "sha256": "c74439ef3f4df01b94b49beb2f80aeade2321e72901dbe5915e3239661963461"
+  },
+  "live_validation": {
+    "status_at_publication": "Running",
+    "plan": {
+      "scope": "Native high-resolution free sample preparation for two existing benchmark regions. This checks data access and offline use; location acceptance is evaluated separately.",
+      "source": "https://www.adsbexchange.com/data-products/sample-data/",
+      "source_commit": "bdcb23b3e7fccb873ea8812ce18ee0c4b3921316",
+      "cli_sha256": "2db675f63ea7663ce4245aebc255cd43904fa9781016381660cc827eb169f273",
+      "script_sha256": "e225a7ddc8e068d708cc8c2148dafa8be7a7055fda35e44e168f3cfb77c0e7fe",
+      "benchmark_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+      "preparation_date": "2026-11-01",
+      "preparation_date_basis": "The existing independently downloaded free sample used by these source comparisons.",
+      "media_or_camera_position_read_for_download": false,
+      "case_bounds": {
+        "maho-nov1-b": {
+          "south": 17.85,
+          "north": 18.25,
+          "west": -63.35,
+          "east": -62.95
+        },
+        "lake-hood-nov1": {
+          "south": 61.0,
+          "north": 61.36,
+          "west": -150.36,
+          "east": -149.62
+        }
+      },
+      "workers": 2,
+      "timeout_per_command_s": 3600,
+      "maho_cache_seed": "Byte-identical copies of the existing native standard traces and discovery snapshots.",
+      "lake_cache_seed": "Empty cache; the CLI downloads discovery snapshots and high-resolution traces.",
+      "offline_checks": "No date arguments, offline flag enabled, loopback proxy observation, input-byte checks.",
+      "repair": "Preserve one downloaded Lake Hood trace outside its cache. Offline reuse must fail. Online preparation must restore the same bytes."
+    },
+    "plan_sha256": "9e3c28bb5c917a98f8ea706fc158c875096709317b2176b8a047df421ca669f0"
+  },
+  "accepted_locations_added": 0
+}
