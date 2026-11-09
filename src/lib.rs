@@ -5,6 +5,7 @@ pub mod availability;
 pub mod data;
 mod date_search;
 pub mod demo;
+pub mod doppler_controls;
 pub mod geo;
 pub mod index;
 pub mod model;
