@@ -24,7 +24,7 @@ const SECRET: &str = "8bd955340e355418a5204e52a055005b6ca761f896abe0cccdd741638e
 const MAX_COMPRESSED: usize = 20_000_000;
 const MAX_JSON: u64 = 128_000_000;
 const SNAPSHOT_INTERVAL_S: f64 = 300.;
-const TRACE_END_GRACE_S: f64 = 1.;
+const TRACE_DAY_S: f64 = 86400.;
 
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -168,27 +168,27 @@ fn trace(value: &Value, expected: f64, id: &str) -> Result<(usize, usize)> {
         .as_f64()
         .context("Sample trace lacks its date")?;
     ensure!(
-        (expected - 86400. ..expected + 86400.).contains(&timestamp),
+        (expected - TRACE_DAY_S..expected + TRACE_DAY_S).contains(&timestamp),
         "Sample trace has the wrong date"
     );
     let positions = value["trace"]
         .as_array()
         .context("Sample trace lacks positions")?;
-    // Traces can retain the preceding day and a fractional endpoint just after
-    // midnight. Preserve their times; analysis filters to the selected dates.
+    // A source trace can continue a flight across either midnight boundary.
+    // Preserve adjacent-day positions; analysis filters to the selected dates.
     ensure!(
         positions
             .iter()
             .all(|row| row[0].as_f64().is_some_and(|offset| {
-                (expected - 86400. ..expected + 86400. + TRACE_END_GRACE_S)
+                (expected - TRACE_DAY_S..expected + 2. * TRACE_DAY_S)
                     .contains(&(timestamp + offset))
             })),
-        "Sample trace has an invalid observation time or a position outside the requested and preceding UTC days, including the one-second endpoint allowance"
+        "Sample trace has an invalid observation time or a position outside the requested and adjacent UTC days"
     );
     ensure!(
         (positions.is_empty() && timestamp >= expected)
             || positions.iter().any(|row| {
-                (expected..expected + 86400.).contains(&(timestamp + row[0].as_f64().unwrap()))
+                (expected..expected + TRACE_DAY_S).contains(&(timestamp + row[0].as_f64().unwrap()))
             }),
         "Sample trace has no positions on the requested UTC day"
     );
@@ -199,7 +199,7 @@ fn trace(value: &Value, expected: f64, id: &str) -> Result<(usize, usize)> {
             .count(),
         positions
             .iter()
-            .filter(|row| timestamp + row[0].as_f64().unwrap() >= expected + 86400.)
+            .filter(|row| timestamp + row[0].as_f64().unwrap() >= expected + TRACE_DAY_S)
             .count(),
     ))
 }
@@ -863,9 +863,7 @@ pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
             spans.push(format!("{preceding} positions from the preceding UTC day"));
         }
         if following > 0 {
-            spans.push(format!(
-                "{following} positions within one second after the requested UTC day"
-            ));
+            spans.push(format!("{following} positions from the following UTC day"));
         }
         format!(
             " {} trace files also contain {}. Original files are preserved; analysis uses positions within the selected archive dates.",
@@ -1346,13 +1344,13 @@ mod tests {
         assert!(!snapshot_plan_valid(&manifest, &names));
     }
     #[test]
-    fn trace_end_grace_requires_current_day_positions_and_stays_bounded() {
+    fn adjacent_day_carryover_requires_current_day_positions_and_stays_bounded() {
         let value = json!({"icao":"abcdef","timestamp":start()+2.608,
             "trace":[[0.], [86397.4]]});
         assert_eq!(trace(&value, start(), "abcdef").unwrap(), (0, 1));
         for rows in [
             json!([[86397.4]]),
-            json!([[0.], [86398.4]]),
+            json!([[0.], [172798.4]]),
             json!([[0.], [null]]),
         ] {
             let mut invalid = value.clone();
@@ -1368,15 +1366,24 @@ mod tests {
 
     #[test]
     fn fractional_midnight_position_is_preserved_and_filtered_for_analysis() {
+        check_following_day_position(86400.008);
+    }
+
+    #[test]
+    fn next_day_flight_continuation_is_preserved_and_filtered_for_analysis() {
+        check_following_day_position(86930.384);
+    }
+
+    fn check_following_day_position(offset: f64) {
         let dir = tempfile::tempdir().unwrap();
-        let with_boundary = |key: &str| {
+        let with_boundary = move |key: &str| {
             let (status, bytes, delay) = fixture(key);
             if !key.contains("/traces/") {
                 return (status, bytes, delay);
             }
             let mut value = parse(&bytes).unwrap();
             let mut last = value["trace"].as_array().unwrap().last().unwrap().clone();
-            last[0] = json!(86400.008);
+            last[0] = json!(offset);
             value["trace"].as_array_mut().unwrap().push(last);
             (status, compressed(value), delay)
         };
@@ -1387,7 +1394,7 @@ mod tests {
         let bytes = std::fs::read(path.join("trace_full_abcdef.json.gz")).unwrap();
         assert_eq!(bytes, expected);
         let value = parse(&bytes).unwrap();
-        assert_eq!(value["trace"][10][0], json!(86400.008));
+        assert_eq!(value["trace"][10][0], json!(offset));
         let manifest_path = path.parent().unwrap().join("sample-manifest.json");
         let manifest_bytes = std::fs::read(&manifest_path).unwrap();
         let manifest: Value = serde_json::from_slice(&manifest_bytes).unwrap();
@@ -1401,7 +1408,7 @@ mod tests {
         assert!(
             coverage_warning(&path)
                 .unwrap()
-                .contains("2 positions within one second after the requested UTC day")
+                .contains("2 positions from the following UTC day")
         );
         let job = crate::Job {
             tracks: path.clone(),
@@ -1613,7 +1620,7 @@ mod tests {
         let record = &mut manifest.traces[0];
         let trace_path = path.join(&record.file);
         let mut value = parse(&std::fs::read(&trace_path).unwrap()).unwrap();
-        value["trace"][0][0] = json!(86401.);
+        value["trace"][0][0] = json!(172800.);
         let bytes = compressed(value);
         record.bytes = bytes.len();
         record.sha256 = hash(&bytes);
