@@ -128,7 +128,12 @@ fn headless_cli_direct_paths_quiet_mode_and_no_match_exit_code() {
     writer.finalize().unwrap();
     let tracks = dir.path().join("flights.csv");
     std::fs::write(&tracks, b"aircraft,time,lat,lon,altitude_m\n").unwrap();
-    let output = dir.path().join("reports/result.json");
+    let mut folder = dir.path().to_path_buf();
+    for _ in 0..16 {
+        folder.push("analysis-reports");
+    }
+    let output = folder.join("result.json");
+    assert!(output.as_os_str().len() > 260);
     let result = cli()
         .args(["analyze", "--input"])
         .arg(&wav)

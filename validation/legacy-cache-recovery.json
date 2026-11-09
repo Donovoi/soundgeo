@@ -42,7 +42,39 @@
   "regressions": [
     "legacy_missing_ground_records_upgrade_once_without_rechecking_source_gaps",
     "legacy_missing_airborne_trace_uses_saved_recovery_sources_and_replays_offline",
-    "legacy_recovery_refusal_preserves_manifest_and_can_resume"
+    "legacy_recovery_refusal_preserves_manifest_and_can_resume",
+    "atomic_cache_writes_create_and_replace_files_beyond_windows_path_limit"
   ],
-  "fixed_native_replay": "Pending qualification and a separate replay of the same source data."
+  "fixed_native_replay": "Pending checks and a new replay at the original long path length or longer.",
+  "windows_path_failure": {
+    "source_commit": "6e397afd9ce6dd55bcfa875a4c6671c16db51db1",
+    "cli_sha256": "b05c02c05e7e31afc74c103ff01c5c8250ddf1252f198c1ee922f2090f466476",
+    "online_exit_code": 1,
+    "online_elapsed_s": 129.04621159999806,
+    "online_log_sha256": "47a9c867e337915a49d541472120d83149fee8160f0033b324a4884298a1414d",
+    "plan_sha256": "9172c4d1ec71fb1cc792bdd119e4629a2bb0985ea582505ab5e2099be35c11f4",
+    "backup_path_characters": 264,
+    "original_caches_unchanged": true,
+    "copied_cache_files_unchanged": true,
+    "legacy_schema_after": 4,
+    "proxy_connections": 0,
+    "offline_started": false,
+    "video_accuracy_test": false,
+    "cause": "The native temporary-file replacement failed on a 264-character Windows backup path.",
+    "native_probe": {
+      "exit_code": 0,
+      "source_sha256": "2251d396421ebf3c348ca9f2b146a9435f5e3c3d8c05d5abc41cd8786c05c450",
+      "exe_sha256": "58dfcc191db2a404c3099885e418b656be068574edb5c17bc20063c215e1803e",
+      "tempfile_rlib_sha256": "4fb069a8fe406f7a1117e031faeddfb186965653af53ae5e795fc34182901810",
+      "log_sha256": "a7146b28a107ac4a01df2c0e1e1da80fc7359f5ae82360f9017812545aae792f",
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+      "scope": "Isolated native path probe. The unmodified atomic-write shape must fail beyond 260 characters; canonical parent paths must support creation and replacement. No application cache was modified."
+    },
+    "audit_sha256": "721e3fe49cff9f7463f35169f72c52fdad18e5e76ad3d7081fbd784fe4ed3e7b",
+    "ci": "https://github.com/Donovoi/soundgeo/actions/runs/42686634314",
+    "required_checks_passed_on_windows_and_ubuntu": true,
+    "rust_tests_per_platform": 193,
+    "python_tests_per_platform": 10
+  },
+  "long_path_fix": "Prepare temporary files and final paths under the same canonical parent directory. Apply this to cache files, backups, and reports."
 }

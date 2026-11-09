@@ -111,7 +111,7 @@ pub(crate) fn save(cache: &Path, catalog: &Catalog) -> Result<()> {
         sha256: hash(&serde_json::to_vec(catalog)?),
         payload: catalog.clone(),
     };
-    let mut file = tempfile::NamedTempFile::new_in(cache)?;
+    let (mut file, destination) = crate::atomic_file::prepare(&path)?;
     serde_json::to_writer_pretty(file.as_file_mut(), &stored)?;
     file.flush()?;
     file.as_file().sync_all()?;
@@ -124,7 +124,7 @@ pub(crate) fn save(cache: &Path, catalog: &Catalog) -> Result<()> {
             path.with_extension(format!("rejected-{suffix}.json")),
         )?;
     }
-    file.persist(path)?;
+    file.persist(destination)?;
     Ok(())
 }
 
@@ -144,13 +144,9 @@ pub fn write_report(catalog: &Catalog, output: &Path, cache: &Path) -> Result<()
                 .is_ok_and(|c| c == p)),
         "The report cannot overwrite its date-index cache"
     );
-    let parent = output
-        .parent()
-        .filter(|p| !p.as_os_str().is_empty())
-        .unwrap_or(Path::new("."));
-    let mut file = tempfile::NamedTempFile::new_in(parent)?;
+    let (mut file, destination) = crate::atomic_file::prepare(output)?;
     serde_json::to_writer_pretty(file.as_file_mut(), catalog)?;
-    file.persist(output)?;
+    file.persist(destination)?;
     Ok(())
 }
 

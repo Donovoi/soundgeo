@@ -441,13 +441,9 @@ pub fn write_report(report: &Report, output: &Path, inputs: &[&Path]) -> Result<
         {
             bail!("The report cannot overwrite an input file");
         }
-        let parent = output
-            .parent()
-            .filter(|p| !p.as_os_str().is_empty())
-            .unwrap_or(Path::new("."));
-        let mut temp = tempfile::NamedTempFile::new_in(parent)?;
+        let (mut temp, destination) = crate::atomic_file::prepare(output)?;
         serde_json::to_writer_pretty(&mut temp, report)?;
-        temp.persist(output)?;
+        temp.persist(destination)?;
     }
     Ok(())
 }

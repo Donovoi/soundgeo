@@ -497,10 +497,10 @@ fn valid_object(path: &Path, object: &Object, control: &Control) -> bool {
 fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
     let parent = path.parent().context("Cache file has no parent")?;
     std::fs::create_dir_all(parent)?;
-    let mut temporary = tempfile::NamedTempFile::new_in(parent)?;
+    let (mut temporary, destination) = crate::atomic_file::prepare(path)?;
     temporary.write_all(bytes)?;
     temporary.as_file().sync_all()?;
-    temporary.persist(path)?;
+    temporary.persist(destination)?;
     Ok(())
 }
 async fn object<F: Fn(&Value) -> Result<()>>(
@@ -557,7 +557,7 @@ async fn object<F: Fn(&Value) -> Result<()>>(
             let backup = rejected.join(name);
             if !backup.exists() {
                 let mut input = std::fs::File::open(path)?;
-                let mut temporary = tempfile::NamedTempFile::new_in(rejected)?;
+                let (mut temporary, destination) = crate::atomic_file::prepare(&backup)?;
                 loop {
                     control.check()?;
                     let count = input.read(&mut buffer)?;
@@ -567,7 +567,7 @@ async fn object<F: Fn(&Value) -> Result<()>>(
                     temporary.write_all(&buffer[..count])?;
                 }
                 temporary.as_file().sync_all()?;
-                temporary.persist(backup)?;
+                temporary.persist(destination)?;
             }
         }
     }
@@ -965,6 +965,24 @@ mod tests {
         gzip.write_all(&serde_json::to_vec(&value).unwrap())
             .unwrap();
         gzip.finish().unwrap()
+    }
+    #[test]
+    fn atomic_cache_writes_create_and_replace_files_beyond_windows_path_limit() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut parent = directory.path().to_path_buf();
+        for _ in 0..16 {
+            parent.push("reference-cache");
+        }
+        let path = parent.join(format!("sample-manifest-{}.json", "a".repeat(64)));
+        assert!(path.as_os_str().len() > 260);
+        atomic_write(&path, b"original manifest").unwrap();
+        assert_eq!(std::fs::read(&path).unwrap(), b"original manifest");
+        atomic_write(&path, b"replacement manifest with recovery").unwrap();
+        assert_eq!(
+            std::fs::read(&path).unwrap(),
+            b"replacement manifest with recovery"
+        );
+        assert_eq!(std::fs::read_dir(parent).unwrap().count(), 1);
     }
     struct Server {
         endpoint: String,

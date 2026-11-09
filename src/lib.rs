@@ -1,5 +1,6 @@
 pub mod aircraft;
 pub mod archive;
+mod atomic_file;
 pub mod audio;
 pub mod availability;
 pub mod data;
@@ -620,8 +621,9 @@ pub fn save_report(report: &Report, path: &std::path::Path) -> Result<()> {
         .filter(|p| !p.as_os_str().is_empty())
         .unwrap_or_else(|| std::path::Path::new("."));
     std::fs::create_dir_all(parent)?;
-    let mut temp = tempfile::NamedTempFile::new_in(parent)?;
+    let (mut temp, destination) = atomic_file::prepare(path)?;
     serde_json::to_writer_pretty(temp.as_file_mut(), report)?;
-    temp.persist(path).context("Could not save the report")?;
+    temp.persist(destination)
+        .context("Could not save the report")?;
     Ok(())
 }

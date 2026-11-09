@@ -608,9 +608,9 @@ pub fn download_day(
     }
     let total: u64 = assets.iter().map(|v| v["size"].as_u64().unwrap_or(0)).sum();
     std::fs::create_dir_all(&dir)?;
-    let mut manifest_tmp = tempfile::NamedTempFile::new_in(&dir)?;
+    let (mut manifest_tmp, destination) = crate::atomic_file::prepare(&manifest)?;
     serde_json::to_writer_pretty(manifest_tmp.as_file_mut(), &release)?;
-    manifest_tmp.persist(&manifest)?;
+    manifest_tmp.persist(destination)?;
     let mut completed = 0u64;
     let mut first = None;
     for asset in assets {

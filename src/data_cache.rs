@@ -194,7 +194,7 @@ impl PreparedCache {
         };
         let parent = self.path.parent().unwrap();
         std::fs::create_dir_all(parent)?;
-        let mut temp = tempfile::NamedTempFile::new_in(parent)?;
+        let (mut temp, destination) = crate::atomic_file::prepare(&self.path)?;
         serde_json::to_writer(&mut temp, &stored)?;
         temp.flush()?;
         control.check()?;
@@ -207,7 +207,7 @@ impl PreparedCache {
                 self.path.with_extension(format!("rejected-{nonce}")),
             )?;
         }
-        temp.persist(&self.path)?;
+        temp.persist(destination)?;
         Ok(())
     }
 }
