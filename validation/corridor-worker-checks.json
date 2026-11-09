@@ -1,0 +1,315 @@
+{
+  "source_commit": "512c645cc56e42f893b374cc6eb1f9df7efaa367",
+  "change": "Optional corridor worker limit in the CLI, saved job, and desktop settings. Default maximum remains four. Location scoring and acceptance are unchanged.",
+  "local_checks": {
+    "rust_tests_passed": 173,
+    "python_tests_passed": 10,
+    "steps": [
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.6052511000016239,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 9.734189800001332,
+        "log_sha256": "c8a70670b8e3e437047d4c976b35c794b587055968b4a1ed6df1fa56d82596da"
+      },
+      {
+        "name": "tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 983.5892265000002,
+        "log_sha256": "5b7ce6a371632d84f405b6f7045418f8426d1c9b5491049546a6493d90364f99"
+      },
+      {
+        "name": "doc-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--doc"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1.2448845999897458,
+        "log_sha256": "77ca7419df77a3074e582230b0aeafbaa62604fa3dfc1b1e03190bf00629483c"
+      },
+      {
+        "name": "build",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--bins"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.6829390000057174,
+        "log_sha256": "85ef9aeedf4527a50122b04b79b35cad30a1b117183a6d191372522ffb137951"
+      },
+      {
+        "name": "python",
+        "command": [
+          "python",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "validation",
+          "-p",
+          "test_run_timing.py"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.2228873999993084,
+        "log_sha256": "4b31d4a3ad33bff160fd6ef3197c31d07e0867196693480e5f225caa24e82959"
+      },
+      {
+        "name": "control-example",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--example",
+          "doppler_controls"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 31.62977649999084,
+        "log_sha256": "52df2da5418d0ecbb786625004657861a579004ad906b6455f94e741fa214fc6"
+      }
+    ],
+    "checks_sha256": "41956884c22c996f5dc0adc2292b58b9ede4a6036f2ca63e2d76d87324a64b72"
+  },
+  "executables": {
+    "cli": {
+      "file": "analysis-build/soundgeo-cli-corridor-workers-512c645.exe",
+      "sha256": "01d4c7cf6e87eae5d5ea7e481944cfa99ba1ed702ec9d32baf9e357c1eb69370"
+    },
+    "desktop": {
+      "file": "analysis-build/soundgeo-corridor-workers-512c645.exe",
+      "sha256": "e67e363b3a63dbdd033ccb09f63765be54a8302bf15ecfa280e6fa5d7537c67e"
+    },
+    "control_tool": {
+      "file": "analysis-build/doppler-corridor-workers-512c645.exe",
+      "sha256": "6dcc55ce84f2df24736beed560c1ef578c3f9a4fef7ddc02a3041c3845ef0ecd"
+    }
+  },
+  "ci": {
+    "head_commit": "512c645cc56e42f893b374cc6eb1f9df7efaa367",
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42598992830",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "check (ubuntu-latest)",
+        "conclusion": "success",
+        "rust_tests_passed": 173,
+        "python_tests_passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "required_steps": [
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "check (windows-latest)",
+        "conclusion": "success",
+        "rust_tests_passed": 173,
+        "python_tests_passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "required_steps": [
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "required_test_names": [
+      "worker_limits_validate_and_preserve_older_job_json",
+      "parallel_corridors_match_serial_fallback_terrain",
+      "headless_cli_help_and_errors_have_documented_exit_codes"
+    ],
+    "log": {
+      "file": "corridor-workers-ci-checks/ci-terminal.log",
+      "sha256": "5d4e23da43b4db778c193084d139fa51faa28043add9dfef4701db2182ef6a8f"
+    }
+  },
+  "native_synthetic": {
+    "result": {
+      "complete": true,
+      "reports_equal": true,
+      "runs": [
+        {
+          "name": "regional_grid-before",
+          "exit_code": 0,
+          "elapsed_s": 6.097551600003499,
+          "report_sha256": "e41652d32c53e1c1e2e115f6dd8ab59a91e368c6172d3bb93cc3084303d0bdf8",
+          "hypotheses": 957
+        },
+        {
+          "name": "regional_grid-after",
+          "exit_code": 0,
+          "elapsed_s": 5.878224800006137,
+          "report_sha256": "8b6805ddfa4ca16f25d8e92fa2a0000d6d422e070b017b38b8f9a9d54ce505c3",
+          "hypotheses": 957
+        },
+        {
+          "name": "flight_corridors-before",
+          "exit_code": 0,
+          "elapsed_s": 3.637602600007085,
+          "report_sha256": "0b1e4b5d62b8f7f4a7c19b40ae2ea2556aa7165bcfd3908a2a8bd36c74fbd209",
+          "hypotheses": 990
+        },
+        {
+          "name": "flight_corridors-after",
+          "exit_code": 0,
+          "elapsed_s": 3.581579399993643,
+          "report_sha256": "02d70ab1cfba9753722823a7ea1215e14ef0d8119855fef5193190f26e1dcdcd",
+          "hypotheses": 990,
+          "corridor_workers_used": 4
+        },
+        {
+          "name": "flight_corridors-after-workers-1",
+          "exit_code": 0,
+          "elapsed_s": 3.6285590000043157,
+          "report_sha256": "f21ab4453013b6b308be0a923baf042b5c9a69afa2a78cc41b511c556e775bbc",
+          "hypotheses": 990,
+          "corridor_workers_used": 1
+        },
+        {
+          "name": "flight_corridors-after-workers-8",
+          "exit_code": 0,
+          "elapsed_s": 3.6019377000047825,
+          "report_sha256": "add47042a86c853495135afa828eb9889b8e7c61c4e0823009d857afeb0a1eb9",
+          "hypotheses": 990,
+          "corridor_workers_used": 8
+        }
+      ],
+      "proxy_connections": 0,
+      "inputs_unchanged": true,
+      "saved_jobs_unchanged": true,
+      "real_recording_acceptance": false
+    },
+    "plan_sha256": "5a68a858c26b6ab79d18c143e543b13a226862c91220a180a56cafd1e38bba00",
+    "comparison": "Full reports equal after excluding creation time and only the explicit worker override."
+  },
+  "real_report_equality": {
+    "plan": {
+      "scope": "Real-report equivalence on the later Lake Hood recording with the original broad region and single-day standard reference CSV.",
+      "case": "lake-hood-nov1-later",
+      "source_commit": "512c645cc56e42f893b374cc6eb1f9df7efaa367",
+      "cli_sha256": "01d4c7cf6e87eae5d5ea7e481944cfa99ba1ed702ec9d32baf9e357c1eb69370",
+      "baseline_source_commit": "e5eeb2b439f271b1160a509095cca25f87b49e56",
+      "script_sha256": "0a9a59940fe4713e47050795f0c85675924d0ad158bcb208bd3f0dd23e6eedd7",
+      "inputs": {
+        "media": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+        "tracks": "4d790cb6dc00c6a7f82d3be33f5f2fab9bc304b14fa8be7c28a0ed5b3c0249a1",
+        "decoder": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+        "job": "890a1463c6b8d9871fb01c98659732cccbcb74e3aa314d783802e8a4704a497c",
+        "baseline_report": "6615972b3fb67d9eb160c64a00172de07237803ba2f20f6eef66afc738d29602"
+      },
+      "worker_override": 8,
+      "timeout_s": 14400,
+      "offline": true,
+      "recording_date_argument_supplied": false,
+      "recording_clock_supplied": false,
+      "known_position_supplied_to_app": false,
+      "video_clues": false,
+      "start_condition": "Complete original four-case comparison with unchanged references and no proxy contacts.",
+      "comparison": "Full decoded reports equal after removing created_utc and the explicit job.search_threads override.",
+      "accuracy_rule": "Original strict CLI status and 1 km evaluator. An unchanged ambiguous report remains a failed acceptance case.",
+      "timing_scope": "Descriptive shared-host timing. The baseline also predates the exact coarse-fit bound; this is not an isolated worker-speed benchmark."
+    },
+    "result": {
+      "complete": true,
+      "accepted": false,
+      "exit_code": 4,
+      "elapsed_s": 5804.967115099993,
+      "status": "ambiguous",
+      "report_sha256": "fba890e2da7b2c21cfd65c55b684bdd869cfd2789fbbb219686b1303d253b579",
+      "reports_equal": true,
+      "corridor_workers_used": 8,
+      "top_candidate_error_m": 106.50915535016873,
+      "events": 16,
+      "hypotheses": 16721120,
+      "candidates": 10,
+      "top_matches": 5,
+      "screened": false,
+      "proxy_connections": 0,
+      "inputs_unchanged": true
+    },
+    "result_sha256": "dd6891f38f3298c4ab34c4b7ecbb568bc84e299c0f48e6ae86440c6342d2b5f6"
+  },
+  "location_acceptance": "The unchanged Lake Hood report remains ambiguous and has no accepted location.",
+  "timing_scope": "Elapsed times combine the worker change, the exact coarse-fit bound, and shared-host load."
+}

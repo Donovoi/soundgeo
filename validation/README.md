@@ -8,6 +8,27 @@ New results must state which target they use.
 
 ## Current checks
 
+The [corridor worker checks](corridor-worker-checks.json) cover the CLI override,
+saved jobs, and the desktop setting. Revision `512c645` passed all 173 Rust
+tests, 10 Python tests, formatting, strict Clippy, doc tests, and both release
+builds locally and in Windows and Ubuntu CI. The control-tool build passed
+locally. Six native offline runs preserve the full synthetic reports with the
+old default and with one or eight corridor workers. Saved jobs stay unchanged.
+An eight-worker replay also preserves the complete later Lake Hood report,
+apart from creation time and the explicit worker setting. The result remains
+ambiguous at 106.51 m. The proxy recorded no connections.
+
+The [four-case proposal-retention comparison](lake-proposal-retention-results.json)
+has completed. The standard-trace results place the first clip 89.81 m away
+and the later clip 106.51 m away. The later high-resolution result is 513.27 m
+away with six matched activities. All three reports remain ambiguous. The first
+high-resolution run reached its two-hour limit without a report. The source
+data covers one prepared day. Expanded-date tests remain separate. A separate
+audit confirms the location errors, unchanged original jobs, and source hashes.
+The earlier control baseline also reached its two-hour limit before it could
+start a shuffled search. Each timed-out job has a separate retry with a
+four-hour limit.
+
 The [coarse-fit bound](corroboration-bound-checks.json) skips curve fits that
 cannot add support to the retention step. All 480 equivalence cases preserve
 the original result. Both native search modes also produce the same complete
