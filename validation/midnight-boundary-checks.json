@@ -263,7 +263,7 @@
       "file": "lake-all-free-hires-dates-v2/plan.json",
       "sha256": "68cede255cdafad24791c5f3eea499e9189bbfc96cd4f430eb56bec0896d7431"
     },
-    "status": "Running",
+    "status": "Failed on a May trace with a flight continuing into the following UTC day",
     "preceding_failure": {
       "file": "lake-all-free-hires-dates/result.json",
       "sha256": "d5fd05dda0415b4e4376c01f315dd4607de045caa42cf451ddcbff26eb72b90d"
@@ -271,6 +271,273 @@
     "copied_cache": {
       "file": "lake-all-free-hires-dates-v2/copied-cache-files.json",
       "sha256": "28b764608d2f3c2e6ae73327680a082851c9b699de01d39285d677d8794567ac"
+    },
+    "result": {
+      "complete": false,
+      "stage": "download",
+      "exit_code": 1,
+      "stop_reason": null
+    },
+    "result_artifact": {
+      "file": "lake-all-free-hires-dates-v2/result.json",
+      "sha256": "d5fd05dda0415b4e4376c01f315dd4607de045caa42cf451ddcbff26eb72b90d"
+    },
+    "following_failure": {
+      "source": {
+        "date": "2022-05-01",
+        "identity": "a3f1c2",
+        "source": "https://www.adsbexchange.com/pull-data/",
+        "bucket": "adsbx-sample-data",
+        "key": "hires-traces/2022/05/01/c2/trace_full_a3f1c2.json",
+        "script_sha256": "db5b8d808914b9c918f6496889835451d8bb7668da940b5da9a8bf89f07cd151",
+        "changes_native_cache": false,
+        "access": "Provider-published public sample credentials",
+        "status": 200,
+        "bytes": 84250,
+        "sha256": "ca4351a4fdb59b735837be20a29949fcfa0d3a4603649118a7c08fcb746b9ed6",
+        "timestamp": 1651445798.184,
+        "timestamp_utc": "2022-05-01T22:56:38.184000+00:00",
+        "positions": 5129,
+        "valid_observation_times": 5129,
+        "invalid_observation_count": 0,
+        "invalid_observations": [],
+        "first_utc": "2022-05-01T22:56:38.184000+00:00",
+        "last_utc": "2022-05-02T00:08:50.384000+00:00",
+        "before_previous_day": 0,
+        "previous_day": 0,
+        "requested_day": 4549,
+        "following_or_later": 580,
+        "boundary_rows": [
+          {
+            "index": 4548,
+            "utc": "2022-05-02T00:00:00.684000+00:00",
+            "row": [
+              3802.5,
+              60.872223,
+              -160.77923,
+              38000,
+              461.3,
+              264.3,
+              0,
+              0,
+              {
+                "type": "adsb_icao",
+                "flight": "UPS48   ",
+                "alt_geom": 36800,
+                "track": 264.28,
+                "baro_rate": 0,
+                "squawk": "5770",
+                "emergency": "none",
+                "category": "A5",
+                "nav_qnh": 1012.8,
+                "nav_altitude_mcp": 38016,
+                "nav_heading": 251.72,
+                "nav_modes": [
+                  "vnav",
+                  "tcas"
+                ],
+                "nic": 8,
+                "rc": 186,
+                "version": 2,
+                "nic_baro": 1,
+                "nac_p": 10,
+                "nac_v": 1,
+                "sil": 3,
+                "sil_type": "perhour",
+                "gva": 2,
+                "sda": 2,
+                "alert": 0,
+                "spi": 0
+              },
+              "adsb_icao",
+              36800,
+              null,
+              null,
+              null,
+              "91ae63cf"
+            ]
+          },
+          {
+            "index": 4549,
+            "utc": "2022-05-02T00:00:01.784000+00:00",
+            "row": [
+              3803.6,
+              60.872032,
+              -160.783146,
+              38000,
+              461.3,
+              264.3,
+              0,
+              0,
+              null,
+              "adsb_icao",
+              36800,
+              null,
+              null,
+              null,
+              "91ae63cf"
+            ]
+          },
+          {
+            "index": 4550,
+            "utc": "2022-05-02T00:00:02.384000+00:00",
+            "row": [
+              3804.2,
+              60.871846,
+              -160.786972,
+              38000,
+              461.3,
+              264.3,
+              0,
+              0,
+              null,
+              "adsb_icao",
+              36800,
+              null,
+              null,
+              null,
+              "91ae63cf"
+            ]
+          },
+          {
+            "index": 4551,
+            "utc": "2022-05-02T00:00:03.484000+00:00",
+            "row": [
+              3805.3,
+              60.871628,
+              -160.791636,
+              38000,
+              461.3,
+              264.3,
+              0,
+              0,
+              null,
+              "adsb_icao",
+              36800,
+              null,
+              null,
+              null,
+              "91ae63cf"
+            ]
+          },
+          {
+            "index": 4552,
+            "utc": "2022-05-02T00:00:04.584000+00:00",
+            "row": [
+              3806.4,
+              60.87138,
+              -160.796193,
+              38000,
+              461.4,
+              264.1,
+              0,
+              0,
+              {
+                "type": "adsb_icao",
+                "flight": "UPS48   ",
+                "alt_geom": 36800,
+                "track": 264.15,
+                "baro_rate": 0,
+                "squawk": "5770",
+                "emergency": "none",
+                "category": "A5",
+                "nav_qnh": 1012.8,
+                "nav_altitude_mcp": 38016,
+                "nav_heading": 251.72,
+                "nav_modes": [
+                  "vnav",
+                  "tcas"
+                ],
+                "nic": 8,
+                "rc": 186,
+                "version": 2,
+                "nic_baro": 1,
+                "nac_p": 10,
+                "nac_v": 1,
+                "sil": 3,
+                "sil_type": "perhour",
+                "gva": 2,
+                "sda": 2,
+                "alert": 0,
+                "spi": 0
+              },
+              "adsb_icao",
+              36800,
+              null,
+              null,
+              null,
+              "91ae63cf"
+            ]
+          },
+          {
+            "index": 4553,
+            "utc": "2022-05-02T00:00:05.684000+00:00",
+            "row": [
+              3807.5,
+              60.871148,
+              -160.800803,
+              38000,
+              461.4,
+              264.1,
+              0,
+              0,
+              null,
+              "adsb_icao",
+              36800,
+              null,
+              null,
+              null,
+              "91ae63cf"
+            ]
+          },
+          {
+            "index": 4554,
+            "utc": "2022-05-02T00:00:06.684000+00:00",
+            "row": [
+              3808.5,
+              60.870987,
+              -160.804517,
+              38000,
+              461.4,
+              264.1,
+              0,
+              0,
+              null,
+              "adsb_icao",
+              36800,
+              null,
+              null,
+              null,
+              "91ae63cf"
+            ]
+          },
+          {
+            "index": 4555,
+            "utc": "2022-05-02T00:00:07.984000+00:00",
+            "row": [
+              3809.8,
+              60.870729,
+              -160.809337,
+              38000,
+              461.4,
+              264.1,
+              0,
+              0,
+              null,
+              "adsb_icao",
+              36800,
+              null,
+              null,
+              null,
+              "91ae63cf"
+            ]
+          }
+        ]
+      },
+      "raw_object": {
+        "file": "may-hires-trace-inspection/source.bin",
+        "sha256": "ca4351a4fdb59b735837be20a29949fcfa0d3a4603649118a7c08fcb746b9ed6"
+      }
     }
   },
   "offline_audio": {
@@ -278,7 +545,13 @@
       "file": "lake-all-free-hires-audio-v2/plan.json",
       "sha256": "6d92a99512bf61e114b81c05116aa673c91943e939d3051427776cb89ad25668"
     },
-    "status": "Waiting for complete prepared data and offline verification"
+    "status": "No audio analysis started because expanded preparation failed",
+    "result": {
+      "complete": false,
+      "stage": "preparation",
+      "audio_started": false,
+      "preparation_result_sha256": "d5fd05dda0415b4e4376c01f315dd4607de045caa42cf451ddcbff26eb72b90d"
+    }
   },
   "artifacts": [
     {

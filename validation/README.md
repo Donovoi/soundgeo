@@ -8,9 +8,35 @@ New results must state which target they use.
 
 ## Current checks
 
+[Whole-activity controls](doppler-controls.md) reorder complete sound activities
+and repeat the original full location search. Curves, overlapping activity,
+and observation alternatives stay together. The 19 orders remain distinct
+after cyclic rotation. Acceptance rules remain unchanged.
+
+The [first control build](doppler-controls-checks.json) passed 169 Rust tests
+and 10 Python tests. A native check then found that JSON rounding prevented a
+real saved plan from loading. The queued experiment stopped before any search.
+
+The [plan reload fix](control-plan-roundtrip-checks.json) passed 171 Rust tests,
+10 Python tests, formatting, strict Clippy, doc tests, both app builds, and the
+control-tool build locally. The regression failed before the fix and passed
+afterward. All 19 reloaded controls now produce the same shifts as the original
+plan. The native tool accepts the real plan and rejects a changed source hash,
+permutation, or duration. A new offline run starts with a fresh baseline and
+compares it with up to 19 shuffled searches on the same frozen build.
+
+[Adjacent-day source checks](next-day-carryover-checks.json) address a second
+download failure. A May source trace contains 580 valid positions on the next
+UTC day. Revision `9509903` preserves these positions and keeps date filtering
+in the analysis. All 170 Rust tests, 10 Python tests, and required local checks
+passed. The failing regression and original source bytes remain preserved.
+A new download reuses the verified partial cache and discovers all 58 free
+sample dates. Both Lake Hood audio tests wait for complete offline cache
+verification. Expanded-date location results remain pending.
+
 [Midnight-boundary checks](midnight-boundary-checks.json) fix a download failure
 in a March 2022 source trace. Its last position is 8 milliseconds after midnight.
-The downloader now preserves and records fractional endpoints within one second
+Revision `ab06bd3` preserved and recorded fractional endpoints within one second
 after the day ends. Analysis uses positions within the selected archive dates.
 Invalid dates still fail validation. Original source bytes remain unchanged.
 
@@ -18,8 +44,10 @@ Revision `ab06bd3` passed all 165 Rust tests, 10 Python tests, formatting,
 strict Clippy, doc tests, and both release builds locally. Tests cover the
 boundary allowance, date filtering, source preservation, and offline cache reuse.
 The earlier failing regression and failed all-date download remain recorded.
-A new preparation run reuses those files and discovers dates without date arguments.
-The two Lake Hood audio replays wait for complete offline cache verification.
+The retry reused those files and discovered dates without date arguments.
+It completed March and April, then stopped on a May trace with 580 positions
+from the following UTC day. No expanded-cache audio replay started. The May
+source bytes and failed attempt remain preserved. The adjacent-day fix is recorded above.
 
 The same source passed all required checks in
 [Windows and Ubuntu CI](midnight-boundary-ci.json), with 165 Rust tests and
@@ -57,7 +85,9 @@ four-curve proposal through the original broad search. It survived coarse
 pruning, then ranked 1,492 of 3,731 proposals before the final 512-proposal
 selection. No proposal within the diagnostic position-and-clock filter reached
 refinement. The known-position hint only filtered diagnostic output. This trace
-does not count as a location pass. The new beam replay remains pending.
+does not count as a location pass. A completed uninstrumented search returns
+the same candidate coordinates, order, and hypothesis count. Differences in
+curve values are at most 1.43e-14. The new beam replay remains pending.
 
 [An early sample-source check](early-high-resolution-source-gaps.json) prepared
 February 1, 2022, the earliest date in the high-resolution catalog. It downloaded

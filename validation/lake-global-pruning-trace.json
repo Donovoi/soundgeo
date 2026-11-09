@@ -149,5 +149,93 @@
       "file": "summarize_lake_pruning_trace.py",
       "sha256": "5760954cc193337ced828bf4ff18c3fa8afd4197f8fdbaf456a8d09816dba7dd"
     }
+  ],
+  "uninstrumented_comparison": {
+    "complete": true,
+    "counts_as_location_acceptance": false,
+    "candidate_count": 10,
+    "hypotheses_equal": true,
+    "differences": 165,
+    "nonnumeric_differences": 0,
+    "maximum_absolute_difference": 1.4210854715202004e-14,
+    "maximum_relative_difference": 4.440892098500626e-15,
+    "original_report_sha256": "cc21e5c7521ec21ea3700a18f47a6e21cd286342fe0a66dd5c18eb66eae00246",
+    "instrumented_search_sha256": "78305b920ffd3591eae6a1a1b4b6147942a3a3b3b461b56418c32673f791f1ca",
+    "largest_differences": [
+      {
+        "path": "candidates[5].matches[1].rmse_hz",
+        "a": 0.6645922418800755,
+        "b": 0.664592241880071,
+        "absolute_difference": 4.440892098500626e-15,
+        "relative_difference": 4.440892098500626e-15
+      },
+      {
+        "path": "candidates[4].matches[1].rmse_hz",
+        "a": 0.6597362825502753,
+        "b": 0.659736282550271,
+        "absolute_difference": 4.3298697960381105e-15,
+        "relative_difference": 4.3298697960381105e-15
+      },
+      {
+        "path": "candidates[3].matches[0].linear_baseline_rmse_hz",
+        "a": 3.3879264238393447,
+        "b": 3.3879264238393323,
+        "absolute_difference": 1.2434497875801753e-14,
+        "relative_difference": 3.6702384645385666e-15
+      },
+      {
+        "path": "candidates[0].matches[0].linear_baseline_rmse_hz",
+        "a": 0.5367677992768344,
+        "b": 0.5367677992768379,
+        "absolute_difference": 3.552713678800501e-15,
+        "relative_difference": 3.552713678800501e-15
+      },
+      {
+        "path": "candidates[1].matches[0].linear_baseline_rmse_hz",
+        "a": 0.5367677992768344,
+        "b": 0.5367677992768379,
+        "absolute_difference": 3.552713678800501e-15,
+        "relative_difference": 3.552713678800501e-15
+      },
+      {
+        "path": "candidates[2].matches[0].linear_baseline_rmse_hz",
+        "a": 0.5367677992768344,
+        "b": 0.5367677992768379,
+        "absolute_difference": 3.552713678800501e-15,
+        "relative_difference": 3.552713678800501e-15
+      },
+      {
+        "path": "candidates[4].matches[0].linear_baseline_rmse_hz",
+        "a": 0.5367677992768344,
+        "b": 0.5367677992768379,
+        "absolute_difference": 3.552713678800501e-15,
+        "relative_difference": 3.552713678800501e-15
+      },
+      {
+        "path": "candidates[5].matches[0].linear_baseline_rmse_hz",
+        "a": 0.5367677992768344,
+        "b": 0.5367677992768379,
+        "absolute_difference": 3.552713678800501e-15,
+        "relative_difference": 3.552713678800501e-15
+      }
+    ]
+  },
+  "candidate_identity_comparison": {
+    "coordinates_and_clocks_equal": true,
+    "matched_aircraft_and_observation_order_equal": true
+  },
+  "comparison_artifacts": [
+    {
+      "file": "lake-global-pruning-trace/output-comparison.json",
+      "sha256": "0adc882d9113d413c16f07bf03122c60bcc289c09b41eb3ad82df70262b66063"
+    },
+    {
+      "file": "lake-global-pruning-trace/output-differences.json",
+      "sha256": "829a95d117ce239c86918042fa35a677065c23d7ebeff35876fc0fa7ceb43a5c"
+    },
+    {
+      "file": "lake-global-pruning-trace/output-identity-comparison.json",
+      "sha256": "9d054e89407e8eebae89f4fb8b3072138fd2d11ddb64bd81698d3b07e5d9f45d"
+    }
   ]
 }
