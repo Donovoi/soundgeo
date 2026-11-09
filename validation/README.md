@@ -8,6 +8,45 @@ New results must state which target they use.
 
 ## Current checks
 
+[Flight reference checks](flight-reference-fixes.json) found two lost-data
+problems. Passage timing kept only one visit when an aircraft left the search
+radius and returned. The trace reader also dropped the first recorded position
+after a reception gap. Both are fixed. Slow and stationary positions keep a
+visit connected. Reception gaps still split tracks.
+
+Revision `598691d` passed all 153 Rust tests, nine Python tests, formatting,
+strict Clippy, doc tests, and both release builds locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42541186372).
+The location acceptance rules are unchanged. The record includes the failing
+checks that led to the fixes and the upstream trace format evidence.
+
+A [free archive comparison](lake-free-archive-comparison.json) checked the
+production and staging sources for all four prepared Lake Hood dates. All
+16 archive parts matched their published sizes and hashes. Staging added
+3,067 rounded position-seconds across the broad search area. Production held
+more regional positions overall. A paired audio replay checks whether combining
+the sources helps locate the recordings.
+
+[High-resolution sample checks](lake-high-resolution-reference.json) downloaded
+both standard and high-resolution free traces for 570 aircraft on November 1.
+Two aircraft were unavailable in both variants. The original broad search area
+contained 64,701 standard airborne positions and 517,449 high-resolution
+positions. The Rust importer retained 156,946 and 432,574 positions, respectively,
+including its wider flight-data margin.
+
+All seven fixed Lake Hood recordings were searched against each complete
+sample reference, with no recording date or start time argument. All 14 runs
+reported insufficient evidence. The runs used the original broad bounds and
+unchanged sound detection and acceptance rules. They ran offline with no proxy
+connections and unchanged reference files. This was a paired single-day source
+diagnostic. The original multi-date benchmark is recorded separately.
+
+A separate diagnostic supplied the known camera position and kept the clock
+unknown. Within the default 500 m passage radius, both sources had fewer than
+six reference passages. Checks at 1, 2, and 5 km found additional candidate
+matches. These point checks did not test location acceptance. The record also
+preserves three failed preparation or diagnostic attempts and their corrections.
+
 [Automatic date discovery](automatic-date-discovery.json) found 1,327 ADSB.lol
 days, 125 first-of-month sample days, and 89 complete days for each airport
 provider on November 7, 2026. Each saved index replayed offline with identical

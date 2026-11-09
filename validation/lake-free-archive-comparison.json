@@ -1,0 +1,338 @@
+{
+  "scope": "Coverage comparison of two free archive variants over the original broad Lake Hood search area.",
+  "plan": {
+    "dates": [
+      "2026-11-01",
+      "2026-11-03",
+      "2026-11-04",
+      "2026-11-06"
+    ],
+    "bounds": {
+      "south": 61.0,
+      "north": 61.36,
+      "west": -150.36,
+      "east": -149.62
+    },
+    "date_selection": "Every date already present in the prepared Lake Hood flight cache.",
+    "known_position_used": false,
+    "recording_date_supplied": false,
+    "recording_clock_supplied": false,
+    "not_acceptance": true,
+    "script_sha256": "5d9931e73443c91d1eefe542da51e2ab9942cec63498554cd0bb46620d2f57ab",
+    "comparison": "Distinct rounded UTC seconds with an airborne position and usable altitude in the broad region. Reception-gap markers are retained as observed positions.",
+    "prior_attempt": "lake-staging-comparison",
+    "prior_issue": "The first diagnostic counted reception-gap markers with ground positions, matching the old importer. This comparison keeps them separate.",
+    "byte_prefilter": "readsb writes fixed-point latitude after each relative timestamp. Only traces with a latitude beginning 61 are decoded as JSON."
+  },
+  "source_documentation": "https://www.adsb.lol/docs/open-data/historical",
+  "download_plan": {
+    "source": "https://www.adsb.lol/docs/open-data/historical",
+    "reason": "The provider documents staging as an alternative when production coverage is short.",
+    "date_selection": "Every date already present in the prepared Lake Hood flight cache.",
+    "dates": [
+      "2026-11-01",
+      "2026-11-03",
+      "2026-11-04",
+      "2026-11-06"
+    ],
+    "instance": "staging-0",
+    "recording_date_supplied": false,
+    "recording_clock_supplied": false,
+    "known_position_supplied": false,
+    "new_cache": true,
+    "existing_cache_unchanged": true,
+    "prior_attempt": "lake-staging-archive-check",
+    "chunk_bytes": 67108864
+  },
+  "all_parts_match_published_size_and_sha256": true,
+  "dates": [
+    {
+      "date": "2026-11-01",
+      "production_counts": {
+        "trace_files": 56670,
+        "regional_trace_files": 405,
+        "regional_airborne_positions": 108765,
+        "regional_ground_positions": 86747,
+        "regional_reception_gap_positions": 69
+      },
+      "staging_counts": {
+        "trace_files": 48440,
+        "regional_trace_files": 286,
+        "regional_airborne_positions": 68990,
+        "regional_ground_positions": 62459,
+        "regional_reception_gap_positions": 65
+      },
+      "production_aircraft": 388,
+      "staging_aircraft": 270,
+      "new_staging_aircraft": [
+        "a84a55"
+      ],
+      "additional_staging_seconds": 688,
+      "not_acceptance": true,
+      "sources": [
+        {
+          "provider": "production",
+          "release_url": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.01-planes-readsb-prod-0",
+          "parts": [
+            {
+              "file": "v2026.11.01-planes-readsb-prod-0.tar.aa",
+              "sha256": "62813665a44851df60676e2449435001cf1acbb5768b0f7fe756fc8145ae9aa3",
+              "bytes": 2000000000
+            },
+            {
+              "file": "v2026.11.01-planes-readsb-prod-0.tar.ab",
+              "sha256": "e083915f63d0f42fedb3af7ea1ab61b970d76265c1663af09ae8c4cf28e19179",
+              "bytes": 1118588416
+            }
+          ],
+          "coverage_artifact": {
+            "file": "lake-staging-comparison-v2/2026-11-01/production/coverage.json",
+            "sha256": "ddf5513642e54790eb5cec5eafa54d2b65e045f7dff38b1b2bf523930101211b"
+          }
+        },
+        {
+          "provider": "staging",
+          "release_url": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.01-planes-readsb-staging-0",
+          "parts": [
+            {
+              "file": "v2026.11.01-planes-readsb-staging-0.tar.aa",
+              "sha256": "802a2d8289289c5157a0a815d2ad7aa36769aafaac502c38996905876ac3af33",
+              "bytes": 2000000000
+            },
+            {
+              "file": "v2026.11.01-planes-readsb-staging-0.tar.ab",
+              "sha256": "96f94b684cf1276267fd25fe1b9c83d43073ca60e233e2523891fa556f9bbfbc",
+              "bytes": 542866944
+            }
+          ],
+          "coverage_artifact": {
+            "file": "lake-staging-comparison-v2/2026-11-01/staging/coverage.json",
+            "sha256": "06678b3841756f88a65f6273d057c4d9b41d0ababe9a7261f061d6fd35d9dde4"
+          }
+        }
+      ],
+      "comparison_artifact": {
+        "file": "lake-staging-comparison-v2/2026-11-01/comparison.json",
+        "sha256": "b14a8140cf34f4cf1f52c335911bf84513fbe63d22aa7efc084385f78ffee41f"
+      }
+    },
+    {
+      "date": "2026-11-03",
+      "production_counts": {
+        "trace_files": 68672,
+        "regional_trace_files": 518,
+        "regional_airborne_positions": 170228,
+        "regional_ground_positions": 124535,
+        "regional_reception_gap_positions": 170
+      },
+      "staging_counts": {
+        "trace_files": 68606,
+        "regional_trace_files": 518,
+        "regional_airborne_positions": 169889,
+        "regional_ground_positions": 124114,
+        "regional_reception_gap_positions": 180
+      },
+      "production_aircraft": 491,
+      "staging_aircraft": 491,
+      "new_staging_aircraft": [],
+      "additional_staging_seconds": 781,
+      "not_acceptance": true,
+      "sources": [
+        {
+          "provider": "production",
+          "release_url": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.03-planes-readsb-prod-0",
+          "parts": [
+            {
+              "file": "v2026.11.03-planes-readsb-prod-0.tar.aa",
+              "sha256": "5b23af3bb86442df1527a0ff49119fca20b09a29c3b99992118d9a0f469dceec",
+              "bytes": 2000000000
+            },
+            {
+              "file": "v2026.11.03-planes-readsb-prod-0.tar.ab",
+              "sha256": "703b0a2e620a37751d6ab8454359d0ce9bd0534aaa0342b81749f99dfa045152",
+              "bytes": 1531563008
+            }
+          ],
+          "coverage_artifact": {
+            "file": "lake-staging-comparison-v2/2026-11-03/production/coverage.json",
+            "sha256": "fa59274138447aa8c30c9cd2b0eb613e3e34ec2fbd5c293e56ac3db275caded3"
+          }
+        },
+        {
+          "provider": "staging",
+          "release_url": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.03-planes-readsb-staging-0",
+          "parts": [
+            {
+              "file": "v2026.11.03-planes-readsb-staging-0.tar.aa",
+              "sha256": "9812c3d286f4a801fbcc715d0b4131be9fae2af727515449f4d756a12da07cf4",
+              "bytes": 2000000000
+            },
+            {
+              "file": "v2026.11.03-planes-readsb-staging-0.tar.ab",
+              "sha256": "ff8c3a799eff2e067d757d6bb78889905cad7f739e79b4a75d347b01638a7f77",
+              "bytes": 1491936768
+            }
+          ],
+          "coverage_artifact": {
+            "file": "lake-staging-comparison-v2/2026-11-03/staging/coverage.json",
+            "sha256": "7e27c46263eaf760db34e43854f870e75d1cee1c75a15d6c471735fa4fc8c402"
+          }
+        }
+      ],
+      "comparison_artifact": {
+        "file": "lake-staging-comparison-v2/2026-11-03/comparison.json",
+        "sha256": "f014dd0c841a03c08e1d0b537aa205c58d163c9f1bd4ef2a8b2ce934b4c2c3bd"
+      }
+    },
+    {
+      "date": "2026-11-04",
+      "production_counts": {
+        "trace_files": 72105,
+        "regional_trace_files": 512,
+        "regional_airborne_positions": 167117,
+        "regional_ground_positions": 127102,
+        "regional_reception_gap_positions": 181
+      },
+      "staging_counts": {
+        "trace_files": 72092,
+        "regional_trace_files": 511,
+        "regional_airborne_positions": 166603,
+        "regional_ground_positions": 126827,
+        "regional_reception_gap_positions": 181
+      },
+      "production_aircraft": 491,
+      "staging_aircraft": 490,
+      "new_staging_aircraft": [],
+      "additional_staging_seconds": 650,
+      "not_acceptance": true,
+      "sources": [
+        {
+          "provider": "production",
+          "release_url": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.04-planes-readsb-prod-0",
+          "parts": [
+            {
+              "file": "v2026.11.04-planes-readsb-prod-0.tar.aa",
+              "sha256": "e1e2d5875b79548737e28e7d92ff38023608ca98c8021ffb1cb77adac1aec823",
+              "bytes": 2000000000
+            },
+            {
+              "file": "v2026.11.04-planes-readsb-prod-0.tar.ab",
+              "sha256": "03aad9dd521014848ddf94e5380d83e665b03fc2dcae5bbe7db87a2291f13b6d",
+              "bytes": 1618676224
+            }
+          ],
+          "coverage_artifact": {
+            "file": "lake-staging-comparison-v2/2026-11-04/production/coverage.json",
+            "sha256": "edb37ecbb62ef91833fc418e580bac943f7f12d5b73bca8b561d7b79cd501897"
+          }
+        },
+        {
+          "provider": "staging",
+          "release_url": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.04-planes-readsb-staging-0",
+          "parts": [
+            {
+              "file": "v2026.11.04-planes-readsb-staging-0.tar.aa",
+              "sha256": "bab8163cd1212910ad7e4bae388eef0f75d361e4f963348319a77e5ddd0891ce",
+              "bytes": 2000000000
+            },
+            {
+              "file": "v2026.11.04-planes-readsb-staging-0.tar.ab",
+              "sha256": "a5351bec97dec68252728bcf87697f07551eec4e2ca5ed7488ff4b174c4de714",
+              "bytes": 1618555392
+            }
+          ],
+          "coverage_artifact": {
+            "file": "lake-staging-comparison-v2/2026-11-04/staging/coverage.json",
+            "sha256": "5496eb9496a4bc4d216551a95c2ec875a27c4f80fc81f650abd53dbcef03df1e"
+          }
+        }
+      ],
+      "comparison_artifact": {
+        "file": "lake-staging-comparison-v2/2026-11-04/comparison.json",
+        "sha256": "56b8c77ff1c4cd7106816b356df35c3163578bc6c42eee23355ab503095efd6a"
+      }
+    },
+    {
+      "date": "2026-11-06",
+      "production_counts": {
+        "trace_files": 75277,
+        "regional_trace_files": 562,
+        "regional_airborne_positions": 165898,
+        "regional_ground_positions": 125396,
+        "regional_reception_gap_positions": 301
+      },
+      "staging_counts": {
+        "trace_files": 75292,
+        "regional_trace_files": 563,
+        "regional_airborne_positions": 166282,
+        "regional_ground_positions": 125650,
+        "regional_reception_gap_positions": 297
+      },
+      "production_aircraft": 532,
+      "staging_aircraft": 533,
+      "new_staging_aircraft": [
+        "a4b420"
+      ],
+      "additional_staging_seconds": 948,
+      "not_acceptance": true,
+      "sources": [
+        {
+          "provider": "production",
+          "release_url": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.06-planes-readsb-prod-0",
+          "parts": [
+            {
+              "file": "v2026.11.06-planes-readsb-prod-0.tar.aa",
+              "sha256": "b2881ccedefd1d5e18f5e295def377ce12c6be976d3973907d48620d106987ab",
+              "bytes": 2000000000
+            },
+            {
+              "file": "v2026.11.06-planes-readsb-prod-0.tar.ab",
+              "sha256": "1010a1ddd625a983ee4441a564d62afac0923179f76a4bd82c7352e6ed1fffdc",
+              "bytes": 1824818688
+            }
+          ],
+          "coverage_artifact": {
+            "file": "lake-staging-comparison-v2/2026-11-06/production/coverage.json",
+            "sha256": "f91e5170e2c7054570ad9dbc324c2711b0cf0b4d6a557224470f447e54f9011b"
+          }
+        },
+        {
+          "provider": "staging",
+          "release_url": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.06-planes-readsb-staging-0",
+          "parts": [
+            {
+              "file": "v2026.11.06-planes-readsb-staging-0.tar.aa",
+              "sha256": "68b65547b6e4419b5628afe4cb1e99413574c37b5c867e37ca3a5a81dc968f75",
+              "bytes": 2000000000
+            },
+            {
+              "file": "v2026.11.06-planes-readsb-staging-0.tar.ab",
+              "sha256": "e7204d75eb14da56bb029bbe7b0d78fdfa036a5e52277ee23c6f9224efc4aec2",
+              "bytes": 1823708160
+            }
+          ],
+          "coverage_artifact": {
+            "file": "lake-staging-comparison-v2/2026-11-06/staging/coverage.json",
+            "sha256": "5947376c520b9c470c84aeb82c36d65a46fb6f61a23d622d28b33239aed7ff44"
+          }
+        }
+      ],
+      "comparison_artifact": {
+        "file": "lake-staging-comparison-v2/2026-11-06/comparison.json",
+        "sha256": "329fd4b2d1ac63622b4daf3827acc721492d18e97c93f564e7359da62f140f41"
+      }
+    }
+  ],
+  "additional_rounded_aircraft_seconds": 3067,
+  "interpretation": "Staging adds some observed positions. Production has more regional positions overall. A paired audio replay tests their combined value.",
+  "earlier_attempts": [
+    {
+      "artifact": "lake-staging-archive-check",
+      "outcome": "Both November 1 parts completed before this run was stopped during later date work. The completed files and receipts remain saved."
+    },
+    {
+      "artifact": "lake-staging-comparison",
+      "outcome": "Stopped after a flag interpretation error was found. It grouped reception-gap positions with ground records. Its ground counts are excluded from this comparison."
+    }
+  ]
+}
