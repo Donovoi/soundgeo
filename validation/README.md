@@ -42,6 +42,10 @@ can worsen the full fit while keeping the same number of supported sounds.
 Refinement now retains the earlier lower-error fit for candidate ranking.
 Each fit still receives its own quiet-gap checks. A four-curve regression failed
 before this change and passed afterward. Location acceptance rules are unchanged.
+[Revision `bd4d948`](equal-corroboration-checks.json) passed all 157 Rust tests,
+10 Python tests, formatting, strict Clippy, doc tests, and both release builds
+locally. Its four-case offline replay uses the same input jobs and waits for the
+preceding comparison to finish.
 
 The benchmark runner also records date arguments from the actual jobs and
 lists imported reference files separately. Earlier direct-file diagnostics
