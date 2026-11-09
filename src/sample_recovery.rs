@@ -226,6 +226,75 @@ pub(super) fn cache_valid(
     }
 }
 
+pub(super) async fn upgrade_legacy(
+    client: &Client,
+    manifest: &mut Manifest,
+    previous: &[u8],
+    start: f64,
+    root: &Path,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<()> {
+    use chrono::Timelike;
+
+    if control.offline || manifest.schema >= 5 || manifest.missing_aircraft.is_empty() {
+        return Ok(());
+    }
+    control.check()?;
+    let backup = root
+        .join("rejected")
+        .join(format!("sample-manifest-{}.json", hash(previous)));
+    if backup.exists() {
+        ensure!(
+            std::fs::read(&backup)?.as_slice() == previous,
+            "Saved legacy manifest has changed"
+        );
+    } else {
+        atomic_write(&backup, previous)?;
+    }
+    let shared = root
+        .parent()
+        .context("Recovery cache has no parent")?
+        .join(format!("adsbx-sample-{}-snapshots", manifest.date));
+    let mut plan = Plan::new();
+    for (index, object) in manifest.snapshots.iter().enumerate() {
+        control.check()?;
+        let bytes = std::fs::read(shared.join(&object.file))?;
+        ensure!(
+            hash(&bytes) == object.sha256,
+            "Discovery snapshot changed during legacy recovery"
+        );
+        let time = chrono::NaiveTime::parse_from_str(&object.file, "%H%M%SZ.json.gz")?;
+        let value = parse(&bytes)?;
+        snapshot(
+            &value,
+            start + f64::from(time.num_seconds_from_midnight()),
+            manifest.bounds,
+        )?;
+        discover(&mut plan, &value, start, manifest.bounds);
+        if index % 24 == 0 || index + 1 == manifest.snapshots.len() {
+            progress(
+                &format!(
+                    "Checking older cache for missing flight positions: {}/{} snapshots",
+                    index + 1,
+                    manifest.snapshots.len()
+                ),
+                0.85 * (index + 1) as f32 / manifest.snapshots.len() as f32,
+            );
+        }
+    }
+    recover(client, manifest, plan, start, root, control, progress).await?;
+    control.check()?;
+    let manifest_path = root.join("sample-manifest.json");
+    ensure!(
+        std::fs::read(&manifest_path)?.as_slice() == previous,
+        "Sample manifest changed during legacy recovery"
+    );
+    manifest.schema = 5;
+    atomic_write(&manifest_path, &serde_json::to_vec_pretty(manifest)?)?;
+    Ok(())
+}
+
 pub(super) async fn recover(
     client: &Client,
     manifest: &mut Manifest,

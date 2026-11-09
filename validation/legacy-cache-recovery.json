@@ -1,0 +1,48 @@
+{
+  "scope": "Reference-data regression. Ordinary preparation of a complete older cache must add missing-flight recovery when the required source snapshots are available.",
+  "video_accuracy_test": false,
+  "source": "https://www.adsbexchange.com/data-products/sample-data/",
+  "source_day": "2025-07-01",
+  "day_selection": "An earlier audit of all 288 discovery snapshots found a missing airborne trace on this day.",
+  "target": "~574db9",
+  "legacy_manifest_sha256": "5543064927208966ead94b53ab4071104465932f6d41aa2e4cffd7040041a6e3",
+  "legacy_schema": 4,
+  "known_recovery": {
+    "source_commit": "b31eb4eeddef022092e11716af0219743e3b7a2c",
+    "positions": 40,
+    "source_snapshots": 122,
+    "missing_slots": [],
+    "derived_trace_sha256": "4b76f0cb28bab469535fbc3b2747331d58f3cbf2f59bef0df9a093f609a3d2f2"
+  },
+  "failed_build": {
+    "source_commit": "4a516354d445d5fe5e2426fa277f0b1aa7b49fed",
+    "ci": "https://github.com/Donovoi/soundgeo/actions/runs/42679867006",
+    "cli_sha256": "02a2ada726c6b308a880eefc9d1cd63fdb7f4178b12d0f1f6943bf58ee5b767a",
+    "checkout_tree_verified": true,
+    "artifact_digest_verified": true,
+    "required_checks_passed_on_windows_and_ubuntu": true,
+    "rust_tests_per_platform": 190,
+    "python_tests_per_platform": 10
+  },
+  "reproduction": {
+    "cache": "A separate copy of the original legacy regional cache and the previously downloaded source snapshots used by the successful recovery.",
+    "mode": "Normal online download with a rejecting local test proxy.",
+    "native_exit_code": 0,
+    "elapsed_s": 124.02671000000555,
+    "recovery_backfilled": false,
+    "legacy_schema_after": 4,
+    "proxy_connections": 0,
+    "original_caches_unchanged": true,
+    "copied_cache_unchanged": true,
+    "plan_sha256": "8e995b825f6ffbc3da4fe889031cd8ec0ddf969fd22f7e2d40a89beb739e519b",
+    "result_sha256": "a2ee5902f2499538050d1a2df4294a607998873cdec5464b92c8fae283858bd1",
+    "log_sha256": "ed13805c42e4132686b4d0bde7bbc7b6b58579ff8a6807c032562bef0dff537b"
+  },
+  "cause": "Completed legacy manifests returned from the cache reuse path before missing-flight recovery ran.",
+  "regressions": [
+    "legacy_missing_ground_records_upgrade_once_without_rechecking_source_gaps",
+    "legacy_missing_airborne_trace_uses_saved_recovery_sources_and_replays_offline",
+    "legacy_recovery_refusal_preserves_manifest_and_can_resume"
+  ],
+  "fixed_native_replay": "Pending qualification and a separate replay of the same source data."
+}

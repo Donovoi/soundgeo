@@ -134,6 +134,10 @@ from five minutes before to five minutes after that position. Overlapping
 windows share the same source files. This can recover short flight segments.
 The cache records the source snapshots, attempted slots, missing files, and
 derived traces. The missing daily trace remains listed in the manifest.
+Online preparation also runs this recovery once for older caches with missing
+daily traces. It keeps the original manifest and reuses saved source files.
+Offline reads leave older caches unchanged; prepare them online to add recovery
+data before offline use.
 
 Recovered positions use the snapshot time minus the reported position age.
 Geometric and barometric altitude remain separate. Duplicate position times

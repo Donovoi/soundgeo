@@ -652,7 +652,7 @@ async fn download(
     let start = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() as f64;
     let names: Vec<_> = (0..288).map(|i| snapshot_name(i * 5)).collect();
     if let Ok(bytes) = std::fs::read(&manifest_path)
-        && let Ok(manifest) = serde_json::from_slice::<Manifest>(&bytes)
+        && let Ok(mut manifest) = serde_json::from_slice::<Manifest>(&bytes)
         && manifest.date == date
         && manifest.resolution == resolution
         && serde_json::to_vec(&manifest.bounds)? == serde_json::to_vec(&bounds)?
@@ -678,6 +678,16 @@ async fn download(
         })
     {
         control.check()?;
+        recovery::upgrade_legacy(
+            client,
+            &mut manifest,
+            &bytes,
+            start,
+            &root,
+            control,
+            progress,
+        )
+        .await?;
         progress("Using verified full-day free sample cache", 1.);
         return Ok(traces);
     }
@@ -1970,6 +1980,151 @@ mod tests {
             compressed(json!({"now": start() + f64::from(second) - 1., "aircraft":aircraft})),
             0,
         )
+    }
+
+    fn restore_legacy_manifest(path: &Path) -> Vec<u8> {
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let mut manifest: Manifest =
+            serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
+        manifest.schema = 4;
+        manifest.snapshot_recoveries.clear();
+        let derived = path.join("snapshot-recovery");
+        if derived.exists() {
+            std::fs::remove_dir_all(derived).unwrap();
+        }
+        let bytes = serde_json::to_vec(&manifest).unwrap();
+        std::fs::write(manifest_path, &bytes).unwrap();
+        bytes
+    }
+
+    #[test]
+    fn legacy_missing_ground_records_upgrade_once_without_rechecking_source_gaps() {
+        let server = Server::new(|key| {
+            if key.contains("trace_full_~abc123") {
+                (404, vec![], 0)
+            } else {
+                fixture(key)
+            }
+        });
+        let directory = tempfile::tempdir().unwrap();
+        let client = server.client();
+        let path = run(&client, directory.path()).unwrap();
+        let legacy = restore_legacy_manifest(&path);
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let calls = server.calls.load(Ordering::Relaxed);
+        let offline = Control::default().with_offline(true);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            path
+        );
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), legacy);
+        assert!(!path.parent().unwrap().join("rejected").exists());
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        let upgraded_bytes = std::fs::read(&manifest_path).unwrap();
+        let upgraded: Manifest = serde_json::from_slice(&upgraded_bytes).unwrap();
+        assert_eq!(upgraded.schema, 5);
+        assert_eq!(upgraded.missing_aircraft, ["~abc123"]);
+        assert!(upgraded.snapshot_recoveries.is_empty());
+        let backup = path
+            .parent()
+            .unwrap()
+            .join("rejected")
+            .join(format!("sample-manifest-{}.json", hash(&legacy)));
+        assert_eq!(std::fs::read(backup).unwrap(), legacy);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), upgraded_bytes);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+    }
+
+    #[test]
+    fn legacy_missing_airborne_trace_uses_saved_recovery_sources_and_replays_offline() {
+        let daily_calls = Arc::new(AtomicUsize::new(0));
+        let counter = daily_calls.clone();
+        let server = Server::new(move |key| {
+            if key.contains("trace_full_~abc123") {
+                counter.fetch_add(1, Ordering::Relaxed);
+            }
+            recovery_fixture(key, false)
+        });
+        let directory = tempfile::tempdir().unwrap();
+        let client = server.client();
+        let path = run(&client, directory.path()).unwrap();
+        let trace = path.join("snapshot-recovery/trace_full_~abc123.json.gz");
+        let original_trace = std::fs::read(&trace).unwrap();
+        let legacy = restore_legacy_manifest(&path);
+        let calls = server.calls.load(Ordering::Relaxed);
+        assert_eq!(daily_calls.load(Ordering::Relaxed), 1);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        // The fixture has one unavailable recovery snapshot. The original
+        // legacy manifest did not record it; every available source is reused.
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 1);
+        assert_eq!(daily_calls.load(Ordering::Relaxed), 1);
+        assert_eq!(std::fs::read(&trace).unwrap(), original_trace);
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let upgraded_bytes = std::fs::read(&manifest_path).unwrap();
+        let upgraded: Manifest = serde_json::from_slice(&upgraded_bytes).unwrap();
+        assert_eq!(upgraded.schema, 5);
+        assert_eq!(upgraded.snapshot_recoveries.len(), 1);
+        assert_eq!(upgraded.snapshot_recoveries[0].missing_slots, [1195]);
+        assert_eq!(upgraded.missing_aircraft, ["~abc123"]);
+        let backup = path
+            .parent()
+            .unwrap()
+            .join("rejected")
+            .join(format!("sample-manifest-{}.json", hash(&legacy)));
+        assert_eq!(std::fs::read(backup).unwrap(), legacy);
+        let offline = Control::default().with_offline(true);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            path
+        );
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), upgraded_bytes);
+        assert_eq!(std::fs::read(&trace).unwrap(), original_trace);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 1);
+    }
+
+    #[test]
+    fn legacy_recovery_refusal_preserves_manifest_and_can_resume() {
+        let forbidden = Arc::new(AtomicBool::new(false));
+        let state = forbidden.clone();
+        let daily_calls = Arc::new(AtomicUsize::new(0));
+        let counter = daily_calls.clone();
+        let server = Server::new(move |key| {
+            if key.contains("trace_full_~abc123") {
+                counter.fetch_add(1, Ordering::Relaxed);
+            }
+            if key.ends_with("001455Z.json.gz") && state.load(Ordering::Relaxed) {
+                return (403, vec![], 0);
+            }
+            recovery_fixture(key, false)
+        });
+        let directory = tempfile::tempdir().unwrap();
+        let client = server.client();
+        let path = run(&client, directory.path()).unwrap();
+        let trace = path.join("snapshot-recovery/trace_full_~abc123.json.gz");
+        let original_trace = std::fs::read(&trace).unwrap();
+        let legacy = restore_legacy_manifest(&path);
+        let snapshot = directory
+            .path()
+            .join(format!("adsbx-sample-{DAY}-snapshots/001455Z.json.gz"));
+        std::fs::remove_file(&snapshot).unwrap();
+        forbidden.store(true, Ordering::Relaxed);
+        let error = run(&client, directory.path()).unwrap_err();
+        assert!(format!("{error:#}").contains("403"));
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), legacy);
+        assert!(!trace.exists());
+        assert_eq!(daily_calls.load(Ordering::Relaxed), 1);
+        forbidden.store(false, Ordering::Relaxed);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(std::fs::read(&trace).unwrap(), original_trace);
+        assert_eq!(daily_calls.load(Ordering::Relaxed), 1);
+        let upgraded: Manifest =
+            serde_json::from_slice(&std::fs::read(manifest_path).unwrap()).unwrap();
+        assert_eq!(upgraded.schema, 5);
+        assert_eq!(upgraded.snapshot_recoveries.len(), 1);
+        assert!(snapshot.is_file());
     }
 
     #[test]
