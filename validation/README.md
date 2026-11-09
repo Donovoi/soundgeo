@@ -64,6 +64,12 @@ production and staging sources for all four prepared Lake Hood dates. All
 3,067 rounded position-seconds across the broad search area. Production held
 more regional positions overall.
 
+A [public-source recheck](free-history-recheck.json) found no November assets in
+ADSBiq's published releases; its latest daily file was October 10. ADSB.fi's
+documented open API lists aircraft queries and snapshots. One anonymous OpenSky
+historical-track request returned 403 and no track. No further request was made.
+These checks added no reference positions.
+
 The [completed archive replay](lake-combined-reference-results.json) searched
 all seven Lake Hood recordings against production data and the combined data.
 All 14 runs finished offline: twelve reported insufficient evidence and two

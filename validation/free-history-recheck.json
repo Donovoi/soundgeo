@@ -1,0 +1,84 @@
+{
+  "scope": "Public-source availability checks for additional historical flight positions. No new flight data was obtained.",
+  "checked_utc": "2026-11-09T02:48:53.700121+00:00",
+  "adsbiq": {
+    "source": "https://github.com/Sky-Power-Services/adsbiq-data/releases",
+    "release_count": 5,
+    "daily_assets": 102,
+    "first_day": "2026-06-28",
+    "last_day": "2026-10-10",
+    "november_2026_assets": [],
+    "metadata": {
+      "file": "free-history-recheck-20261109/adsbiq-releases.json",
+      "sha256": "22196569f68c6bb711b08872bb8c12f9627d95ed367b86532600f86678e1a4f0"
+    }
+  },
+  "adsbfi": {
+    "source": "https://github.com/adsbfi/opendata/blob/9fe1c9ae1bf7a20ab180158e426800464c3cd93c/README.md",
+    "source_commit": "9fe1c9ae1bf7a20ab180158e426800464c3cd93c",
+    "documentation": {
+      "file": "free-history-recheck-20261109/adsbfi-README.md",
+      "sha256": "f7dfc42617088b6cd750c9f7657faa8b61e886138f3304264f35dd7bd1bd447b"
+    },
+    "observation": "The documented public endpoints provide aircraft queries; the feeder endpoint provides snapshots. No historical endpoint is listed."
+  },
+  "opensky": {
+    "plan": {
+      "scope": "One anonymous historical track probe. It does not run the location solver.",
+      "documentation": "https://openskynetwork.github.io/opensky-api/rest.html",
+      "source": "lake-combined-reference/production.csv",
+      "source_sha256": "322a6308a64f8dfe4441876bc251eced74da0682382611ceca9acca40978cb3a",
+      "selection": "Latest prepared reference day; most regional observations, then lexical ICAO; median observed flight time.",
+      "reference_day": "2026-11-06",
+      "bounds": {
+        "south": 61.0,
+        "north": 61.36,
+        "west": -150.36,
+        "east": -149.62
+      },
+      "aircraft": "a83d29",
+      "observed_positions": 1765,
+      "flight_reference_time_utc": 1793950294,
+      "media_or_recording_metadata_read": false,
+      "known_camera_position_read": false,
+      "request_url": "https://opensky-network.org/api/tracks/all?icao24=a83d29&time=1793950294",
+      "authentication": "None",
+      "maximum_requests": 1,
+      "timeout_s": 30,
+      "maximum_response_bytes": 524288,
+      "script_sha256": "237671973c1e15bd8c65cfaa4223a8e4cd0878f8865ddbabf69931eecbc2f793"
+    },
+    "result": {
+      "http_status": 403,
+      "response_headers": {
+        "Content-Type": "application/json",
+        "Content-Length": "35"
+      },
+      "bytes": 35,
+      "response_sha256": "2d411f57f9a4e0f3578ea29191fb3418492b766c5129cceced58e929fc56c000",
+      "elapsed_s": 0.8815403000044171,
+      "response_limit_exceeded": false,
+      "usable_trace": false
+    },
+    "response_text": "You cannot access historical tracks",
+    "request_count": 1,
+    "retry_count": 0,
+    "credentials_used": false,
+    "artifacts": [
+      {
+        "file": "opensky-free-history-probe/plan.json",
+        "sha256": "854cb24706b4e3721e1e123629b6ced80f32f5d7c7a3f850a7ac92f582efecab"
+      },
+      {
+        "file": "opensky-free-history-probe/result.json",
+        "sha256": "9babd396cab8b992d9b62f92eb1c7bad4b3526bc53ae6945599125769e1b5fff"
+      },
+      {
+        "file": "opensky-free-history-probe/response.body",
+        "sha256": "2d411f57f9a4e0f3578ea29191fb3418492b766c5129cceced58e929fc56c000"
+      }
+    ]
+  },
+  "new_reference_positions": 0,
+  "existing_replays_unchanged": true
+}
