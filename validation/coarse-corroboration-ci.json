@@ -1,0 +1,147 @@
+{
+  "head_commit": "e1a6bdfc75a670ed84ea1afcc13da068b5311209",
+  "url": "https://github.com/Donovoi/soundgeo/actions/runs/42564311224",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "check (ubuntu-latest)",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Linux dependencies",
+          "conclusion": "success"
+        },
+        {
+          "name": "Windows FFmpeg",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --all-targets",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --doc",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo build --release --locked --bins",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "check (windows-latest)",
+      "conclusion": "success",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Linux dependencies",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Windows FFmpeg",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --all-targets",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --doc",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo build --release --locked --bins",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}

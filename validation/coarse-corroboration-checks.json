@@ -136,7 +136,7 @@
     "extra_beam_requires_full_curve_coverage_and_curvature",
     "corroboration_beams_are_bounded_and_parallel_deterministic"
   ],
-  "ci_status": "Pending for this source revision",
+  "ci_status": "Passed all required checks on Windows and Ubuntu",
   "real_video_replay": {
     "status": "Queued after the preceding fit-retention comparison",
     "plan": {
@@ -145,14 +145,58 @@
     },
     "fixed_jobs_unchanged": true,
     "scope": "The same four offline single-day Doppler cases, original broad bounds, no recording date or clock supplied.",
-    "new_location_acceptances": 0
+    "new_location_acceptances": 0,
+    "plan_description_correction": {
+      "file": "lake-hires-doppler-beam/plan-description-correction.json",
+      "sha256": "b32c0cd9abdd82e609e55eef562d52062ad9c89189ae6c8eaa30881f79f7ca8c"
+    }
   },
   "timing_control": {
-    "status": "Running",
+    "status": "Completed",
     "plan": {
       "file": "coarse-corroboration-maho/plan.json",
       "sha256": "8c4a4bb1a8a9f2bf566c1ca438cdfb0042df3a10966e66b14ef8a5a10609c565"
-    }
+    },
+    "accepted": true,
+    "result": {
+      "complete": true,
+      "runner_exit_code": 0,
+      "proxy_connections": 0,
+      "source_manifests_unchanged": true,
+      "results_sha256": "67a31737cc4a6fd956232262f224eaed352111342a05d003e1a5fe03f7b2e3de"
+    },
+    "case": {
+      "case": "maho-nov1-b",
+      "accepted": true,
+      "screened": true,
+      "job_sha256": "46876daf826fd70e58496d9b8723835892dbb84669eb0eba3ab3f66bbf323096",
+      "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+      "exit_code": 0,
+      "report_sha256": "dbd28c6db22629f64c65127e82ba2feea78ab4c9a09eebb481015ce7815a6243",
+      "status": "candidates_found",
+      "sound_peaks": 117,
+      "track_count": 833,
+      "region": {
+        "latitude": 18.04328859060403,
+        "longitude": -63.121830985915494,
+        "enclosing_radius_m": 0.0,
+        "competitive_points": 1
+      },
+      "error_m": 549.649056637247,
+      "matched_flights": 16,
+      "score": 32.3003018462938,
+      "controls": 19,
+      "date_search": null,
+      "elapsed_s": 27.0431441000037
+    },
+    "preceding_report_differences": [
+      "created_utc"
+    ],
+    "report": {
+      "file": "coarse-corroboration-maho/audio/maho-nov1-b/report.json",
+      "sha256": "dbd28c6db22629f64c65127e82ba2feea78ab4c9a09eebb481015ce7815a6243"
+    },
+    "scope": "Offline Maho replay with no recording date or clock supplied; prepared high-resolution sample cache and original broad bounds."
   },
   "artifacts": [
     {
@@ -183,5 +227,6 @@
       "file": "coarse-corroboration-port/checks.json",
       "sha256": "1c5a4e148221962b1aae972dbca2f4a08889c4e1bbe7c4f869763234374fa0b9"
     }
-  ]
+  ],
+  "ci": "coarse-corroboration-ci.json"
 }

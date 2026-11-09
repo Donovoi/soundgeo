@@ -228,7 +228,22 @@
     },
     "date_arguments_supplied": false,
     "published_dates_discovered": 58,
-    "status": "Running"
+    "status": "Failed on a March trace with a position 8 milliseconds after midnight",
+    "result": {
+      "complete": false,
+      "stage": "download",
+      "exit_code": 1,
+      "stop_reason": null
+    },
+    "result_artifact": {
+      "file": "lake-all-free-hires-dates/result.json",
+      "sha256": "d5fd05dda0415b4e4376c01f315dd4607de045caa42cf451ddcbff26eb72b90d"
+    },
+    "source_inspection": {
+      "file": "march-hires-trace-inspection/result.json",
+      "sha256": "77b6d8e0bc0914a1bbe253777b9e6c0ce1f1416db143242f10c041746f73cca2"
+    },
+    "audio_status": "No audio analysis started because reference preparation failed"
   },
   "artifacts": [
     {
@@ -247,5 +262,23 @@
       "file": "early-hires-missing-trace-probe/result.json",
       "sha256": "9a3e2984dbd6e522384ec44c545f2a5536d8ef3779d3ee74ac7293a0e0fa2197"
     }
-  ]
+  ],
+  "public_sample_s3_probe": {
+    "access_documentation": "https://www.adsbexchange.com/pull-data/",
+    "scope": "The same 12 identities and both trace resolutions through the documented public sample bucket.",
+    "result": {
+      "complete": true,
+      "identities": 12,
+      "requests": 24,
+      "status_counts": {
+        "404": 24
+      },
+      "standard_available": 0,
+      "hires_available": 0
+    },
+    "artifact": {
+      "file": "early-hires-missing-trace-s3-probe/result.json",
+      "sha256": "6f196908419cb6426891edf437db30fa75edb0840d948d686279e796b33f5ec6"
+    }
+  }
 }

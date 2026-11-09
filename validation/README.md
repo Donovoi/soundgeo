@@ -8,6 +8,19 @@ New results must state which target they use.
 
 ## Current checks
 
+[Midnight-boundary checks](midnight-boundary-checks.json) fix a download failure
+in a March 2022 source trace. Its last position is 8 milliseconds after midnight.
+The downloader now preserves and records fractional endpoints within one second
+after the day ends. Analysis uses positions within the selected archive dates.
+Invalid dates still fail validation. Original source bytes remain unchanged.
+
+Revision `ab06bd3` passed all 165 Rust tests, 10 Python tests, formatting,
+strict Clippy, doc tests, and both release builds locally. Tests cover the
+boundary allowance, date filtering, source preservation, and offline cache reuse.
+The earlier failing regression and failed all-date download remain recorded.
+A new preparation run reuses those files and discovers dates without date arguments.
+The two Lake Hood audio replays wait for complete offline cache verification.
+
 [Proposal-retention checks](coarse-corroboration-checks.json) reproduce a
 four-curve proposal lost before refinement when another proposal has lower
 error across three curves. The search now keeps its error-ranked proposals
@@ -21,14 +34,19 @@ doc tests, and both release builds locally. The regression failed before the
 change and passed afterward. Further tests cover weak curves, missing coverage,
 bounded retention, and parallel determinism. The four-case offline Lake Hood
 replay waits for the preceding comparison. Its location results remain pending.
+The same source passed all required steps in
+[Windows and Ubuntu CI](coarse-corroboration-ci.json). Its offline Maho control
+remained within 549.65 m with 16 matched flights and all 19 controls. Only the
+report creation time differs from the preceding high-resolution replay.
 
 [An early sample-source check](early-high-resolution-source-gaps.json) prepared
 February 1, 2022, the earliest date in the high-resolution catalog. It downloaded
 379 traces and recorded 1,478 unavailable identities, all with the `~` prefix.
 Twelve evenly spaced missing identities returned HTTP 404 from both free trace
-sources. Preparation of all 58 discovered dates is running with blank dates
-and the original broad Lake Hood bounds. Two offline audio replays will use
-the complete prepared set after cache verification.
+sources. The same probes through the documented public sample bucket also
+returned 404. The first all-date preparation stopped on the March midnight
+endpoint. Its failure and partial cache remain preserved. The retry uses the
+fixed downloader, blank dates, and the original broad Lake Hood bounds.
 
 [Native high-resolution sample checks](native-high-resolution-checks.json) cover
 the new download option in the CLI and desktop app. Standard and high-resolution
