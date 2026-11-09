@@ -208,6 +208,20 @@ fn full_corroboration(
     tracks: &[Track],
     c: f64,
 ) -> Option<Corroboration> {
+    let required = events.len().min(3);
+    // Exact fitting can only remove assigned sounds. Extra retention needs
+    // more sounds than the core fit, so skip curves that cannot qualify.
+    if seed
+        .indices
+        .iter()
+        .take(events.len())
+        .filter(|&&index| index != usize::MAX)
+        .take(required + 1)
+        .count()
+        <= required
+    {
+        return None;
+    }
     let (objective, matches) = exact_score(seed, events, tracks, c);
     corroboration_for_fit(seed, events, objective, &matches)
 }
@@ -1376,6 +1390,47 @@ mod tests {
             coarse_profiled: false,
             corroboration: None,
         }
+    }
+
+    #[test]
+    fn coarse_corroboration_bound_preserves_full_curve_results() {
+        let (events, tracks) = corroboration_fixture();
+        let c = Job::default().sound_speed();
+        let mut qualified = 0;
+        let mut unqualified = 0;
+        for latitude_offset in [0., 500. / 111320.] {
+            for clock_rate in [0.999, 1., 1.001] {
+                for count in 0..=events.len() {
+                    for mask in 0..(1 << events.len()) {
+                        let mut seed = corroboration_seed(Point {
+                            lat: demo::TRUTH.lat + latitude_offset,
+                            ..demo::TRUTH
+                        });
+                        seed.clock_rate = clock_rate;
+                        for (i, index) in seed.indices.iter_mut().enumerate() {
+                            if mask & (1 << i) == 0 {
+                                *index = usize::MAX;
+                            }
+                        }
+                        let observations = &events[..count];
+                        let (objective, matches) = exact_score(&seed, observations, &tracks, c);
+                        let reference =
+                            corroboration_for_fit(&seed, observations, objective, &matches);
+                        assert_eq!(
+                            full_corroboration(&seed, observations, &tracks, c),
+                            reference,
+                            "count={count}, mask={mask}, offset={latitude_offset}, rate={clock_rate}"
+                        );
+                        if reference.is_some() {
+                            qualified += 1;
+                        } else {
+                            unqualified += 1;
+                        }
+                    }
+                }
+            }
+        }
+        assert!(qualified > 0 && unqualified > 0);
     }
 
     #[test]
