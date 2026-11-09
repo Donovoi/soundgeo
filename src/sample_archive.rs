@@ -760,7 +760,7 @@ async fn download(
     }
     ensure!(
         !legacy_offline,
-        "The older free sample cache failed verification; prepare it online before using it offline"
+        "Offline mode: the older free sample cache failed verification; prepare it online before using it offline"
     );
     // Reuse verified old objects and recorded 404s while preparing the wider
     // area. Keep the original manifest and files intact, including on failure.

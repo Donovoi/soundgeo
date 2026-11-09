@@ -55,5 +55,20 @@
     "receipt_sha256": "b9031b5f6d72d3d48795384dec5daca2ac51024a40380853d7945b41c278c279"
   },
   "native_migration_validation": "Pending qualified executable replay",
-  "video_accuracy_accepted": false
+  "video_accuracy_accepted": false,
+  "initial_ci_failure": {
+    "commit": "04bba8f9a44fee5990e9fe54c12f3693bf001bef",
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42706697001",
+    "platforms": [
+      "Windows",
+      "Ubuntu"
+    ],
+    "test": "empty_sample_dates_keep_later_matches_and_damaged_cache_still_fails",
+    "failure": "The damaged legacy cache was rejected, but the error omitted the Offline mode marker.",
+    "repair": "Restore the offline error marker without weakening integrity checks or changing the test.",
+    "ci_log_sha256": "ef62e070d834d2d534d706540f7b23115f88a64606145f94d62e5305d36d3147",
+    "local_qualification": "Stopped after the same source failed CI; only verified compiler children of that qualification job were terminated. Logs and terminal owner receipts were retained.",
+    "frozen_executable_created": false,
+    "native_replay_started": false
+  }
 }
