@@ -20,6 +20,13 @@ strict Clippy, doc tests, and both release builds locally and in
 The location acceptance rules are unchanged. The record includes the failing
 checks that led to the fixes and the upstream trace format evidence.
 
+The [offline replay](flight-reference-replays.json) with that build completed
+all 13 cases that use readsb flight traces. Maho remained within 550 m. All
+seven Lake Hood cases remained unresolved. No wrong accepted result or
+processing error occurred. Each job searched its prepared cache with empty
+date fields and no recording start time. The test proxy saw no connections,
+and the saved source manifests stayed unchanged.
+
 A [free archive comparison](lake-free-archive-comparison.json) checked the
 production and staging sources for all four prepared Lake Hood dates. All
 16 archive parts matched their published sizes and hashes. Staging added

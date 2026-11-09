@@ -155,12 +155,16 @@ def main():
             raise ValueError(f"{case['id']}: media differs from the fixed capture")
         prepared.append((case, job))
     args.output.mkdir(parents=True, exist_ok=False)
+    dated_cases = [case['id'] for case, job in prepared
+                   if any((job.get('archive') or {}).get(key) for key in ('date_from', 'date_to'))]
     plan = {'cli_sha256': digest(cli), 'manifest_sha256': digest(manifest_path),
             'runner_sha256': digest(Path(__file__)),
             'target_error_m': manifest['target_error_m'], 'selected_cases': [c['id'] for c in selected],
             'all_cases_selected': len(selected) == len(manifest['cases']),
             'workers': args.workers, 'timeout_s': args.timeout,
-            'recording_clock_supplied': False, 'recording_date_supplied': not args.unknown_date,
+            'recording_clock_supplied': False, 'recording_date_supplied': bool(dated_cases),
+            'date_argument_case_ids': dated_cases,
+            'imported_reference_case_ids': [case['id'] for case, job in prepared if job.get('tracks')],
             'offline': args.offline, 'archive_override': archive_override, 'all_cases_are_replays': True}
     (args.output / 'plan.json').write_text(json.dumps(plan, indent=2) + '\n', encoding='utf-8')
 

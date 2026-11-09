@@ -1,0 +1,369 @@
+{
+  "scope": "Offline real-video replays after the flight-reference fixes. Recording date and time fields are empty.",
+  "target_error_m": 1000,
+  "replays": [
+    {
+      "source_commit": "598691d5098fad3f52bcc7fbc9fa898e6f04b1fa",
+      "cli_sha256": "fb9c7aa3c32556769642a3631329ccdb383216684d3fbb0bc69fc62fe943f2c9",
+      "scope": "The 13 readsb-source cases from the fixed unknown-date manifest. Other providers are outside this replay.",
+      "known_position_supplied_to_app": false,
+      "video_clues": false,
+      "result": {
+        "cli_sha256": "fb9c7aa3c32556769642a3631329ccdb383216684d3fbb0bc69fc62fe943f2c9",
+        "manifest_sha256": "ae02858171684b026e156ed84b4997e14fc2f78ce30430d8acb1501f1ad64c2e",
+        "runner_sha256": "1819fac35d2464d9c527bce26829408bd2c2cc42371e0498e2575f891785b907",
+        "target_error_m": 1000,
+        "selected_cases": [
+          "lake-hood",
+          "lake-hood-nov1",
+          "lake-hood-nov1-later",
+          "lake-hood-nov4-a",
+          "lake-hood-nov4-b",
+          "lake-new-a",
+          "lake-new-b",
+          "maho-nov1-a",
+          "maho-nov1-b",
+          "maho-continuous-c",
+          "southampton",
+          "southampton-nov1",
+          "maho-nov4-b"
+        ],
+        "all_cases_selected": true,
+        "workers": 2,
+        "timeout_s": 3600.0,
+        "recording_clock_supplied": false,
+        "recording_date_supplied": false,
+        "offline": true,
+        "archive_override": null,
+        "all_cases_are_replays": true,
+        "completed_cases": 13,
+        "planned_cases": 13,
+        "accepted": 1,
+        "wrong_screened": 0,
+        "processing_errors": 0,
+        "cases": [
+          {
+            "case": "lake-hood",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "32d4d3f4209b57f71588a0f9c69227f768e954a56cd18348b60d0d37e7f3b072",
+            "media_sha256": "7945a3b57de29dcf70a99305ee5e1c3a489826fb49cfb410cb60eaf2481c0b42",
+            "exit_code": 3,
+            "report_sha256": "50a6602b1c9b27e6a0512409ce5f413b32ca375c6d56db542901fa5faedf10bc",
+            "status": "insufficient_evidence",
+            "sound_peaks": 48,
+            "track_count": 6992,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04",
+                "2026-11-06"
+              ],
+              "completed_batches": 3,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 1760.0379140000005
+          },
+          {
+            "case": "lake-hood-nov1",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "b255780685937f0f83059d6f52e49f4ed94efea9925f6c04017e962093864bed",
+            "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+            "exit_code": 3,
+            "report_sha256": "94090d4be070fada9b3d56af28bb1df686c818756bb3104cd06c37e004a5a507",
+            "status": "insufficient_evidence",
+            "sound_peaks": 56,
+            "track_count": 6992,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04",
+                "2026-11-06"
+              ],
+              "completed_batches": 3,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 2479.524911499997
+          },
+          {
+            "case": "lake-hood-nov1-later",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "34fc17252e699651f05b043d33067a1660fce52737e525c5d7d0f93002f68361",
+            "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+            "exit_code": 3,
+            "report_sha256": "f73900a0662a4980ddf2be1048bd18dbcf6e94a1df01b56a052b5ffaec834ddd",
+            "status": "insufficient_evidence",
+            "sound_peaks": 40,
+            "track_count": 6992,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04",
+                "2026-11-06"
+              ],
+              "completed_batches": 3,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 402.41241640000226
+          },
+          {
+            "case": "lake-hood-nov4-a",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "5cac208681504f98be9a9c55c8903741ffc1325789311badbca67d246d9e4b02",
+            "media_sha256": "c2544cdfc778a8f385f9366cf1fe23a21dc4dacffa4e6e7581d96fe66c505bea",
+            "exit_code": 3,
+            "report_sha256": "9102c1bba247e049d5edc088a1f8cc05b471a318c37e27cb6fd32161533fe1fc",
+            "status": "insufficient_evidence",
+            "sound_peaks": 22,
+            "track_count": 6992,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04",
+                "2026-11-06"
+              ],
+              "completed_batches": 3,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 324.5386930999957
+          },
+          {
+            "case": "lake-hood-nov4-b",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "b11dfec9af65ba7918ab9a30227cc9a625af799cd6455ce6fe86b3b7cbab39f7",
+            "media_sha256": "33f9dacf9f6fcf8ef19d2d3d49e5389b5c0160c513975a5ca535a2cc7cfb511a",
+            "exit_code": 3,
+            "report_sha256": "03205814d793462790715d43950841ae829ed07076b09f11c570158317750ace",
+            "status": "insufficient_evidence",
+            "sound_peaks": 26,
+            "track_count": 6992,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04",
+                "2026-11-06"
+              ],
+              "completed_batches": 3,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 211.70971269999427
+          },
+          {
+            "case": "lake-new-a",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "9e62166225927616076bde030469625c6ed39738d4b97b372fa7e1ae309af2d5",
+            "media_sha256": "76989a0829a92ddba147497d33c3d201eafcd0323811041e75393d0608e3db05",
+            "exit_code": 4,
+            "report_sha256": "ccf8242d66eec0ee216c0ab33a620e6056f0d43e85c97b3422796ca7c33dc113",
+            "status": "ambiguous",
+            "sound_peaks": 19,
+            "track_count": 6992,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04",
+                "2026-11-06"
+              ],
+              "completed_batches": 3,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 157.49494860000414
+          },
+          {
+            "case": "lake-new-b",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "e95166af52194b53cc7a2fa443119172fd281d8b9a0c6fee33f3fcb13108789d",
+            "media_sha256": "1c738aa5122c16ff0aefe98b7b1f00e5266cd0035c5bbb98c253cf6e3939b12c",
+            "exit_code": 3,
+            "report_sha256": "79a4b97aef16b2e0c8899b62d541ad12d30af5ce01a2548f42f7207dc50cd80c",
+            "status": "insufficient_evidence",
+            "sound_peaks": 25,
+            "track_count": 6992,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04",
+                "2026-11-06"
+              ],
+              "completed_batches": 3,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 163.721280699996
+          },
+          {
+            "case": "maho-continuous-c",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "ddc9ef11d1835a45139ab462adf48ca7e913a9710ef6f53dbaee5016160a0499",
+            "media_sha256": "75c0e04d7940f3b855ec598018861866b0ac40f07351e18eb400adaa94d30795",
+            "exit_code": 3,
+            "report_sha256": "32969f6c20870c2bd04b4fb0e445aade3bed3ce04083a8a6e8270532d9ad11f6",
+            "status": "insufficient_evidence",
+            "sound_peaks": 42,
+            "track_count": 597,
+            "date_search": null,
+            "elapsed_s": 6.876009100000374
+          },
+          {
+            "case": "maho-nov1-a",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "467bc1679cc9db83f4d92d414f787becebb96a44893eb94427f6fdcfb4af92f5",
+            "media_sha256": "5bd1012051c9ff8bada2924e111fe49728b2c68f39b5342d4cad5109cfb64949",
+            "exit_code": 4,
+            "report_sha256": "3c479a5376e5054277fe6265132030bb32e9450a38103e90e14ae0a8a64ed384",
+            "status": "ambiguous",
+            "sound_peaks": 86,
+            "track_count": 597,
+            "date_search": null,
+            "elapsed_s": 15.500041299994336
+          },
+          {
+            "case": "maho-nov1-b",
+            "accepted": true,
+            "screened": true,
+            "job_sha256": "2bcf35f546d4a4b3fd44a2020ba41f2a4203219cdd330e3b1c9e37d88fd8f00b",
+            "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+            "exit_code": 0,
+            "report_sha256": "bd0a8d79a443caf5bd8f75286ebe2f1edde3183ae298cf392e6fb5da69a3cbe3",
+            "status": "candidates_found",
+            "sound_peaks": 117,
+            "track_count": 597,
+            "region": {
+              "latitude": 18.04328859060403,
+              "longitude": -63.121830985915494,
+              "enclosing_radius_m": 0.0,
+              "competitive_points": 1
+            },
+            "error_m": 549.649056637247,
+            "matched_flights": 16,
+            "score": 31.0335629455301,
+            "controls": 19,
+            "date_search": null,
+            "elapsed_s": 15.53127449999738
+          },
+          {
+            "case": "maho-nov4-b",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "8ad6d2b618f26ab090e31bfe0224545fd6a146640df281cdae4abe494ad7be4b",
+            "media_sha256": "66bff87e701936146f1c21f7cebdec1025a87b59b4244c0dbaf45d17455f05c4",
+            "exit_code": 3,
+            "report_sha256": "e01110d6f4dc73fd91853ec21e8ab14c39dc5a4893b023d291c6daeca27d2323",
+            "status": "insufficient_evidence",
+            "sound_peaks": 62,
+            "track_count": 147,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04"
+              ],
+              "completed_batches": 2,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 723.3800880999988
+          },
+          {
+            "case": "southampton",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "b466e27d8573a89385b992a1d7d25ecf5e4853b2aaf91a744e13067da6259493",
+            "media_sha256": "88fadc80a7209432e01350aec3adc901e296e3174ee1f469022d6ec47c1d7e30",
+            "exit_code": 3,
+            "report_sha256": "de7e59bbf4b83129e08776be826db9368fa3c1d8783dac85fda4a756de6975c0",
+            "status": "insufficient_evidence",
+            "sound_peaks": 13,
+            "track_count": 16430,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04"
+              ],
+              "completed_batches": 2,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 753.3733260999943
+          },
+          {
+            "case": "southampton-nov1",
+            "accepted": false,
+            "screened": false,
+            "job_sha256": "be9326bbb69e24e97105fa6adf2303b0f9146e370fe9c3e33b7d57f9ce94c274",
+            "media_sha256": "996aabae4904eac7cae7ac9c1a4d4dbb8bef3c1726dd304497b17516bbf3b64f",
+            "exit_code": 3,
+            "report_sha256": "3ca2a09834ded8a4e8f5a2e46cb645fbc0526c2b7e62b01654f7d9b70e3598ed",
+            "status": "insufficient_evidence",
+            "sound_peaks": 11,
+            "track_count": 16430,
+            "date_search": {
+              "dates": [
+                "2026-11-01",
+                "2026-11-03",
+                "2026-11-04"
+              ],
+              "completed_batches": 2,
+              "complete": true,
+              "track_count_includes_overlap": true
+            },
+            "elapsed_s": 728.5284893999997
+          }
+        ]
+      },
+      "completion": {
+        "runner_exit_code": 1,
+        "elapsed_s": 4208.219829200003,
+        "proxy_connections": 0,
+        "source_manifests_unchanged": true,
+        "audio_results_sha256": "6d077b49510517045c3b5fcfcf8217141de908fcfdf84ca2e129259403230c9c"
+      },
+      "lake_cases": 7,
+      "lake_accepted": 0,
+      "artifacts": [
+        {
+          "file": "reception-gap-native/plan.json",
+          "sha256": "1c246000bbeff4da5c05a3d17772fd4c0b3e204bdfc3a6bf891e0defff3c2ae2"
+        },
+        {
+          "file": "reception-gap-native/manifest.json",
+          "sha256": "ae02858171684b026e156ed84b4997e14fc2f78ce30430d8acb1501f1ad64c2e"
+        },
+        {
+          "file": "reception-gap-native/audio/results.json",
+          "sha256": "6d077b49510517045c3b5fcfcf8217141de908fcfdf84ca2e129259403230c9c"
+        },
+        {
+          "file": "reception-gap-native/result.json",
+          "sha256": "a7d0053dd503da23acab07a608cf28a1f90ab660b43169546632bff183ef3667"
+        },
+        {
+          "file": "reception-gap-native/proxy-observation.json",
+          "sha256": "cc613c5b17db29f551703bba2fc9294d055621569ef8f77906a5415a16bd688f"
+        }
+      ]
+    }
+  ]
+}

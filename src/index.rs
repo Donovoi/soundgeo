@@ -421,14 +421,19 @@ fn for_each_corridor_point(
         .collect();
         slants.sort_by(f64::total_cmp);
         slants.dedup_by(|a, b| (*a - *b).abs() < 1.);
+        // Carry spacing along each continuous eligible path. Starting again at
+        // every fix makes dense recordings produce extra search hypotheses.
+        let mut next_distance = 0.;
         for pair in track.samples.windows(2) {
             control.check()?;
             let dt = pair[1].time - pair[0].time;
             if dt <= 0. || dt > 60. {
+                next_distance = 0.;
                 continue;
             }
             let speed = (pair[1].xyz - pair[0].xyz).norm() / dt;
             if speed < 25. || (speed / first.speed_mps).ln().abs() > 0.8 {
+                next_distance = 0.;
                 continue;
             }
             let latmid = (pair[0].point.lat + pair[1].point.lat) * 0.5;
@@ -437,11 +442,12 @@ fn for_each_corridor_point(
             let north = (pair[1].point.lat - pair[0].point.lat) * 111320.;
             let length = east.hypot(north);
             if length < 1. {
+                next_distance = 0.;
                 continue;
             }
-            let steps = (length / job.grid_m).ceil().max(1.) as usize;
-            for step in 0..steps {
-                let f = step as f64 / steps as f64;
+            while next_distance < length {
+                let f = next_distance / length;
+                next_distance += job.grid_m;
                 let a = pair[0].point;
                 let b = pair[1].point;
                 let plane = Point {
@@ -488,6 +494,7 @@ fn for_each_corridor_point(
                     }
                 }
             }
+            next_distance = (next_distance - length).max(0.);
         }
     }
     Ok(())
@@ -601,6 +608,117 @@ mod tests {
                 .map(|&(t, east, north, height)| Sample::new(EPOCH + t, point(east, north, height)))
                 .collect(),
         }
+    }
+
+    fn corridor_proposals(track: &Track) -> Vec<(Point, f64)> {
+        let job = Job {
+            grid_m: 200.,
+            ..Default::default()
+        };
+        let event = Event {
+            start_s: 0.,
+            end_s: 20.,
+            cpa_s: 10.,
+            base_hz: 100.,
+            speed_mps: 50.,
+            slant_m: 500.,
+            fit_rmse_hz: 0.,
+            contrast_db: 20.,
+            ridge: vec![],
+            activity_span_s: None,
+            alternatives: vec![],
+        };
+        let bounds = Bounds {
+            south: TRUTH.lat - 1.,
+            north: TRUTH.lat + 1.,
+            west: TRUTH.lon - 1.,
+            east: TRUTH.lon + 1.,
+        };
+        let mut result = vec![];
+        for_each_corridor_point(
+            &job,
+            &event,
+            track,
+            bounds,
+            &mut Terrain::new(None, TRUTH.alt),
+            &Control::default(),
+            |_, point, arrival| {
+                result.push((point, arrival));
+                Ok(())
+            },
+        )
+        .unwrap();
+        result
+    }
+
+    fn corridor_centers(proposals: &[(Point, f64)]) -> BTreeSet<(i64, i64)> {
+        // The two sides of each constant-height corridor share the same plane point.
+        proposals
+            .chunks_exact(2)
+            .map(|pair| {
+                let lat = (pair[0].0.lat + pair[1].0.lat) * 0.5;
+                let lon = (pair[0].0.lon + pair[1].0.lon) * 0.5;
+                (
+                    ((lon - TRUTH.lon) * 111320. * TRUTH.lat.to_radians().cos()).round() as i64,
+                    ((lat - TRUTH.lat) * 111320.).round() as i64,
+                )
+            })
+            .collect()
+    }
+
+    #[test]
+    fn corridor_spacing_is_independent_of_position_cadence() {
+        let sparse: Vec<_> = (0..=3)
+            .map(|i| (i as f64 * 6., i as f64 * 300., 0., 100.))
+            .collect();
+        let dense: Vec<_> = (0..=9)
+            .map(|i| (i as f64 * 2., i as f64 * 100., 0., 100.))
+            .collect();
+        let sparse = corridor_proposals(&track("sparse", &sparse));
+        let dense = corridor_proposals(&track("dense", &dense));
+        let expected = BTreeSet::from([(0, 0), (200, 0), (400, 0), (600, 0), (800, 0)]);
+        assert_eq!(corridor_centers(&sparse), expected);
+        assert_eq!(corridor_centers(&dense), expected);
+        assert_eq!(sparse.len(), dense.len());
+        for (a, b) in sparse.iter().zip(&dense) {
+            assert!(a.0.distance(b.0) < 1e-4);
+            assert!((a.1 - b.1).abs() < 1e-6);
+        }
+    }
+
+    #[test]
+    fn corridor_spacing_follows_turns_along_the_recorded_path() {
+        let proposals = corridor_proposals(&track(
+            "turn",
+            &[
+                (0., 0., 0., 100.),
+                (3., 150., 0., 100.),
+                (7., 150., 200., 100.),
+            ],
+        ));
+        assert_eq!(
+            corridor_centers(&proposals),
+            BTreeSet::from([(0, 0), (150, 50)])
+        );
+    }
+
+    #[test]
+    fn corridor_spacing_restarts_after_gaps_and_ineligible_motion() {
+        let proposals = corridor_proposals(&track(
+            "interrupted",
+            &[
+                (0., 0., 0., 100.),
+                (2., 100., 0., 100.),
+                (202., 1000., 0., 100.),
+                (204., 1100., 0., 100.),
+                (214., 1150., 0., 100.),
+                (216., 1250., 0., 100.),
+            ],
+        ));
+        assert_eq!(
+            corridor_centers(&proposals),
+            BTreeSet::from([(0, 0), (1000, 0), (1150, 0)])
+        );
     }
 
     #[test]
