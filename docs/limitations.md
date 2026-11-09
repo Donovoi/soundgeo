@@ -125,6 +125,21 @@ retries recorded gaps. Offline reuse preserves them and rejects missing or
 damaged downloaded files. Preparation stops if no discovery snapshot is
 available for the day. This source permits testing and evaluation.
 
+When a daily trace is unavailable, the downloader checks for an airborne
+position in the discovery snapshots. It then downloads five-second snapshots
+from five minutes before to five minutes after that position. Overlapping
+windows share the same source files. This can recover short flight segments.
+The cache records the source snapshots, attempted slots, missing files, and
+derived traces. The missing daily trace remains listed in the manifest.
+
+Recovered positions use the snapshot time minus the reported position age.
+Geometric and barometric altitude remain separate. Duplicate position times
+are counted once, and gaps over 20 seconds split the path. Ground records do
+not supply flight altitude. These windows can miss other parts of a flight.
+Snapshot recovery also needs an airborne discovery position; a flight between
+discovery snapshots can remain absent. Samples before May 2020 use the source's
+one-minute snapshot interval. Offline use requires a prepared cache.
+
 The high-resolution sample uses the same discovery snapshots and first-of-month
 coverage. It can add positions for a recorded flight, but source gaps and flights
 missed during discovery remain. Downloads and disk use can be larger. Selecting
