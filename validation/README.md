@@ -8,6 +8,28 @@ New results must state which target they use.
 
 ## Current checks
 
+[Proposal-retention checks](coarse-corroboration-checks.json) reproduce a
+four-curve proposal lost before refinement when another proposal has lower
+error across three curves. The search now keeps its error-ranked proposals
+and a bounded extra set supported by full curves. It can keep 512 extra coarse
+proposals and 128 extra refinement proposals. Coverage, curve shape, error,
+and shared-clock checks qualify the extra set. Location acceptance rules are unchanged.
+
+This adapts the earlier `a5e0a99` experiment to the current source. Revision
+`e5eeb2b` passed all 163 Rust tests, 10 Python tests, formatting, strict Clippy,
+doc tests, and both release builds locally. The regression failed before the
+change and passed afterward. Further tests cover weak curves, missing coverage,
+bounded retention, and parallel determinism. The four-case offline Lake Hood
+replay waits for the preceding comparison. Its location results remain pending.
+
+[An early sample-source check](early-high-resolution-source-gaps.json) prepared
+February 1, 2022, the earliest date in the high-resolution catalog. It downloaded
+379 traces and recorded 1,478 unavailable identities, all with the `~` prefix.
+Twelve evenly spaced missing identities returned HTTP 404 from both free trace
+sources. Preparation of all 58 discovered dates is running with blank dates
+and the original broad Lake Hood bounds. Two offline audio replays will use
+the complete prepared set after cache verification.
+
 [Native high-resolution sample checks](native-high-resolution-checks.json) cover
 the new download option in the CLI and desktop app. Standard and high-resolution
 traces have separate caches and share discovery snapshots. Offline date discovery

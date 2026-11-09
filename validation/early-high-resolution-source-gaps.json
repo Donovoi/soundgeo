@@ -1,0 +1,251 @@
+{
+  "scope": "Free-source availability check on the earliest date discovered for high-resolution sample traces. This is a source check and contains no media analysis.",
+  "source": "https://www.adsbexchange.com/data-products/sample-data/",
+  "date": "2022-02-01",
+  "native_manifest": {
+    "file": "lake-all-free-hires-dates/cache/adsbx-hires-sample-2022-02-01-4c03a53c13712c72/sample-manifest.json",
+    "sha256": "703831b35c21ddb03822b1f8afc293a3d5d9fb79eed394fbfa1920d2662a2017"
+  },
+  "native_preparation": {
+    "identities": 1857,
+    "downloaded_traces": 379,
+    "unavailable_high_resolution_identities": 1478,
+    "missing_identities_with_tilde_prefix": 1478,
+    "snapshots": 288
+  },
+  "probe_plan": {
+    "scope": "First published high-resolution sample date. Select up to 12 missing identities at evenly spaced sorted indices, then probe the public high-resolution and standard trace URLs. No media or known recording time is read.",
+    "source": "https://www.adsbexchange.com/data-products/sample-data/",
+    "script_sha256": "ab5e9b7b99a2326d0bb49276993344b4ef7482341e22a4a56731548797a20286",
+    "date": "2022-02-01",
+    "maximum_requests": 24,
+    "selection": "Evenly spaced sorted indices of missing_aircraft, including both ends. Selection occurs before any requests.",
+    "wait_limit_s": 7200,
+    "changes_native_cache": false
+  },
+  "selection": {
+    "manifest_sha256": "703831b35c21ddb03822b1f8afc293a3d5d9fb79eed394fbfa1920d2662a2017",
+    "missing_identities": 1478,
+    "selected_identities": [
+      "~574001",
+      "~574170",
+      "~574314",
+      "~574471",
+      "~5745ce",
+      "~57470e",
+      "~574890",
+      "~574a56",
+      "~574bdb",
+      "~574d56",
+      "~574e9f",
+      "~574ffe"
+    ],
+    "successful_native_traces": 379
+  },
+  "completion": {
+    "complete": true,
+    "identities": 12,
+    "requests": 24,
+    "standard_available": 0,
+    "hires_available": 0,
+    "native_manifest_unchanged": true
+  },
+  "requests": [
+    {
+      "identity": "~574001",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/01/trace_full_~574001.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574001",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/01/trace_full_~574001.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574170",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/70/trace_full_~574170.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574170",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/70/trace_full_~574170.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574314",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/14/trace_full_~574314.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574314",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/14/trace_full_~574314.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574471",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/71/trace_full_~574471.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574471",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/71/trace_full_~574471.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~5745ce",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/ce/trace_full_~5745ce.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~5745ce",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/ce/trace_full_~5745ce.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~57470e",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/0e/trace_full_~57470e.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~57470e",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/0e/trace_full_~57470e.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574890",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/90/trace_full_~574890.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574890",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/90/trace_full_~574890.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574a56",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/56/trace_full_~574a56.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574a56",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/56/trace_full_~574a56.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574bdb",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/db/trace_full_~574bdb.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574bdb",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/db/trace_full_~574bdb.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574d56",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/56/trace_full_~574d56.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574d56",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/56/trace_full_~574d56.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574e9f",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/9f/trace_full_~574e9f.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574e9f",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/9f/trace_full_~574e9f.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574ffe",
+      "resolution": "hires-traces",
+      "url": "https://samples.adsbexchange.com/hires-traces/2022/02/01/fe/trace_full_~574ffe.json",
+      "status": 404,
+      "error": "Not Found"
+    },
+    {
+      "identity": "~574ffe",
+      "resolution": "traces",
+      "url": "https://samples.adsbexchange.com/traces/2022/02/01/fe/trace_full_~574ffe.json",
+      "status": 404,
+      "error": "Not Found"
+    }
+  ],
+  "interpretation": "All 12 sampled missing identities returned HTTP 404 from both free trace sources. This probe establishes no standard-trace fallback for those 12 identities. Other missing identities were not probed against the standard source.",
+  "all_date_preparation": {
+    "plan": {
+      "file": "lake-all-free-hires-dates/plan.json",
+      "sha256": "acb79c8ff073a91cc4cfcae516516e752d58b55bd042695514cdb78c5c295954"
+    },
+    "date_arguments_supplied": false,
+    "published_dates_discovered": 58,
+    "status": "Running"
+  },
+  "artifacts": [
+    {
+      "file": "early-hires-missing-trace-probe/queued-plan.json",
+      "sha256": "424c6baa079617fa4cd098da980007c5efe83afd24bada38e2892706b7cf8d80"
+    },
+    {
+      "file": "early-hires-missing-trace-probe/plan.json",
+      "sha256": "34fcae8982850168636c16baa93324c7a66502fb9b6058257c22b733068093e3"
+    },
+    {
+      "file": "early-hires-missing-trace-probe/results.json",
+      "sha256": "f0cb1ac791db8f9b5f10b61e1e8cd5f0f14373be87c69744e65a6483bbe3e314"
+    },
+    {
+      "file": "early-hires-missing-trace-probe/result.json",
+      "sha256": "9a3e2984dbd6e522384ec44c545f2a5536d8ef3779d3ee74ac7293a0e0fa2197"
+    }
+  ]
+}

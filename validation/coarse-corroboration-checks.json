@@ -1,0 +1,187 @@
+{
+  "scope": "Proposal retention through coarse pruning and final refinement selection. Full observed curves qualify extra proposals; final location acceptance rules are unchanged.",
+  "source_commit": "e5eeb2b439f271b1160a509095cca25f87b49e56",
+  "source_sha256": "588b0749f9528006760a6d6f041f648d0230db59209dad7de13b95f212e86cd3",
+  "adapted_from": "a5e0a99e45ccc8c1d503388e0e8c826e63a95cb1",
+  "prior_experiment": "corroboration-probe-result.json",
+  "retention": {
+    "original_error_ranked_set_kept": true,
+    "additional_limit": "ceil(primary_limit / 4)",
+    "coarse_primary_limit": 2048,
+    "coarse_additional_limit": 512,
+    "refinement_primary_limit": 512,
+    "refinement_additional_limit": 128,
+    "checks": [
+      "Full observed ridge coverage",
+      "Doppler curve improvement over a fitted linear drift",
+      "Existing per-curve and joint error limits",
+      "Shared clock span"
+    ]
+  },
+  "regression_before": {
+    "exit_code": 101,
+    "expected_assertion_failed": true,
+    "log_sha256": "865a928de832efd7aa7b84674d6d0f616f222c722d5ebfb64af642811332f66d",
+    "production_source_restored": true
+  },
+  "required_local_checks": {
+    "source_sha256": "588b0749f9528006760a6d6f041f648d0230db59209dad7de13b95f212e86cd3",
+    "steps": [
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.6436889000033261,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 6.536166099998809,
+        "log_sha256": "dd4dae76e0f61bd24a2764bd3a6460c07e8c53e24b4fced3cef09d3d5613bd35"
+      },
+      {
+        "name": "tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 325.6528177,
+        "log_sha256": "fb53d0ee631c3d2c07d59ad8ef377064c4168bc358aaed88ad3ced68b16c61ef"
+      },
+      {
+        "name": "doc-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--doc"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.9980988000024809,
+        "log_sha256": "5ab599182b066b7e9a84c53c1c04f87ade6ff3cef2f578bcc5c55fa93b73aea3"
+      },
+      {
+        "name": "build",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--bins"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.6379105000014533,
+        "log_sha256": "90cf830373db453d84495a4e6fd37c6b76570bd6d22bfa550514a72b498c4898"
+      },
+      {
+        "name": "python",
+        "command": [
+          "python",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "validation",
+          "-p",
+          "test_run_timing.py"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.27462910000031115,
+        "log_sha256": "b3db13a6cddbbe325ab6b20e864b6713b4d32788361ef8cf638b3005724dd8a0"
+      }
+    ],
+    "complete": true,
+    "rust_tests_passed": 163,
+    "python_tests_passed": 10,
+    "failed": 0,
+    "ignored": 0
+  },
+  "build": {
+    "source_commit": "e5eeb2b439f271b1160a509095cca25f87b49e56",
+    "source_sha256": "588b0749f9528006760a6d6f041f648d0230db59209dad7de13b95f212e86cd3",
+    "rust_tests_passed": 163,
+    "python_tests_passed": 10,
+    "all_required_checks_passed": true,
+    "checks_sha256": "1c5a4e148221962b1aae972dbca2f4a08889c4e1bbe7c4f869763234374fa0b9",
+    "adapted_from": "a5e0a99e45ccc8c1d503388e0e8c826e63a95cb1",
+    "cli": "analysis-build/soundgeo-cli-beam-e5eeb2b.exe",
+    "cli_sha256": "5abdd660b58dd41a3a9cdf3ca424524f7c54a59cda02022048a51ee74f897ade",
+    "desktop": "analysis-build/soundgeo-beam-e5eeb2b.exe",
+    "desktop_sha256": "eeac69a36c1f0feb372141b8f90ce70fa5e26501d1b8e679582a8fc5a81a4653"
+  },
+  "new_tests": [
+    "coarse_pruning_keeps_extra_verified_curves",
+    "extra_beam_requires_full_curve_coverage_and_curvature",
+    "corroboration_beams_are_bounded_and_parallel_deterministic"
+  ],
+  "ci_status": "Pending for this source revision",
+  "real_video_replay": {
+    "status": "Queued after the preceding fit-retention comparison",
+    "plan": {
+      "file": "lake-hires-doppler-beam/plan.json",
+      "sha256": "8196c9bd16103bfdc0896ca0bd1a1bd746e6eedd65beacdabd6c5d11606be54f"
+    },
+    "fixed_jobs_unchanged": true,
+    "scope": "The same four offline single-day Doppler cases, original broad bounds, no recording date or clock supplied.",
+    "new_location_acceptances": 0
+  },
+  "timing_control": {
+    "status": "Running",
+    "plan": {
+      "file": "coarse-corroboration-maho/plan.json",
+      "sha256": "8c4a4bb1a8a9f2bf566c1ca438cdfb0042df3a10966e66b14ef8a5a10609c565"
+    }
+  },
+  "artifacts": [
+    {
+      "file": "coarse-corroboration-before/plan.json",
+      "sha256": "c22a86bf2d8075b906ecbf8ac573d717f7c481e3769e62a412ec95dafa2b3588"
+    },
+    {
+      "file": "coarse-corroboration-before/test.log",
+      "sha256": "865a928de832efd7aa7b84674d6d0f616f222c722d5ebfb64af642811332f66d"
+    },
+    {
+      "file": "coarse-corroboration-before/instrumented-search.rs",
+      "sha256": "0610daab90dfa381ed9016374c2fa120b73aa37300300fd0ed17dfe7a88fdc7a"
+    },
+    {
+      "file": "coarse-corroboration-before/result.json",
+      "sha256": "0b3757d223ebd8191d732fa380ad019e0b1122c66d54dd44ce97c3511f5a049a"
+    },
+    {
+      "file": "coarse_corroboration_regression.rs",
+      "sha256": "38bfa235f5e1da6479f80d16ed251c1c7d97c47e7fb28887013ff71192277422"
+    },
+    {
+      "file": "coarse-corroboration-port/focused-after.log",
+      "sha256": "789ae2e3f01e05d448825fd3ef9911ee5b17afd43b109d6fd06ef0ead9d30090"
+    },
+    {
+      "file": "coarse-corroboration-port/checks.json",
+      "sha256": "1c5a4e148221962b1aae972dbca2f4a08889c4e1bbe7c4f869763234374fa0b9"
+    }
+  ]
+}
