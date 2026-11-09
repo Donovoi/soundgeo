@@ -44,8 +44,25 @@ regression helper and the correction.
 For the first November 1 Lake Hood clip, standard traces now need 15,277,836
 proposals, down from 19,816,431. High-resolution traces need 15,274,007 and fit
 the same 20-million-proposal budget. They previously exceeded that budget.
-The paired searches continue offline with identical input jobs and no recording
-date or start time argument. These counts cover search preparation.
+All four [paired searches](lake-doppler-spacing-results.json) completed offline
+with no recording date or start time argument. These counts cover search preparation.
+The first clip's leading candidates were within 166.16 m with standard traces
+and 99.54 m with high-resolution traces. The later clip's leading candidates
+were 5,208.45 m and 8,103.08 m away. All four results were ambiguous. No location
+was accepted, and no processing error or proxy connection was recorded.
+
+An [association check](lake-curve-association-audit.json) tested all 40 computed
+candidates at their fixed positions and inferred clocks. Extra passing curves
+occurred at both nearby and distant candidates. The coarse range and speed
+checks rejected the extra first-clip association. A separate diagnostic supplied
+an earlier hinted estimate for the later clip. Five curves still passed with
+each source. These conditional checks add no accepted locations.
+
+A [selected-flight diagnostic](lake-proposal-retention-diagnostic.json) then
+traced proposals for three aircraft from that earlier hinted fit. For two of
+those aircraft, nearby proposals with four passing curves ranked among the
+best four worker results with each source. A full search trace is checking
+the later pruning stages. These tests use hints and add no location passes.
 
 The [preceding Doppler source test](lake-doppler-source-baseline.json) completed
 one of four planned analyses. Its first candidate was within 46 m of Lake Hood.
@@ -67,8 +84,7 @@ Each fit still receives its own quiet-gap checks. A four-curve regression failed
 before this change and passed afterward. Location acceptance rules are unchanged.
 [Revision `bd4d948`](equal-corroboration-checks.json) passed all 157 Rust tests,
 10 Python tests, formatting, strict Clippy, doc tests, and both release builds
-locally. Its four-case offline replay uses the same input jobs and waits for the
-preceding comparison to finish.
+locally. Its four-case offline replay now runs with the same input jobs.
 The same source passed all 157 Rust tests, 10 Python tests, and required steps in
 [Windows and Ubuntu CI](equal-corroboration-ci-checks.json) at `5348434`.
 
