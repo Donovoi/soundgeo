@@ -130,6 +130,7 @@ fn main() -> Result<()> {
                     "job":job,"duration_s":report.duration_s,"track_count":data.tracks.len(),
                     "candidates":search.candidates,"hypotheses":search.hypotheses,"search_method":search.method,
                     "search_grid_m":search.coarse_grid_m,"warnings":search.warnings,
+                    "proposal_partition":search.partition,
                     "changes_location_acceptance":false,"calibrated_location_probability":false,
                     "scope":"Full search of reordered complete sound activities, with original bounds, flight data and resource limits. The control supplies no candidate position or recording clock."
                 }),

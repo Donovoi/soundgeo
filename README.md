@@ -313,18 +313,18 @@ Set `start_utc` to `null` when the recording start time is unknown.
 For Doppler searches, set `bounds` to `null` to search the area covered by the imported flight data.
 Flight passage timing requires a search area.
 
-Before it compares sound curves, the flight-corridor search checks its hypothesis budget.
-If the search needs more hypotheses than the limit, it stops without a partial result.
-The check uses the same proposed locations as the search.
-To retry with a larger limit, use `--max-hypotheses`:
+The flight-corridor search divides large jobs into batches automatically.
+It checks each batch before it compares sound curves. Matching keeps access
+to all flight tracks across batch boundaries.
+Use `--max-hypotheses` to set the budget for each batch:
 
 ```powershell
 soundgeo-cli.exe analyze --config "job.json" --max-hypotheses 50000000 --output "report-larger-search.json"
 ```
 
 The limit can be between 100 and 100,000,000.
-This option sets the search budget for that run. In a date search, the budget
-applies to each batch. The report records the limit used.
+The report records the limit and each automatic division. Total work across
+dates and proposal batches can exceed the limit for one batch.
 
 Use `--search-threads` to set the maximum CPU workers for flight-corridor matching:
 

@@ -84,6 +84,7 @@ pub struct SearchResult {
     pub coarse_grid_m: f64,
     pub hypotheses: usize,
     pub method: String,
+    pub partition: Option<crate::index::ProposalPartition>,
 }
 #[derive(Clone)]
 pub(crate) struct Seed {
@@ -172,6 +173,37 @@ pub(crate) fn has_competing_fit(candidates: &[Candidate]) -> bool {
             .skip(1)
             .any(|other| other.relative_error_percent < first.relative_error_percent * 1.5 + 0.05)
     })
+}
+
+pub(crate) fn rank_candidates(mut candidates: Vec<Candidate>, last_event: f64) -> Vec<Candidate> {
+    candidates.sort_by(candidate_order);
+    let mut distinct: Vec<Candidate> = vec![];
+    for candidate in candidates {
+        let point = Point {
+            lat: candidate.latitude,
+            lon: candidate.longitude,
+            alt: 0.,
+        };
+        if distinct.iter().any(|other| {
+            point.distance(Point {
+                lat: other.latitude,
+                lon: other.longitude,
+                alt: 0.,
+            }) < 250.
+                && (candidate.recording_start_unix - other.recording_start_unix).abs() < 10.
+                && (candidate.recording_start_unix - other.recording_start_unix
+                    + last_event * (candidate.recording_clock_rate - other.recording_clock_rate))
+                    .abs()
+                    < 10.
+        }) {
+            continue;
+        }
+        distinct.push(candidate);
+        if distinct.len() == 10 {
+            break;
+        }
+    }
+    distinct
 }
 
 struct CorroboratedFit {
@@ -824,6 +856,98 @@ pub fn locate(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<SearchResult> {
+    match locate_once(job, events, tracks, terrain, control, progress, None) {
+        Err(error)
+            if error
+                .downcast_ref::<crate::index::HypothesisBudgetExceeded>()
+                .is_some_and(|e| e.before_matching) => {}
+        result => return result,
+    }
+    progress("Dividing flight proposals to fit the search budget", 0.42);
+    let bounds = job.bounds.unwrap_or(inferred_bounds(tracks)?);
+    let partition =
+        crate::index::partition_proposals(job, events, tracks, bounds, terrain, control, progress)?;
+    let mut candidates = vec![];
+    let mut warnings = std::collections::BTreeSet::new();
+    let mut hypotheses = 0usize;
+    let active_count = partition
+        .batches
+        .iter()
+        .filter(|batch| batch.hypotheses > 0)
+        .count();
+    for (index, batch) in partition
+        .batches
+        .iter()
+        .filter(|batch| batch.hypotheses > 0)
+        .enumerate()
+    {
+        control.check()?;
+        let update = |message: &str, fraction: f32| {
+            progress(
+                &format!(
+                    "Flight proposal batch {}/{}: {message}",
+                    index + 1,
+                    active_count
+                ),
+                0.42 + 0.57 * (index as f32 + ((fraction - 0.42) / 0.57).clamp(0., 1.))
+                    / active_count as f32,
+            );
+        };
+        // Only anchor generation is partitioned. Every fit still sees all
+        // tracks and the original clock settings, including across boundaries.
+        let result = locate_once(
+            job,
+            events,
+            tracks,
+            terrain,
+            control,
+            &update,
+            Some(batch.window()),
+        )?;
+        anyhow::ensure!(
+            result.hypotheses == batch.hypotheses,
+            "Proposal partition count changed after planning; no partial location is reported"
+        );
+        hypotheses = hypotheses
+            .checked_add(result.hypotheses)
+            .ok_or_else(|| anyhow::anyhow!("Total proposal count overflow"))?;
+        candidates.extend(result.candidates);
+        warnings.extend(result.warnings);
+    }
+    let last_event = events.iter().map(|e| e.cpa_s).fold(0., f64::max);
+    let candidates = rank_candidates(candidates, last_event);
+    if !candidates.is_empty() {
+        warnings.retain(|warning| {
+            !warning.starts_with("No candidate passed the joint curve-fit threshold")
+        });
+    }
+    if has_competing_fit(&candidates) {
+        warnings.insert(
+            "Several distinct locations or times fit similarly well. The result is ambiguous."
+                .into(),
+        );
+    }
+    warnings.insert(format!("Completed all {} flight-timestamp proposal batches, including {} empty batches. Each batch fits the {} hypothesis budget. All flight tracks remained available for matching and refinement. Recording clock settings were unchanged.",
+        partition.batches.len(), partition.batches.len() - active_count, job.max_hypotheses));
+    Ok(SearchResult {
+        candidates,
+        warnings: warnings.into_iter().collect(),
+        coarse_grid_m: job.grid_m,
+        hypotheses,
+        method: "indexed_flight_corridors_time_batches".into(),
+        partition: Some(partition),
+    })
+}
+
+fn locate_once(
+    job: &Job,
+    events: &[Event],
+    tracks: &[Track],
+    terrain: &mut Terrain,
+    control: &Control,
+    progress: &Progress<'_>,
+    window: Option<crate::index::EmissionWindow>,
+) -> Result<SearchResult> {
     if events.is_empty() {
         bail!("No flyover events to match");
     }
@@ -839,7 +963,9 @@ pub fn locate(
     let c = job.sound_speed();
     let anchors = crate::audio::anchor_indices(events);
     let (mut seeds, hypotheses) = if indexed {
-        crate::index::corridor_seeds(job, events, tracks, bounds, terrain, control, progress)?
+        crate::index::corridor_seeds(
+            job, events, tracks, bounds, terrain, control, progress, window,
+        )?
     } else {
         (vec![], grid.len())
     };
@@ -1064,33 +1190,7 @@ pub fn locate(
             });
         }
     }
-    candidates.sort_by(candidate_order);
-    let mut distinct: Vec<Candidate> = vec![];
-    for candidate in candidates {
-        let p = Point {
-            lat: candidate.latitude,
-            lon: candidate.longitude,
-            alt: 0.,
-        };
-        if distinct.iter().any(|s| {
-            p.distance(Point {
-                lat: s.latitude,
-                lon: s.longitude,
-                alt: 0.,
-            }) < 250.
-                && (candidate.recording_start_unix - s.recording_start_unix).abs() < 10.
-                && (candidate.recording_start_unix - s.recording_start_unix
-                    + last_event * (candidate.recording_clock_rate - s.recording_clock_rate))
-                    .abs()
-                    < 10.
-        }) {
-            continue;
-        }
-        distinct.push(candidate);
-        if distinct.len() == 10 {
-            break;
-        }
-    }
+    let distinct = rank_candidates(candidates, last_event);
     let mut warnings = vec![];
     if events.iter().any(|e| e.activity_span_s.is_some()) {
         warnings.push("Overlapping curves and connected slow fragments were counted as one sound. Matching can select a retained alternative, but it cannot count alternatives as independent flights. The full activity interval is excluded from quiet-gap evidence.".into());
@@ -1124,6 +1224,7 @@ pub fn locate(
         warnings,
         coarse_grid_m: spacing,
         hypotheses,
+        partition: None,
         method: if indexed {
             "indexed_flight_corridors"
         } else {

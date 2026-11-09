@@ -357,7 +357,7 @@ impl App {
                     for (label,value) in [("Low frequency (Hz)",&mut self.job.min_hz),("High frequency (Hz)",&mut self.job.max_hz),("Min contrast (dB)",&mut self.job.min_snr_db),("Temperature (°C)",&mut self.job.temperature_c),("Grid target (m)",&mut self.job.grid_m)]{ui.label(label);ui.add(egui::DragValue::new(value).speed(1.));ui.end_row();}
                     ui.label("Media clock drift limit (ppm)");ui.add(egui::DragValue::new(&mut self.job.max_clock_drift_ppm).range(0. ..=5000.));ui.end_row();
                     ui.label("Grid point budget");ui.add(egui::DragValue::new(&mut self.job.max_grid_points).range(100..=50000));ui.end_row();
-                    ui.label("Indexed hypothesis limit");ui.add(egui::DragValue::new(&mut self.job.max_hypotheses).range(100..=100_000_000));ui.end_row();
+                    ui.label("Hypotheses per batch");ui.add(egui::DragValue::new(&mut self.job.max_hypotheses).range(100..=100_000_000));ui.end_row();
                     ui.label("Flight-corridor workers");ui.horizontal(|ui|{
                         let mut automatic=self.job.search_threads.is_none();
                         if ui.checkbox(&mut automatic,"Automatic").changed(){self.job.search_threads=(!automatic).then_some(4);}

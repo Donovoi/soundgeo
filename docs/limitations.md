@@ -195,7 +195,14 @@ Current processing bounds are:
 - 10 million retained flight positions.
 - 32 MB decoded per aircraft trace.
 - 50,000 regional grid points.
-- A default budget of 5 million hypotheses, configurable up to 100 million.
+- A default budget of 5 million hypotheses per flight-proposal batch, configurable
+  up to 100 million. Large corridor searches divide automatically by flight
+  timestamp. Matching and refinement use the complete reference set in every
+  batch. The recording clock remains unknown when no time was supplied.
+- Automatic proposal division stops at a one-second flight interval or 4,096
+  batches. Every batch must pass its budget check before matching starts. A
+  failed check returns no location. Reports record all completed partitions in
+  `doppler_partitions`; the total work can exceed the budget for one batch.
 - Latitudes from 85 degrees south to 85 degrees north.
 - 64 terrain tiles per download request. Each expanded tile uses about 3 MB or
   26 MB, depending on resolution.

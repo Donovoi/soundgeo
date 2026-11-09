@@ -1,4 +1,4 @@
-use crate::{Control, Job, Progress, Report, geo::Point, timing};
+use crate::{Control, Job, Progress, Report, timing};
 use anyhow::{Result, ensure};
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
@@ -63,6 +63,9 @@ pub(crate) fn run(
             crate::analyze_sources(&batch, seed, peaks.clone(), &paths, true, control, &update)?;
         combined.track_count += result.track_count;
         combined.hypotheses += result.hypotheses;
+        combined
+            .doppler_partitions
+            .extend(result.doppler_partitions);
         combined.search_grid_m = combined.search_grid_m.max(result.search_grid_m);
         if !result.search_method.is_empty() {
             combined.search_method = result.search_method;
@@ -87,6 +90,9 @@ pub(crate) fn run(
     }
     if combined.search_method.is_empty() {
         combined.search_method = "date_batches".into();
+    }
+    if !combined.doppler_partitions.is_empty() {
+        combined.search_method = "indexed_flight_corridors_time_batches".into();
     }
     if let Some(assessment) = &mut combined.timing {
         timing::apply_screen(assessment);
@@ -123,35 +129,8 @@ pub(crate) fn run(
 }
 
 fn rank_doppler(report: &mut Report) {
-    report.candidates.sort_by(crate::search::candidate_order);
-    let mut distinct: Vec<crate::search::Candidate> = Vec::new();
-    for candidate in report.candidates.drain(..) {
-        let point = Point {
-            lat: candidate.latitude,
-            lon: candidate.longitude,
-            alt: 0.,
-        };
-        if distinct.iter().any(|other| {
-            point.distance(Point {
-                lat: other.latitude,
-                lon: other.longitude,
-                alt: 0.,
-            }) < 250.
-                && (candidate.recording_start_unix - other.recording_start_unix).abs() < 10.
-                && (candidate.recording_start_unix - other.recording_start_unix
-                    + report.duration_s
-                        * (candidate.recording_clock_rate - other.recording_clock_rate))
-                    .abs()
-                    < 10.
-        }) {
-            continue;
-        }
-        distinct.push(candidate);
-        if distinct.len() == 10 {
-            break;
-        }
-    }
-    report.candidates = distinct;
+    report.candidates =
+        crate::search::rank_candidates(std::mem::take(&mut report.candidates), report.duration_s);
 }
 
 fn merge_timing(

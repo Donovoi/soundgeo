@@ -100,7 +100,7 @@ enum Commands {
         /// Download/reuse free terrain for the configured search area in this folder.
         #[arg(long)]
         terrain_cache: Option<PathBuf>,
-        /// Maximum search hypotheses; overrides the saved job. Larger limits take longer.
+        /// Maximum hypotheses per proposal batch; overrides the saved job. Large searches divide automatically.
         #[arg(long, value_parser = clap::value_parser!(u64).range(100..=100_000_000))]
         max_hypotheses: Option<u64>,
         /// Maximum CPU workers for flight-corridor matching (default: up to 4).

@@ -135,6 +135,13 @@ fn indexed_country_extent_search_recovers_unknown_time() {
     assert!(error < 200.);
     assert!((best.recording_start_unix - soundgeo::demo::EPOCH).abs() < 3.);
     job.max_hypotheses = 100;
+    // A simultaneous dense group cannot be divided below the minimum flight
+    // timestamp interval. This failure must finish before any curve matching.
+    for i in 0..16 {
+        let mut coincident = tracks[0].clone();
+        coincident.id = format!("coincident-{i}");
+        tracks.push(coincident);
+    }
     let progress = std::sync::Mutex::new(Vec::new());
     let missing_before = terrain.missing;
     let result = soundgeo::search::locate(
@@ -350,12 +357,13 @@ fn parallel_corridors_match_serial_fallback_terrain() {
         );
     }
     job.terrain = Some(dir.path().join("missing-tiles"));
-    // An exact budget succeeds; one fewer proposal fails before matching,
-    // including on the serial, disk-backed terrain path.
+    // One fewer proposal now triggers a complete automatic partition, including
+    // on the serial terrain path. Both flyovers must remain available to a fit
+    // even when their anchor proposals belong to different timestamp batches.
     job.max_hypotheses -= 1;
-    let missing_before = terrain.missing;
+    let job_before = serde_json::to_value(&job).unwrap();
     let messages = std::sync::Mutex::new(Vec::new());
-    let error = soundgeo::search::locate(
+    let partitioned = soundgeo::search::locate(
         &job,
         &events,
         &tracks,
@@ -363,17 +371,35 @@ fn parallel_corridors_match_serial_fallback_terrain() {
         &Control::default(),
         &|message, _| messages.lock().unwrap().push(message.to_owned()),
     )
-    .err()
-    .unwrap()
-    .to_string();
-    assert!(error.contains("before curve matching"));
-    assert_eq!(terrain.missing, missing_before);
+    .unwrap();
+    let partition = partitioned.partition.as_ref().unwrap();
+    assert!(partition.complete && partition.batches.len() >= 2);
     assert!(
-        !messages
+        partition
+            .batches
+            .iter()
+            .all(|b| b.hypotheses <= job.max_hypotheses)
+    );
+    assert_eq!(partitioned.hypotheses, parallel.hypotheses);
+    assert_eq!(partitioned.candidates[0].matches.len(), events.len());
+    let best = &partitioned.candidates[0];
+    assert!(
+        Point {
+            lat: best.latitude,
+            lon: best.longitude,
+            alt: best.ground_m
+        }
+        .distance(soundgeo::demo::TRUTH)
+            < 250.
+    );
+    assert!(job.start_utc.is_none());
+    assert_eq!(serde_json::to_value(&job).unwrap(), job_before);
+    assert!(
+        messages
             .into_inner()
             .unwrap()
             .iter()
-            .any(|s| s.starts_with("Indexed flight corridors:"))
+            .any(|s| s.contains("Indexed flight corridors:"))
     );
 }
 

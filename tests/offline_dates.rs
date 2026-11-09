@@ -204,6 +204,102 @@ fn different_matching_dates_remain_ambiguous() {
 }
 
 #[test]
+fn unknown_date_cli_partitions_large_search_and_preserves_competing_clocks() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut job = demo::create(dir.path()).unwrap();
+    job.search_mode = soundgeo::search::SearchMode::FlightCorridors;
+    job.search_threads = Some(1);
+    job.max_hypotheses = 1_000_000;
+    job.start_utc = None;
+    let cache = dir.path().join("cache");
+    let first = shifted_csv(0., None);
+    let second = shifted_csv(86400., None);
+    cache_day(&cache, "2026-09-08", &first);
+    cache_day(&cache, "2026-09-09", &second);
+    let job_path = dir.path().join("job.json");
+    std::fs::write(&job_path, serde_json::to_vec(&job).unwrap()).unwrap();
+    let full = analyze(dir.path(), &["--require-unambiguous"]);
+    assert_eq!(
+        full.status.code(),
+        Some(4),
+        "{}",
+        String::from_utf8_lossy(&full.stderr)
+    );
+    let full: Report = serde_json::from_slice(&full.stdout).unwrap();
+    assert!(full.doppler_partitions.is_empty());
+    job.max_hypotheses = full.hypotheses / 3;
+    assert!(job.max_hypotheses >= 100);
+    let bytes = serde_json::to_vec(&job).unwrap();
+    std::fs::write(&job_path, &bytes).unwrap();
+    let divided = analyze(dir.path(), &["--require-unambiguous"]);
+    assert_eq!(
+        divided.status.code(),
+        Some(4),
+        "{}",
+        String::from_utf8_lossy(&divided.stderr)
+    );
+    let report: Report = serde_json::from_slice(&divided.stdout).unwrap();
+    assert_eq!(report.status, "ambiguous");
+    assert!(report.job.start_utc.is_none() && report.job.offline);
+    let archive = report.job.archive.as_ref().unwrap();
+    assert!(archive.date_from.is_empty() && archive.date_to.is_none());
+    let coverage = report.date_search.as_ref().unwrap();
+    assert!(coverage.complete);
+    assert_eq!(coverage.dates, ["2026-09-08", "2026-09-09"]);
+    assert_eq!(coverage.completed_batches, 1);
+    assert_eq!(report.hypotheses, full.hypotheses);
+    assert_eq!(report.doppler_partitions.len(), 1);
+    let partition = &report.doppler_partitions[0];
+    assert!(partition.complete && partition.batches.len() > 1);
+    assert_eq!(partition.max_hypotheses_per_batch, job.max_hypotheses);
+    assert!(
+        partition
+            .batches
+            .iter()
+            .all(|b| b.hypotheses <= job.max_hypotheses)
+    );
+    assert_eq!(
+        partition
+            .batches
+            .iter()
+            .map(|b| b.hypotheses)
+            .sum::<usize>(),
+        full.hypotheses
+    );
+    assert!(
+        partition
+            .batches
+            .windows(2)
+            .all(|b| b[0].emission_to_unix == b[1].emission_from_unix)
+    );
+    for start in [demo::EPOCH, demo::EPOCH + 86400.] {
+        assert!(
+            report.candidates.iter().any(|candidate| {
+                (candidate.recording_start_unix - start).abs() < 30.
+                    && Point {
+                        lat: candidate.latitude,
+                        lon: candidate.longitude,
+                        alt: candidate.ground_m,
+                    }
+                    .distance(demo::TRUTH)
+                        < 250.
+                    && candidate.matches.len() == report.events.len()
+            }),
+            "A competing clock or jointly supported location was lost"
+        );
+    }
+    assert_eq!(std::fs::read(job_path).unwrap(), bytes);
+    assert_eq!(
+        std::fs::read(cache.join("webtrak-cda-2026-09-08/flights.csv")).unwrap(),
+        first
+    );
+    assert_eq!(
+        std::fs::read(cache.join("webtrak-cda-2026-09-09/flights.csv")).unwrap(),
+        second
+    );
+}
+
+#[test]
 fn missing_offline_data_is_reported_without_contacting_a_proxy() {
     let dir = tempfile::tempdir().unwrap();
     let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();

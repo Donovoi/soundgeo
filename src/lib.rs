@@ -266,6 +266,8 @@ pub struct Report {
     pub timing: Option<timing::Assessment>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub date_search: Option<date_search::Coverage>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub doppler_partitions: Vec<index::ProposalPartition>,
 }
 
 impl Report {
@@ -311,7 +313,7 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     let mut report = Report { version: env!("CARGO_PKG_VERSION").into(), status: "insufficient_evidence".into(),
         media: job.media.clone(), job: job.clone(), duration_s, track_count: 0, events,
         candidates: vec![], warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
-        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![],timing:None,date_search:None };
+        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![],timing:None,date_search:None,doppler_partitions:vec![] };
     if let Some(peaks) = &timing_peaks
         && (peaks.len() < 6 || duration_s < 480.)
     {
@@ -489,6 +491,7 @@ pub(crate) fn analyze_sources(
     report.hypotheses = result.hypotheses;
     report.candidates = result.candidates;
     report.warnings.extend(result.warnings);
+    report.doppler_partitions.extend(result.partition);
     set_doppler_status(&mut report);
     if terrain.missing > 0 {
         report.warnings.push(format!("Missing/void terrain used the configured fallback height of {} m ({:?}). Candidate heights are WGS84 ellipsoid heights.", job.ground_m, job.ground_datum));
