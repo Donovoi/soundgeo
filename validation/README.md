@@ -91,6 +91,14 @@ six reference passages. Checks at 1, 2, and 5 km found additional candidate
 matches. These point checks did not test location acceptance. The record also
 preserves three failed preparation or diagnostic attempts and their corrections.
 
+[Broader-distance checks](lake-high-resolution-range-results.json) then searched
+the two sample-covered recordings at 1 km and 2 km passage distances. All four
+runs completed offline with the same sound peaks, original broad bounds, and
+no recording date or time argument. Each ran all 19 shuffled controls and
+reported insufficient evidence. The highest-ranked points were 2.87 to 7.07 km
+from the reference, including its allowance. Control scores also remained higher
+when both distance choices were evaluated together. Default settings are unchanged.
+
 [Automatic date discovery](automatic-date-discovery.json) found 1,327 ADSB.lol
 days, 125 first-of-month sample days, and 89 complete days for each airport
 provider on November 7, 2026. Each saved index replayed offline with identical
