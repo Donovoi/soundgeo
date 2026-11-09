@@ -35,6 +35,10 @@ remained insufficient. Both reports match the preceding replay apart from
 creation time. The proxy recorded no connections, and source manifests stayed
 unchanged. These replays use the existing November sample caches.
 
+The [Windows CI executable](control-ci-artifact-audio.json) reproduced both
+reports apart from creation time, with no proxy connections or changed source
+manifests. Its downloaded ZIP matches GitHub's published SHA-256 checksum.
+
 [Adjacent-day source checks](next-day-carryover-checks.json) address a second
 download failure. A May source trace contains 580 valid positions on the next
 UTC day. Revision `9509903` preserves these positions and keeps date filtering
