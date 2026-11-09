@@ -10,6 +10,102 @@ fn job_for(path: std::path::PathBuf) -> Job {
 }
 
 #[test]
+fn reception_gap_flag_keeps_the_first_observed_position() {
+    let dir = tempfile::tempdir().unwrap();
+    let file = dir.path().join("trace_full_test.json");
+    let rows: Vec<_> = (0..3)
+        .map(|i| {
+            serde_json::json!([
+                i * 5,
+                41.,
+                -87. + i as f64 * 0.003,
+                500,
+                100,
+                90,
+                if i == 0 { 1 } else { 0 },
+                0,
+                null,
+                null,
+                500
+            ])
+        })
+        .collect();
+    std::fs::write(
+        &file,
+        serde_json::to_vec(&serde_json::json!({
+            "icao":"test", "timestamp":10000, "trace":rows
+        }))
+        .unwrap(),
+    )
+    .unwrap();
+    let data = data::load_for_job(&job_for(file), 1200., &Control::default()).unwrap();
+    assert_eq!(data.tracks.len(), 1);
+    assert_eq!(
+        data.tracks[0]
+            .samples
+            .iter()
+            .map(|p| p.time)
+            .collect::<Vec<_>>(),
+        [10000., 10005., 10010.]
+    );
+}
+
+#[test]
+fn reception_gap_splits_tracks_even_when_sources_repeat_the_boundary() {
+    for duplicate_offset in [None, Some(0.), Some(-0.001)] {
+        let dir = tempfile::tempdir().unwrap();
+        let rows: Vec<_> = [0, 5, 10, 40, 45, 50]
+            .into_iter()
+            .map(|time| {
+                serde_json::json!([
+                    time,
+                    41.,
+                    -87. + time as f64 * 0.0006,
+                    500,
+                    100,
+                    90,
+                    if time == 40 { 1 } else { 0 },
+                    0,
+                    null,
+                    null,
+                    500
+                ])
+            })
+            .collect();
+        let write = |name: &str, rows| {
+            std::fs::write(
+                dir.path().join(name),
+                serde_json::to_vec(&serde_json::json!({
+                    "icao":"test", "timestamp":10000, "trace":rows
+                }))
+                .unwrap(),
+            )
+            .unwrap();
+        };
+        write("trace_full_a.json", rows.clone());
+        if let Some(offset) = duplicate_offset {
+            let mut repeated = rows;
+            repeated[3][0] = serde_json::json!(40. + offset);
+            repeated[3][6] = serde_json::json!(0);
+            write("trace_full_b.json", repeated);
+        }
+        let data = data::load_for_job(&job_for(dir.path().to_owned()), 1200., &Control::default())
+            .unwrap();
+        assert_eq!(data.tracks.len(), 2);
+        let times: Vec<Vec<_>> = data
+            .tracks
+            .iter()
+            .map(|track| track.samples.iter().map(|sample| sample.time).collect())
+            .collect();
+        assert_eq!(times[0], [10000., 10005., 10010.]);
+        assert_eq!(
+            times[1],
+            [10040. + duplicate_offset.unwrap_or(0.), 10045., 10050.]
+        );
+    }
+}
+
+#[test]
 fn timing_import_keeps_short_recorded_paths_without_relaxing_doppler() {
     let dir = tempfile::tempdir().unwrap();
     let file = dir.path().join("short.csv");
@@ -63,6 +159,54 @@ fn timing_import_keeps_short_recorded_paths_without_relaxing_doppler() {
     assert_eq!(data::load(&file, &control).unwrap().tracks.len(), 1);
     control.stop();
     assert!(data::load_for_job(&job_for(file), 1200., &control).is_err());
+}
+
+#[test]
+fn unusable_altitude_does_not_remove_a_reception_gap_boundary() {
+    for altitude in [serde_json::Value::Null, serde_json::json!("ground")] {
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("trace_full_test.json");
+        let mut rows: Vec<_> = [0, 5, 10, 40, 45, 50, 55]
+            .into_iter()
+            .map(|time| {
+                serde_json::json!([
+                    time,
+                    41.,
+                    -87. + time as f64 * 0.0006,
+                    500,
+                    100,
+                    90,
+                    if time == 40 { 1 } else { 0 },
+                    0,
+                    null,
+                    null,
+                    500
+                ])
+            })
+            .collect();
+        rows[3][3] = altitude;
+        rows[3][10] = serde_json::Value::Null;
+        std::fs::write(
+            &file,
+            serde_json::to_vec(&serde_json::json!({
+                "icao":"test", "timestamp":10000, "trace":rows
+            }))
+            .unwrap(),
+        )
+        .unwrap();
+        let data = data::load_for_job(&job_for(file), 1200., &Control::default()).unwrap();
+        let times: Vec<Vec<_>> = data
+            .tracks
+            .iter()
+            .map(|track| track.samples.iter().map(|sample| sample.time).collect())
+            .collect();
+        assert_eq!(times, [[10000., 10005., 10010.], [10045., 10050., 10055.]]);
+        assert!(
+            data.warnings
+                .iter()
+                .any(|warning| warning.contains("1 reception-gap markers"))
+        );
+    }
 }
 
 #[test]

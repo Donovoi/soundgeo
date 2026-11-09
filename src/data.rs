@@ -9,7 +9,7 @@ use flate2::read::GzDecoder;
 use serde::Deserialize;
 use serde_json::Value;
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     fs::File,
     io::{BufReader, Read},
     path::{Path, PathBuf},
@@ -23,6 +23,12 @@ mod cache;
 pub struct Dataset {
     pub tracks: Vec<Track>,
     pub warnings: Vec<String>,
+}
+
+#[derive(Default)]
+struct RawTracks {
+    samples: BTreeMap<String, Vec<Sample>>,
+    reception_gaps: BTreeMap<String, BTreeSet<u64>>,
 }
 #[derive(Deserialize)]
 struct CsvRow {
@@ -192,7 +198,7 @@ fn source_paths(sources: &[PathBuf]) -> Vec<PathBuf> {
     paths
 }
 fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Result<Dataset> {
-    let mut raw: BTreeMap<String, Vec<Sample>> = BTreeMap::new();
+    let mut raw = RawTracks::default();
     let mut kinds = BTreeMap::new();
     let mut skipped = 0usize;
     let mut barometric = 0usize;
@@ -233,7 +239,8 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                 if !filter.accepts(point, time) {
                     continue;
                 }
-                raw.entry(row.aircraft)
+                raw.samples
+                    .entry(row.aircraft)
                     .or_default()
                     .push(Sample::new(time, point));
                 total += 1;
@@ -297,7 +304,7 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
         }
     }
     let mut tracks = vec![];
-    for (id, mut samples) in raw {
+    for (id, mut samples) in raw.samples {
         let kind = kinds.get(&id).copied().unwrap_or_default();
         if !filter.aircraft.accepts(kind) {
             continue;
@@ -307,12 +314,21 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
         samples.dedup_by(|a, b| (a.time - b.time).abs() < 0.01);
         let mut segment = vec![];
         let mut index = 0;
+        let reception_gaps = raw.reception_gaps.get(&id);
         for s in samples {
             if let Some(prev) = segment.last() {
                 let prev: &Sample = prev;
                 let dt = s.time - prev.time;
                 let speed = (s.xyz - prev.xyz).norm() / dt;
-                if dt > 60. || speed > 280. {
+                // Deduplication can retain a source timestamp up to 0.01 seconds
+                // from a flagged copy. Preserve the boundary from either copy.
+                let reception_gap = reception_gaps.is_some_and(|times| {
+                    times
+                        .range((prev.time + 0.01).to_bits()..=(s.time + 0.01).to_bits())
+                        .next()
+                        .is_some()
+                });
+                if dt > 60. || speed > 280. || reception_gap {
                     if segment.len() >= filter.minimum_positions {
                         tracks.push(Track {
                             id: format!("{id}/{index}"),
@@ -338,6 +354,10 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
         return Err(EmptyFlightData(filter.minimum_positions).into());
     }
     let mut warnings = vec![];
+    let reception_gaps: usize = raw.reception_gaps.values().map(BTreeSet::len).sum();
+    if reception_gaps > 0 {
+        warnings.push(format!("Read {reception_gaps} reception-gap markers. Recorded positions after each gap are retained; interpolation does not cross the gap."));
+    }
     let short = tracks
         .iter()
         .filter(|track| track.samples.len() < 8)
@@ -372,7 +392,7 @@ fn read_limited(reader: impl Read) -> Result<Vec<u8>> {
 }
 fn ingest_trace(
     bytes: &[u8],
-    raw: &mut BTreeMap<String, Vec<Sample>>,
+    raw: &mut RawTracks,
     skipped: &mut usize,
     barometric: &mut usize,
     total: &mut usize,
@@ -413,7 +433,24 @@ fn ingest_trace(
             *skipped += 1;
             continue;
         };
-        if row[3].as_str() == Some("ground") || row[6].as_u64().unwrap_or(0) & 1 != 0 {
+        let t = base + relative;
+        // readsb flag 1 marks a new reliable position following a reception gap.
+        // Its timestamp and coordinates are valid; the preceding connection is not.
+        let reception_gap = row[6].as_u64().unwrap_or(0) & 1 != 0;
+        let horizontal = Point { lat, lon, alt: 0. };
+        if reception_gap
+            && horizontal.valid()
+            && t.is_finite()
+            && (0. ..=4102444800.).contains(&t)
+            && filter.accepts(horizontal, t)
+        {
+            // Keep the boundary even if this row has no usable airborne altitude.
+            raw.reception_gaps
+                .entry(id.into())
+                .or_default()
+                .insert(t.to_bits());
+        }
+        if row[3].as_str() == Some("ground") {
             *skipped += 1;
             continue;
         }
@@ -428,7 +465,6 @@ fn ingest_trace(
             lon,
             alt: alt * 0.3048,
         };
-        let t = base + relative;
         if !p.valid() || !t.is_finite() || !(0. ..=4102444800.).contains(&t) {
             *skipped += 1;
             continue;
@@ -436,10 +472,11 @@ fn ingest_trace(
         if !filter.accepts(p, t) {
             continue;
         }
-        let samples = raw.entry(id.into()).or_default();
-        if samples
-            .last()
-            .is_some_and(|s| t >= s.time && t - s.time < 2.)
+        let samples = raw.samples.entry(id.into()).or_default();
+        if !reception_gap
+            && samples
+                .last()
+                .is_some_and(|s| t >= s.time && t - s.time < 2.)
         {
             continue;
         }
