@@ -16,6 +16,7 @@ struct Segment {
     time: f64,
     duration: f64,
     track: usize,
+    eligible: bool,
 }
 struct Bucket {
     radius: f64,
@@ -79,9 +80,11 @@ impl Reference {
                 let difference = pair[1].xyz - pair[0].xyz;
                 let velocity = difference * (1. / duration);
                 let speed2 = velocity.dot(velocity);
-                if !(625. ..(sound_speed * 0.9).powi(2)).contains(&speed2) {
+                if !(0. ..(sound_speed * 0.9).powi(2)).contains(&speed2) {
                     continue;
                 }
+                // Slow positions connect a visit, but cannot supply its closest passage.
+                let eligible = speed2 >= 625.;
                 let half = difference.norm() * 0.5;
                 let bucket = limits
                     .iter()
@@ -102,10 +105,13 @@ impl Reference {
                     time: pair[0].time,
                     duration,
                     track,
+                    eligible,
                 });
-                let day = (pair[0].time / 86400.).floor() * 86400.;
-                result.start_day = result.start_day.min(day);
-                result.end_day = result.end_day.max(day + 86400.);
+                if eligible {
+                    let day = (pair[0].time / 86400.).floor() * 86400.;
+                    result.start_day = result.start_day.min(day);
+                    result.end_day = result.end_day.max(day + 86400.);
+                }
             }
         }
         Ok(result)
@@ -127,21 +133,38 @@ impl Reference {
                                 continue;
                             }
                             let relative = segment.start - observer;
-                            let projection = -relative.dot(segment.velocity) / segment.speed2;
+                            let projection = if segment.speed2 > 0. {
+                                -relative.dot(segment.velocity) / segment.speed2
+                            } else {
+                                0.
+                            };
                             let u = projection.clamp(0., segment.duration);
                             let distance = (relative + segment.velocity * u).norm();
                             if distance > self.range {
                                 continue;
                             }
-                            let line_distance = (relative + segment.velocity * projection).norm();
-                            let half = ((self.range.powi(2) - line_distance.powi(2)).max(0.)
-                                / segment.speed2)
-                                .sqrt();
+                            let (enter, leave) = if segment.speed2 > 0. {
+                                let line_distance =
+                                    (relative + segment.velocity * projection).norm();
+                                let half = ((self.range.powi(2) - line_distance.powi(2)).max(0.)
+                                    / segment.speed2)
+                                    .sqrt();
+                                (
+                                    (projection - half).max(0.),
+                                    (projection + half).min(segment.duration),
+                                )
+                            } else {
+                                (0., segment.duration)
+                            };
                             visits.push(Visit {
                                 track: segment.track,
-                                enter: segment.time + (projection - half).max(0.),
-                                leave: segment.time + (projection + half).min(segment.duration),
-                                distance,
+                                enter: segment.time + enter,
+                                leave: segment.time + leave,
+                                distance: if segment.eligible {
+                                    distance
+                                } else {
+                                    f64::INFINITY
+                                },
                                 segment: index,
                                 arrival: segment.time + u + distance / self.sound_speed,
                             });
@@ -173,14 +196,18 @@ impl Reference {
                     old.segment = visit.segment;
                     old.arrival = visit.arrival;
                 }
-            } else if let Some(old) = current.replace(visit) {
+            } else if let Some(old) = current.replace(visit)
+                && old.distance.is_finite()
+            {
                 result.push(Passage {
                     time: old.arrival,
                     track: old.track,
                 });
             }
         }
-        if let Some(old) = current {
+        if let Some(old) = current
+            && old.distance.is_finite()
+        {
             result.push(Passage {
                 time: old.arrival,
                 track: old.track,
@@ -253,6 +280,30 @@ mod tests {
         let passages = reference.passages(Vec3(0., 0., 0.));
         assert_eq!(passages.len(), 1);
         assert!((passages[0].time - 10. - 100. / 340.).abs() < 1e-9);
+    }
+
+    #[test]
+    fn slowing_and_stopping_inside_range_do_not_create_extra_passages() {
+        for x in [0., 100.] {
+            let tracks = [path(&[
+                (0., -1000., 0.),
+                (10., 0., 0.),
+                (20., x, 0.),
+                (30., 0., 0.),
+                (40., -1000., 0.),
+            ])];
+            let reference = Reference::new(&tracks, 500., 340., &Control::default()).unwrap();
+            let passages = reference.passages(Vec3(0., 0., 0.));
+            assert_eq!(passages.len(), 1);
+            assert!((passages[0].time - 10. - 100. / 340.).abs() < 1e-9);
+        }
+    }
+
+    #[test]
+    fn slow_motion_alone_is_not_a_flight_passage() {
+        let tracks = [path(&[(0., -100., 0.), (10., 0., 0.), (20., 100., 0.)])];
+        let reference = Reference::new(&tracks, 500., 340., &Control::default()).unwrap();
+        assert!(reference.passages(Vec3(0., 0., 0.)).is_empty());
     }
 
     #[test]
