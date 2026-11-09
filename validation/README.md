@@ -8,6 +8,16 @@ New results must state which target they use.
 
 ## Current checks
 
+The [coarse-fit bound](corroboration-bound-checks.json) skips curve fits that
+cannot add support to the retention step. All 480 equivalence cases preserve
+the original result. Both native search modes also produce the same complete
+reports on the synthetic demo, apart from creation time, with no proxy
+connections. Acceptance rules are unchanged.
+
+Revision `70735f5` passed 172 Rust tests, 10 Python tests, formatting, strict
+Clippy, doc tests, and release builds locally and in Windows and Ubuntu CI.
+The control-tool build also passed locally. Real-video validation continues.
+
 [Whole-activity controls](doppler-controls.md) reorder complete sound activities
 and repeat the original full location search. Curves, overlapping activity,
 and observation alternatives stay together. The 19 orders remain distinct
@@ -25,7 +35,7 @@ plan. The native tool accepts the real plan and rejects a changed source hash,
 permutation, or duration. A new offline run starts with a fresh baseline and
 compares it with up to 19 shuffled searches on the same frozen build.
 
-The current source also passed all required checks in
+The plan reload source also passed all required checks in
 [Windows and Ubuntu CI](control-plan-ci.json): 171 Rust tests and 10 Python
 tests passed on each platform.
 
