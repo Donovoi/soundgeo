@@ -103,6 +103,9 @@ enum Commands {
         /// Maximum search hypotheses; overrides the saved job. Larger limits take longer.
         #[arg(long, value_parser = clap::value_parser!(u64).range(100..=100_000_000))]
         max_hypotheses: Option<u64>,
+        /// Maximum CPU workers for flight-corridor matching (default: up to 4).
+        #[arg(long)]
+        search_threads: Option<std::num::NonZeroUsize>,
         /// Sound matching method; passage timing needs bounds and at least eight minutes.
         #[arg(long)]
         method: Option<soundgeo::AnalysisMethod>,
@@ -284,6 +287,7 @@ fn run(args: Args) -> Result<u8> {
             provider,
             terrain_cache,
             max_hypotheses,
+            search_threads,
             method,
             output,
             require_match,
@@ -364,6 +368,9 @@ fn run(args: Args) -> Result<u8> {
             if let Some(limit) = max_hypotheses {
                 // Clap limits this to 100 million, which also fits 32-bit usize.
                 job.max_hypotheses = limit as usize;
+            }
+            if let Some(threads) = search_threads {
+                job.search_threads = Some(threads.get());
             }
             if let Some(method) = method {
                 job.analysis_method = method;

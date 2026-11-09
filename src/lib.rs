@@ -68,6 +68,9 @@ pub struct Job {
     pub type_catalog: Option<PathBuf>,
     pub search_mode: search::SearchMode,
     pub max_hypotheses: usize,
+    /// Maximum corridor workers; absent keeps the existing four-worker limit.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub search_threads: Option<usize>,
     pub silence_mode: search::SilenceMode,
 }
 impl Default for Job {
@@ -101,6 +104,7 @@ impl Default for Job {
             type_catalog: None,
             search_mode: Default::default(),
             max_hypotheses: 5_000_000,
+            search_threads: None,
             silence_mode: Default::default(),
         }
     }
@@ -144,6 +148,9 @@ impl Job {
         }
         if !(100..=100_000_000).contains(&self.max_hypotheses) {
             bail!("Hypothesis budget must be 100–100,000,000");
+        }
+        if self.search_threads == Some(0) {
+            bail!("Flight-corridor workers must be at least 1.");
         }
         if let Some(path) = &self.type_catalog
             && !path.is_file()

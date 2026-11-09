@@ -195,3 +195,9 @@ Current processing bounds are:
 Split search regions that cross the date line. Large archives can require
 substantial memory, storage, and processing time. A hypothesis-budget overrun
 stops the search with an error and no partial location result.
+
+The `--search-threads` option controls flight-corridor matching. Other search
+stages keep their existing worker settings. A search with a terrain tile folder
+uses one corridor worker because it loads and updates the tile cache during the
+search. More workers can use more memory. Speed depends on the search and the
+other work running on the computer.

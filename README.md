@@ -326,6 +326,16 @@ The limit can be between 100 and 100,000,000.
 This option sets the search budget for that run. In a date search, the budget
 applies to each batch. The report records the limit used.
 
+Use `--search-threads` to set the maximum CPU workers for flight-corridor matching:
+
+```powershell
+soundgeo-cli.exe analyze --config "job.json" --search-threads 8 --output "report.json"
+```
+
+The default is up to four workers. The program caps the worker count at the
+available CPU capacity. The progress log shows the count used. In the desktop
+app, set **Flight-corridor workers** under **Advanced audio & search**.
+
 Paths in a job file are relative to that file.
 Paths supplied with `--input`, `--tracks`, `--cache`, and `--terrain-cache` are relative to the current directory.
 These command-line options replace the related job settings.

@@ -200,7 +200,10 @@ pub(crate) fn corridor_seeds(
     let pool = if !terrain.has_tiles() {
         Some(
             rayon::ThreadPoolBuilder::new()
-                .num_threads(std::thread::available_parallelism().map_or(1, |n| n.get().min(4)))
+                .num_threads(
+                    std::thread::available_parallelism()
+                        .map_or(1, |n| n.get().min(job.search_threads.unwrap_or(4).max(1))),
+                )
                 .build()?,
         )
     } else {
@@ -219,6 +222,13 @@ pub(crate) fn corridor_seeds(
         control,
         progress,
     )?;
+    progress(
+        &format!(
+            "Flight-corridor workers: {}",
+            pool.as_ref().map_or(1, |p| p.current_num_threads())
+        ),
+        0.42,
+    );
     let index = FlightIndex::new(tracks, control)?;
     for (ordinal, &anchor) in anchors.iter().enumerate() {
         for (batch_no, batch) in tracks.chunks(32).enumerate() {

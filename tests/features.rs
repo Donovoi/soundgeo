@@ -302,6 +302,7 @@ fn parallel_corridors_match_serial_fallback_terrain() {
     // An empty tile folder exercises the serial terrain-cache path with
     // exactly the same fallback heights and search inputs.
     job.terrain = Some(dir.path().join("missing-tiles"));
+    job.search_threads = Some(8);
     job.max_hypotheses = parallel.hypotheses;
     let mut terrain = Terrain::new(job.terrain.clone(), supplied_height);
     let serial = soundgeo::search::locate(
@@ -315,10 +316,40 @@ fn parallel_corridors_match_serial_fallback_terrain() {
     .unwrap();
     assert_eq!(parallel.hypotheses, serial.hypotheses);
     assert!(!parallel.candidates.is_empty());
+    let expected_candidates = serde_json::to_value(&parallel.candidates).unwrap();
     assert_eq!(
-        serde_json::to_value(parallel.candidates).unwrap(),
+        expected_candidates,
         serde_json::to_value(serial.candidates).unwrap()
     );
+    for workers in [1, 8] {
+        job.search_threads = Some(workers);
+        job.terrain = None;
+        let mut worker_terrain = Terrain::new(None, supplied_height);
+        let messages = std::sync::Mutex::new(Vec::new());
+        let result = soundgeo::search::locate(
+            &job,
+            &events,
+            &tracks,
+            &mut worker_terrain,
+            &Control::default(),
+            &|message, _| messages.lock().unwrap().push(message.to_owned()),
+        )
+        .unwrap();
+        let used = workers.min(std::thread::available_parallelism().map_or(1, |n| n.get()));
+        assert!(
+            messages
+                .lock()
+                .unwrap()
+                .contains(&format!("Flight-corridor workers: {used}"))
+        );
+        assert_eq!(result.hypotheses, parallel.hypotheses);
+        assert_eq!(
+            serde_json::to_value(result.candidates).unwrap(),
+            expected_candidates,
+            "worker limit {workers} changed the search"
+        );
+    }
+    job.terrain = Some(dir.path().join("missing-tiles"));
     // An exact budget succeeds; one fewer proposal fails before matching,
     // including on the serial, disk-backed terrain path.
     job.max_hypotheses -= 1;
@@ -627,4 +658,28 @@ fn clock_configuration_limits_and_older_reports_remain_supported() {
         "relative_error_percent": 0.5, "matches": []});
     let candidate: soundgeo::search::Candidate = serde_json::from_value(old).unwrap();
     assert_eq!(candidate.recording_clock_rate, 1.);
+}
+
+#[test]
+fn worker_limits_validate_and_preserve_older_job_json() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut job = Job {
+        media: dir.path().join("audio.wav"),
+        tracks: dir.path().join("flights.csv"),
+        ..Job::default()
+    };
+    std::fs::write(&job.media, []).unwrap();
+    std::fs::write(&job.tracks, []).unwrap();
+    job.search_threads = Some(0);
+    assert!(job.validate().unwrap_err().to_string().contains("workers"));
+    for valid in [None, Some(1), Some(4), Some(8), Some(usize::MAX)] {
+        job.search_threads = valid;
+        job.validate().unwrap();
+        let saved = serde_json::to_value(&job).unwrap();
+        assert_eq!(saved.get("search_threads").is_some(), valid.is_some());
+        let loaded: Job = serde_json::from_value(saved).unwrap();
+        assert_eq!(loaded.search_threads, valid);
+    }
+    let old: Job = serde_json::from_str("{}").unwrap();
+    assert_eq!(old.search_threads, None);
 }

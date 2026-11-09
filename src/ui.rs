@@ -358,6 +358,11 @@ impl App {
                     ui.label("Media clock drift limit (ppm)");ui.add(egui::DragValue::new(&mut self.job.max_clock_drift_ppm).range(0. ..=5000.));ui.end_row();
                     ui.label("Grid point budget");ui.add(egui::DragValue::new(&mut self.job.max_grid_points).range(100..=50000));ui.end_row();
                     ui.label("Indexed hypothesis limit");ui.add(egui::DragValue::new(&mut self.job.max_hypotheses).range(100..=100_000_000));ui.end_row();
+                    ui.label("Flight-corridor workers");ui.horizontal(|ui|{
+                        let mut automatic=self.job.search_threads.is_none();
+                        if ui.checkbox(&mut automatic,"Automatic").changed(){self.job.search_threads=(!automatic).then_some(4);}
+                        if let Some(workers)=&mut self.job.search_threads{ui.add(egui::DragValue::new(workers).range(1..=std::thread::available_parallelism().map_or(1,|n|n.get())));}
+                    }).response.on_hover_text("Automatic uses up to 4 workers. A higher limit can use more CPU capacity. Searches with terrain tiles use one worker.");ui.end_row();
                 });
                 } else {
                     egui::Grid::new("timing-options").num_columns(2).show(ui,|ui| {
