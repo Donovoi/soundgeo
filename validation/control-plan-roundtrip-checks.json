@@ -310,7 +310,7 @@
     }
   ],
   "real_control_run": {
-    "status": "Waiting for the preceding comparison",
+    "status": "Same-build baseline running; shuffled searches follow",
     "plan": {
       "scope": "A same-build baseline and up to 19 whole-activity controls for the first existing Lake Hood recording with standard traces. Original broad bounds and fixed single-day reference CSV. No date or clock arguments, candidate location, or video clues supplied.",
       "source_commit": "bc1c794655b605a79e2cd17b81c06385fbdaa25f",
@@ -352,7 +352,7 @@
       "sha256": "c8bfd96e2060ba06c0db8788c44e2638b7a89cbf773ea5566a9c00c09fc8bc37"
     }
   },
-  "ci_status": "Pending for this source revision",
+  "ci_status": "All required checks passed on Windows and Ubuntu",
   "changes_location_acceptance": false,
   "artifacts": [
     {
@@ -383,5 +383,6 @@
       "file": "run_lake_doppler_controls_v2.py",
       "sha256": "6a3dcaf5c3a1b8177b970e7a6afa821f5ba20ca8223cfa7c6e7d8b3ec38a30c0"
     }
-  ]
+  ],
+  "ci": "control-plan-ci.json"
 }

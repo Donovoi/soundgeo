@@ -634,7 +634,7 @@
       "preparation_wait_limit_s": 50400
     }
   },
-  "ci_status": "Pending for this source revision",
+  "ci_status": "Current source including this fix passed all required checks on Windows and Ubuntu",
   "artifacts": [
     {
       "file": "next-day-carryover-before.log",
@@ -660,5 +660,86 @@
       "file": "run_lake_all_free_hires_audio_v3.py",
       "sha256": "dd2dd1dec8a7df0641eafcec95e2a7cf04708f3e00e9ef1ad54e1d7872ef9448"
     }
-  ]
+  ],
+  "real_native_source_check": {
+    "scope": "The native all-date preparation accepted the source object that stopped the preceding attempt. Complete date-cache and offline verification remain pending.",
+    "source_commit": "9509903a49d47fe705839e438d815b338f2fbfb9",
+    "cli_sha256": "f73bac0fefef5680c47b32ff803b0693447013721b21bc93cf0a17286355bdd4",
+    "download_plan_sha256": "1c58245dfd1f7883a61075768dd9a7e8d7de633e935cda12950759c2045e2643",
+    "cache_file": "lake-all-free-hires-dates-v3/cache/adsbx-hires-sample-2022-05-01-4c03a53c13712c72/traces/trace_full_a3f1c2.json.gz",
+    "bytes": 84250,
+    "sha256": "ca4351a4fdb59b735837be20a29949fcfa0d3a4603649118a7c08fcb746b9ed6",
+    "matches_preserved_original_source": true,
+    "requested_day_positions": 4549,
+    "following_day_positions": 580,
+    "date_arguments_supplied": false,
+    "counts_as_location_acceptance": false
+  },
+  "real_offline_source_check": {
+    "scope": "Offline reuse of the completed May source cache. A date selects reference files; no media or recording time is supplied.",
+    "result": {
+      "complete": true,
+      "exit_code": 0,
+      "elapsed_s": 27.99711290000414,
+      "proxy_connections": 0,
+      "source_files_unchanged": true,
+      "traces": 377,
+      "missing_aircraft": 1116,
+      "log_sha256": "d88a0cdf11e92d9b40f7b39d39c9138a63f00f51a7f3e50ac6b1f5e6c14a83c5",
+      "recorded_boundaries": [
+        {
+          "file": "trace_full_a3f1c2.json.gz",
+          "sha256": "ca4351a4fdb59b735837be20a29949fcfa0d3a4603649118a7c08fcb746b9ed6",
+          "following_day_positions": 580,
+          "preceding_day_positions": 0,
+          "first_following_day_second": 0.6840000152587891,
+          "last_following_day_second": 530.3840000629425
+        },
+        {
+          "file": "trace_full_a561fd.json.gz",
+          "sha256": "bb07358f13a9ad0e22463609796462a25b0642b94093674a77e3df2a7077728f",
+          "following_day_positions": 1,
+          "preceding_day_positions": 0,
+          "first_following_day_second": 0.03399991989135742,
+          "last_following_day_second": 0.03399991989135742
+        },
+        {
+          "file": "trace_full_a76a3a.json.gz",
+          "sha256": "2d9e61c2a93c6dfe1a25aff364a31c944fb977d9a23504df5e81b89f85f5779c",
+          "following_day_positions": 1276,
+          "preceding_day_positions": 0,
+          "first_following_day_second": 1.694000005722046,
+          "last_following_day_second": 1364.8940000534058
+        },
+        {
+          "file": "trace_full_a7e6c7.json.gz",
+          "sha256": "50f00f91ca77b94f1b3c6f92506b88b4bda49fc87e89c9cca6976e70c46d58eb",
+          "following_day_positions": 0,
+          "preceding_day_positions": 1,
+          "first_following_day_second": null,
+          "last_following_day_second": null
+        }
+      ]
+    },
+    "plan": {
+      "file": "may-carryover-offline-v2/plan.json",
+      "sha256": "a169d6c70a9140ad3c04afe7e0ebe2cd92d99f282769562640b8854674ee5ced"
+    },
+    "result_artifact": {
+      "file": "may-carryover-offline-v2/result.json",
+      "sha256": "1fe66c8993b4924899ae82a5050c3b29c06a603f1d89bf49692ee720b1f270e1"
+    },
+    "script": {
+      "file": "run_may_carryover_offline_v2.py",
+      "sha256": "1506f688533f95311cc8073c203f7b5addec0b83c9b71bed0fd4a1d7f2a37a53"
+    },
+    "preceding_helper_failure": {
+      "scope": "Offline verification script failed before running the application.",
+      "reason": "The March helper assumed every carryover trace had following-day positions. May also has preceding-day-only carryover.",
+      "application_started": false,
+      "script_sha256": "3623f1f7b72d28474b8419ba9de51b7577bc3affdb6ce857df49bfc00c77d350",
+      "log_sha256": "3ea94a5e6ba3ab9871cf75c94c3671a99e1511a58921d19937b1b561f0bceff7"
+    }
+  },
+  "ci": "control-plan-ci.json"
 }

@@ -25,6 +25,16 @@ plan. The native tool accepts the real plan and rejects a changed source hash,
 permutation, or duration. A new offline run starts with a fresh baseline and
 compares it with up to 19 shuffled searches on the same frozen build.
 
+The current source also passed all required checks in
+[Windows and Ubuntu CI](control-plan-ci.json): 171 Rust tests and 10 Python
+tests passed on each platform.
+
+The [same-build offline replay](control-plan-offline-audio.json) kept Maho within
+549.65 m, with 16 matched flights and all 19 timing controls passed. Lake Hood
+remained insufficient. Both reports match the preceding replay apart from
+creation time. The proxy recorded no connections, and source manifests stayed
+unchanged. These replays use the existing November sample caches.
+
 [Adjacent-day source checks](next-day-carryover-checks.json) address a second
 download failure. A May source trace contains 580 valid positions on the next
 UTC day. Revision `9509903` preserves these positions and keeps date filtering
@@ -33,6 +43,11 @@ passed. The failing regression and original source bytes remain preserved.
 A new download reuses the verified partial cache and discovers all 58 free
 sample dates. Both Lake Hood audio tests wait for complete offline cache
 verification. Expanded-date location results remain pending.
+The native retry has accepted the original May object byte for byte, including
+all 580 positions from the following day.
+May completed with 377 traces and 1,116 unavailable identities recorded.
+Native offline reuse passed with unchanged source files and no proxy connections.
+The manifest also records other preceding-day and following-day positions.
 
 [Midnight-boundary checks](midnight-boundary-checks.json) fix a download failure
 in a March 2022 source trace. Its last position is 8 milliseconds after midnight.
@@ -74,7 +89,8 @@ This adapts the earlier `a5e0a99` experiment to the current source. Revision
 doc tests, and both release builds locally. The regression failed before the
 change and passed afterward. Further tests cover weak curves, missing coverage,
 bounded retention, and parallel determinism. The four-case offline Lake Hood
-replay waits for the preceding comparison. Its location results remain pending.
+replay has started after the preceding comparison completed. Its location
+results remain pending.
 The same source passed all required steps in
 [Windows and Ubuntu CI](coarse-corroboration-ci.json). Its offline Maho control
 remained within 549.65 m with 16 matched flights and all 19 controls. Only the
@@ -174,7 +190,11 @@ Each fit still receives its own quiet-gap checks. A four-curve regression failed
 before this change and passed afterward. Location acceptance rules are unchanged.
 [Revision `bd4d948`](equal-corroboration-checks.json) passed all 157 Rust tests,
 10 Python tests, formatting, strict Clippy, doc tests, and both release builds
-locally. Its four-case offline replay now runs with the same input jobs.
+locally. Its [four-case offline replay](lake-fit-retention-results.json)
+completed with the same input jobs. All four results remained ambiguous.
+The first clip ranked within 166.16 m and 99.54 m; the later clip ranked
+5.21 km and 8.12 km away. No location was accepted, no processing failed,
+and the proxy recorded no connections.
 The same source passed all 157 Rust tests, 10 Python tests, and required steps in
 [Windows and Ubuntu CI](equal-corroboration-ci-checks.json) at `5348434`.
 

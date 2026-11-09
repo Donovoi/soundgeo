@@ -326,7 +326,7 @@
       "sha256": "37f16f849eb96c32cca116e84477b867bcbd34355086cbbf093b694c776be6a8"
     }
   },
-  "ci_status": "Pending for this source revision",
+  "ci_status": "The corrected source passed Windows and Ubuntu CI; the original native plan failure remains recorded",
   "changes_location_acceptance": false,
   "method_notes": "doppler-controls.md",
   "artifacts": [
@@ -358,5 +358,6 @@
       "sha256": "5e7877d9d92546c6392143d2795d886a3dd18f552e8930b328efc11cb9d98f79"
     },
     "fixed_in": "control-plan-roundtrip-checks.json"
-  }
+  },
+  "ci": "control-plan-ci.json"
 }

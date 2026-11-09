@@ -166,6 +166,12 @@
       "sha256": "eb4e423d386cd74b58b9f65e54737a994e8c4307e76239d5395de22819c72500"
     },
     "input_jobs_identical_to_preceding_run": true,
-    "accepted_locations_added": 0
+    "accepted_locations_added": 0,
+    "status": "Completed: four ambiguous results, zero accepted locations"
+  },
+  "completed_replay": {
+    "result": "lake-fit-retention-results.json",
+    "accepted": 0,
+    "cases": 4
   }
 }

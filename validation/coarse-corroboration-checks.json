@@ -138,7 +138,7 @@
   ],
   "ci_status": "Passed all required checks on Windows and Ubuntu",
   "real_video_replay": {
-    "status": "Queued after the preceding fit-retention comparison",
+    "status": "Running; the preceding fit-retention comparison is complete",
     "plan": {
       "file": "lake-hires-doppler-beam/plan.json",
       "sha256": "8196c9bd16103bfdc0896ca0bd1a1bd746e6eedd65beacdabd6c5d11606be54f"
