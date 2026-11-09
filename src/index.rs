@@ -653,8 +653,10 @@ mod tests {
 
     fn corridor_centers(proposals: &[(Point, f64)]) -> BTreeSet<(i64, i64)> {
         // The two sides of each constant-height corridor share the same plane point.
-        proposals
-            .chunks_exact(2)
+        let (pairs, remainder) = proposals.as_chunks::<2>();
+        assert!(remainder.is_empty());
+        pairs
+            .iter()
             .map(|pair| {
                 let lat = (pair[0].0.lat + pair[1].0.lat) * 0.5;
                 let lon = (pair[0].0.lon + pair[1].0.lon) * 0.5;

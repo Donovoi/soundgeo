@@ -8,6 +8,24 @@ New results must state which target they use.
 
 ## Current checks
 
+[Corridor spacing checks](corridor-spacing-checks.json) fixed excess search
+proposals from dense flight traces. Proposals now keep their metre spacing
+along each continuous eligible path. The spacing follows turns and restarts
+after gaps or unsuitable motion. Curve fitting keeps the original positions.
+Revision `b63138d` passed all 156 Rust tests, 10 Python tests, and every required
+local check.
+
+For the first November 1 Lake Hood clip, standard traces now need 15,277,836
+proposals, down from 19,816,431. High-resolution traces need 15,274,007 and fit
+the same 20-million-proposal budget. They previously exceeded that budget.
+The paired searches continue offline with identical input jobs and no recording
+date or start time argument. These counts cover search preparation.
+
+The benchmark runner also records date arguments from the actual jobs and
+lists imported reference files separately. Earlier direct-file diagnostics
+could set the supplied-date flag when no date argument was present. Their
+original records remain saved with this issue documented.
+
 [Flight reference checks](flight-reference-fixes.json) found two lost-data
 problems. Passage timing kept only one visit when an aircraft left the search
 radius and returned. The trace reader also dropped the first recorded position

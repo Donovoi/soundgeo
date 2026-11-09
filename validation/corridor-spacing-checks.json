@@ -1,0 +1,152 @@
+{
+  "scope": "Software qualification and proposal-budget checks. Real-video location searches are still running.",
+  "source_commit": "b63138dd0705d4aa9a5e2627b6ff73b1b76d8e78",
+  "source_tree": "fe2e24e1eccc53d9fd7b1a80c1440190ec82b078",
+  "cli": "analysis-build/soundgeo-cli-spacing-b63138d.exe",
+  "cli_sha256": "3d03c47e0f0aa8395d5a399fe3f87020900469f78387e027168b27b4a328825b",
+  "rust_tests_passed": 156,
+  "python_tests_passed": 10,
+  "checks": [
+    {
+      "check": "fmt",
+      "exit_code": 0,
+      "elapsed_s": 0.5531982999964384
+    },
+    {
+      "check": "clippy",
+      "exit_code": 0,
+      "elapsed_s": 7.295471799996449
+    },
+    {
+      "check": "tests",
+      "exit_code": 0,
+      "elapsed_s": 344.5232249999972
+    },
+    {
+      "check": "doc-tests",
+      "exit_code": 0,
+      "elapsed_s": 1.1777151999995112
+    },
+    {
+      "check": "build",
+      "exit_code": 0,
+      "elapsed_s": 0.6136186000003363
+    },
+    {
+      "check": "python",
+      "exit_code": 0,
+      "elapsed_s": 0.24274879999575205
+    }
+  ],
+  "logs": [
+    {
+      "file": "corridor-spacing-fmt.log",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "file": "corridor-spacing-clippy.log",
+      "sha256": "e1a10045ee329538981e024f8c5f69c27743370ecc8667c76c05af7867ca57c1"
+    },
+    {
+      "file": "corridor-spacing-tests.log",
+      "sha256": "55d3770971592114c47ee9d3287268b31f63bc999de82e3cfc98e324eb3ca799"
+    },
+    {
+      "file": "corridor-spacing-doc-tests.log",
+      "sha256": "ced5d2960d9a9c8ea26d8d542bb1613770dd2099ee9e96e4e190ea8e64268b69"
+    },
+    {
+      "file": "corridor-spacing-build.log",
+      "sha256": "0f602ff623d113332d3df57a5792733a446a225610d025c53ec51f689b6aa8b5"
+    },
+    {
+      "file": "corridor-spacing-python.log",
+      "sha256": "70efccaa93f24d9cd24820f0047b7e4c9974d34c56e847ea765f990474c3b46e"
+    }
+  ],
+  "changes": [
+    "Carry proposal spacing along continuous eligible paths, including turns.",
+    "Restart proposal spacing after time gaps or unsuitable motion.",
+    "Keep original flight positions for curve fitting.",
+    "Derive benchmark date metadata from actual jobs and record imported references separately."
+  ],
+  "acceptance_rules_changed": false,
+  "regressions": {
+    "before_spacing": {
+      "file": "corridor-spacing-before.log",
+      "sha256": "4eafc0d9b836f0fc87926f476b756abd635e188e56151da3d235dbde44ab6f86"
+    },
+    "after_spacing": {
+      "file": "corridor-spacing-focused.log",
+      "sha256": "dd99f106f84e3df8fb836a781a62b6197c2b5bf910e7231a38baf7a23e9ae5f0"
+    },
+    "before_date_metadata": {
+      "file": "date-metadata-before/run.log",
+      "sha256": "e414e44f5d64ceb7c5463d0827b38225b2461bb71d654c9e86436a84ea8aac38"
+    },
+    "after_date_metadata": {
+      "file": "corridor-spacing-python-focused.log",
+      "sha256": "60886ae64a7500603442b9a21d3c10886b3ba2ab8137913fb9eb2669d34572cf"
+    }
+  },
+  "budget_checks": [
+    {
+      "build": "before",
+      "variant": "traces",
+      "case": "lake-hood-nov1",
+      "job_sha256": "41b15c6b28cc8d28a20b00ddc88ef85c7354f3a69fc3845c96665b246b469ffd",
+      "budget": 20000000,
+      "fits_budget": true,
+      "hypotheses": 19816431,
+      "preflight_log": {
+        "file": "corridor-spacing-budget-check/before-traces-preflight.log",
+        "sha256": "38b623e76e0d0e9e448e269db9a619e86a83ecf1cc672da260e192bd787a3b25"
+      }
+    },
+    {
+      "build": "before",
+      "variant": "hires-traces",
+      "case": "lake-hood-nov1",
+      "job_sha256": "2116f9fc436bb17df283c576681be723ac1ff5e905f5b2a9f9db0501cecbec70",
+      "budget": 20000000,
+      "fits_budget": false,
+      "hypotheses": null,
+      "preflight_log": {
+        "file": "corridor-spacing-budget-check/before-hires-traces-preflight.log",
+        "sha256": "5634f462a26948aca69e334b3bc35dfa8d0d27b12e3af7a3bc091cb5296ca7a2"
+      }
+    },
+    {
+      "build": "after",
+      "variant": "traces",
+      "case": "lake-hood-nov1",
+      "job_sha256": "41b15c6b28cc8d28a20b00ddc88ef85c7354f3a69fc3845c96665b246b469ffd",
+      "budget": 20000000,
+      "fits_budget": true,
+      "hypotheses": 15277836,
+      "preflight_log": {
+        "file": "corridor-spacing-budget-check/after-traces-preflight.log",
+        "sha256": "3c455bf7387344384e3bc2304d077ac36356e7e2a1fdd9f9b098a031d2ec3041"
+      }
+    },
+    {
+      "build": "after",
+      "variant": "hires-traces",
+      "case": "lake-hood-nov1",
+      "job_sha256": "2116f9fc436bb17df283c576681be723ac1ff5e905f5b2a9f9db0501cecbec70",
+      "budget": 20000000,
+      "fits_budget": true,
+      "hypotheses": 15274007,
+      "preflight_log": {
+        "file": "corridor-spacing-budget-check/after-hires-traces-preflight.log",
+        "sha256": "93a65d35d822c2cf47e0bfc1b6120adefc41507f44c205e37fb3707c926a240c"
+      }
+    }
+  ],
+  "recording_date_argument_supplied": false,
+  "recording_clock_supplied": false,
+  "known_position_supplied_to_app": false,
+  "video_clues": false,
+  "reference_scope": "The complete prepared November 1 free sample day, searched over the original broad bounds.",
+  "location_acceptance": "Pending. A successful budget check does not establish a location."
+}
