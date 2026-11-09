@@ -184,9 +184,31 @@ fn shift(event: &mut Event, seconds: f64) {
     }
 }
 
-pub fn apply(events: &[Event], plan: &Plan, index: usize) -> Result<(Vec<Event>, Vec<EventShift>)> {
+fn same_time(a: f64, b: f64) -> bool {
+    a.is_finite()
+        && b.is_finite()
+        && (a - b).abs() <= 4. * f64::EPSILON * a.abs().max(b.abs()).max(1.)
+}
+
+pub fn apply(
+    events: &[Event],
+    duration_s: f64,
+    saved: &Plan,
+    index: usize,
+) -> Result<(Vec<Event>, Vec<EventShift>)> {
+    // JSON decoding can round a block boundary by one floating-point step.
+    // Always derive the actual shifts from the source report again.
+    let plan = self::plan(events, duration_s)?;
     ensure!(
-        *plan == self::plan(events, plan.duration_s)?,
+        same_time(saved.duration_s, plan.duration_s)
+            && saved.minimum_activity_gap_s == plan.minimum_activity_gap_s
+            && saved.controls == plan.controls
+            && saved.blocks.len() == plan.blocks.len()
+            && saved.blocks.iter().zip(&plan.blocks).all(|(a, b)| {
+                a.event_indices == b.event_indices
+                    && same_time(a.start_s, b.start_s)
+                    && same_time(a.end_s, b.end_s)
+            }),
         "Control plan differs from the source activity blocks"
     );
     let permutation = plan
@@ -276,7 +298,7 @@ mod tests {
         let plan: Plan = serde_json::from_slice(&serde_json::to_vec(&plan).unwrap()).unwrap();
         assert_eq!(plan.blocks.len(), 5);
         for index in 0..CONTROL_COUNT {
-            let (changed, shifts) = apply(&events, &plan, index).unwrap();
+            let (changed, shifts) = apply(&events, 900.75, &plan, index).unwrap();
             assert_eq!(changed.len(), events.len());
             let a = shifts.iter().find(|s| s.original_index == 0).unwrap();
             let b = shifts.iter().find(|s| s.original_index == 5).unwrap();
@@ -318,7 +340,7 @@ mod tests {
         );
         assert!(plan.controls.iter().all(|c| !is_rotation(&c.order)));
         for index in 0..19 {
-            let (_, shifts) = apply(&events, &plan, index).unwrap();
+            let (_, shifts) = apply(&events, 900., &plan, index).unwrap();
             assert!(
                 shifts
                     .iter()
@@ -347,15 +369,47 @@ mod tests {
     }
 
     #[test]
+    fn saved_real_activity_plan_can_be_reloaded() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../tests/fixtures/doppler-control-activities.json"
+        ))
+        .unwrap();
+        let duration = fixture["duration_s"].as_f64().unwrap();
+        let events: Vec<_> = fixture["activities"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|v| event(v[0].as_f64().unwrap(), v[1].as_f64().unwrap()))
+            .collect();
+        let original = plan(&events, duration).unwrap();
+        assert_eq!(original.blocks.len(), 15);
+        let saved: Plan = serde_json::from_slice(&serde_json::to_vec(&original).unwrap()).unwrap();
+        for index in 0..CONTROL_COUNT {
+            let original = apply(&events, duration, &original, index).unwrap();
+            let reloaded = apply(&events, duration, &saved, index).unwrap();
+            assert_eq!(
+                serde_json::to_value(&original).unwrap(),
+                serde_json::to_value(&reloaded).unwrap()
+            );
+        }
+    }
+
+    #[test]
     fn insufficient_blocks_and_invalid_or_changed_inputs_are_rejected() {
         let mut events = fixture();
         let plan = plan(&events, 900.).unwrap();
         assert!(self::plan(&events[..4], 900.).is_err());
         assert!(self::plan(&events, f64::NAN).is_err());
-        assert!(apply(&events, &plan, 19).is_err());
+        assert!(apply(&events, 900., &plan, 19).is_err());
+        let changed_duration = self::plan(&events, 901.).unwrap();
+        assert!(apply(&events, 900., &changed_duration, 0).is_err());
+        let mut changed_boundary = plan.clone();
+        changed_boundary.blocks[0].end_s += 1.;
+        assert!(apply(&events, 900., &changed_boundary, 0).is_err());
+        assert!(apply(&events, f64::NAN, &plan, 0).is_err());
         events[0].alternatives.push(event(45., 140.));
         assert!(self::plan(&events, 900.).is_err());
-        assert!(apply(&events, &plan, 0).is_err());
+        assert!(apply(&events, 900., &plan, 0).is_err());
         events = fixture();
         events[0].ridge[0].time_s = -1.;
         assert!(self::plan(&events, 900.).is_err());

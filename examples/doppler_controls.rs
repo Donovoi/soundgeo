@@ -97,8 +97,12 @@ fn main() -> Result<()> {
                     && !saved.calibrated_location_probability,
                 "Saved control plan does not match the source report"
             );
-            let (events, shifts) =
-                doppler_controls::apply(&report.events, &saved.plan, index.into())?;
+            let (events, shifts) = doppler_controls::apply(
+                &report.events,
+                report.duration_s,
+                &saved.plan,
+                index.into(),
+            )?;
             let mut job = report.job.clone();
             job.offline = true;
             let control = Control::default().with_offline(true);

@@ -17,6 +17,8 @@ It keeps the original search mode, model settings, and hypothesis limit. It
 runs offline and receives no candidate coordinates or recording clock.
 The saved plan binds the source report by SHA-256. Each result records the
 block order, event shifts, full curves, search settings, and candidates.
+The runner checks the saved duration against the source report. It calculates
+all shifts from that report again, so JSON rounding cannot change a control.
 
 ```text
 cargo run --release --locked --example doppler_controls -- plan report.json controls.json
