@@ -1,0 +1,154 @@
+{
+  "scope": "Offline compatibility replay after the midnight endpoint change. Original broad bounds and prepared November sample caches; no date or clock arguments. These are existing recordings.",
+  "build": {
+    "source_commit": "ab06bd385db9f39a695ea1391baf58f84535dc55",
+    "sources": {
+      "src/aircraft.rs": "54db127d0b1cf748f68d3eb648e32ef88e5f36bbb48009597af5938b1cd38ac8",
+      "src/archive.rs": "1af68623b18dcbd0644c396aabee97cb011cacaba8522b7a445008d0508a1afc",
+      "src/audio.rs": "728094705bd1055b7522ea747db9688c45bf6e6c741e905f21d4af1d71aebf78",
+      "src/availability.rs": "1fbff825f786ec2c9ac40b2b45b648787071d825587e8a645f0e93eb61cdb86b",
+      "src/bin/soundgeo-cli.rs": "93f15fe699c2a1f715c7519c3fd75acc60fc0a7c600112c183fc968a5cbbb967",
+      "src/cli.rs": "165e68ff989c10f910c18dab1f0cf2cdf831fab88904152a6f04acf681f4eec5",
+      "src/data.rs": "9b0e53f031873b0fc93f2414ddc23857780bef2b132d8236b372bab4130c9abf",
+      "src/data_cache.rs": "d13b9565b6e637677f14ec0d0c9a40f352cbd5549b8994d184e70192f4d33515",
+      "src/date_search.rs": "721378eedeb2d6d4fdcd5ceef25810a5e3eeb7be366bcd4adda32ac32ed86934",
+      "src/demo.rs": "f0224f5ac2c029ccc732c6d13cbc2518e7c3199ea185bcb8facc0810498c282c",
+      "src/geo.rs": "df08646c74e1e65154b8701a5e7a44a6c32d38bdd56c85f2a77d72aa6275a9fa",
+      "src/index.rs": "baec90fe1d27aa1bf01980405b9efb25d5d1900d440eabfcd8fdd289998f20aa",
+      "src/lib.rs": "8c98f77841e87ecb0901f1937eacf187adee93722ae151fbe38646ab4ec9d23c",
+      "src/main.rs": "709cb3fc1a0230969ab09a8fc8b3e4d889cc0c2bc71548673fb4f7bcc1b07bba",
+      "src/model.rs": "1d880a6d2a9b6829d3e132a45dd09aa7083f561a4827c1ae29f2c7388242fb65",
+      "src/network.rs": "124ba4fa367fc7dc198e6d3930e27860e06b61e1989a283b41c31e9c3ec6ca49",
+      "src/sample_archive.rs": "5b4321406867ca99d5adeb1c7aaa28c2c1761ba4258464ba802e4e959ca175b0",
+      "src/search.rs": "588b0749f9528006760a6d6f041f648d0230db59209dad7de13b95f212e86cd3",
+      "src/terrain_archive.rs": "a364c807acd6aec4452da1a1da657b9f13769640a38a38d9734fe8f37951397c",
+      "src/timing/assessment.rs": "56d2f05752a2543ec4de8c601ab0543ddc9a0a5d45720d7cc3b6b14a04097ba8",
+      "src/timing/assignment.rs": "973a7d909504e24672527c3c051b7caef10b88b09df6f7b7bbf9bae7001d5f5c",
+      "src/timing/audio.rs": "74c840f1ea1d32388b6a39d1bdfdb13d5e6952f45c1682b512bb0cd3ad694b95",
+      "src/timing/likelihood.rs": "3626b091eb891b79d6d83a19cade683d6c3da4e07e8d0ef97fa39c57afc3a70c",
+      "src/timing/mod.rs": "994bb87f441dd38db734e86a6fea0f67d1b537c45cadf31fa2578bbb87a92561",
+      "src/timing/reference.rs": "fc21e7438374da9021166e37bd8e4cc5be6063d4ecac2ba1638145d0f9c85460",
+      "src/timing/search.rs": "d31ef3c86a74f2859cbda463d82e20476cda0e2d51ee797ee76902e0bf0dc5c5",
+      "src/ui.rs": "8e8a0546614e298e0510b4cacbbf9e25e8475ea69c9902be04924e762c5caff5",
+      "src/visual.rs": "58f603cb09b45cfb4be31c265c9de20bc9e44d11fbe4921ffa2b2b0b01dedf17",
+      "src/visual_data.rs": "be25400eb5ca3dd030f91434ba5fb145c72daaf4c4d35f78b1cf7c5feebcc17a",
+      "src/webtrak.rs": "c9e398fd96b27396cad1a50a860840d7e3d445b04364eb4f46f695ea0db7fe6e",
+      "tests/archives.rs": "b1640daf4e49524eef718ca2cb0b389c7f9ffe295e4175ff0fb11927743394f8",
+      "tests/automatic_cli.rs": "9207e21d372ab584452f4da17ee75fb082e9bb63ae084dfd413b4a9cd50c7bdc",
+      "tests/cli.rs": "848109bab520e4635e0366e966fd5ca4dcc51f02cc0e7a18cfd1b24a149f7a24",
+      "tests/empty_sample_dates.rs": "a989169fb69771a83e6ff62a8b55d262d76f3066abb7b4e68e5a799c462d54c5",
+      "tests/features.rs": "fc240acbbd73e63dfb456cb5fa32a82af3b6402f0c7c148e28be0d4075613551",
+      "tests/media_errors.rs": "7f2962eb4fb941e7d6880a1ad8b9feefafa4fae4900e6dd0d7929bd8c76b992c",
+      "tests/offline_dates.rs": "372a54b8cabc538d22467d013315dddf1dbb9c53acd26a7edc6592cdaa255223",
+      "tests/pipeline.rs": "bf896ebaf7d0fbcb3f74827b9f5d73ca9f555c0d7cbdd767ec0b5867297dc03b",
+      "tests/position_model.rs": "11c004670b1fcff596ad191f13dd7604b6e6d93dbf388b2721349deb723faed1",
+      "tests/sample_download_cli.rs": "09e2a28b4327f027074e08e2533b63e95323f648adfada452f03c084625dfdbc",
+      "tests/short_flyovers.rs": "c03ac03d85c96003167f444adbb1b2e2d85810d9798d9a368e8d1ba63cd55e29",
+      "tests/terrain_cli.rs": "9ce52d0b9358202a614140a2d33ad2274f5a7f4164e6811264316dbd4811a3d6",
+      "tests/timing_cli.rs": "42a0607731653e7f676d50493fc251dc4c5c463f2c4c40bbd5a5e8467c3783ae",
+      "tests/timing_short_tracks.rs": "3fdfff5dd48def325ded456e886a784121dc876ffb64b9fe2604f4c9e99d079c",
+      "Cargo.toml": "4d2924345e2f33dfda3e3867886c3ad8bee9ac0f4571b1ed4ae086d465bb376d",
+      "Cargo.lock": "e74c2f4141a488c76ed6491834a92c257f77f54d6047e7c29f767b085b6aafbb"
+    },
+    "rust_tests_passed": 165,
+    "python_tests_passed": 10,
+    "all_required_checks_passed": true,
+    "checks_sha256": "44f02390a794f863eb6fc07ef8b407e12854e1d268723c7411cf9e87a6a76da6",
+    "cli": "analysis-build/soundgeo-cli-midnight-ab06bd3.exe",
+    "cli_sha256": "9991e12deb4468e4df2da7db8ef236d8117cd96ad270de07f4f0f38a32fdedd7",
+    "desktop": "analysis-build/soundgeo-midnight-ab06bd3.exe",
+    "desktop_sha256": "6e96f229007047bace10e8b864c617417618cc2f036b9564175eea2c331d1322"
+  },
+  "plan_sha256": "d1f2661eed54cce4ba8e416e24e834a9b7a3aa16eadae09f06eb40284d9aa1f4",
+  "completion": {
+    "complete": true,
+    "runner_exit_code": 1,
+    "proxy_connections": 0,
+    "source_manifests_unchanged": true,
+    "results_sha256": "0040ecfbd03a00ed342797ac726c317ab1a757a05d946bfa296a272d49db44a9"
+  },
+  "results": {
+    "cli_sha256": "9991e12deb4468e4df2da7db8ef236d8117cd96ad270de07f4f0f38a32fdedd7",
+    "manifest_sha256": "fcd3199a03791295ad93105154769e297c1d89bcd05046c5d20dbd4252e66c1c",
+    "runner_sha256": "56bc882021aedb1312f0b0490285da6f58ac6994eee5987c2eade6cdc1c66323",
+    "target_error_m": 1000,
+    "selected_cases": [
+      "maho-nov1-b",
+      "lake-hood-nov1"
+    ],
+    "all_cases_selected": true,
+    "workers": 2,
+    "timeout_s": 3600.0,
+    "recording_clock_supplied": false,
+    "recording_date_supplied": false,
+    "date_argument_case_ids": [],
+    "imported_reference_case_ids": [],
+    "offline": true,
+    "archive_override": null,
+    "all_cases_are_replays": true,
+    "completed_cases": 2,
+    "planned_cases": 2,
+    "accepted": 1,
+    "wrong_screened": 0,
+    "processing_errors": 0,
+    "cases": [
+      {
+        "case": "lake-hood-nov1",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "62397b6759144253ef8ce460c5a2e961ba4d87730db5246e5a8a77c030050ba8",
+        "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+        "exit_code": 3,
+        "report_sha256": "ec775e93df75b15f80cdbc3322b26aa5b5b4e1bddc6544b3468dc16125eb14c7",
+        "status": "insufficient_evidence",
+        "sound_peaks": 56,
+        "track_count": 996,
+        "date_search": null,
+        "elapsed_s": 74.8773715999996
+      },
+      {
+        "case": "maho-nov1-b",
+        "accepted": true,
+        "screened": true,
+        "job_sha256": "46876daf826fd70e58496d9b8723835892dbb84669eb0eba3ab3f66bbf323096",
+        "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+        "exit_code": 0,
+        "report_sha256": "b4ca30466b723b9c66b98757db947540052bb81ef68df2d177132b0761c42f08",
+        "status": "candidates_found",
+        "sound_peaks": 117,
+        "track_count": 833,
+        "region": {
+          "latitude": 18.04328859060403,
+          "longitude": -63.121830985915494,
+          "enclosing_radius_m": 0.0,
+          "competitive_points": 1
+        },
+        "error_m": 549.649056637247,
+        "matched_flights": 16,
+        "score": 32.3003018462938,
+        "controls": 19,
+        "date_search": null,
+        "elapsed_s": 25.050728400005028
+      }
+    ]
+  },
+  "report_comparisons": [
+    {
+      "case": "lake-hood-nov1",
+      "report_sha256": "ec775e93df75b15f80cdbc3322b26aa5b5b4e1bddc6544b3468dc16125eb14c7",
+      "previous_report_sha256": "8e6e99d9feb97eaca62bac74cf14d4ed6e68bac340bed582026e97b6cccb9dbf",
+      "changed_fields": [
+        "created_utc"
+      ]
+    },
+    {
+      "case": "maho-nov1-b",
+      "report_sha256": "b4ca30466b723b9c66b98757db947540052bb81ef68df2d177132b0761c42f08",
+      "previous_report_sha256": "507d60dda123bcb6d17dda6db93f254906cd346677a7c372a76ddff5ca13bd02",
+      "changed_fields": [
+        "created_utc"
+      ]
+    }
+  ],
+  "new_accepted_recordings": 0
+}

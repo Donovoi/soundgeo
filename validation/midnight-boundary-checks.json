@@ -257,7 +257,7 @@
     "desktop": "analysis-build/soundgeo-midnight-ab06bd3.exe",
     "desktop_sha256": "6e96f229007047bace10e8b864c617417618cc2f036b9564175eea2c331d1322"
   },
-  "ci_status": "Pending for this source revision",
+  "ci_status": "All required checks passed on Windows and Ubuntu",
   "preparation_retry": {
     "plan": {
       "file": "lake-all-free-hires-dates-v2/plan.json",
@@ -313,5 +313,62 @@
       "file": "run_lake_all_free_hires_audio_v2.py",
       "sha256": "b87e83c08fac40383e97205340644e527eb826899b4fca81f6298ce57c79a46b"
     }
-  ]
+  ],
+  "real_source_download": {
+    "result": {
+      "bytes": 729838,
+      "source_bytes_equal": true,
+      "sha256": "f899223ec81c8fb64903990fe301c2eb5762dbe9722a80c5c944ab2ec3c0b6c9",
+      "receipt": {
+        "file": "trace_full_a2a219.json.gz",
+        "sha256": "f899223ec81c8fb64903990fe301c2eb5762dbe9722a80c5c944ab2ec3c0b6c9",
+        "bytes": 729838
+      }
+    },
+    "evidence": {
+      "file": "lake-all-free-hires-dates-v2/march-boundary-object-check.json",
+      "sha256": "384a88d383d3d6941ae3c17391b81e204c885cfe03fc91fd5beb8a30b82c8a67"
+    },
+    "status": "The native retry accepted the original March object and continued downloading subsequent identities. Complete all-date and offline verification remains pending."
+  },
+  "ci": "midnight-boundary-ci.json",
+  "real_offline_source_check": {
+    "scope": "A completed reference month, with no media input. All-date cache and audio replays remain pending.",
+    "plan": {
+      "file": "march-boundary-offline/plan.json",
+      "sha256": "9ef7f64bd16cf6190fe924c6d6e077d195824c8e0944a4fbf58d45b49a10c419"
+    },
+    "result": {
+      "complete": true,
+      "exit_code": 0,
+      "elapsed_s": 24.647310799999104,
+      "proxy_connections": 0,
+      "source_files_unchanged": true,
+      "traces": 483,
+      "missing_aircraft": 1186,
+      "recorded_boundaries": [
+        {
+          "file": "trace_full_a2a219.json.gz",
+          "sha256": "f899223ec81c8fb64903990fe301c2eb5762dbe9722a80c5c944ab2ec3c0b6c9",
+          "following_day_positions": 1,
+          "seconds_after_midnight": [
+            0.00800013542175293
+          ]
+        },
+        {
+          "file": "trace_full_a2eb95.json.gz",
+          "sha256": "ee1fa72243c9bf1aa99710ea499a511fa7d5b87d9001e61e14210326a49e3d23",
+          "following_day_positions": 1,
+          "seconds_after_midnight": [
+            0.0019998550415039062
+          ]
+        }
+      ],
+      "log_sha256": "6246e4c39c19d985f69c44a12e4dc21b07e315bbaee83d86138ab1ee4a28f72c"
+    },
+    "result_artifact": {
+      "file": "march-boundary-offline/result.json",
+      "sha256": "eb5518c46924b769a99f69796b9bff8bbb37fbd4bb442002a6ca0466439d8f13"
+    }
+  }
 }

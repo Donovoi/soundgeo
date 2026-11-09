@@ -1,0 +1,153 @@
+{
+  "scope": "Trace pruning of the unchanged broad search using saved observations. A prior hinted point and inferred clock filter diagnostic output only. No acceptance claim.",
+  "counts_as_location_acceptance": false,
+  "plan": {
+    "source_commit": "64f91d0f193a3a56e9df2c6817eab4217941a0ef",
+    "source_sha256": "262eb9db4543cb1aa1f12f607d159bc0f713404026f8d70cb87690bec1fd6940",
+    "hint_report_sha256": "e91554c8feebab5c355243b89ccc8cc6d5d2a7b60765662c03a491ed29b44770",
+    "current_report_sha256": "39773827e1332f6699e1edfdc489d1d8dd9bb4a4ce83cdc5fd1049b99d4719fa",
+    "script_sha256": "27b2b93fed89939353effa1c451394cff228a938ab87dee47e929764ddbbb29d",
+    "diagnostic_source_sha256": "90710f58e1bc97f34721247ff3deadfc619dc075851228ce2af1beaedce9a11c",
+    "scope": "Trace pruning of the unchanged broad search using saved observations. A prior hinted point and inferred clock filter diagnostic output only. No acceptance claim.",
+    "counts_as_location_acceptance": false,
+    "timeout_s": 7200
+  },
+  "completion": {
+    "complete": true,
+    "exit_code": 0,
+    "source_restored": false,
+    "counts_as_location_acceptance": false
+  },
+  "binary": {
+    "file": "global-pruning-tests.exe",
+    "sha256": "72dd6eb02dc8be007792293e89b66517a6000cc74d498cc12b88871f29f91acf",
+    "source_commit": "64f91d0f193a3a56e9df2c6817eab4217941a0ef",
+    "instrumented": true
+  },
+  "summary": {
+    "complete": true,
+    "counts_as_location_acceptance": false,
+    "decision_lines": 3039,
+    "witness": {
+      "accepted_error_percent": 0.9577805184988123,
+      "distance_to_hint_m": 556.2382429486012,
+      "full_core_error_percent": 0.4587408513242679,
+      "latitude": 61.18026011882876,
+      "longitude": -149.9656617049112,
+      "matches": 4,
+      "rate": 0.9992578125,
+      "sampled_error_percent": 0.4067202387688482,
+      "sampled_rank": 1,
+      "start": 1793568597.327827
+    },
+    "witness_aircraft": "a6ad7d/2/0",
+    "witness_anchor": 7,
+    "first_observation": {
+      "limit": 2048,
+      "pair": 91,
+      "stage": "before_coarse",
+      "total": 8192,
+      "nearby_count": 8,
+      "witness": [
+        {
+          "anchor": 7,
+          "latitude": 61.18026011882876,
+          "longitude": -149.9656617049112,
+          "lower_score_count": 105,
+          "rate": 0.9992578125,
+          "score": 0.4067202387688482,
+          "start": 1793568597.327827
+        }
+      ]
+    },
+    "last_observation": {
+      "limit": 512,
+      "pair": 1519,
+      "stage": "before_final",
+      "total": 3731,
+      "nearby_count": 8,
+      "witness": [
+        {
+          "anchor": 7,
+          "latitude": 61.18026011882876,
+          "longitude": -149.9656617049112,
+          "lower_score_count": 1491,
+          "rate": 0.9992578125,
+          "score": 0.4587408513242679,
+          "start": 1793568597.327827
+        }
+      ]
+    },
+    "witness_observations": 2855,
+    "coarse_losses": [],
+    "final_selection": [
+      {
+        "limit": 512,
+        "pair": 1519,
+        "stage": "before_final",
+        "total": 3731,
+        "nearby_count": 8,
+        "witness": [
+          {
+            "anchor": 7,
+            "latitude": 61.18026011882876,
+            "longitude": -149.9656617049112,
+            "lower_score_count": 1491,
+            "rate": 0.9992578125,
+            "score": 0.4587408513242679,
+            "start": 1793568597.327827
+          }
+        ]
+      }
+    ],
+    "decisions_sha256": "53c661cfaf368a3f039c8886b6a62f4c9800bdb9e9b5e7ed4bbd83e8fc98de66",
+    "search_sha256": "78305b920ffd3591eae6a1a1b4b6147942a3a3b3b461b56418c32673f791f1ca"
+  },
+  "interpretation": "The tracked four-curve proposal survived coarse pruning. Before final selection, 1491 proposals had lower core error. It did not reach the 512-proposal refinement stage.",
+  "empty_after_final_observer": "The completed instrumented search calls the after_final observer before refinement. That observer emits no row when its position-and-clock filter selects nothing. No after_final row was emitted; all eight filtered proposals were absent from refinement.",
+  "source_state": {
+    "frozen_diagnostic_source_commit": "64f91d0f193a3a56e9df2c6817eab4217941a0ef",
+    "production_source_restored_before_launch": true,
+    "subsequent_production_commit": "e5eeb2b439f271b1160a509095cca25f87b49e56",
+    "explanation": "The diagnostic executable was copied and its instrumentation removed before it started. Production source later advanced through a separately qualified change. Its terminal source_restored comparison can therefore be false without indicating instrumentation left in production. The frozen diagnostic binary and inputs are unchanged."
+  },
+  "source_state_explanation": "The diagnostic source was restored before its frozen executable started. Production later advanced through qualified commits. The terminal source_restored field compares those different revisions.",
+  "artifacts": [
+    {
+      "file": "lake-global-pruning-trace/plan.json",
+      "sha256": "9da324479115d3644f6b1742ed33dc850c1e043c563f53ea3bc3f9d681fd6eb9"
+    },
+    {
+      "file": "lake-global-pruning-trace/binary.json",
+      "sha256": "e8dceb3460fc5492d97c98ff4b8452f1e156aa0d75b12fd7d262c47f8cac0dea"
+    },
+    {
+      "file": "lake-global-pruning-trace/decisions.jsonl",
+      "sha256": "53c661cfaf368a3f039c8886b6a62f4c9800bdb9e9b5e7ed4bbd83e8fc98de66"
+    },
+    {
+      "file": "lake-global-pruning-trace/retention-summary.json",
+      "sha256": "511e22cfb2e777b5aca7948a38f462c3daa7f406a4ee9f676e05e6297b571cbd"
+    },
+    {
+      "file": "lake-global-pruning-trace/search.json",
+      "sha256": "78305b920ffd3591eae6a1a1b4b6147942a3a3b3b461b56418c32673f791f1ca"
+    },
+    {
+      "file": "lake-global-pruning-trace/run.log",
+      "sha256": "ed7c08aae0a76ed58280c8440c88546989413117c653b3233e2d962549c3a910"
+    },
+    {
+      "file": "lake_pruning_trace.rs",
+      "sha256": "90710f58e1bc97f34721247ff3deadfc619dc075851228ce2af1beaedce9a11c"
+    },
+    {
+      "file": "run_lake_global_pruning_trace.py",
+      "sha256": "27b2b93fed89939353effa1c451394cff228a938ab87dee47e929764ddbbb29d"
+    },
+    {
+      "file": "summarize_lake_pruning_trace.py",
+      "sha256": "5760954cc193337ced828bf4ff18c3fa8afd4197f8fdbaf456a8d09816dba7dd"
+    }
+  ]
+}

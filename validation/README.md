@@ -21,6 +21,19 @@ The earlier failing regression and failed all-date download remain recorded.
 A new preparation run reuses those files and discovers dates without date arguments.
 The two Lake Hood audio replays wait for complete offline cache verification.
 
+The same source passed all required checks in
+[Windows and Ubuntu CI](midnight-boundary-ci.json), with 165 Rust tests and
+10 Python tests on each platform. The native retry passed the original March
+file and completed that month with 483 traces. Offline reuse then passed with
+no proxy connections or changed source files. The manifest records two
+following-day endpoints, 8 ms and 2 ms after midnight.
+
+An [offline compatibility replay](midnight-boundary-audio.json) used the same
+frozen build and existing November sample caches. Maho remained within 549.65 m;
+Lake Hood again reported insufficient evidence with passage timing. Both reports
+match the earlier high-resolution replay apart from creation time. The proxy
+recorded no connections, and source manifests stayed unchanged.
+
 [Proposal-retention checks](coarse-corroboration-checks.json) reproduce a
 four-curve proposal lost before refinement when another proposal has lower
 error across three curves. The search now keeps its error-ranked proposals
@@ -38,6 +51,13 @@ The same source passed all required steps in
 [Windows and Ubuntu CI](coarse-corroboration-ci.json). Its offline Maho control
 remained within 549.65 m with 16 matched flights and all 19 controls. Only the
 report creation time differs from the preceding high-resolution replay.
+
+The [completed old-search trace](lake-global-pruning-trace.json) followed a
+four-curve proposal through the original broad search. It survived coarse
+pruning, then ranked 1,492 of 3,731 proposals before the final 512-proposal
+selection. No proposal within the diagnostic position-and-clock filter reached
+refinement. The known-position hint only filtered diagnostic output. This trace
+does not count as a location pass. The new beam replay remains pending.
 
 [An early sample-source check](early-high-resolution-source-gaps.json) prepared
 February 1, 2022, the earliest date in the high-resolution catalog. It downloaded

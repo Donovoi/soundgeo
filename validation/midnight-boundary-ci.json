@@ -1,0 +1,79 @@
+{
+  "head_commit": "205661293362adcff3ae78e4bdefb60bb3302d73",
+  "url": "https://github.com/Donovoi/soundgeo/actions/runs/42566722905",
+  "conclusion": "success",
+  "jobs": [
+    {
+      "name": "check (windows-latest)",
+      "conclusion": "success",
+      "rust_tests_passed": 165,
+      "python_tests_passed": 10,
+      "failed": 0,
+      "ignored": 0,
+      "required_steps": [
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --all-targets",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --doc",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo build --release --locked --bins",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "check (ubuntu-latest)",
+      "conclusion": "success",
+      "rust_tests_passed": 165,
+      "python_tests_passed": 10,
+      "failed": 0,
+      "ignored": 0,
+      "required_steps": [
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --all-targets",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --doc",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo build --release --locked --bins",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "log": {
+    "file": "midnight-boundary-checks/ci-terminal.log",
+    "sha256": "2143ffc2ac5d11ad77af8cc334ed756cd42af3e069a92a50e8ece68a07684058"
+  }
+}
