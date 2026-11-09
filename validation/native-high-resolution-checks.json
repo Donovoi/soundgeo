@@ -81,7 +81,7 @@
     "sha256": "c74439ef3f4df01b94b49beb2f80aeade2321e72901dbe5915e3239661963461"
   },
   "live_validation": {
-    "status_at_publication": "Running",
+    "status_at_publication": "Complete",
     "plan": {
       "scope": "Native high-resolution free sample preparation for two existing benchmark regions. This checks data access and offline use; location acceptance is evaluated separately.",
       "source": "https://www.adsbexchange.com/data-products/sample-data/",
@@ -113,7 +113,277 @@
       "offline_checks": "No date arguments, offline flag enabled, loopback proxy observation, input-byte checks.",
       "repair": "Preserve one downloaded Lake Hood trace outside its cache. Offline reuse must fail. Online preparation must restore the same bytes."
     },
-    "plan_sha256": "9e3c28bb5c917a98f8ea706fc158c875096709317b2176b8a047df421ca669f0"
+    "plan_sha256": "9e3c28bb5c917a98f8ea706fc158c875096709317b2176b8a047df421ca669f0",
+    "completion": {
+      "complete": true,
+      "regions": 2,
+      "offline_date_arguments_supplied": false,
+      "proxy_connections": 0,
+      "missing_trace_restored_byte_identically": true,
+      "original_standard_cache_unchanged": true,
+      "lake_traces_match_independent_downloads": true,
+      "accepted_locations_added": 0
+    },
+    "regions": [
+      {
+        "case": "maho-nov1-b",
+        "manifest": {
+          "file": "native-hires-live/maho-nov1-b/cache/adsbx-hires-sample-2026-11-01-adbd76249b092139/sample-manifest.json",
+          "sha256": "8783c8bd1967520c460969e179823864aae8296889f573070c32104c73dd97c9"
+        },
+        "traces": 97,
+        "missing_aircraft": [],
+        "snapshots": 288
+      },
+      {
+        "case": "lake-hood-nov1",
+        "manifest": {
+          "file": "native-hires-live/lake-hood-nov1/cache/adsbx-hires-sample-2026-11-01-4c03a53c13712c72/sample-manifest.json",
+          "sha256": "7c3faef26c9a84c654c4f7198c41e2745b10393a2827421a438c7096e735f768"
+        },
+        "traces": 387,
+        "missing_aircraft": [
+          "~574a91"
+        ],
+        "snapshots": 288
+      }
+    ],
+    "stages": [
+      {
+        "stage": "lake-hood-nov1-download",
+        "exit_code": 0,
+        "elapsed_s": 297.021041699998,
+        "log_sha256": "bde570b731f1af8e4c7de9fda94eb351117cb03034b0038f6af37eceba434230"
+      },
+      {
+        "stage": "lake-hood-nov1-offline",
+        "exit_code": 0,
+        "elapsed_s": 35.46456600000238,
+        "log_sha256": "ae2b769762bbb1c74a7ada9ab2cf2cebd43c4d5f4d0dc42d99542bba92bb3ffd"
+      },
+      {
+        "stage": "lake-missing-offline",
+        "exit_code": 1,
+        "elapsed_s": 39.57851749999827,
+        "log_sha256": "5413e7fce667dcf83e70e54215e0ed3b89d69a1b1bcd9fae602867a1721ac5b7"
+      },
+      {
+        "stage": "lake-repair-online",
+        "exit_code": 0,
+        "elapsed_s": 72.53638059999503,
+        "log_sha256": "bde570b731f1af8e4c7de9fda94eb351117cb03034b0038f6af37eceba434230"
+      },
+      {
+        "stage": "maho-nov1-b-download",
+        "exit_code": 0,
+        "elapsed_s": 107.99936170000001,
+        "log_sha256": "6fbdfc55785a6608d664e4c5878a667712b5838c6772cfc75b6eeb56f17dd6d2"
+      },
+      {
+        "stage": "maho-nov1-b-offline",
+        "exit_code": 0,
+        "elapsed_s": 7.830215599999065,
+        "log_sha256": "37a62649d18ae1854affbe4a52424495656b35d73394d7593cc354c92b44083c"
+      }
+    ],
+    "artifacts": [
+      {
+        "file": "native-hires-live/plan.json",
+        "sha256": "9e3c28bb5c917a98f8ea706fc158c875096709317b2176b8a047df421ca669f0"
+      },
+      {
+        "file": "native-hires-live/result.json",
+        "sha256": "34112d1d0caa7e7588a903447e77088fbd79a42592d1d840c634ebcdec24c170"
+      },
+      {
+        "file": "native-hires-live/prepared.json",
+        "sha256": "a19743c5950ffe2fcc7b29e34fa66cd760f0ecf3ff7104809e9b4cbe85ed86ae"
+      },
+      {
+        "file": "native-hires-live/withheld.json",
+        "sha256": "f8ae877ea316aa7afdcf7ac64af5b47a157c360b4fc2abb7c876feae185fd6a4"
+      },
+      {
+        "file": "native-hires-live/proxy-observation.json",
+        "sha256": "47e92d4561a3b772606eff9b0b381289896cb82bc39b191dd1980bf464ed9871"
+      }
+    ]
   },
-  "accepted_locations_added": 0
+  "accepted_locations_added": 0,
+  "date_discovery": {
+    "plan": {
+      "source_commit": "bdcb23b3e7fccb873ea8812ce18ee0c4b3921316",
+      "cli_sha256": "2db675f63ea7663ce4245aebc255cd43904fa9781016381660cc827eb169f273",
+      "scope": "Discover high-resolution free sample dates from provider listings, then replay the saved index offline.",
+      "script_sha256": "4930422cdfb62dabbe7d7e7f1807095394afd75384afb78467c65b93e3d69c67",
+      "timeout_per_command_s": 3600,
+      "date_arguments_supplied": false,
+      "media_or_position_used": false,
+      "downloads_flight_objects": false
+    },
+    "result": {
+      "complete": true,
+      "available_days": 58,
+      "first_date": "2022-02-01",
+      "last_date": "2026-11-01",
+      "online_and_offline_reports_identical": true,
+      "cache_unchanged": true,
+      "proxy_connections": 0,
+      "cache_sha256": "0b50272ac4cccd439e09186d8639b6b7c2b172c020e754ac751c21967e025ee4",
+      "report_sha256": "fcaa5cbdf17032e9cb776a589ce101fd4181565f28e41a231d729b774d461b98"
+    },
+    "artifacts": [
+      {
+        "file": "native-hires-date-index/plan.json",
+        "sha256": "b997a2a386bb27029a2ad1826ae7992ffe93e01ec2b33ee152e9b6570ce14cb9"
+      },
+      {
+        "file": "native-hires-date-index/online.json",
+        "sha256": "fcaa5cbdf17032e9cb776a589ce101fd4181565f28e41a231d729b774d461b98"
+      },
+      {
+        "file": "native-hires-date-index/offline.json",
+        "sha256": "fcaa5cbdf17032e9cb776a589ce101fd4181565f28e41a231d729b774d461b98"
+      },
+      {
+        "file": "native-hires-date-index/result.json",
+        "sha256": "e9ef81d9495ad6f352038736b086026d4e0b506de6d45ba1919d4ad4e9c56d73"
+      },
+      {
+        "file": "native-hires-date-index/proxy-observation.json",
+        "sha256": "47e92d4561a3b772606eff9b0b381289896cb82bc39b191dd1980bf464ed9871"
+      }
+    ]
+  },
+  "real_audio_replay": {
+    "plan": {
+      "source_commit": "bdcb23b3e7fccb873ea8812ce18ee0c4b3921316",
+      "cli_sha256": "2db675f63ea7663ce4245aebc255cd43904fa9781016381660cc827eb169f273",
+      "scope": "Native high-resolution source checks on two existing videos. Each cache contains the prepared November 1 sample. The original multi-date benchmark remains separate.",
+      "original_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+      "selected_manifest_sha256": "fcd3199a03791295ad93105154769e297c1d89bcd05046c5d20dbd4252e66c1c",
+      "runner_sha256": "56bc882021aedb1312f0b0490285da6f58ac6994eee5987c2eade6cdc1c66323",
+      "helper_sha256": "f6d6a9da344fed4777d4b44b0e93056d359c0da0b6e0b12ead400055e71dc8c8",
+      "script_sha256": "f3b81beb57a528ea264b128d587b3e201c3740c42e5d15af7b7023b348913244",
+      "case_ids": [
+        "maho-nov1-b",
+        "lake-hood-nov1"
+      ],
+      "source_manifests": [
+        {
+          "file": "native-hires-live/maho-nov1-b/cache/adsbx-hires-sample-2026-11-01-adbd76249b092139/sample-manifest.json",
+          "sha256": "8783c8bd1967520c460969e179823864aae8296889f573070c32104c73dd97c9"
+        },
+        {
+          "file": "native-hires-live/lake-hood-nov1/cache/adsbx-hires-sample-2026-11-01-4c03a53c13712c72/sample-manifest.json",
+          "sha256": "7c3faef26c9a84c654c4f7198c41e2745b10393a2827421a438c7096e735f768"
+        }
+      ],
+      "offline": true,
+      "recording_date_arguments_supplied": false,
+      "recording_clock_supplied": false,
+      "known_position_supplied_to_app": false,
+      "original_broad_bounds_used": true,
+      "video_clues": false,
+      "target_error_m": 1000,
+      "workers": 2,
+      "timeout_per_case_s": 3600
+    },
+    "completion": {
+      "complete": true,
+      "runner_exit_code": 1,
+      "proxy_connections": 0,
+      "source_manifests_unchanged": true,
+      "results_sha256": "6dc8f726527257c659c37abef59cffb61b3135e1b80a9875d43a9251f22307ae"
+    },
+    "results": {
+      "cli_sha256": "2db675f63ea7663ce4245aebc255cd43904fa9781016381660cc827eb169f273",
+      "manifest_sha256": "fcd3199a03791295ad93105154769e297c1d89bcd05046c5d20dbd4252e66c1c",
+      "runner_sha256": "56bc882021aedb1312f0b0490285da6f58ac6994eee5987c2eade6cdc1c66323",
+      "target_error_m": 1000,
+      "selected_cases": [
+        "maho-nov1-b",
+        "lake-hood-nov1"
+      ],
+      "all_cases_selected": true,
+      "workers": 2,
+      "timeout_s": 3600.0,
+      "recording_clock_supplied": false,
+      "recording_date_supplied": false,
+      "date_argument_case_ids": [],
+      "imported_reference_case_ids": [],
+      "offline": true,
+      "archive_override": null,
+      "all_cases_are_replays": true,
+      "completed_cases": 2,
+      "planned_cases": 2,
+      "accepted": 1,
+      "wrong_screened": 0,
+      "processing_errors": 0,
+      "cases": [
+        {
+          "case": "lake-hood-nov1",
+          "accepted": false,
+          "screened": false,
+          "job_sha256": "62397b6759144253ef8ce460c5a2e961ba4d87730db5246e5a8a77c030050ba8",
+          "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+          "exit_code": 3,
+          "report_sha256": "8e6e99d9feb97eaca62bac74cf14d4ed6e68bac340bed582026e97b6cccb9dbf",
+          "status": "insufficient_evidence",
+          "sound_peaks": 56,
+          "track_count": 996,
+          "date_search": null,
+          "elapsed_s": 110.35402140000224
+        },
+        {
+          "case": "maho-nov1-b",
+          "accepted": true,
+          "screened": true,
+          "job_sha256": "46876daf826fd70e58496d9b8723835892dbb84669eb0eba3ab3f66bbf323096",
+          "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+          "exit_code": 0,
+          "report_sha256": "507d60dda123bcb6d17dda6db93f254906cd346677a7c372a76ddff5ca13bd02",
+          "status": "candidates_found",
+          "sound_peaks": 117,
+          "track_count": 833,
+          "region": {
+            "latitude": 18.04328859060403,
+            "longitude": -63.121830985915494,
+            "enclosing_radius_m": 0.0,
+            "competitive_points": 1
+          },
+          "error_m": 549.649056637247,
+          "matched_flights": 16,
+          "score": 32.3003018462938,
+          "controls": 19,
+          "date_search": null,
+          "elapsed_s": 32.096959100003005
+        }
+      ]
+    },
+    "interpretation": "Maho retained its accepted position within 549.65 m, including the reference allowance, with 16 matched flights and all 19 controls. Lake Hood remained insufficient with the timing method. Both analyses used native prepared caches offline, blank dates, no recording start time, and the original broad bounds.",
+    "artifacts": [
+      {
+        "file": "native-hires-audio/plan.json",
+        "sha256": "abb7bba8f437b50ddff1bad3a55e363aacefcc7d043707f0866040850d7e4dcb"
+      },
+      {
+        "file": "native-hires-audio/manifest.json",
+        "sha256": "fcd3199a03791295ad93105154769e297c1d89bcd05046c5d20dbd4252e66c1c"
+      },
+      {
+        "file": "native-hires-audio/audio/results.json",
+        "sha256": "6dc8f726527257c659c37abef59cffb61b3135e1b80a9875d43a9251f22307ae"
+      },
+      {
+        "file": "native-hires-audio/result.json",
+        "sha256": "822ca87e42edddd76e73053496520b8bb16b6533029b713c24ce3cada0208853"
+      },
+      {
+        "file": "native-hires-audio/proxy-observation.json",
+        "sha256": "47e92d4561a3b772606eff9b0b381289896cb82bc39b191dd1980bf464ed9871"
+      }
+    ]
+  },
+  "ci_record": "native-high-resolution-ci.json"
 }

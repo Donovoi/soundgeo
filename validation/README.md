@@ -14,8 +14,22 @@ traces have separate caches and share discovery snapshots. Offline date discover
 skips unfinished sample folders. Tests cover download routing, cache separation,
 offline reuse, missing-file recovery, date catalogs, and CLI input checks.
 Revision `bdcb23b` passed all 160 Rust tests, 10 Python tests, formatting, strict
-Clippy, doc tests, and both release builds locally. Native source checks for the
-Lake Hood and Maho regions are running. These checks add no accepted locations.
+Clippy, doc tests, and both release builds locally. The same source passed all
+required steps in [Windows and Ubuntu CI](native-high-resolution-ci.json).
+
+Native downloads retrieved 97 Maho traces and 387 Lake Hood traces. One selected
+Lake Hood trace was unavailable. All downloaded Lake Hood traces matched the
+independent copies. Offline cache reuse passed with blank dates and no proxy
+connections. A withheld trace caused the expected offline failure; online
+preparation restored the same bytes. Existing standard cache files stayed unchanged.
+Automatic discovery found 58 high-resolution sample dates. The saved date index
+replayed offline with identical output.
+
+Both recordings then ran offline through the native high-resolution provider,
+with no supplied recording dates or clocks and the original broad search areas.
+Maho remained within 549.65 m, with 16 matched flights and all 19 controls.
+Lake Hood reported insufficient evidence with the timing method. These replays
+add no new accepted recordings.
 
 [Corridor spacing checks](corridor-spacing-checks.json) fixed excess search
 proposals from dense flight traces. Proposals now keep their metre spacing

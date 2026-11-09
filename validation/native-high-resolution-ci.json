@@ -1,0 +1,167 @@
+{
+  "run": 42557434243,
+  "url": "https://github.com/Donovoi/soundgeo/actions/runs/42557434243",
+  "source_commit": "dc6d9395b1753301c44b57a3d60b9818379c2e08",
+  "platforms": [
+    {
+      "platform": "windows-latest",
+      "rust_tests": [
+        160,
+        0,
+        0
+      ],
+      "python_tests": 10
+    },
+    {
+      "platform": "ubuntu-latest",
+      "rust_tests": [
+        160,
+        0,
+        0
+      ],
+      "python_tests": 10
+    }
+  ],
+  "all_required_steps_passed": true,
+  "log_sha256": "be32695157b7ec9d80152903e81ffa4d66113cf13b3c6038a0ccac98f78a4912",
+  "jobs": [
+    {
+      "name": "check (ubuntu-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Linux dependencies",
+          "conclusion": "success"
+        },
+        {
+          "name": "Windows FFmpeg",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --all-targets",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --doc",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo build --release --locked --bins",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "name": "check (windows-latest)",
+      "steps": [
+        {
+          "name": "Set up job",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run dtolnay/rust-toolchain@stable",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Linux dependencies",
+          "conclusion": "skipped"
+        },
+        {
+          "name": "Windows FFmpeg",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo fmt --all -- --check",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --all-targets",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo test --release --locked --doc",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run cargo build --release --locked --bins",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run Swatinem/rust-cache@v2",
+          "conclusion": "success"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "conclusion": "success"
+        },
+        {
+          "name": "Complete job",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ]
+}
