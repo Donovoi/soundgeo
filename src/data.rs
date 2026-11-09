@@ -110,7 +110,7 @@ pub fn load_for_job_sources(
 ) -> Result<Dataset> {
     let filter = Filter {
         archive_days: if let Some(archive) = &job.archive
-            && archive.provider == crate::archive::ArchiveProvider::AdsbExchangeSample
+            && archive.provider.sample_resolution().is_some()
         {
             archive
                 .dates()?

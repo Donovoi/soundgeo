@@ -106,6 +106,39 @@ fn invalid_ranges_and_wrong_date_cache_are_rejected() {
 }
 
 #[test]
+fn sample_cache_dates_keep_resolutions_separate_and_skip_unfinished_days() {
+    use soundgeo::archive::ArchiveProvider;
+    let dir = tempfile::tempdir().unwrap();
+    for (name, complete) in [
+        ("adsbx-sample-2024-02-01-area", true),
+        ("adsbx-hires-sample-2024-03-01-area", true),
+        ("adsbx-sample-2024-04-01-snapshots", false),
+        ("adsbx-hires-sample-2024-05-01-area", false),
+    ] {
+        let path = dir.path().join(name);
+        std::fs::create_dir(&path).unwrap();
+        if complete {
+            std::fs::write(path.join("sample-manifest.json"), b"{}").unwrap();
+        }
+    }
+    let mut request = ArchiveRequest {
+        date_from: String::new(),
+        date_to: None,
+        cache: dir.path().into(),
+        provider: ArchiveProvider::AdsbExchangeSample,
+    };
+    assert_eq!(request.dates().unwrap(), ["2024-02-01"]);
+    request.provider = ArchiveProvider::AdsbExchangeSampleHires;
+    assert_eq!(request.dates().unwrap(), ["2024-03-01"]);
+    request.date_from = "2024-01-15".into();
+    request.date_to = Some("2024-04-01".into());
+    assert_eq!(
+        request.dates().unwrap(),
+        ["2024-02-01", "2024-03-01", "2024-04-01"]
+    );
+}
+
+#[test]
 fn sample_ranges_select_available_months_and_cache_discovery_keeps_gaps() {
     let dir = tempfile::tempdir().unwrap();
     let mut request = ArchiveRequest {

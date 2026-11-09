@@ -116,7 +116,7 @@ impl Job {
         }
         if let Some(request) = &self.archive {
             request.validate()?;
-            if request.provider == archive::ArchiveProvider::AdsbExchangeSample {
+            if request.provider.sample_resolution().is_some() {
                 sample_archive::validate_bounds(self.bounds)?;
                 if !request.date_from.trim().is_empty() {
                     for date in request.dates()? {
@@ -374,7 +374,7 @@ pub(crate) fn analyze_sources(
     if job
         .archive
         .as_ref()
-        .is_some_and(|r| r.provider == archive::ArchiveProvider::AdsbExchangeSample)
+        .is_some_and(|r| r.provider.sample_resolution().is_some())
     {
         let mut no_traces = !sources.is_empty();
         for path in sources {
@@ -539,7 +539,7 @@ pub fn prepare_data(job: &Job, control: &Control, progress: &Progress<'_>) -> Re
         .archive
         .as_ref()
         .context("Select a flight provider and cache folder")?;
-    if request.provider == archive::ArchiveProvider::AdsbExchangeSample {
+    if request.provider.sample_resolution().is_some() {
         sample_archive::validate_bounds(job.bounds)?;
     }
     let flight_sources =

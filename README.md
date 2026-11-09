@@ -231,6 +231,12 @@ sets out the dates and terms of use. Source gaps are listed in
 `sample-manifest.json` and in the report warning.
 The app checks cached file hashes and keeps damaged cache bytes before repair.
 
+For the sample's high-resolution flight traces, use
+`--provider adsb-exchange-sample-hires` in the download or analysis command.
+In the desktop app, select **Free evaluation sample: high resolution**.
+Both options use the same discovery snapshots. Each keeps its own flight traces.
+Prepared high-resolution data can be used with `--offline` and blank dates.
+
 To search more than one possible date, add `--date-to`:
 
 ```powershell

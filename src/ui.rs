@@ -257,16 +257,18 @@ impl App {
                 egui::ComboBox::from_id_salt("flight_provider").selected_text(match request.provider {
                     ArchiveProvider::AdsbLol => "Worldwide: ADSB.lol",
                     ArchiveProvider::AdsbExchangeSample => "Free evaluation sample: first of each month",
+                    ArchiveProvider::AdsbExchangeSampleHires => "Free evaluation sample: high resolution",
                     ArchiveProvider::WebtrakChicago => "Chicago: public airport replay",
                     ArchiveProvider::WebtrakLax => "LAX: public airport replay",
                 }).show_ui(ui,|ui|{
                     ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbLol,"Worldwide: ADSB.lol");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbExchangeSample,"Free evaluation sample: first of each month");
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbExchangeSampleHires,"Free evaluation sample: high resolution");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakChicago,"Chicago: public airport replay");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakLax,"LAX: public airport replay");
                 });
                 ui.label(RichText::new("Optional date range. Blank dates find the provider's available days online. Offline mode searches prepared dates.").small().color(MUTED));
-                if request.provider == ArchiveProvider::AdsbExchangeSample {
+                if request.provider.sample_resolution().is_some() {
                     ui.label(RichText::new("Use the first day of a month and set a search area below. This free sample is for testing and evaluation. It can miss flights between five-minute discovery snapshots.").small().color(MUTED));
                     ui.hyperlink_to("Free sample coverage and terms", "https://www.adsbexchange.com/data-products/sample-data/");
                 }

@@ -25,6 +25,30 @@ const MAX_COMPRESSED: usize = 20_000_000;
 const MAX_JSON: u64 = 128_000_000;
 const SNAPSHOT_INTERVAL_S: f64 = 300.;
 
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TraceResolution {
+    #[default]
+    Standard,
+    High,
+}
+
+impl TraceResolution {
+    pub(crate) fn object_prefix(self) -> &'static str {
+        match self {
+            Self::Standard => "traces",
+            Self::High => "hires-traces",
+        }
+    }
+
+    pub(crate) fn cache_prefix(self) -> &'static str {
+        match self {
+            Self::Standard => "adsbx-sample",
+            Self::High => "adsbx-hires-sample",
+        }
+    }
+}
+
 fn hash(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
@@ -327,6 +351,8 @@ struct TraceCarryover {
 #[derive(Serialize, Deserialize)]
 struct Manifest {
     schema: u32,
+    #[serde(default)]
+    resolution: TraceResolution,
     date: String,
     bounds: Bounds,
     source: String,
@@ -552,12 +578,31 @@ pub fn download_day(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<PathBuf> {
+    download_day_with_resolution(
+        date,
+        cache,
+        bounds,
+        TraceResolution::Standard,
+        control,
+        progress,
+    )
+}
+
+pub fn download_day_with_resolution(
+    date: &str,
+    cache: &Path,
+    bounds: Option<Bounds>,
+    resolution: TraceResolution,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<PathBuf> {
     control.check()?;
     let bounds = validate(date, bounds)?;
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()?;
     runtime.block_on(download(
+        resolution,
         &Client::new()?,
         date,
         cache,
@@ -567,6 +612,7 @@ pub fn download_day(
     ))
 }
 async fn download(
+    resolution: TraceResolution,
     client: &Client,
     date: &str,
     cache: &Path,
@@ -575,7 +621,11 @@ async fn download(
     progress: &Progress<'_>,
 ) -> Result<PathBuf> {
     let tag = hash(&serde_json::to_vec(&bounds)?);
-    let root = cache.join(format!("adsbx-sample-{date}-{}", &tag[..16]));
+    let root = cache.join(format!(
+        "{}-{date}-{}",
+        resolution.cache_prefix(),
+        &tag[..16]
+    ));
     let shared = cache.join(format!("adsbx-sample-{date}-snapshots"));
     let traces = root.join("traces");
     let manifest_path = root.join("sample-manifest.json");
@@ -585,6 +635,7 @@ async fn download(
     if let Ok(bytes) = std::fs::read(&manifest_path)
         && let Ok(manifest) = serde_json::from_slice::<Manifest>(&bytes)
         && manifest.date == date
+        && manifest.resolution == resolution
         && serde_json::to_vec(&manifest.bounds)? == serde_json::to_vec(&bounds)?
         && snapshot_plan_valid(&manifest, &names)
         && cached_aircraft_set_valid(&manifest, control.offline)
@@ -613,6 +664,7 @@ async fn download(
     let prefix = date.replace('-', "/");
     let mut manifest = Manifest {
         schema: 3,
+        resolution,
         date: date.into(),
         bounds,
         source: "https://www.adsbexchange.com/data-products/sample-data/".into(),
@@ -697,7 +749,8 @@ async fn download(
         control.check()?;
         let file = format!("trace_full_{id}.json.gz");
         let key = format!(
-            "traces/{prefix}/{}/trace_full_{id}.json",
+            "{}/{prefix}/{}/trace_full_{id}.json",
+            resolution.object_prefix(),
             &id[id.len() - 2..]
         );
         if let Some((record, value)) = object(
@@ -952,6 +1005,26 @@ mod tests {
         };
         (200, compressed(value), 0)
     }
+    async fn download(
+        client: &Client,
+        date: &str,
+        cache: &Path,
+        bounds: Bounds,
+        control: &Control,
+        progress: &Progress<'_>,
+    ) -> Result<PathBuf> {
+        super::download(
+            TraceResolution::Standard,
+            client,
+            date,
+            cache,
+            bounds,
+            control,
+            progress,
+        )
+        .await
+    }
+
     fn run(client: &Client, cache: &Path) -> Result<PathBuf> {
         tokio::runtime::Builder::new_current_thread()
             .enable_all()
@@ -1059,6 +1132,115 @@ mod tests {
             .is_err()
         );
     }
+    #[test]
+    fn high_resolution_download_keeps_separate_traces_and_reuses_discovery_offline() {
+        let dir = tempfile::tempdir().unwrap();
+        let server = Server::new(|key| {
+            let (status, bytes, delay) = fixture(key);
+            if key.contains("/hires-traces/") {
+                let mut value = parse(&bytes).unwrap();
+                value["trace"] = json!(
+                    (0..61)
+                        .map(|i| json!([
+                            10. + i as f64 * 0.5,
+                            10.4,
+                            20.4 + i as f64 / 6000.,
+                            1000,
+                            100,
+                            90,
+                            0
+                        ]))
+                        .collect::<Vec<_>>()
+                );
+                return (status, compressed(value), delay);
+            }
+            (status, bytes, delay)
+        });
+        let client = server.client();
+        let standard = run(&client, dir.path()).unwrap();
+        let original = std::fs::read(standard.join("trace_full_abcdef.json.gz")).unwrap();
+        assert_eq!(server.calls.load(Ordering::Relaxed), 290);
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let high = runtime
+            .block_on(super::download(
+                TraceResolution::High,
+                &client,
+                DAY,
+                dir.path(),
+                bounds(),
+                &Control::default(),
+                &|_, _| {},
+            ))
+            .unwrap();
+        assert_ne!(standard, high);
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+        assert_eq!(
+            std::fs::read(standard.join("trace_full_abcdef.json.gz")).unwrap(),
+            original
+        );
+        let dense = std::fs::read(high.join("trace_full_abcdef.json.gz")).unwrap();
+        assert_eq!(
+            parse(&dense).unwrap()["trace"].as_array().unwrap().len(),
+            61
+        );
+        assert_ne!(dense, original);
+        let manifest: Manifest = serde_json::from_slice(
+            &std::fs::read(high.parent().unwrap().join("sample-manifest.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(manifest.resolution, TraceResolution::High);
+        let offline = Control::default().with_offline(true);
+        let request = crate::archive::ArchiveRequest {
+            date_from: String::new(),
+            date_to: None,
+            cache: dir.path().into(),
+            provider: crate::archive::ArchiveProvider::AdsbExchangeSampleHires,
+        };
+        assert_eq!(request.dates().unwrap(), [DAY]);
+        assert_eq!(
+            request
+                .ensure_for_bounds(Some(bounds()), &offline, &|_, _| {})
+                .unwrap(),
+            std::slice::from_ref(&high)
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+
+        // A missing high-resolution object must not use the standard trace.
+        std::fs::remove_file(high.join("trace_full_abcdef.json.gz")).unwrap();
+        assert!(
+            request
+                .ensure_for_bounds(Some(bounds()), &offline, &|_, _| {})
+                .is_err()
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+        assert_eq!(
+            runtime
+                .block_on(super::download(
+                    TraceResolution::High,
+                    &client,
+                    DAY,
+                    dir.path(),
+                    bounds(),
+                    &Control::default(),
+                    &|_, _| {},
+                ))
+                .unwrap(),
+            high
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 293);
+        assert_eq!(
+            std::fs::read(high.join("trace_full_abcdef.json.gz")).unwrap(),
+            dense
+        );
+        assert_eq!(
+            std::fs::read(standard.join("trace_full_abcdef.json.gz")).unwrap(),
+            original
+        );
+    }
+
     #[test]
     fn full_day_download_preserves_non_icao_ids_and_reuses_offline_cache() {
         let dir = tempfile::tempdir().unwrap();

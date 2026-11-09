@@ -125,6 +125,11 @@ retries recorded gaps. Offline reuse preserves them and rejects missing or
 damaged downloaded files. Preparation stops if no discovery snapshot is
 available for the day. This source permits testing and evaluation.
 
+The high-resolution sample uses the same discovery snapshots and first-of-month
+coverage. It can add positions for a recorded flight, but source gaps and flights
+missed during discovery remain. Downloads and disk use can be larger. Selecting
+high-resolution data does not establish a location by itself.
+
 The free sample downloader retrieved all 288 snapshots and 97 Maho traces in
 validation. Every file matched an independent download. Cache reuse and recovery
 of a missing trace passed. LAX full-day download, cache reuse, and missing-part

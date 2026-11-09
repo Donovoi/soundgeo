@@ -61,7 +61,7 @@ fn validate(catalog: &Catalog, provider: ArchiveProvider, today: NaiveDate) -> R
         catalog.dates.windows(2).all(|p| p[0] < p[1]),
         "Date catalog must be ordered with no duplicates"
     );
-    if provider == ArchiveProvider::AdsbExchangeSample {
+    if provider.sample_resolution().is_some() {
         ensure!(
             catalog.dates.iter().all(|d| d.ends_with("-01")),
             "The free sample index contains a non-sample date"
@@ -347,11 +347,14 @@ async fn discover_online(
                 }
             }
         }
-        ArchiveProvider::AdsbExchangeSample => {
+        ArchiveProvider::AdsbExchangeSample | ArchiveProvider::AdsbExchangeSampleHires => {
             basis = "First-of-month dates listed under both free sample snapshots and traces. Completeness is checked during download.";
             let client = crate::sample_archive::Client::new()?;
             let mut by_kind = vec![];
-            for kind in ["readsb-hist", "traces"] {
+            for kind in [
+                "readsb-hist",
+                provider.sample_resolution().unwrap().object_prefix(),
+            ] {
                 let mut listed = BTreeSet::new();
                 let root = format!("{kind}/");
                 for year in prefixes(&client, &root, &mut fetch.sources, control).await? {
@@ -545,6 +548,36 @@ mod tests {
         control.stop();
         assert!(discover(provider, dir.path(), &control, &|_, _| {}).is_err());
     }
+    #[test]
+    fn high_resolution_date_catalog_preserves_provider_and_monthly_coverage() {
+        let dir = tempfile::tempdir().unwrap();
+        let provider = ArchiveProvider::AdsbExchangeSampleHires;
+        let mut catalog = Catalog {
+            provider,
+            retrieved_utc: Utc::now().to_rfc3339(),
+            dates: vec!["2024-03-01".into()],
+            basis: "fixture".into(),
+            sources: vec![Source {
+                url: "https://example.com/hires-traces/".into(),
+                sha256: hash(b"fixture"),
+                status: 200,
+                request_body_sha256: None,
+            }],
+        };
+        save(dir.path(), &catalog).unwrap();
+        let offline = Control::default().with_offline(true);
+        assert_eq!(
+            discover(provider, dir.path(), &offline, &|_, _| {})
+                .unwrap()
+                .dates,
+            catalog.dates
+        );
+        assert!(load(dir.path(), ArchiveProvider::AdsbExchangeSample).is_err());
+        catalog.dates = vec!["2024-03-02".into()];
+        assert!(save(dir.path(), &catalog).is_err());
+        assert_eq!(load(dir.path(), provider).unwrap().dates, ["2024-03-01"]);
+    }
+
     #[test]
     fn release_index_recognizes_supported_complete_day_archives() {
         let today = NaiveDate::from_ymd_opt(2026, 11, 7).unwrap();

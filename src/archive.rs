@@ -11,14 +11,24 @@ pub enum ArchiveProvider {
     #[default]
     AdsbLol,
     AdsbExchangeSample,
+    AdsbExchangeSampleHires,
     WebtrakChicago,
     WebtrakLax,
 }
 
 impl ArchiveProvider {
+    pub fn sample_resolution(self) -> Option<crate::sample_archive::TraceResolution> {
+        use crate::sample_archive::TraceResolution;
+        match self {
+            Self::AdsbExchangeSample => Some(TraceResolution::Standard),
+            Self::AdsbExchangeSampleHires => Some(TraceResolution::High),
+            _ => None,
+        }
+    }
+
     pub fn webtrak_site(self) -> Option<crate::webtrak::Site> {
         match self {
-            Self::AdsbLol | Self::AdsbExchangeSample => None,
+            Self::AdsbLol | Self::AdsbExchangeSample | Self::AdsbExchangeSampleHires => None,
             Self::WebtrakChicago => Some(crate::webtrak::Site::Chicago),
             Self::WebtrakLax => Some(crate::webtrak::Site::Lax),
         }
@@ -69,7 +79,7 @@ impl ArchiveRequest {
     }
 
     fn first_year(&self) -> i32 {
-        if self.provider == ArchiveProvider::AdsbExchangeSample {
+        if self.provider.sample_resolution().is_some() {
             2016
         } else {
             2023
@@ -112,7 +122,7 @@ impl ArchiveRequest {
                     .to_string()
             })
             .filter(|date| {
-                self.provider != ArchiveProvider::AdsbExchangeSample
+                self.provider.sample_resolution().is_none()
                     || self.date_to.is_none()
                     || NaiveDate::parse_from_str(date, "%Y-%m-%d").is_ok_and(|day| day.day() == 1)
             })
@@ -150,10 +160,15 @@ impl ArchiveRequest {
                 ArchiveProvider::AdsbLol => name.as_str(),
                 ArchiveProvider::WebtrakChicago => name.strip_prefix("webtrak-cda-").unwrap_or(""),
                 ArchiveProvider::WebtrakLax => name.strip_prefix("webtrak-lax4-").unwrap_or(""),
-                ArchiveProvider::AdsbExchangeSample => name
-                    .strip_prefix("adsbx-sample-")
-                    .and_then(|s| s.get(..10))
-                    .unwrap_or(""),
+                ArchiveProvider::AdsbExchangeSample | ArchiveProvider::AdsbExchangeSampleHires => {
+                    if !entry.path().join("sample-manifest.json").is_file() {
+                        continue;
+                    }
+                    let prefix = self.provider.sample_resolution().unwrap().cache_prefix();
+                    name.strip_prefix(&format!("{prefix}-"))
+                        .and_then(|s| s.get(..10))
+                        .unwrap_or("")
+                }
             };
             if let Ok(day) = NaiveDate::parse_from_str(date, "%Y-%m-%d")
                 && day >= NaiveDate::from_ymd_opt(self.first_year(), 1, 1).unwrap()
@@ -175,11 +190,11 @@ impl ArchiveRequest {
         control: &Control,
         progress: &Progress<'_>,
     ) -> Result<Vec<PathBuf>> {
-        if self.provider == ArchiveProvider::AdsbExchangeSample {
+        if self.provider.sample_resolution().is_some() {
             crate::sample_archive::validate_bounds(bounds)?;
         }
         let (dates, _) = self.resolve_dates(control, progress)?;
-        if self.provider == ArchiveProvider::AdsbExchangeSample {
+        if self.provider.sample_resolution().is_some() {
             for date in &dates {
                 crate::sample_archive::validate(date, bounds)?;
             }
@@ -199,13 +214,17 @@ impl ArchiveRequest {
                     ArchiveProvider::AdsbLol => {
                         crate::data::download_day(date, &self.cache, control, &day_progress)
                     }
-                    ArchiveProvider::AdsbExchangeSample => crate::sample_archive::download_day(
-                        date,
-                        &self.cache,
-                        bounds,
-                        control,
-                        &day_progress,
-                    ),
+                    ArchiveProvider::AdsbExchangeSample
+                    | ArchiveProvider::AdsbExchangeSampleHires => {
+                        crate::sample_archive::download_day_with_resolution(
+                            date,
+                            &self.cache,
+                            bounds,
+                            self.provider.sample_resolution().unwrap(),
+                            control,
+                            &day_progress,
+                        )
+                    }
                     ArchiveProvider::WebtrakChicago => crate::webtrak::download_day(
                         crate::webtrak::Site::Chicago,
                         date,
