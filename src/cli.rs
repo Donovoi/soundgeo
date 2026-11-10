@@ -106,6 +106,9 @@ enum Commands {
         /// Maximum CPU workers for flight-corridor matching (default: up to 4).
         #[arg(long)]
         search_threads: Option<std::num::NonZeroUsize>,
+        /// Reuse complete offline archive date batches from this checkpoint folder.
+        #[arg(long)]
+        date_checkpoints: Option<PathBuf>,
         /// Sound matching method; passage timing needs bounds and at least eight minutes.
         #[arg(long)]
         method: Option<soundgeo::AnalysisMethod>,
@@ -291,6 +294,7 @@ fn run(args: Args) -> Result<u8> {
             terrain_cache,
             max_hypotheses,
             search_threads,
+            date_checkpoints,
             method,
             output,
             require_match,
@@ -382,6 +386,10 @@ fn run(args: Args) -> Result<u8> {
                 job.terrain = Some(path);
                 job.download_terrain = true;
             }
+            let control = match date_checkpoints {
+                Some(path) => control.with_date_checkpoints(path),
+                None => control,
+            };
             let report = soundgeo::analyze(&job, &control, &progress)?;
             if output == std::path::Path::new("-") {
                 use std::io::Write;

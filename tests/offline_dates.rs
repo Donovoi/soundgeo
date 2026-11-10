@@ -67,6 +67,255 @@ fn analyze(root: &Path, extra: &[&str]) -> std::process::Output {
         .unwrap()
 }
 
+fn checkpoint_job(root: &Path) -> Job {
+    let mut job = demo::create(root).unwrap();
+    job.offline = true;
+    job.search_threads = Some(1);
+    job.archive = Some(soundgeo::archive::ArchiveRequest {
+        date_from: String::new(),
+        date_to: None,
+        cache: root.join("cache"),
+        provider: soundgeo::archive::ArchiveProvider::WebtrakChicago,
+    });
+    for (day, offset) in [("2026-09-08", 0.), ("2026-09-10", 2. * 86400.)] {
+        cache_day(&root.join("cache"), day, &shifted_csv(offset, None));
+    }
+    job
+}
+
+fn without_creation_time(report: Report) -> serde_json::Value {
+    let mut value = serde_json::to_value(report).unwrap();
+    value.as_object_mut().unwrap().remove("created_utc");
+    value
+}
+
+#[test]
+fn interrupted_date_search_resumes_complete_batches_with_exact_report_parity() {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    let dir = tempfile::tempdir().unwrap();
+    let job = checkpoint_job(dir.path());
+    let checkpoint = dir.path().join("checkpoints");
+    let control = Control::default().with_date_checkpoints(checkpoint.clone());
+    let stopped = soundgeo::analyze(&job, &control, &|message, _| {
+        if message.ends_with("Saved completed date batch") {
+            control.stop();
+        }
+    });
+    assert!(stopped.unwrap_err().to_string().contains("Cancelled"));
+    let first = std::fs::read(checkpoint.join("batch-0000.json")).unwrap();
+    assert!(
+        !checkpoint.join("batch-0001.json").exists(),
+        "Partial search must not publish a later batch"
+    );
+    let reused = AtomicUsize::new(0);
+    let resumed = soundgeo::analyze(
+        &job,
+        &Control::default().with_date_checkpoints(checkpoint.clone()),
+        &|message, _| {
+            if message.ends_with("Reusing completed date batch") {
+                reused.fetch_add(1, Ordering::Relaxed);
+            }
+        },
+    )
+    .unwrap();
+    assert_eq!(reused.load(Ordering::Relaxed), 1);
+    assert_eq!(
+        std::fs::read(checkpoint.join("batch-0000.json")).unwrap(),
+        first
+    );
+    assert_eq!(
+        resumed.status, "ambiguous",
+        "The other day's competing clock must survive recovery"
+    );
+    let coverage = resumed.date_search.as_ref().unwrap();
+    assert!(coverage.complete);
+    assert_eq!(coverage.completed_batches, 2);
+    let uninterrupted = soundgeo::analyze(&job, &Control::default(), &|_, _| {}).unwrap();
+    assert_eq!(
+        without_creation_time(resumed),
+        without_creation_time(uninterrupted),
+        "Checkpoint JSON must preserve all numeric values, candidates, warnings and coverage exactly"
+    );
+
+    // A whole valid record copied to the wrong window must still be rejected.
+    std::fs::write(checkpoint.join("batch-0001.json"), &first).unwrap();
+    let error = soundgeo::analyze(
+        &job,
+        &Control::default().with_date_checkpoints(checkpoint),
+        &|_, _| {},
+    )
+    .unwrap_err();
+    assert!(
+        error.to_string().contains("checkpoint binding"),
+        "{error:#}"
+    );
+}
+
+#[test]
+fn date_checkpoints_reject_changed_reference_metadata_and_corrupt_payloads() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut job = checkpoint_job(dir.path());
+    let explicit_catalog = dir.path().join("explicit-aircraft-types.json");
+    let catalog_bytes = br#"{"C172":["Cessna","L1P","L"]}"#;
+    std::fs::write(&explicit_catalog, catalog_bytes).unwrap();
+    job.type_catalog = Some(explicit_catalog.clone());
+    let checkpoint = dir.path().join("checkpoints");
+    // Change a shared input after the manifest is bound but before matching.
+    // Restoring it after failure must not make an incorrectly bound result reusable.
+    let error = soundgeo::analyze(
+        &job,
+        &Control::default().with_date_checkpoints(checkpoint.clone()),
+        &|message, _| {
+            if message.ends_with("Reading historical flight paths") {
+                std::fs::write(
+                    &explicit_catalog,
+                    br#"{"C172":["Changed maker","L1P","L"]}"#,
+                )
+                .unwrap();
+            }
+        },
+    )
+    .unwrap_err();
+    assert!(
+        error.to_string().contains("Shared inputs changed"),
+        "{error:#}"
+    );
+    assert!(!checkpoint.join("batch-0000.json").exists());
+    std::fs::write(&explicit_catalog, catalog_bytes).unwrap();
+    let control = Control::default().with_date_checkpoints(checkpoint.clone());
+    soundgeo::analyze(&job, &control, &|message, _| {
+        if message.ends_with("Saved completed date batch") {
+            control.stop();
+        }
+    })
+    .unwrap_err();
+    let path = checkpoint.join("batch-0000.json");
+    let original = std::fs::read(&path).unwrap();
+    let run = || {
+        soundgeo::analyze(
+            &job,
+            &Control::default().with_date_checkpoints(checkpoint.clone()),
+            &|_, _| {},
+        )
+        .unwrap_err()
+    };
+    // Keep the provider's integrity checks valid while changing the actual CSV.
+    let mut changed = shifted_csv(0., None);
+    changed.push(b'\n');
+    cache_day(&dir.path().join("cache"), "2026-09-08", &changed);
+    let error = run();
+    assert!(
+        error.to_string().contains("checkpoint binding")
+            || error.to_string().contains("reference inputs changed"),
+        "{error:#}"
+    );
+    cache_day(
+        &dir.path().join("cache"),
+        "2026-09-08",
+        &shifted_csv(0., None),
+    );
+    // The inferred aircraft catalog is also part of the reference inventory.
+    let catalog = dir
+        .path()
+        .join("cache/webtrak-cda-2026-09-08/aircraft-types.json");
+    let catalog_original = std::fs::read(&catalog).unwrap();
+    std::fs::write(&catalog, b"{}").unwrap();
+    let error = run();
+    assert!(
+        error.to_string().contains("checkpoint binding")
+            || error.to_string().contains("reference inputs changed"),
+        "{error:#}"
+    );
+    std::fs::write(catalog, catalog_original).unwrap();
+    let mut stored: serde_json::Value = serde_json::from_slice(&original).unwrap();
+    stored["report"] = serde_json::Value::String("{}".into());
+    std::fs::write(&path, serde_json::to_vec(&stored).unwrap()).unwrap();
+    assert!(run().to_string().contains("checksum failed"));
+    std::fs::write(&path, b"{\"incomplete\":").unwrap();
+    assert!(run().to_string().contains("Invalid date batch checkpoint"));
+    std::fs::write(&path, &original).unwrap();
+    let mut changed_job = job.clone();
+    changed_job.temperature_c += 1.;
+    let error = soundgeo::analyze(
+        &changed_job,
+        &Control::default().with_date_checkpoints(checkpoint),
+        &|_, _| {},
+    )
+    .unwrap_err();
+    assert!(
+        error
+            .to_string()
+            .contains("executable, plan or inputs changed"),
+        "{error:#}"
+    );
+    assert_eq!(
+        std::fs::read(path).unwrap(),
+        original,
+        "Failures must preserve the earlier checkpoint"
+    );
+}
+
+#[test]
+fn date_checkpoint_cli_rejects_unsupported_inputs_before_decoding() {
+    let dir = tempfile::tempdir().unwrap();
+    let media = dir.path().join("unparsed.wav");
+    let tracks = dir.path().join("unparsed.csv");
+    std::fs::write(
+        &media,
+        b"Decoding this is an error; validation must reject the request first",
+    )
+    .unwrap();
+    std::fs::write(&tracks, b"unused").unwrap();
+    for (extra, expected) in [
+        (
+            vec![
+                "--provider",
+                "webtrak-chicago",
+                "--date",
+                "2026-09-08",
+                "--offline",
+            ],
+            "at least two prepared dates",
+        ),
+        (
+            vec![
+                "--provider",
+                "webtrak-chicago",
+                "--date",
+                "2026-09-08",
+                "--date-to",
+                "2026-09-09",
+            ],
+            "require offline analysis",
+        ),
+        (
+            vec!["--tracks", "unparsed.csv", "--offline"],
+            "require offline analysis",
+        ),
+    ] {
+        let output = Command::new(env!("CARGO_BIN_EXE_soundgeo-cli"))
+            .current_dir(dir.path())
+            .args([
+                "analyze",
+                "--input",
+                "unparsed.wav",
+                "--output",
+                "-",
+                "--quiet",
+                "--date-checkpoints",
+                "checkpoints",
+            ])
+            .args(extra)
+            .output()
+            .unwrap();
+        assert_eq!(output.status.code(), Some(1));
+        assert!(output.stdout.is_empty());
+        let error = String::from_utf8_lossy(&output.stderr);
+        assert!(error.contains(expected), "{error}");
+        assert!(!dir.path().join("checkpoints").exists());
+    }
+}
+
 #[test]
 fn prepare_and_search_33_cached_days_without_a_recording_date() {
     let dir = tempfile::tempdir().unwrap();

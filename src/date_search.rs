@@ -39,6 +39,15 @@ pub(crate) fn run(
     progress: &Progress<'_>,
 ) -> Result<Report> {
     let windows = batches(dates)?;
+    let mut checkpoints = control
+        .date_checkpoints
+        .as_ref()
+        .map(|path| {
+            crate::date_checkpoint::Checkpoints::open(
+                path, job, &template, &peaks, &windows, control,
+            )
+        })
+        .transpose()?;
     let mut combined = template.clone();
     for (index, (from, to)) in windows.iter().enumerate() {
         control.check()?;
@@ -59,8 +68,31 @@ pub(crate) fn run(
         let paths = archive.ensure_for_bounds(job.bounds, control, &|m, p| update(m, p * 0.34))?;
         let mut seed = template.clone();
         seed.job = batch.clone();
-        let result =
-            crate::analyze_sources(&batch, seed, peaks.clone(), &paths, true, control, &update)?;
+        let checkpoint_batch = checkpoints
+            .as_ref()
+            .map(|store| store.prepare_batch(&batch, &paths, control))
+            .transpose()?;
+        let cached = if let (Some(store), Some(inputs)) = (&checkpoints, &checkpoint_batch) {
+            store.load(index, inputs)?
+        } else {
+            None
+        };
+        let reused = cached.is_some();
+        let result = match cached {
+            Some(result) => {
+                update("Reusing completed date batch", 1.);
+                result
+            }
+            None => {
+                crate::analyze_sources(&batch, seed, peaks.clone(), &paths, true, control, &update)?
+            }
+        };
+        if let (Some(store), Some(inputs)) = (&mut checkpoints, checkpoint_batch) {
+            store.finish(index, inputs, &result, reused, control)?;
+            if !reused {
+                update("Saved completed date batch", 1.);
+            }
+        }
         combined.track_count += result.track_count;
         combined.hypotheses += result.hypotheses;
         combined
@@ -82,6 +114,9 @@ pub(crate) fn run(
         if let Some(assessment) = result.timing {
             merge_timing(&mut combined.timing, assessment)?;
         }
+    }
+    if let Some(store) = checkpoints {
+        store.verify_complete_inputs(control)?;
     }
     if combined.timing.is_none()
         && let Some(peaks) = peaks

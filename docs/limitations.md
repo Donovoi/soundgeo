@@ -51,10 +51,17 @@ Maho tests searched three, ten, and twelve prepared sample dates with the same r
 one accepted recording, one ambiguous, and one insufficient.
 The app has not been verified against a complete historical flight archive.
 
-Revision `c5bcade` passed all 199 Rust tests, 10 Python tests, and the required
+Revision `82fc48c` passed all 215 Rust tests, 10 Python tests, and the required
 checks locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42734990519).
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42785607130).
 Location accuracy needs separate tests against known positions.
+
+The latest detector change suppresses persistent tones in the fast frequency
+bands. Offline replays preserve ten previously matched curves across two Lake
+Hood hours. A fresh hour still has no passing individual curve at its known
+camera point and clock. Its full location replay remains pending.
+A separate 20-minute Lake Hood recording produced no usable Doppler observations
+and returned insufficient evidence before searching flight dates.
 
 Optional video text tests matched an airport name within 31.06 m of the camera
 reference in two 360p Lake Hood clips. The reports also contained a broad

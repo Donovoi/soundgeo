@@ -8,6 +8,37 @@ New results must state which target they use.
 
 ## Current checks
 
+The [separate 20-minute Lake Hood test](lake-final-20-minute.json) returned
+insufficient evidence with no usable Doppler observations or location candidates.
+The qualified `82fc48c` Windows CLI stopped before loading flight tracks or
+searching dates. Its offline job supplied the original broad area and ground
+elevation, with no recording date, clock, camera point, or video text clues.
+An independent audit verified 46 checks and 35 unchanged cache files. This
+additional development test fails the 1 km target; the 27-recording timing
+benchmark below remains unchanged.
+
+The [persistent-tone check](fast-stationary-tones.json) reproduces two flyovers
+hidden by louder fixed tones. The corrected detector recovers both flyovers.
+Revision `82fc48c` passes all 215 Rust tests, 10 Python tests, formatting,
+strict Clippy, doc tests, and release builds locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42785607130).
+The downloaded Windows binaries match the CI archive checksum and source tree.
+
+Six offline audio exports replayed three unchanged Lake Hood hours, with no
+recording dates or times supplied. The selected observation counts changed from
+24 to 18, 16 to 14, and 24 to 10. The first two hours retain all five previously
+matched sound curves. An independent audit checked the observation order, native
+exits, and input and executable hashes. The proxy recorded zero connections.
+The full location replay processes stopped before producing terminal reports.
+New attempts preserve their original inputs and partial logs. These audio
+checks establish no new location result.
+
+Separate checks used the known camera point and clock to examine the new
+observations. Five sounds in the first hour and four in the second had passing
+individual fits. The fresh hour had none. Testing that hour at 14 uniform
+temperatures from -30 to 35 degrees Celsius also produced no passing fit in
+3,679 comparisons. This temperature check kept the extracted sounds fixed.
+
 The [archive repair check](production-archive-repair.json) verifies automatic
 updates from a staging archive to a production release. It also reproduces and
 fixes a saved production manifest with a missing archive part. The CLI rejects
@@ -28,8 +59,9 @@ insufficient evidence: 24 observations, 22,753,143 hypotheses, and no candidates
 It searched all three dates. The independent audit verified the original 33
 cache files, media, decoder, executable, and zero proxy connections.
 
-The [audio diagnostics](lake-hood-audio-diagnostics.json) export all 31 grouped
-observations. The default 24 are unchanged. The seven observations below the
+The earlier [audio diagnostics](lake-hood-audio-diagnostics.json), from revision
+`709d38f`, export all 31 grouped observations. The default 24 match the original
+search. The seven observations below the
 limit produce no passing individual fit at the known camera and clock. Allowing
 the source pitch to change linearly also produces no passing fit at that clock.
 These results leave the event limit and pitch model unchanged.
@@ -84,8 +116,8 @@ in these diagnostics. Other searches were active; full-search speed is still
 unmeasured. A separate segment-lookup cache was slower and was discarded.
 
 Four cases in the four-date Lake Hood retry reached their six-hour limits.
-None wrote a location report. One case remains pending. These failures
-remain in the validation record.
+None wrote a location report. The fifth process stopped without a terminal
+report. These failures remain in the validation record.
 
 Revision `8e3092c` passes all 196 Rust tests, 10 Python tests, formatting,
 strict Clippy, doc tests, and release builds locally and in

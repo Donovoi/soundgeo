@@ -404,6 +404,16 @@ Use consistent altitude units and reference levels.
 
 The program reports missing dates and damaged files. It can use a complete cache without an internet connection.
 
+For offline archive searches covering at least two prepared dates, add
+`--date-checkpoints checkpoints` to the
+`analyze` command. Repeat the same command after an interruption to reuse completed
+date batches. Keep the checkpoint folder outside the flight and terrain folders.
+The SoundGeo executable, recording, settings, dates, reference files and terrain
+must stay unchanged. Audio is decoded again on each run; its extracted observations
+must also match before results are reused. Use a new checkpoint folder after
+changing these inputs. The program checks every planned date batch before returning
+a location report.
+
 The ADSB.lol archive uses the [ODbL 1.0 licence](https://opendatacommons.org/licenses/odbl/1-0/).
 Other providers have separate terms. The downloader saves a source notice.
 Follow each source's terms when you use or distribute its data.

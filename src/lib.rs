@@ -5,6 +5,7 @@ mod atomic_file;
 pub mod audio;
 pub mod availability;
 pub mod data;
+mod date_checkpoint;
 mod date_search;
 pub mod demo;
 pub mod doppler_controls;
@@ -216,6 +217,8 @@ pub struct Control {
     pub offline: bool,
     /// Retry source files previously recorded as unavailable in a verified cache.
     pub refresh_source_gaps: bool,
+    /// Optional folder for complete offline archive date-batch checkpoints.
+    pub date_checkpoints: Option<PathBuf>,
 }
 impl Control {
     pub fn require_network(&self, resource: &str) -> Result<()> {
@@ -236,6 +239,12 @@ impl Control {
     pub fn with_source_gap_refresh(&self) -> Self {
         Self {
             refresh_source_gaps: true,
+            ..self.clone()
+        }
+    }
+    pub fn with_date_checkpoints(&self, path: PathBuf) -> Self {
+        Self {
+            date_checkpoints: Some(path),
             ..self.clone()
         }
     }
@@ -305,6 +314,25 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     let control = &control.with_offline(effective.offline);
     let job = &effective;
     job.validate()?;
+    let checkpoint_dates = if control.date_checkpoints.is_some() {
+        anyhow::ensure!(
+            control.offline && job.archive.is_some(),
+            "Date checkpoints require offline analysis with a prepared flight archive"
+        );
+        let dates = job
+            .archive
+            .as_ref()
+            .unwrap()
+            .resolve_dates(control, &|_, _| {})?
+            .0;
+        anyhow::ensure!(
+            dates.len() > 1,
+            "Date checkpoints require at least two prepared dates; single-date analysis keeps its existing behavior without checkpoints"
+        );
+        Some(dates)
+    } else {
+        None
+    };
     control.check()?;
     progress("Extracting audio locally", 0.02);
     let samples = audio::decode(job, control)?;
@@ -342,7 +370,10 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         report.warnings.push("Only one flyover and no known clock: time and location can be ambiguous, especially on straight flight paths.".into());
     }
     if let Some(request) = &job.archive {
-        let (dates, discovery) = request.resolve_dates(control, &|m, _| progress(m, 0.33))?;
+        let (dates, discovery) = match checkpoint_dates {
+            Some(dates) => (dates, None),
+            None => request.resolve_dates(control, &|m, _| progress(m, 0.33))?,
+        };
         if dates.len() > 1 || discovery.is_some() {
             let mut result =
                 date_search::run(job, report, timing_peaks, &dates, control, progress)?;
