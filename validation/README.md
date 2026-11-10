@@ -46,10 +46,29 @@ cache files and other inputs stayed unchanged. The proxy recorded no connections
 This replay searched one prepared day with no date or clock supplied. The
 separate wider-date tests continue.
 
-A [fresh one-hour recording](fresh-lake-recent-hour.json) is now being analyzed
-offline with three automatically selected provider days. It receives no recording
-date, clock, camera point, or video text clues. Data preparation and the actual
-launch command passed independent checks. The location result is pending.
+The [full free-cache check](full-free-cache-offline.json) prepared all 58
+first-of-month dates listed by the high-resolution sample provider, from
+February 2022 to November 2026. Native offline preparation passed, with zero
+test-proxy connections and unchanged cache and source copies. The selected data
+contains 28,099 traces and all 16,704 snapshot slots. Source gaps remain recorded.
+Both original Lake Hood clips are now being searched against this full cache,
+with no recording date or clock supplied. Their location results are pending.
+
+A [fresh one-hour recording](fresh-lake-recent-hour.json) was tested offline with
+three automatically selected provider days. It received no recording date,
+clock, camera point, or video text clues. The first date batch completed. The
+second stopped with a decode error after 77.6 minutes; no location report was
+written. The provider archive passes its published checksum and contains an
+empty `.readsb_tmp` trace file. The importer tried to decode this unfinished
+file. The original failed run and archive remain preserved.
+
+The same recording passed a separate [optional video-text check](fresh-lake-video-clues.json)
+with the qualified Windows CI executable. It read **Lake Hood Seaplane Base**
+in three frames and matched a GeoNames point 31.06 m from the camera reference.
+No date, clock, region, or coordinates were supplied. It used the prepared
+worldwide place database offline, with zero test-proxy connections and unchanged
+inputs. The report also retains a broad Anchorage area clue 118.24 km away.
+These place clues do not establish an audio result or a camera-position radius.
 
 Revised Doppler ranking sums the covered improvement over linear frequency
 drift, with each sound capped at one unit. Proposal retention, refinement, and

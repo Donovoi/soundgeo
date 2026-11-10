@@ -194,6 +194,7 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
     let mut raw = RawTracks::default();
     let mut kinds = BTreeMap::new();
     let mut skipped = 0usize;
+    let mut unfinished = 0usize;
     let mut barometric = 0usize;
     let mut total = 0usize;
     let paths = source_paths(sources);
@@ -203,6 +204,10 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
     for path in paths {
         control.check()?;
         let name = path.file_name().unwrap_or_default().to_string_lossy();
+        if unfinished_trace(&name) {
+            unfinished += 1;
+            continue;
+        }
         if name.ends_with(".csv") {
             let mut reader = csv::Reader::from_path(&path)?;
             for (i, row) in reader.deserialize::<CsvRow>().enumerate() {
@@ -250,9 +255,13 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                 Box::new(BufReader::new(File::open(&path)?))
             };
             let mut archive = tar::Archive::new(reader);
-            for entry in archive.entries()? {
+            for entry in archive
+                .entries()
+                .with_context(|| format!("Could not read archive {}", path.display()))?
+            {
                 control.check()?;
-                let entry = entry?;
+                let entry = entry
+                    .with_context(|| format!("Could not read an entry in {}", path.display()))?;
                 let p = entry.path()?.into_owned();
                 if !entry.header().entry_type().is_file()
                     || !p
@@ -263,11 +272,21 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                 {
                     continue;
                 }
+                if unfinished_trace(&p.file_name().unwrap_or_default().to_string_lossy()) {
+                    unfinished += 1;
+                    continue;
+                }
                 if entry.size() > 32_000_000 {
                     skipped += 1;
                     continue;
                 }
-                let bytes = read_limited(GzDecoder::new(entry))?;
+                let bytes = read_limited(GzDecoder::new(entry)).with_context(|| {
+                    format!(
+                        "Could not decode trace {} in {}",
+                        p.display(),
+                        path.display()
+                    )
+                })?;
                 ingest_trace(
                     &bytes,
                     &mut raw,
@@ -276,14 +295,17 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                     &mut total,
                     filter,
                     &mut kinds,
-                )?;
+                )
+                .with_context(|| format!("Invalid trace {} in {}", p.display(), path.display()))?;
             }
         } else {
             let file = File::open(&path)?;
             let bytes = if name.ends_with(".gz") {
-                read_limited(GzDecoder::new(file))?
+                read_limited(GzDecoder::new(file))
+                    .with_context(|| format!("Could not decode trace {}", path.display()))?
             } else {
-                read_limited(file)?
+                read_limited(file)
+                    .with_context(|| format!("Could not read trace {}", path.display()))?
             };
             ingest_trace(
                 &bytes,
@@ -293,7 +315,8 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                 &mut total,
                 filter,
                 &mut kinds,
-            )?;
+            )
+            .with_context(|| format!("Invalid trace {}", path.display()))?;
         }
     }
     let mut tracks = vec![];
@@ -347,6 +370,11 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
         return Err(EmptyFlightData(filter.minimum_positions).into());
     }
     let mut warnings = vec![];
+    if unfinished > 0 {
+        warnings.push(format!(
+            "Unfinished readsb trace files skipped: {unfinished} (.readsb_tmp)."
+        ));
+    }
     let reception_gaps: usize = raw.reception_gaps.values().map(BTreeSet::len).sum();
     if reception_gaps > 0 {
         warnings.push(format!("Read {reception_gaps} reception-gap markers. Recorded positions after each gap are retained; interpolation does not cross the gap."));
@@ -375,6 +403,11 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
     }
     Ok(Dataset { tracks, warnings })
 }
+fn unfinished_trace(name: &str) -> bool {
+    // readsb writes this temporary name and renames it after closing the output.
+    name.starts_with("trace_full_") && name.ends_with(".readsb_tmp")
+}
+
 fn read_limited(reader: impl Read) -> Result<Vec<u8>> {
     let mut data = vec![];
     reader.take(32_000_001).read_to_end(&mut data)?;

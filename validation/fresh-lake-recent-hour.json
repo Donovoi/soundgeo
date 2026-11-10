@@ -45,7 +45,7 @@
   "corrected_preparation_result_sha256": "88c490f220dff090f2f53acb4f1f4d061e2b2d0996ad45e59e5fa851a2405344",
   "analysis": {
     "launch_verified": true,
-    "analysis_result_pending": true,
+    "analysis_result_pending": false,
     "pid": 10808,
     "started_unix": 1794276840.1711123,
     "source_commit": "8e3092c1173ad577964efd5eccec8c691c659665",
@@ -70,7 +70,48 @@
     "complete_local_ci_and_preparation_gates_verified": true,
     "start_verification_sha256": "9efd550f39512079e34727c5d47fc294e10c7d65275feb59c774b8948f1b9f82",
     "target_error_m": 1000,
-    "acceptance": "Complete coverage of all three prepared dates, native exit 0 with candidates_found, independently checked error including reference allowance within 1 km, unchanged inputs, and no proxy connections."
+    "acceptance": "Complete coverage of all three prepared dates, native exit 0 with candidates_found, independently checked error including reference allowance within 1 km, unchanged inputs, and no proxy connections.",
+    "terminal_result": {
+      "complete": false,
+      "accepted": false,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "elapsed_s": 4655.203821500007,
+      "source_files_unchanged": true,
+      "inputs_unchanged": true,
+      "additional_cache_files": [
+        "decoded-tracks/9de9f0bd0aa5758f68980c5fee03dff678d230524e5e8c0a2b9d8a6acb32a09d.sgcache"
+      ],
+      "proxy_connections": 0,
+      "native_exit_code": 1,
+      "native_error": "unexpected end of file",
+      "native_elapsed_s": 4655.201430299989,
+      "first_batch_completed": true,
+      "second_batch_completed": false,
+      "report_written": false,
+      "failure_verification_sha256": "22c31dade04078185fb438c657b65f5af2bed5a417e1abcb97e9fd4d62c29567"
+    }
   },
-  "accepted_location": false
+  "accepted_location": false,
+  "source_archive_diagnostic": {
+    "source_url": "https://github.com/adsblol/globe_history_2026/releases/download/v2026.11.09-planes-readsb-staging-0/v2026.11.09-planes-readsb-staging-0.tar",
+    "source_release": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.09-planes-readsb-staging-0",
+    "bytes": 1859851264,
+    "sha256": "91b8e85fb96d16affea00d1a9afff9d73f9f8135cbc6073baefc847b84b91a11",
+    "provider_digest_matches": true,
+    "members": 51954,
+    "trace_members": 51666,
+    "empty_traces": [
+      "./traces/5f/trace_full_407e5f.json.readsb_tmp"
+    ],
+    "small_traces": [
+      {
+        "name": "./traces/5f/trace_full_407e5f.json.readsb_tmp",
+        "size": 0,
+        "offset": 1763041280
+      }
+    ],
+    "tar_structure_complete": true,
+    "upstream_temporary_file_convention": "https://github.com/wiedehopf/readsb/blob/dev/json_out.c#L1898-L1963",
+    "scope": "Provider-byte and tar-structure check; the archive is preserved unchanged."
+  }
 }
