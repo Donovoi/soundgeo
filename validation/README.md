@@ -11,8 +11,12 @@ New results must state which target they use.
 The [date-index freshness check](date-index-freshness.json) reproduced a newly
 published day missing from the saved provider index. The new CLI added that day
 with one metadata request and kept all 1,329 earlier dates. Warm-cache and offline
-repeats stayed identical, with no proxy connections. Eight focused tests passed;
-full qualification of this change is pending.
+repeats stayed identical, with no proxy connections. Revision `c5bcade` passed
+all required local checks and [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42734990519):
+199 Rust tests and 10 Python tests passed, with no failures or ignored tests.
+The release binaries and control tool are frozen. The downloaded Windows CLI
+also passed the same date-discovery and offline reuse checks. Its source tree
+and archive checksum match the CI records.
 
 The [curve-fit runtime check](curve-fit-runtime.json) compared 1,842 fits from
 two Lake Hood recordings, including shifted proposals and short curves. Reusing
