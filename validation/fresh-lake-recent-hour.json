@@ -113,5 +113,37 @@
     "tar_structure_complete": true,
     "upstream_temporary_file_convention": "https://github.com/wiedehopf/readsb/blob/dev/json_out.c#L1898-L1963",
     "scope": "Provider-byte and tar-structure check; the archive is preserved unchanged."
+  },
+  "corrected_importer_replay": {
+    "record": "readsb-temporary-traces.json",
+    "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+    "complete": true,
+    "segments": 717,
+    "points": 99042,
+    "unfinished_traces": 1,
+    "archive_unchanged": true,
+    "proxy_connections": 0,
+    "independent_verification_sha256": "75833257ba490e11c17174fe6837d6bf32770bfb441457bfa0708944313c0fa6"
+  },
+  "audio_retry": {
+    "complete": true,
+    "scope": "Actual native launch and unchanged original v2 analysis inputs; final location and input/network checks remain pending.",
+    "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+    "cli_sha256": "2f4b912203c29d3395e741f0e58e8891bb93ecdf3343e3d0cd6a06ee178d97ee",
+    "pid": 21344,
+    "started_unix": 1794284202.705716,
+    "original_analysis_job_unchanged": true,
+    "no_recording_date_clock_or_point_supplied": true,
+    "video_clues": false,
+    "offline": true,
+    "workers": 2,
+    "timeout_s": 21600,
+    "plan_sha256": "f16f87d0794998bb4c70172f95e40298cc1ee28e55039de9f0ed92c1ac545cff",
+    "job_sha256": "3085352cdfa0c992193b97b7f0e3a05d928a50ce66b626d62406ec052ee398b4",
+    "native_witness_sha256": "9f83f5b2af3af9a859916d3219b8a81dc04f136abdb1d6d58310f4ecd00f32bf",
+    "parser_result_sha256": "2c23068ace64720c5c9568a9577e88480e33da3e65efed61e833700d209257d2",
+    "parser_independent_verification_sha256": "75833257ba490e11c17174fe6837d6bf32770bfb441457bfa0708944313c0fa6",
+    "location_result_pending": true,
+    "accepted_location": false
   }
 }

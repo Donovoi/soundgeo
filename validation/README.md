@@ -8,6 +8,23 @@ New results must state which target they use.
 
 ## Current checks
 
+The [unfinished-trace check](readsb-temporary-traces.json) replays the provider
+archive that stopped the fresh Lake Hood recording. The corrected importer
+loads 717 flight segments and 99,042 positions, reports one unfinished file,
+and preserves the original archive. An independent check matched every exported
+timestamp to its source aircraft trace. Damaged completed traces still fail.
+
+Revision `5f6c4e1` passes all required checks locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42751843529):
+202 Rust tests and 10 Python tests pass, with no failures or ignored tests.
+The release binaries and diagnostic tools are frozen and hashed. Two earlier
+successful recordings also pass offline with blank recording dates and times.
+Maho remains within 550 m, including its 200 m reference allowance. Midway remains
+within 90 m after searching all three prepared dates. Both retain their original
+result regions. All 18,111 checked cache files and other inputs stayed unchanged;
+the proxy recorded no connections. The fresh one-hour Lake Hood retry is running
+with its original analysis inputs. Its location result is pending.
+
 The [date-index freshness check](date-index-freshness.json) reproduced a newly
 published day missing from the saved provider index. The new CLI added that day
 with one metadata request and kept all 1,329 earlier dates. Warm-cache and offline
