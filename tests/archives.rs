@@ -7,10 +7,19 @@ fn cached_day(root: &std::path::Path, date: &str) {
     std::fs::create_dir_all(&folder).unwrap();
     let tag = format!("v{}-planes-readsb-prod-0", date.replace('-', "."));
     let name = format!("{tag}.tar.aa");
-    let bytes = b"offline cache verification fixture";
-    std::fs::write(folder.join(&name), bytes).unwrap();
+    let body = b"offline cache verification fixture";
+    let mut archive = tar::Builder::new(Vec::new());
+    let mut header = tar::Header::new_gnu();
+    header.set_size(body.len() as u64);
+    header.set_mode(0o644);
+    header.set_cksum();
+    archive
+        .append_data(&mut header, "fixture.txt", &body[..])
+        .unwrap();
+    let bytes = archive.into_inner().unwrap();
+    std::fs::write(folder.join(&name), &bytes).unwrap();
     let manifest = json!({"tag_name":tag,"assets":[{"name":name,"size":bytes.len(),
-        "digest":format!("sha256:{:x}",Sha256::digest(bytes)),
+        "digest":format!("sha256:{:x}",Sha256::digest(&bytes)),
         "browser_download_url":"https://github.com/adsblol/globe_history_2024/releases/download/fixture/nonexistent"}]});
     std::fs::write(
         folder.join("archive-manifest.json"),

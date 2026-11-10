@@ -83,9 +83,13 @@ plans, failed tests, older wrong Doppler results, source records, and build chec
   a saved index; flight files must be downloaded separately.
 - Online preparation checks for a preferred ADSB.lol production release when a
   saved date uses a fallback release. Checks are at least 15 minutes apart.
-  If the check or replacement download fails, it reports the failure and uses
-  the verified saved archive. Offline runs use the saved selection. New releases
+  If a complete saved archive is available, a failed check or replacement download
+  keeps that archive in use and reports the failure. Offline runs use the saved selection. New releases
   can contain more flight positions, but coverage still depends on the source.
+- A release can appear before all its parts finish uploading. Online preparation
+  refreshes an incomplete release and downloads newly listed parts. Incomplete
+  archives stop offline preparation. Part checksums and the full archive end marker
+  must pass before a split archive is marked ready.
 - A worldwide search across all available dates can need several TB of storage
   and a long processing time. Downloads can be cancelled and resumed. Use the
   `dates` command to inspect coverage before preparing a large cache.

@@ -110,7 +110,7 @@ fn selected_cache(cache: &Path, date: &str, prefix: &str) -> Result<PathBuf> {
     let root = cache.join(date).join(".releases").join(key);
     let release = read_json(&root.join(date).join("archive-manifest.json"))?;
     ensure!(
-        release_key(&release)? == key && rank(&release, prefix)? < 2,
+        release_key(&release)? == key && rank(&release, prefix)? <= 2,
         "Preferred archive metadata changed"
     );
     Ok(root)
@@ -184,7 +184,13 @@ fn ensure_with(
     let existing = prepare(&selected)?;
     let release = read_json(&selected.join(date).join("archive-manifest.json"))?;
     let priority = rank(&release, &prefix)?;
-    if control.offline || priority == 0 {
+    let completeness = verify_complete_archive(&selected.join(date), &release, control);
+    control.check()?;
+    if control.offline {
+        completeness.context("Cached flight archive is incomplete; prepare it online")?;
+        return Ok(existing);
+    }
+    if priority == 0 && completeness.is_ok() {
         return Ok(existing);
     }
     let check_path = cache.join(date).join("preferred-check.json");
@@ -195,11 +201,17 @@ fn ensure_with(
                 .is_some_and(|stamp| (0..900).contains(&now.saturating_sub(stamp)))
     });
     if recent {
+        completeness.context(
+            "Cached flight archive is incomplete; the next release check is due within 15 minutes",
+        )?;
         return Ok(existing);
     }
     progress("Checking for a preferred daily archive", 0.);
     let attempt = (|| -> Result<Option<PathBuf>> {
-        for instance in &INSTANCES[..priority] {
+        // A release can be visible before its final asset finishes uploading.
+        // Re-read the same release when the saved parts do not form a complete tar.
+        let count = priority + usize::from(completeness.is_err());
+        for instance in &INSTANCES[..count] {
             control.check()?;
             let tag = format!("{prefix}{instance}");
             let Some(candidate) = lookup(&tag)? else {
@@ -219,8 +231,9 @@ fn ensure_with(
                 selected.join(date).join("aircraft-types.json"),
                 folder.join("aircraft-types.json"),
             )?;
+            copy_verified_parts(&selected.join(date), &release, &folder, &candidate, control)?;
             let path = prepare(&root)?;
-            verify_tar(&folder, &candidate, control)?;
+            verify_complete_archive(&folder, &candidate, control)?;
             control.check()?;
             save_json(
                 &cache.join(date).join("preferred-release.json"),
@@ -242,8 +255,18 @@ fn ensure_with(
     )?;
     match attempt {
         Ok(Some(path)) => Ok(path),
-        Ok(None) => Ok(existing),
+        Ok(None) => {
+            completeness.context(
+                "Cached flight archive is incomplete and no complete release is available",
+            )?;
+            Ok(existing)
+        }
         Err(error) => {
+            if let Err(incomplete) = completeness {
+                return Err(incomplete).context(format!(
+                    "Could not complete the saved flight archive: {error:#}"
+                ));
+            }
             progress(
                 &format!(
                     "Preferred archive unavailable ({error:#}); using the verified saved release"
@@ -253,6 +276,59 @@ fn ensure_with(
             Ok(existing)
         }
     }
+}
+
+fn copy_verified_parts(
+    source: &Path,
+    saved: &Value,
+    destination: &Path,
+    candidate: &Value,
+    control: &Control,
+) -> Result<()> {
+    let previous = saved["assets"]
+        .as_array()
+        .context("Missing saved archive assets")?;
+    for asset in candidate["assets"]
+        .as_array()
+        .context("Missing candidate assets")?
+    {
+        control.check()?;
+        let Some(name) = asset["name"]
+            .as_str()
+            .filter(|n| n.ends_with(".tar") || n.contains(".tar."))
+        else {
+            continue;
+        };
+        let target = destination.join(name);
+        if !target.exists()
+            && previous.iter().any(|old| {
+                ["name", "size", "digest", "browser_download_url"]
+                    .iter()
+                    .all(|field| old[field] == asset[field])
+            })
+        {
+            // The caller has already verified the saved parts. The downloader
+            // verifies the copied bytes again before accepting the replacement.
+            std::fs::copy(source.join(name), target)?;
+        }
+    }
+    control.check()
+}
+
+fn verify_complete_archive(folder: &Path, release: &Value, control: &Control) -> Result<()> {
+    // Part hashes are checked by download_day on every call. This receipt binds
+    // the structural check to that exact saved manifest, including all part hashes.
+    let key = format!("{:x}", Sha256::digest(serde_json::to_vec(release)?));
+    let path = folder.join("archive-complete.json");
+    if read_json(&path)
+        .ok()
+        .is_some_and(|v| v["format"] == 1 && v["manifest_sha256"] == key)
+    {
+        return Ok(());
+    }
+    verify_tar(folder, release, control)?;
+    control.check()?;
+    save_json(&path, &json!({"format":1,"manifest_sha256":key}))
 }
 
 fn verify_tar(folder: &Path, release: &Value, control: &Control) -> Result<()> {
@@ -284,7 +360,18 @@ fn verify_tar(folder: &Path, release: &Value, control: &Control) -> Result<()> {
         std::io::copy(&mut entry?, &mut std::io::sink())?;
         entries += 1;
     }
-    ensure!(entries > 0, "Preferred archive is empty");
+    ensure!(entries > 0, "Flight archive is empty");
+    // tar's iterator also stops at physical EOF. Require the second end block
+    // after the first zero header so a split at a member boundary cannot pass.
+    let mut end_block = [1u8; 512];
+    archive
+        .into_inner()
+        .read_exact(&mut end_block)
+        .context("Flight archive has no complete end marker")?;
+    ensure!(
+        end_block.iter().all(|b| *b == 0),
+        "Invalid flight archive end marker"
+    );
     Ok(())
 }
 
@@ -627,6 +714,229 @@ mod tests {
                 &|_, _| {},
                 1000,
                 |_| panic!("invalid marker must fail before lookup"),
+                prepare
+            )
+            .is_err()
+        );
+    }
+
+    #[test]
+    fn partial_current_release_fetches_new_manifest_and_reuses_existing_part() {
+        let temp = tempfile::tempdir().unwrap();
+        let bytes = archive_bytes();
+        let full = fixture("prod-0", &bytes);
+        let mut partial = full.clone();
+        partial["assets"].as_array_mut().unwrap().truncate(1);
+        seed(temp.path(), &partial, &bytes, 1);
+        assert!(
+            ensure_with(
+                DATE,
+                temp.path(),
+                &Control::default().with_offline(true),
+                &|_, _| {},
+                1000,
+                |_| panic!("offline must not fetch metadata"),
+                prepare
+            )
+            .is_err()
+        );
+        let original = std::fs::read(temp.path().join(DATE).join("archive-manifest.json")).unwrap();
+        let result = ensure_with(
+            DATE,
+            temp.path(),
+            &Control::default(),
+            &|_, _| {},
+            1000,
+            |tag| {
+                assert_eq!(tag, full["tag_name"]);
+                Ok(Some(full.clone()))
+            },
+            |root| {
+                if root != temp.path() {
+                    let folder = root.join(DATE);
+                    let first = folder.join(full["assets"][0]["name"].as_str().unwrap());
+                    assert_eq!(
+                        std::fs::read(first).unwrap(),
+                        bytes[..bytes.len().div_ceil(2)]
+                    );
+                    let second = folder.join(full["assets"][1]["name"].as_str().unwrap());
+                    assert!(!second.exists());
+                    std::fs::write(second, &bytes[bytes.len().div_ceil(2)..]).unwrap();
+                }
+                prepare(root)
+            },
+        )
+        .unwrap();
+        assert_eq!(
+            std::fs::read(temp.path().join(DATE).join("archive-manifest.json")).unwrap(),
+            original
+        );
+        assert!(
+            result
+                .parent()
+                .unwrap()
+                .join("archive-complete.json")
+                .exists()
+        );
+        assert_eq!(
+            ensure_with(
+                DATE,
+                temp.path(),
+                &Control::default().with_offline(true),
+                &|_, _| {},
+                2000,
+                |_| panic!("offline must reuse the completed release"),
+                prepare
+            )
+            .unwrap(),
+            result
+        );
+    }
+
+    #[test]
+    fn incomplete_current_release_never_falls_back_to_success() {
+        let temp = tempfile::tempdir().unwrap();
+        let bytes = archive_bytes();
+        let mut partial = fixture("prod-0", &bytes);
+        partial["assets"].as_array_mut().unwrap().truncate(1);
+        seed(temp.path(), &partial, &bytes, 1);
+        let error = ensure_with(
+            DATE,
+            temp.path(),
+            &Control::default(),
+            &|_, _| {},
+            1000,
+            |_| anyhow::bail!("provider unavailable"),
+            prepare,
+        )
+        .unwrap_err();
+        assert!(error.to_string().contains("Could not complete"));
+        assert!(
+            ensure_with(
+                DATE,
+                temp.path(),
+                &Control::default(),
+                &|_, _| {},
+                1001,
+                |_| panic!("honor the failed lookup backoff"),
+                prepare
+            )
+            .is_err()
+        );
+        assert!(
+            !temp
+                .path()
+                .join(DATE)
+                .join("archive-complete.json")
+                .exists()
+        );
+        assert!(
+            !temp
+                .path()
+                .join(DATE)
+                .join("preferred-release.json")
+                .exists()
+        );
+    }
+
+    #[test]
+    fn incomplete_staging_release_can_refresh_its_own_parts() {
+        let temp = tempfile::tempdir().unwrap();
+        let bytes = archive_bytes();
+        let full = fixture("staging-0", &bytes);
+        let mut partial = full.clone();
+        partial["assets"].as_array_mut().unwrap().truncate(1);
+        seed(temp.path(), &partial, &bytes, 1);
+        let mut requests = vec![];
+        ensure_with(
+            DATE,
+            temp.path(),
+            &Control::default(),
+            &|_, _| {},
+            1000,
+            |tag| {
+                requests.push(tag.to_owned());
+                Ok((tag == full["tag_name"]).then(|| full.clone()))
+            },
+            |root| {
+                if root != temp.path() {
+                    std::fs::write(
+                        root.join(DATE)
+                            .join(full["assets"][1]["name"].as_str().unwrap()),
+                        &bytes[bytes.len().div_ceil(2)..],
+                    )
+                    .unwrap();
+                }
+                prepare(root)
+            },
+        )
+        .unwrap();
+        assert_eq!(requests.len(), 3);
+        ensure_with(
+            DATE,
+            temp.path(),
+            &Control::default().with_offline(true),
+            &|_, _| {},
+            2000,
+            |_| panic!("offline"),
+            prepare,
+        )
+        .unwrap();
+    }
+
+    #[test]
+    fn tar_completion_requires_both_zero_end_blocks() {
+        for removed in [512, 1024] {
+            let temp = tempfile::tempdir().unwrap();
+            let mut bytes = archive_bytes();
+            bytes.truncate(bytes.len() - removed);
+            let release = fixture("prod-0", &bytes);
+            seed(temp.path(), &release, &bytes, 2);
+            assert!(
+                verify_complete_archive(&temp.path().join(DATE), &release, &Control::default())
+                    .is_err()
+            );
+        }
+    }
+
+    #[test]
+    fn completion_receipt_does_not_bypass_part_integrity_checks() {
+        let temp = tempfile::tempdir().unwrap();
+        let bytes = archive_bytes();
+        let release = fixture("prod-0", &bytes);
+        seed(temp.path(), &release, &bytes, 2);
+        let control = Control::default().with_offline(true);
+        ensure_with(
+            DATE,
+            temp.path(),
+            &control,
+            &|_, _| {},
+            1000,
+            |_| panic!("offline"),
+            prepare,
+        )
+        .unwrap();
+        assert!(
+            temp.path()
+                .join(DATE)
+                .join("archive-complete.json")
+                .is_file()
+        );
+        let part = temp
+            .path()
+            .join(DATE)
+            .join(release["assets"][0]["name"].as_str().unwrap());
+        let mut damaged = std::fs::read(&part).unwrap();
+        damaged[0] ^= 1;
+        std::fs::write(part, damaged).unwrap();
+        assert!(
+            ensure_with(
+                DATE,
+                temp.path(),
+                &control,
+                &|_, _| {},
+                1001,
+                |_| panic!("offline"),
                 prepare
             )
             .is_err()
