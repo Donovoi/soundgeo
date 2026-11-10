@@ -460,9 +460,9 @@ fn detect_scale(
                 .iter()
                 .map(|row| row[band_low - low..=band_high - low].to_vec())
                 .collect();
-            if !fast {
-                suppress_stationary_tones(&mut patch);
-            }
+            // Persistent tones can consume all four trace attempts in either
+            // band, or attract a descending trace from unrelated noise.
+            suppress_stationary_tones(&mut patch);
             for _ in 0..4 {
                 let ridge = trace(&patch, band_low, start, fft_size, hop);
                 if let Some(event) = fit(&ridge, job, fast)

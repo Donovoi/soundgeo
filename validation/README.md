@@ -23,8 +23,16 @@ the location target. Two earlier clips searched all 58 available free sample
 dates and returned insufficient evidence. The fresh one-hour clip searched
 three prepared dates and also returned insufficient evidence. These runs used
 no recording dates or times. All searched dates, native reports, and offline
-checks are recorded. The fresh clip is now being checked with the production
-archive and the same analysis settings.
+checks are recorded. The production-archive repeat also finished with
+insufficient evidence: 24 observations, 22,753,143 hypotheses, and no candidates.
+It searched all three dates. The independent audit verified the original 33
+cache files, media, decoder, executable, and zero proxy connections.
+
+The [audio diagnostics](lake-hood-audio-diagnostics.json) export all 31 grouped
+observations. The default 24 are unchanged. The seven observations below the
+limit produce no passing individual fit at the known camera and clock. Allowing
+the source pitch to change linearly also produces no passing fit at that clock.
+These results leave the event limit and pitch model unchanged.
 
 A separate [ground-coverage diagnostic](lake-hood-ground-coverage-diagnostic.json)
 checked the known camera point and clock. The raw source contains 619 ground

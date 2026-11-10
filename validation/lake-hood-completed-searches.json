@@ -206,11 +206,68 @@
     }
   },
   "fresh_hour_production_followup": {
-    "state": "running",
+    "state": "complete",
     "plan_sha256": "302a8831f2e1870fe226a17fcdc21f950db46917ec584769b63a2eb0acd3a7e3",
     "same_original_analysis_settings": true,
     "change": "Use the production release found by automatic cache refresh.",
-    "accepted_location": false
+    "accepted_location": false,
+    "source_commit": "568c7f33033c79768561ba16a34f190627b35017",
+    "result": {
+      "complete": true,
+      "accepted": false,
+      "exit_code": 3,
+      "report_written": true,
+      "status": "insufficient_evidence",
+      "report_sha256": "7038386022995a241b87762500405d0ff6947ade9171f1a75e6282b62d094d7e",
+      "elapsed_s": 8393.774729600002,
+      "top_candidate_error_m": null,
+      "events": 24,
+      "matched_events": 0,
+      "hypotheses": 22753143,
+      "all_prepared_dates_searched": true,
+      "date_search": {
+        "dates": [
+          "2026-11-07",
+          "2026-11-08",
+          "2026-11-09"
+        ],
+        "completed_batches": 2,
+        "complete": true,
+        "track_count_includes_overlap": true
+      },
+      "reference_days": 3,
+      "source_files_unchanged": true,
+      "inputs_unchanged": true,
+      "additional_cache_files": [
+        "decoded-tracks/47cafb5a6f244dd3087ffe92b820d40e963a259b587d9ec87da76a11c9263bc9.sgcache",
+        "decoded-tracks/5182c1bb122071b9c86874877b331c669c2a18431e3cbd33be0ee05e76568f1c.sgcache"
+      ],
+      "proxy_connections": 0
+    },
+    "independent_audit": {
+      "complete": true,
+      "scope": "Audit of a completed audio-only failure. Original cache files independently rehashed; native report, media, decoder, executable, date coverage and proxy record checked. No accepted location.",
+      "accepted": false,
+      "status": "insufficient_evidence",
+      "exit_code": 3,
+      "source_commit": "568c7f33033c79768561ba16a34f190627b35017",
+      "report_sha256": "7038386022995a241b87762500405d0ff6947ade9171f1a75e6282b62d094d7e",
+      "plan_sha256": "302a8831f2e1870fe226a17fcdc21f950db46917ec584769b63a2eb0acd3a7e3",
+      "result_sha256": "3a5b2d67e752954622725f529756ae4aed78f1f9554f9f8f6f4bdb7f5bc153cd",
+      "verifier_sha256": "b954667feacf7ca64aa46a211a022a8249edc100e2c97962e7e7ccc7eb8f5390",
+      "original_cache_files_rehashed": 33,
+      "additional_decoded_caches": 2,
+      "dates": [
+        "2026-11-07",
+        "2026-11-08",
+        "2026-11-09"
+      ],
+      "no_supplied_recording_date_or_clock": true,
+      "original_broad_bounds": true,
+      "proxy_connections": 0,
+      "events": 24,
+      "candidates": 0
+    }
   },
   "lake_hood_reliability_verified": false
 }
