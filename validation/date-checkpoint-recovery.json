@@ -1,0 +1,149 @@
+{
+  "schema": 1,
+  "source_commit": "4f8764c557339bc02da8b6464b3c6bfce1564d80",
+  "scope": "Offline completed-date checkpoint recovery on the existing positive Maho recording; no additional independent location site.",
+  "case": "maho-nov1-b",
+  "original_case_manifest": "unknown-date-cases.json",
+  "platform": "Native Linux in WSL2",
+  "guest_logical_processors": 11,
+  "build_provenance": {
+    "built_from_dirty_snapshot": true,
+    "snapshot_base_commit": "82fc48cbcc00e1207086f6277b26a4b3f246e37e",
+    "built_at_reviewed_commit": false,
+    "compiled_files_matched_to_reviewed_commit": 66,
+    "comparison": "22 exact bytes; 44 UTF-8 text files differ only in CRLF line endings."
+  },
+  "qualification": {
+    "checks_sha256": "ca479fb1df0d1a71da301ee957a44b3f0029e74d673ba0e16875f7e038c46c63",
+    "source_manifest_sha256": "e3898d53afe6e7de7be0c698412eb9169cfc4bea31b6d0d46ac8da7822c8594d",
+    "build_receipt_sha256": "2648e9cadf7043f2ee0a20ce146059919d3b945b72511a3c9ac3a45f14937fc5",
+    "rust_tests_passed": 221,
+    "python_tests_passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "checks": [
+      "fmt",
+      "strict Clippy",
+      "all-target tests",
+      "doc tests",
+      "release binaries",
+      "Python tests"
+    ],
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42821378180",
+    "ubuntu_ci": "passed, 221 Rust and 10 Python tests",
+    "windows_ci": "passed, 221 Rust and 10 Python tests",
+    "ci_jobs": {
+      "ubuntu": {
+        "job_id": 129847473681,
+        "status": "success",
+        "saved_log_sha256": "f4547479621d36d4eccee04ef224ac34730d3b07a7ae251dbb9fb57f4e562a28"
+      },
+      "windows": {
+        "job_id": 129847474078,
+        "status": "success",
+        "saved_log_sha256": "7b5b89e5530c2d9c10900f0ccddb767673c40bb7d3221b2f86c7c10d331c7c49"
+      }
+    },
+    "saved_ci_log_format": "Connector-decoded logs with CRLF normalized to LF and a final newline."
+  },
+  "cli_sha256": "be3be6e40b04d14a0bd8bd1d0bf8cf9edfc625b2a75e9d46751105e5a5784cf9",
+  "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+  "decoder_sha256": "ed16af623947494a72e284b6eb8ff225f2da22b38b5d5069c2fd4b4ba3384e41",
+  "job_sha256": "e75f378f5507a8657b36e9575fcac1d3fe27e5dd68932b1b5bab432c20104f64",
+  "field_plan_sha256": "d0db6b7e201a88e6752beeaf8c003e7cba51882cab7129853261726603c844b2",
+  "runner_sha256": "c4b46ab2b6486f52875ce647329f1054eb8bcbb39b723c1df26f3253060229ee",
+  "result_sha256": "3be658c0969979ad35e971d47207f1b927c50b5566286a28ae12dc64f4cbed1e",
+  "independent_audit_sha256": "6efc7e7feb7bd392ea17abf8b32f163079df6e7721e8ebfdfc3811fb1367e03c",
+  "prepared_dates": [
+    "2026-09-01",
+    "2026-10-01",
+    "2026-11-01"
+  ],
+  "recording_date_supplied": false,
+  "recording_clock_supplied": false,
+  "camera_position_supplied": false,
+  "video_clues_used": false,
+  "broad_bounds_supplied": true,
+  "ground_elevation_supplied": true,
+  "offline": true,
+  "target_error_m": 1000,
+  "reference_allowance_m": 200,
+  "matching_settings_unchanged": true,
+  "runs": [
+    {
+      "name": "interrupted",
+      "exit_code": -9,
+      "elapsed_s": 21.283617538999806,
+      "log_sha256": "053ee1a477608c5e5118faccf71c34082485645d16792fcd4286240f5c06fb53"
+    },
+    {
+      "name": "resumed",
+      "exit_code": 0,
+      "elapsed_s": 35.649949602000106,
+      "log_sha256": "9e0a97d9c899cf9441fefa04d7805148638dc12f5e0d08c97004d72fbc199abd"
+    },
+    {
+      "name": "uninterrupted",
+      "exit_code": 0,
+      "elapsed_s": 31.733753873000296,
+      "log_sha256": "b77602b578321844fa9c1aae46be0eb958b4106eb02fecee4feb3c5791f6992f"
+    }
+  ],
+  "intentional_interruption": "SIGKILL after first complete batch was atomically published; no final report or later checkpoint existed.",
+  "first_checkpoint_unchanged": true,
+  "complete_checkpoint_records": 3,
+  "resumed_reused_batches": 1,
+  "resumed_new_batches": 2,
+  "full_reports_exact_except_created_utc": true,
+  "comparison": "Independent parsed-tree comparison retains numeric tokens and types, including negative zero.",
+  "evaluations": {
+    "resumed": {
+      "status": "candidates_found",
+      "accepted": true,
+      "screened": true,
+      "sound_peaks": 117,
+      "track_count": 1338,
+      "region": {
+        "latitude": 18.04328859060403,
+        "longitude": -63.121830985915494,
+        "enclosing_radius_m": 0.0,
+        "competitive_points": 1
+      },
+      "error_m": 549.649056637247,
+      "matched_flights": 16,
+      "score": 31.0335629455301,
+      "controls": 19
+    },
+    "uninterrupted": {
+      "status": "candidates_found",
+      "accepted": true,
+      "screened": true,
+      "sound_peaks": 117,
+      "track_count": 1338,
+      "region": {
+        "latitude": 18.04328859060403,
+        "longitude": -63.121830985915494,
+        "enclosing_radius_m": 0.0,
+        "competitive_points": 1
+      },
+      "error_m": 549.649056637247,
+      "matched_flights": 16,
+      "score": 31.0335629455301,
+      "controls": 19
+    }
+  },
+  "report_hashes": {
+    "resumed": "2da5f48080448cf2bdc2d0e66d138c0c907f9af8d88fd5f4a78da89763724e0f",
+    "uninterrupted": "0b4a6c295e67ab12082b4b069aed57345b6ffa2c4a1272812acce724850f50f4"
+  },
+  "raw_cache_files_rehashed": 2172,
+  "input_hashes_unchanged": true,
+  "proxy_connections": 0,
+  "owned_analysis_groups_absent": true,
+  "limitations": [
+    "Same existing development recording; successful-site coverage remains unchanged.",
+    "Only three prepared dates were searched; this is not a complete historical archive test.",
+    "Full report equality compares the two new Linux runs; only the accepted region is compared with the historical Windows result.",
+    "Zero proxy connections are observed traffic, not operating-system network isolation."
+  ]
+}

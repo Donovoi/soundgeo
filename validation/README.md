@@ -8,6 +8,18 @@ New results must state which target they use.
 
 ## Current checks
 
+The [completed-date recovery check](date-checkpoint-recovery.json) interrupted the
+existing Maho recording after its first saved date batch, resumed it, and compared
+the result with an uninterrupted search. Both Linux reports match exactly except
+for creation time. Both searched all three prepared dates and passed 19 controls,
+with a location error of 549.65 m including the 200 m reference allowance.
+The first checkpoint stayed unchanged; 2,172 raw reference files and all other
+inputs passed an independent hash audit. This verifies recovery on an existing
+successful recording; successful-site coverage remains unchanged.
+Application revision `4f8764c` passes 221 Rust tests, 10 Python tests, and all
+required checks locally on Linux and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42821378180).
+
 The [separate 20-minute Lake Hood test](lake-final-20-minute.json) returned
 insufficient evidence with no usable Doppler observations or location candidates.
 The qualified `82fc48c` Windows CLI stopped before loading flight tracks or

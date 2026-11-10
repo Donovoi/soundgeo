@@ -51,9 +51,9 @@ Maho tests searched three, ten, and twelve prepared sample dates with the same r
 one accepted recording, one ambiguous, and one insufficient.
 The app has not been verified against a complete historical flight archive.
 
-Revision `82fc48c` passed all 215 Rust tests, 10 Python tests, and the required
-checks locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42785607130).
+Revision `4f8764c` passed all 221 Rust tests, 10 Python tests, and the required
+checks locally on Linux and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42821378180).
 Location accuracy needs separate tests against known positions.
 
 The latest detector change suppresses persistent tones in the fast frequency
