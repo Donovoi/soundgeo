@@ -164,6 +164,20 @@ pub fn detect(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<Vec<Event>> {
+    let mut events = detect_all(samples, job, control, progress)?;
+    events.truncate(24);
+    events.sort_by(|a, b| a.cpa_s.total_cmp(&b.cpa_s));
+    Ok(events)
+}
+
+/// All grouped observations in quality order, before the search's event limit.
+/// Diagnostic callers can inspect observations that the search would discard.
+pub fn detect_all(
+    samples: &[f32],
+    job: &Job,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<Vec<Event>> {
     let mut found = detect_scale(samples, job, control, progress, false)?;
     if job.fast_flyovers {
         found.extend(detect_scale(samples, job, control, progress, true)?);
@@ -171,8 +185,6 @@ pub fn detect(
     let events = group_overlapping_curves(found);
     let mut events = collapse_continuations(events);
     events.sort_by(|a, b| event_quality(b).total_cmp(&event_quality(a)));
-    events.truncate(24);
-    events.sort_by(|a, b| a.cpa_s.total_cmp(&b.cpa_s));
     Ok(events)
 }
 

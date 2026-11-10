@@ -8,6 +8,40 @@ New results must state which target they use.
 
 ## Current checks
 
+The [archive repair check](production-archive-repair.json) verifies automatic
+updates from a staging archive to a production release. It also reproduces and
+fixes a saved production manifest with a missing archive part. The CLI rejects
+that incomplete cache offline, downloads the missing 1.72 GB part online, and
+then reuses the completed cache offline with no date argument. Publisher hashes
+match, the original files remain intact, and the proxy records no connections.
+Revision `c21b314` passes all 214 Rust tests and 10 Python tests locally. The same
+application source also passes
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42770523346).
+
+The [completed Lake Hood searches](lake-hood-completed-searches.json) still fail
+the location target. Two earlier clips searched all 58 available free sample
+dates and returned insufficient evidence. The fresh one-hour clip searched
+three prepared dates and also returned insufficient evidence. These runs used
+no recording dates or times. All searched dates, native reports, and offline
+checks are recorded. The fresh clip is now being checked with the production
+archive and the same analysis settings.
+
+A separate [ground-coverage diagnostic](lake-hood-ground-coverage-diagnostic.json)
+checked the known camera point and clock. The raw source contains 619 ground
+positions within 1 km, across 19 aircraft IDs. Including ground-to-air
+transitions produced no passing individual sound curves in that diagnostic.
+Its airborne importer matched all 43,023 compared positions from the native
+export. The application and the no-date searches remain unchanged.
+
+To inspect observations before the 24-event search limit, run:
+
+```text
+cargo run --release --locked --example inspect_audio -- job.json all-events.json --all-observations
+```
+
+This diagnostic exports all grouped observations in quality order. Without the
+flag, it exports the observations selected for normal analysis.
+
 The [unfinished-trace check](readsb-temporary-traces.json) replays the provider
 archive that stopped the fresh Lake Hood recording. The corrected importer
 loads 717 flight segments and 99,042 positions, reports one unfinished file,
@@ -22,8 +56,8 @@ successful recordings also pass offline with blank recording dates and times.
 Maho remains within 550 m, including its 200 m reference allowance. Midway remains
 within 90 m after searching all three prepared dates. Both retain their original
 result regions. All 18,111 checked cache files and other inputs stayed unchanged;
-the proxy recorded no connections. The fresh one-hour Lake Hood retry is running
-with its original analysis inputs. Its location result is pending.
+the proxy recorded no connections. The fresh one-hour Lake Hood retry completed
+with insufficient evidence; its result is in the completed-search record above.
 
 The [date-index freshness check](date-index-freshness.json) reproduced a newly
 published day missing from the saved provider index. The new CLI added that day
@@ -41,8 +75,8 @@ flight geometry preserved every fit output. Median fit time fell by 24% and 31%
 in these diagnostics. Other searches were active; full-search speed is still
 unmeasured. A separate segment-lookup cache was slower and was discarded.
 
-Two cases in the four-date Lake Hood retry reached their six-hour limits.
-Neither wrote a location report. Three cases remain pending. These failures
+Four cases in the four-date Lake Hood retry reached their six-hour limits.
+None wrote a location report. One case remains pending. These failures
 remain in the validation record.
 
 Revision `8e3092c` passes all 196 Rust tests, 10 Python tests, formatting,
