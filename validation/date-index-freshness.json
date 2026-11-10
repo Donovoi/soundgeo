@@ -39,5 +39,44 @@
     ]
   },
   "full_qualification_complete": false,
-  "native_fixed_cache_replay_complete": false
+  "native_fixed_cache_replay_complete": true,
+  "native_fixed_cache_replay": {
+    "complete": true,
+    "source_commit": "fb042a0165eef1a988c0bb05f568ff3939dd4679",
+    "cli_sha256": "feca57ed5e6a3014143eb587fee64ae4784d6370e13812991f14da90f1e794ba",
+    "original_dates": 1329,
+    "updated_dates": 1330,
+    "added_dates": [
+      "2026-11-09"
+    ],
+    "retained_all_original_dates": true,
+    "full_scan_timestamp_unchanged": true,
+    "additional_provider_pages": 1,
+    "warm_and_offline_reports_identical": true,
+    "warm_and_offline_proxy_connections": 0,
+    "warm_cache_unchanged": true,
+    "original_cache_unchanged": true,
+    "new_cache_sha256": "1378166f39ccb13ebb70a79e162af944bd1f1a14ce8a588322769a6a3ecbd604",
+    "steps": [
+      {
+        "step": "online-refresh",
+        "exit_code": 0,
+        "elapsed_s": 1.3772293999936664,
+        "log_sha256": "35b04eba7fe0d576da317c580b30ebf2668bedc2cfd5b38be229650ca79e3e2c"
+      },
+      {
+        "step": "warm-online",
+        "exit_code": 0,
+        "elapsed_s": 0.17258260000380687,
+        "log_sha256": "bce99e5c27d1618e92ef4bd692302ed7f1d08caf84d11a0339c8409ff4d695b6"
+      },
+      {
+        "step": "offline",
+        "exit_code": 0,
+        "elapsed_s": 0.16949230000318494,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "result_sha256": "9353645a9adc2016f29bf40e9fc7fda61cdc722c644eb5cc44414104d36ff321"
+  }
 }

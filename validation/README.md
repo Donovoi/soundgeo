@@ -8,6 +8,12 @@ New results must state which target they use.
 
 ## Current checks
 
+The [date-index freshness check](date-index-freshness.json) reproduced a newly
+published day missing from the saved provider index. The new CLI added that day
+with one metadata request and kept all 1,329 earlier dates. Warm-cache and offline
+repeats stayed identical, with no proxy connections. Eight focused tests passed;
+full qualification of this change is pending.
+
 The [curve-fit runtime check](curve-fit-runtime.json) compared 1,842 fits from
 two Lake Hood recordings, including shifted proposals and short curves. Reusing
 flight geometry preserved every fit output. Median fit time fell by 24% and 31%
