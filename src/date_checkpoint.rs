@@ -108,7 +108,7 @@ fn decode_report(payload: &str) -> Result<Report> {
 }
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
-struct Object {
+pub(crate) struct Object {
     path: PathBuf,
     sha256: String,
 }
@@ -163,7 +163,7 @@ fn digest(bytes: &[u8]) -> String {
 
 // Keep roots, rather than just a list of existing files, so added terrain/reference
 // files invalidate a checkpoint too. Traversal errors cannot silently omit inputs.
-fn inventory(roots: &[PathBuf], control: &Control) -> Result<Vec<Object>> {
+pub(crate) fn inventory(roots: &[PathBuf], control: &Control) -> Result<Vec<Object>> {
     let mut paths = BTreeSet::new();
     for root in roots {
         control.check()?;
@@ -192,6 +192,23 @@ fn inventory(roots: &[PathBuf], control: &Control) -> Result<Vec<Object>> {
             })
         })
         .collect()
+}
+
+// Providers place raw archives, split parts, integrity metadata and inferred
+// catalogs beside their selected source. Derived decoded caches live elsewhere.
+pub(crate) fn reference_roots(sources: &[PathBuf]) -> Result<Vec<PathBuf>> {
+    let mut roots = BTreeSet::new();
+    for source in sources {
+        let root = if source.is_dir() && source.file_name().is_none_or(|name| name != "traces") {
+            source.as_path()
+        } else {
+            source
+                .parent()
+                .context("Archive source has no parent folder")?
+        };
+        roots.insert(root.canonicalize()?);
+    }
+    Ok(roots.into_iter().collect())
 }
 
 fn write_new(path: &Path, value: &impl Serialize) -> Result<()> {
@@ -307,24 +324,13 @@ impl Checkpoints {
         // Archive providers place the files, split parts, coverage manifests and
         // inferred aircraft catalog in each source's parent folder. Bind that full
         // folder, including metadata used for filtering and report warnings.
-        let mut roots = BTreeSet::new();
-        for source in sources {
-            let root = if source.is_dir() && source.file_name().is_none_or(|name| name != "traces")
-            {
-                source.as_path()
-            } else {
-                source
-                    .parent()
-                    .context("Archive source has no parent folder")?
-            }
-            .canonicalize()?;
+        let roots = reference_roots(sources)?;
+        for root in &roots {
             ensure!(
-                !self.root.starts_with(&root),
+                !self.root.starts_with(root),
                 "Keep date checkpoints outside reference folders"
             );
-            roots.insert(root);
         }
-        let roots: Vec<_> = roots.into_iter().collect();
         let inputs = inventory(&roots, control)?;
         let key = digest(&serde_json::to_vec(&(job, sources, &inputs))?);
         let mut prepared = job.clone();

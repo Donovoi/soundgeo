@@ -14,7 +14,7 @@ pub struct Coverage {
     pub provider_discovery: Option<crate::availability::Catalog>,
 }
 
-fn batches(dates: &[String]) -> Result<Vec<(String, String)>> {
+pub(crate) fn batches(dates: &[String]) -> Result<Vec<(String, String)>> {
     let parsed: Vec<_> = dates
         .iter()
         .map(|s| NaiveDate::parse_from_str(s, "%Y-%m-%d"))

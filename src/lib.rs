@@ -348,6 +348,28 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         }
     };
     drop(samples);
+    analyze_observations(
+        job,
+        duration_s,
+        events,
+        timing_peaks,
+        checkpoint_dates.map(|dates| (dates, None)),
+        control,
+        progress,
+    )
+}
+
+// Shared by normal analysis and diagnostic replays of already extracted observations.
+// Date batching, proposal limits, terrain, ranking and acceptance remain in this path.
+pub(crate) fn analyze_observations(
+    job: &Job,
+    duration_s: f64,
+    events: Vec<audio::Event>,
+    timing_peaks: Option<Vec<timing::Peak>>,
+    resolved_dates: Option<(Vec<String>, Option<availability::Catalog>)>,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<Report> {
     let mut report = Report { version: env!("CARGO_PKG_VERSION").into(), status: "insufficient_evidence".into(),
         media: job.media.clone(), job: job.clone(), duration_s, track_count: 0, events,
         candidates: vec![], warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
@@ -370,8 +392,8 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         report.warnings.push("Only one flyover and no known clock: time and location can be ambiguous, especially on straight flight paths.".into());
     }
     if let Some(request) = &job.archive {
-        let (dates, discovery) = match checkpoint_dates {
-            Some(dates) => (dates, None),
+        let (dates, discovery) = match resolved_dates {
+            Some(resolved) => resolved,
             None => request.resolve_dates(control, &|m, _| progress(m, 0.33))?,
         };
         if dates.len() > 1 || discovery.is_some() {

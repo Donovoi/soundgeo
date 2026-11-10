@@ -5,6 +5,9 @@ use anyhow::{Result, ensure};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 
+mod replay;
+pub use replay::{SearchBinding, bind_search, replay_observations};
+
 const CONTROL_COUNT: usize = 19;
 const MIN_ACTIVITY_GAP_S: f64 = 30.;
 

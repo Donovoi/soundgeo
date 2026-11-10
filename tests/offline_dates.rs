@@ -90,6 +90,203 @@ fn without_creation_time(report: Report) -> serde_json::Value {
 }
 
 #[test]
+fn control_identity_replays_overlapping_dates_partitions_and_competing_clocks() {
+    use soundgeo::doppler_controls::{bind_search, replay_observations};
+    let dir = tempfile::tempdir().unwrap();
+    let mut job = checkpoint_job(dir.path());
+    cache_day(
+        &dir.path().join("cache"),
+        "2026-09-09",
+        &shifted_csv(86400., None),
+    );
+    job.search_mode = soundgeo::search::SearchMode::FlightCorridors;
+    let probe = soundgeo::analyze(&job, &Control::default(), &|_, _| {}).unwrap();
+    assert!(probe.doppler_partitions.is_empty());
+    job.max_hypotheses = probe.hypotheses / 8;
+    assert!(job.max_hypotheses >= 100);
+    let baseline = soundgeo::analyze(&job, &Control::default(), &|_, _| {}).unwrap();
+    let coverage = baseline.date_search.as_ref().unwrap();
+    assert_eq!(coverage.completed_batches, 2);
+    assert_eq!(coverage.dates, ["2026-09-08", "2026-09-09", "2026-09-10"]);
+    assert_eq!(baseline.doppler_partitions.len(), 2);
+    assert!(
+        baseline
+            .doppler_partitions
+            .iter()
+            .all(|p| p.complete && p.batches.len() > 1)
+    );
+    assert_eq!(baseline.status, "ambiguous");
+    for offset in [0., 86400., 172800.] {
+        assert!(
+            baseline
+                .candidates
+                .iter()
+                .any(|c| (c.recording_start_unix - demo::EPOCH - offset).abs() < 30.)
+        );
+    }
+    let binding = bind_search(&baseline, &Control::default()).unwrap();
+    let mut incomplete = baseline.clone();
+    incomplete.doppler_partitions[0].complete = false;
+    assert!(bind_search(&incomplete, &Control::default()).is_err());
+    let binding = serde_json::from_slice(&serde_json::to_vec(&binding).unwrap()).unwrap();
+    let replay = replay_observations(
+        &baseline,
+        &binding,
+        baseline.events.clone(),
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    assert_eq!(
+        without_creation_time(replay),
+        without_creation_time(baseline),
+        "Identity replay must preserve the full production report, including overlap, partitions, warnings, candidates and merge status"
+    );
+}
+
+#[test]
+fn control_bindings_reject_changed_dates_partial_inputs_and_incomplete_baselines() {
+    use soundgeo::doppler_controls::{bind_search, replay_observations};
+    let dir = tempfile::tempdir().unwrap();
+    let job = checkpoint_job(dir.path());
+    let baseline = soundgeo::analyze(&job, &Control::default(), &|_, _| {}).unwrap();
+    let binding = bind_search(&baseline, &Control::default()).unwrap();
+    for bad in [
+        {
+            let mut r = baseline.clone();
+            r.date_search.as_mut().unwrap().complete = false;
+            r
+        },
+        {
+            let mut r = baseline.clone();
+            r.date_search.as_mut().unwrap().completed_batches = 1;
+            r
+        },
+        {
+            let mut r = baseline.clone();
+            r.job.start_utc = Some(demo::EPOCH);
+            r
+        },
+        {
+            let mut r = baseline.clone();
+            r.job.archive.as_mut().unwrap().date_from = "2026-09-08".into();
+            r
+        },
+    ] {
+        assert!(bind_search(&bad, &Control::default()).is_err());
+    }
+    assert!(
+        binding
+            .check_output_path(&dir.path().join("cache/webtrak-cda-2026-09-08/control.json"))
+            .is_err()
+    );
+    cache_day(
+        &dir.path().join("cache"),
+        "2026-09-09",
+        &shifted_csv(86400., None),
+    );
+    assert!(
+        replay_observations(
+            &baseline,
+            &binding,
+            baseline.events.clone(),
+            &Control::default(),
+            &|_, _| {}
+        )
+        .unwrap_err()
+        .to_string()
+        .contains("date plan")
+    );
+    std::fs::remove_dir_all(dir.path().join("cache/webtrak-cda-2026-09-09")).unwrap();
+    let file = dir.path().join("cache/webtrak-cda-2026-09-08/flights.csv");
+    let bytes = std::fs::read(&file).unwrap();
+    std::fs::remove_file(&file).unwrap();
+    assert!(
+        replay_observations(
+            &baseline,
+            &binding,
+            baseline.events.clone(),
+            &Control::default(),
+            &|_, _| {}
+        )
+        .is_err()
+    );
+    std::fs::write(&file, bytes).unwrap();
+    let catalog = dir
+        .path()
+        .join("cache/webtrak-cda-2026-09-08/aircraft-types.json");
+    let original = std::fs::read(&catalog).unwrap();
+    std::fs::write(&catalog, br#"{"C172":["Different maker","L1P","L"]}"#).unwrap();
+    assert!(
+        replay_observations(
+            &baseline,
+            &binding,
+            baseline.events.clone(),
+            &Control::default(),
+            &|_, _| {}
+        )
+        .unwrap_err()
+        .to_string()
+        .contains("inputs changed")
+    );
+    std::fs::write(&catalog, original).unwrap();
+    let error = replay_observations(
+        &baseline,
+        &binding,
+        baseline.events.clone(),
+        &Control::default(),
+        &|message, _| {
+            if message.ends_with("Analysis complete") {
+                std::fs::write(&catalog, br#"{"C172":["Changed mid-search","L1P","L"]}"#).unwrap();
+            }
+        },
+    )
+    .unwrap_err();
+    assert!(
+        error.to_string().contains("changed during search"),
+        "{error:#}"
+    );
+}
+
+#[test]
+fn control_identity_preserves_single_date_and_imported_searches() {
+    use soundgeo::doppler_controls::{bind_search, replay_observations};
+    let dir = tempfile::tempdir().unwrap();
+    let mut job = demo::create(dir.path()).unwrap();
+    job.offline = true;
+    for archive in [false, true] {
+        if archive {
+            cache_day(
+                &dir.path().join("cache"),
+                "2026-09-08",
+                &shifted_csv(0., None),
+            );
+            job.archive = Some(soundgeo::archive::ArchiveRequest {
+                date_from: String::new(),
+                date_to: None,
+                cache: dir.path().join("cache"),
+                provider: soundgeo::archive::ArchiveProvider::WebtrakChicago,
+            });
+        }
+        let baseline = soundgeo::analyze(&job, &Control::default(), &|_, _| {}).unwrap();
+        assert!(baseline.date_search.is_none());
+        let binding = bind_search(&baseline, &Control::default()).unwrap();
+        let replay = replay_observations(
+            &baseline,
+            &binding,
+            baseline.events.clone(),
+            &Control::default(),
+            &|_, _| {},
+        )
+        .unwrap();
+        assert_eq!(
+            without_creation_time(replay),
+            without_creation_time(baseline)
+        );
+    }
+}
+
+#[test]
 fn interrupted_date_search_resumes_complete_batches_with_exact_report_parity() {
     use std::sync::atomic::{AtomicUsize, Ordering};
     let dir = tempfile::tempdir().unwrap();
