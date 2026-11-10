@@ -380,6 +380,7 @@ fn date_index(root: &Path, dates: &[&str]) {
     let catalog = soundgeo::availability::Catalog {
         provider: soundgeo::archive::ArchiveProvider::WebtrakChicago,
         retrieved_utc: chrono::Utc::now().to_rfc3339(),
+        recent_checked_utc: None,
         dates: dates.iter().map(|s| (*s).to_owned()).collect(),
         basis: "Saved provider-index fixture; no recording date supplied".into(),
         sources: vec![soundgeo::availability::Source {

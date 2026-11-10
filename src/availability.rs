@@ -30,6 +30,9 @@ pub struct Catalog {
     pub dates: Vec<String>,
     pub basis: String,
     pub sources: Vec<Source>,
+    /// Last lightweight check for newly published daily archives.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub recent_checked_utc: Option<String>,
 }
 #[derive(Serialize, Deserialize)]
 struct Stored {
@@ -72,6 +75,13 @@ fn validate(catalog: &Catalog, provider: ArchiveProvider, today: NaiveDate) -> R
         stamp.timestamp() <= Utc::now().timestamp() + 300,
         "Date catalog timestamp is in the future"
     );
+    if let Some(recent) = &catalog.recent_checked_utc {
+        let checked = chrono::DateTime::parse_from_rfc3339(recent)?;
+        ensure!(
+            checked >= stamp && checked.timestamp() <= Utc::now().timestamp() + 300,
+            "Recent date check timestamp is outside the catalog lifetime"
+        );
+    }
     ensure!(
         !catalog.sources.is_empty(),
         "Date catalog has no source records"
@@ -167,11 +177,12 @@ pub fn discover(
     if let Ok(catalog) = load(cache, provider) {
         let stamp = chrono::DateTime::parse_from_rfc3339(&catalog.retrieved_utc)?;
         if Utc::now().timestamp() - stamp.timestamp() < CACHE_SECONDS {
-            progress(
-                "Using the verified provider date index (refreshed within six hours)",
-                1.,
-            );
-            return Ok(catalog);
+            return refresh_cached(catalog, cache, control, progress, Utc::now(), |catalog| {
+                let runtime = tokio::runtime::Builder::new_current_thread()
+                    .enable_all()
+                    .build()?;
+                runtime.block_on(refresh_recent(catalog, control, progress))
+            });
         }
     }
     control.require_network("discover available flight dates")?;
@@ -187,6 +198,110 @@ pub fn discover(
         ),
         1.,
     );
+    Ok(catalog)
+}
+
+fn recent_refresh_due(catalog: &Catalog, now: chrono::DateTime<Utc>) -> Result<bool> {
+    if catalog.provider != ArchiveProvider::AdsbLol {
+        return Ok(false);
+    }
+    let stamp = chrono::DateTime::parse_from_rfc3339(
+        catalog
+            .recent_checked_utc
+            .as_deref()
+            .unwrap_or(&catalog.retrieved_utc),
+    )?;
+    Ok(now.timestamp() - stamp.timestamp() >= 15 * 60)
+}
+
+fn recent_years(today: NaiveDate) -> BTreeSet<i32> {
+    [1, 2]
+        .into_iter()
+        .filter_map(|days| today.checked_sub_days(Days::new(days)))
+        .map(|day| day.year())
+        .filter(|&year| year >= 2023)
+        .collect()
+}
+
+fn refresh_cached(
+    catalog: Catalog,
+    cache: &Path,
+    control: &Control,
+    progress: &Progress<'_>,
+    now: chrono::DateTime<Utc>,
+    refresh: impl FnOnce(Catalog) -> Result<Catalog>,
+) -> Result<Catalog> {
+    control.check()?;
+    if !control.offline && recent_refresh_due(&catalog, now)? {
+        // Keep the verified index intact if the provider is temporarily down.
+        // A cancellation must still stop the operation.
+        match refresh(catalog.clone()) {
+            Ok(updated) => {
+                control.check()?;
+                save(cache, &updated)?;
+                return Ok(updated);
+            }
+            Err(error) => {
+                control.check()?;
+                progress(
+                    &format!(
+                        "Could not check recent archive publications: {error:#}. Using saved dates."
+                    ),
+                    1.,
+                );
+                let mut fallback = catalog;
+                fallback.basis.push_str(
+                    " The recent publication check failed; newly published dates may be missing.",
+                );
+                return Ok(fallback);
+            }
+        }
+    }
+    progress("Using the verified provider date index", 1.);
+    Ok(catalog)
+}
+
+fn merge_recent_releases(
+    catalog: &mut Catalog,
+    releases: &[serde_json::Value],
+    year: i32,
+    today: NaiveDate,
+) {
+    let mut dates: BTreeSet<_> = catalog.dates.iter().cloned().collect();
+    dates.extend(
+        releases
+            .iter()
+            .filter_map(|release| release_date(release, year, today)),
+    );
+    catalog.dates = dates.into_iter().collect();
+}
+
+async fn refresh_recent(
+    mut catalog: Catalog,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<Catalog> {
+    control.require_network("check recent flight archive publications")?;
+    let now = Utc::now();
+    let mut fetch = Fetcher::new()?;
+    for year in recent_years(now.date_naive()) {
+        progress(
+            &format!("Checking recent free archive publications: {year}"),
+            0.,
+        );
+        let url = format!(
+            "https://api.github.com/repos/adsblol/globe_history_{year}/releases?per_page=100&page=1"
+        );
+        if let Some(bytes) = fetch.get(&url, None, control).await? {
+            let releases: Vec<serde_json::Value> = serde_json::from_slice(&bytes)?;
+            merge_recent_releases(&mut catalog, &releases, year, now.date_naive());
+        }
+    }
+    // Preserve the full-scan timestamp so frequent recent checks cannot postpone
+    // discovery of older releases. Keep both sets of source receipts.
+    catalog.recent_checked_utc = Some(now.to_rfc3339());
+    catalog.sources.extend(fetch.sources);
+    catalog.basis = "All release pages were read during full discovery. Recent publication checks add new dates and preserve the earlier list.".into();
     Ok(catalog)
 }
 
@@ -414,6 +529,7 @@ async fn discover_online(
     let catalog = Catalog {
         provider,
         retrieved_utc: Utc::now().to_rfc3339(),
+        recent_checked_utc: None,
         dates: dates.into_iter().collect(),
         basis: basis.into(),
         sources: fetch.sources,
@@ -515,6 +631,7 @@ mod tests {
         let catalog = Catalog {
             provider,
             retrieved_utc: Utc::now().to_rfc3339(),
+            recent_checked_utc: None,
             dates: vec!["2024-02-29".into(), "2024-03-01".into()],
             basis: "fixture".into(),
             sources: vec![Source {
@@ -551,6 +668,7 @@ mod tests {
         let mut catalog = Catalog {
             provider,
             retrieved_utc: Utc::now().to_rfc3339(),
+            recent_checked_utc: None,
             dates: vec!["2024-03-01".into()],
             basis: "fixture".into(),
             sources: vec![Source {
@@ -615,5 +733,145 @@ mod tests {
             ]),
             "continuation-token=a%2Bb%20%2F%3D&delimiter=%2F&prefix=traces%2F2026%2F"
         );
+    }
+    fn daily_fixture(now: chrono::DateTime<Utc>) -> Catalog {
+        Catalog {
+            provider: ArchiveProvider::AdsbLol,
+            retrieved_utc: (now - chrono::Duration::hours(1)).to_rfc3339(),
+            recent_checked_utc: None,
+            dates: vec!["2024-03-01".into()],
+            basis: "fixture".into(),
+            sources: vec![Source {
+                url: "https://example.com/original".into(),
+                sha256: hash(b"original"),
+                status: 200,
+                request_body_sha256: None,
+            }],
+        }
+    }
+
+    #[test]
+    fn recent_dates_extend_legacy_index_without_postponing_full_discovery() {
+        let now = Utc::now();
+        let dir = tempfile::tempdir().unwrap();
+        let catalog = daily_fixture(now);
+        let legacy_bytes = serde_json::to_vec(&catalog).unwrap();
+        assert!(!String::from_utf8_lossy(&legacy_bytes).contains("recent_checked_utc"));
+        save(dir.path(), &catalog).unwrap();
+        let old = load(dir.path(), catalog.provider).unwrap();
+        assert_eq!(serde_json::to_vec(&old).unwrap(), legacy_bytes);
+        let day = now.date_naive().pred_opt().unwrap();
+        let added = serde_json::json!({"tag_name":format!("v{}-planes-readsb-staging-0", day.format("%Y.%m.%d")),
+            "assets":[{"name":"day.tar","size":10}]});
+        let updated = refresh_cached(
+            old,
+            dir.path(),
+            &Control::default(),
+            &|_, _| {},
+            now,
+            |mut value| {
+                merge_recent_releases(
+                    &mut value,
+                    &[added.clone(), added],
+                    day.year(),
+                    now.date_naive(),
+                );
+                value.recent_checked_utc = Some(now.to_rfc3339());
+                value.sources.push(Source {
+                    url: "https://example.com/recent".into(),
+                    sha256: hash(b"recent"),
+                    status: 200,
+                    request_body_sha256: None,
+                });
+                Ok(value)
+            },
+        )
+        .unwrap();
+        assert_eq!(updated.dates, ["2024-03-01".to_owned(), day.to_string()]);
+        assert_eq!(updated.retrieved_utc, catalog.retrieved_utc);
+        assert_eq!(updated.sources.len(), 2);
+        assert_eq!(
+            load(dir.path(), catalog.provider).unwrap().dates,
+            updated.dates
+        );
+        assert!(!recent_refresh_due(&updated, now + chrono::Duration::seconds(899)).unwrap());
+        assert!(recent_refresh_due(&updated, now + chrono::Duration::seconds(900)).unwrap());
+        let cached = refresh_cached(
+            updated,
+            dir.path(),
+            &Control::default(),
+            &|_, _| {},
+            now,
+            |_| panic!("Fresh catalog must avoid another request"),
+        )
+        .unwrap();
+        assert_eq!(cached.dates.len(), 2);
+    }
+
+    #[test]
+    fn recent_date_failures_and_offline_reads_preserve_saved_bytes() {
+        let now = Utc::now();
+        let dir = tempfile::tempdir().unwrap();
+        let catalog = daily_fixture(now);
+        save(dir.path(), &catalog).unwrap();
+        let path = cache_path(dir.path(), catalog.provider);
+        let before = std::fs::read(&path).unwrap();
+        let fallback = refresh_cached(
+            catalog.clone(),
+            dir.path(),
+            &Control::default(),
+            &|_, _| {},
+            now,
+            |_| anyhow::bail!("fixture outage"),
+        )
+        .unwrap();
+        assert_eq!(fallback.dates, catalog.dates);
+        assert!(fallback.basis.contains("publication check failed"));
+        assert_eq!(std::fs::read(&path).unwrap(), before);
+        let offline = Control::default().with_offline(true);
+        let saved = discover(catalog.provider, dir.path(), &offline, &|_, _| {}).unwrap();
+        assert_eq!(saved.dates, catalog.dates);
+        refresh_cached(
+            catalog.clone(),
+            dir.path(),
+            &offline,
+            &|_, _| {},
+            now,
+            |_| panic!("Offline must not probe publications"),
+        )
+        .unwrap();
+        let cancel = Control::default();
+        let result = refresh_cached(catalog, dir.path(), &cancel, &|_, _| {}, now, |_| {
+            cancel.stop();
+            anyhow::bail!("cancelled during request")
+        });
+        assert!(result.is_err());
+        assert_eq!(std::fs::read(path).unwrap(), before);
+    }
+
+    #[test]
+    fn recent_checks_cover_year_boundary_and_validate_timestamps() {
+        assert_eq!(
+            recent_years(NaiveDate::from_ymd_opt(2027, 1, 1).unwrap()),
+            BTreeSet::from([2026])
+        );
+        assert_eq!(
+            recent_years(NaiveDate::from_ymd_opt(2027, 1, 2).unwrap()),
+            BTreeSet::from([2026, 2027])
+        );
+        assert_eq!(
+            recent_years(NaiveDate::from_ymd_opt(2027, 1, 3).unwrap()),
+            BTreeSet::from([2027])
+        );
+        let now = Utc::now();
+        let mut catalog = daily_fixture(now);
+        catalog.recent_checked_utc = Some((now + chrono::Duration::hours(1)).to_rfc3339());
+        assert!(validate(&catalog, catalog.provider, now.date_naive()).is_err());
+        catalog.recent_checked_utc = Some((now - chrono::Duration::hours(2)).to_rfc3339());
+        assert!(validate(&catalog, catalog.provider, now.date_naive()).is_err());
+        catalog.recent_checked_utc = Some(now.to_rfc3339());
+        validate(&catalog, catalog.provider, now.date_naive()).unwrap();
+        catalog.provider = ArchiveProvider::AdsbExchangeSampleHires;
+        assert!(!recent_refresh_due(&catalog, now + chrono::Duration::hours(2)).unwrap());
     }
 }

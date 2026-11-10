@@ -1,0 +1,43 @@
+{
+  "reproduction": {
+    "observed_utc": "2026-11-10T00:52:19.248741+00:00",
+    "scope": "Read-only reproduction of a cached discovery index omitting a newly published day. Six-hour reuse is current documented behavior.",
+    "cli_sha256": "66b7b8eed61b9eb2a2165b40f8eaaac8be57df555a5a618299c0e2b9a4404c9d",
+    "native_exit_code": 0,
+    "cache_sha256": "a51d0e64531df46b82aefd3fe8b2a2a8d8dbbdbb52b0ad02dec034b2acab1013",
+    "cache_unchanged": true,
+    "catalog_retrieved_utc": "2026-11-09T23:44:35.735664300+00:00",
+    "catalog_last_date": "2026-11-08",
+    "provider_payload_sha256": "b57b1ce73d344673b50d5862730124f22fc7427327bedf25593747b37b37a2a2",
+    "latest_supported_release": "v2026.11.09-planes-readsb-staging-0",
+    "latest_release_published_at": "2026-11-10T00:17:26Z",
+    "latest_supported_date_in_native_catalog": false,
+    "assets": [
+      {
+        "name": "v2026.11.09-planes-readsb-staging-0.tar",
+        "size": 1859851264,
+        "state": "uploaded",
+        "updated_at": "2026-11-10T00:18:39Z"
+      }
+    ],
+    "production_behavior_changed": false
+  },
+  "reproduction_sha256": "97e960ae8b0f6685c3f806ad24a47ef4f7d9b8f52503adb6aae1dc9f20fded1e",
+  "change": "For a valid saved ADSB.lol index, check recent release pages after15minutes. Preserve older dates, the full-scan timestamp, and offline cache-only behavior. Full discovery still runs after6hours.",
+  "focused_tests": {
+    "passed": 8,
+    "failed": 0,
+    "ignored": 0,
+    "new_tests": 3,
+    "coverage": [
+      "Legacy index loading and unchanged full-scan time",
+      "New-day merging without losing older dates",
+      "Repeated checks within15minutes avoid requests",
+      "Offline reads and provider failures preserve cached bytes",
+      "Cancellation stops refresh",
+      "Year boundaries and invalid timestamps"
+    ]
+  },
+  "full_qualification_complete": false,
+  "native_fixed_cache_replay_complete": false
+}

@@ -181,5 +181,21 @@
       }
     ]
   },
-  "acceptance_thresholds_changed": false
+  "acceptance_thresholds_changed": false,
+  "qualification": {
+    "source_commit": "8e3092c1173ad577964efd5eccec8c691c659665",
+    "rust_tests_passed": 196,
+    "python_tests_passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "local_required_checks_passed": true,
+    "windows_and_ubuntu_ci_passed": true,
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42729743227",
+    "local_checks_sha256": "61b841ae99ff4d1e9982f3bad1401310167ac0dab77a46f6be4fda5a8a85e82e",
+    "ci_verification_sha256": "c2b3db9f6a610a8011e20061526d4fede4b7f13d6445c85342208f417f5112f7",
+    "ci_checkout_matches_source_tree": true,
+    "ci_artifact_digest_verified": true,
+    "ci_cli_sha256": "fdddd67487a14d4164633dd80055dff95341e3e495a03f13417f6fc3ef95c4c4",
+    "local_cli_sha256": "aba8bc819096a838589e4898d4e4c62b47ab27824a4ea3020d34c0b53089fa75"
+  }
 }

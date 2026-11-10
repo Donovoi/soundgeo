@@ -18,9 +18,9 @@ Two cases in the four-date Lake Hood retry reached their six-hour limits.
 Neither wrote a location report. Three cases remain pending. These failures
 remain in the validation record.
 
-Revision `7d979b7` passes all 196 Rust tests, 10 Python tests, formatting,
+Revision `8e3092c` passes all 196 Rust tests, 10 Python tests, formatting,
 strict Clippy, doc tests, and release builds locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42709059233).
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42729743227).
 The local control-tool build also passes.
 
 The [nearby-flight discovery check](flight-discovery-area.json) used the verified

@@ -76,8 +76,11 @@ plans, failed tests, older wrong Doppler results, source records, and build chec
 - Date discovery reads provider metadata. Each flight archive still needs a
   complete download and integrity check. Airport indexes use the advertised
   replay period and exclude partial UTC days. Source gaps can stop a download.
-- Saved date indexes are reused for up to six hours online. The `dates --offline`
-  command reads a saved index; flight files must be downloaded separately.
+- Full date indexes are reused for up to six hours online. During discovery,
+  ADSB.lol checks recent publications if the last check is at least 15 minutes
+  old. A failed recent check
+  keeps the saved dates and adds a warning. The `dates --offline` command reads
+  a saved index; flight files must be downloaded separately.
 - A worldwide search across all available dates can need several TB of storage
   and a long processing time. Downloads can be cancelled and resumed. Use the
   `dates` command to inspect coverage before preparing a large cache.
