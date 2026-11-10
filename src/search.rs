@@ -1303,17 +1303,24 @@ fn fit_observation(
     event_index: usize,
     event_variant: usize,
 ) -> Option<Match> {
+    let observer = seed.point.ecef();
+    // Full ridges revisit each flight segment many times. Preparing its arrival
+    // geometry saves those repeated calculations. Keep short observations on
+    // long tracks direct so preparation remains proportional to the work.
+    let prepared = (track.samples.len() <= event.ridge.len().saturating_mul(8))
+        .then(|| track.prepare(observer, c));
     let mut predicted = vec![];
     let mut used = vec![];
     let mut used_times = vec![];
     let mut ff = 0.;
     let mut yf = 0.;
     for p in &event.ridge {
-        if let Some(f) = track.factor(
-            seed.point.ecef(),
-            seed.start + seed.clock_rate * p.time_s,
-            c,
-        ) {
+        let arrival = seed.start + seed.clock_rate * p.time_s;
+        let factor = match &prepared {
+            Some(prepared) => prepared.factor(arrival),
+            None => track.factor(observer, arrival, c),
+        };
+        if let Some(f) = factor {
             ff += f * f;
             yf += p.hz * f;
             predicted.push(f);

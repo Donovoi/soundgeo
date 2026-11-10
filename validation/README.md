@@ -8,6 +8,16 @@ New results must state which target they use.
 
 ## Current checks
 
+The [curve-fit runtime check](curve-fit-runtime.json) compared 1,842 fits from
+two Lake Hood recordings, including shifted proposals and short curves. Reusing
+flight geometry preserved every fit output. Median fit time fell by 24% and 31%
+in these diagnostics. Other searches were active; full-search speed is still
+unmeasured. A separate segment-lookup cache was slower and was discarded.
+
+Two cases in the four-date Lake Hood retry reached their six-hour limits.
+Neither wrote a location report. Three cases remain pending. These failures
+remain in the validation record.
+
 Revision `7d979b7` passes all 196 Rust tests, 10 Python tests, formatting,
 strict Clippy, doc tests, and release builds locally and in
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42709059233).
