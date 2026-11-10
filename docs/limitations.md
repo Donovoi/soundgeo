@@ -81,6 +81,11 @@ plans, failed tests, older wrong Doppler results, source records, and build chec
   old. A failed recent check
   keeps the saved dates and adds a warning. The `dates --offline` command reads
   a saved index; flight files must be downloaded separately.
+- Online preparation checks for a preferred ADSB.lol production release when a
+  saved date uses a fallback release. Checks are at least 15 minutes apart.
+  If the check or replacement download fails, it reports the failure and uses
+  the verified saved archive. Offline runs use the saved selection. New releases
+  can contain more flight positions, but coverage still depends on the source.
 - A worldwide search across all available dates can need several TB of storage
   and a long processing time. Downloads can be cancelled and resumed. Use the
   `dates` command to inspect coverage before preparing a large cache.

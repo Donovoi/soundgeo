@@ -211,9 +211,12 @@ impl ArchiveRequest {
             };
             paths.push(
                 match self.provider {
-                    ArchiveProvider::AdsbLol => {
-                        crate::data::download_day(date, &self.cache, control, &day_progress)
-                    }
+                    ArchiveProvider::AdsbLol => crate::archive_refresh::download_day(
+                        date,
+                        &self.cache,
+                        control,
+                        &day_progress,
+                    ),
                     ArchiveProvider::AdsbExchangeSample
                     | ArchiveProvider::AdsbExchangeSampleHires => {
                         crate::sample_archive::download_day_with_resolution(

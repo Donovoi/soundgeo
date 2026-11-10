@@ -51,6 +51,8 @@ The [validation record](validation/README.md) contains test results, sources, an
 Put FFmpeg on `PATH`, beside the application, or select its path in the advanced settings.
 A new daily flight archive can require several GB of storage.
 The program checks downloaded files and uses valid files again.
+When online, it can upgrade a saved ADSB.lol staging archive to a production
+archive. It keeps the previous files until the replacement is verified.
 With blank dates, online analysis discovers the provider's available days and
 downloads missing files as it searches. Offline analysis searches prepared days.
 
