@@ -39,8 +39,17 @@ Windows CI executable to prepare a real Lake Hood reference cache. It selected
 free source. Two daily traces remained unavailable. All 563 downloaded traces
 match independent source downloads. Offline reuse passed with no date arguments
 and no connections to the test proxy. The original cache stayed unchanged.
-This checks data preparation. The new offline video replay and wider-date
-location tests are still running.
+The completed offline video replay placed its first candidate 56.34 m from the
+reference. It matched five of 24 detections and remained ambiguous, so it failed
+acceptance. The other retained points were 5.5 to 17.0 km away. All 2,480 original
+cache files and other inputs stayed unchanged. The proxy recorded no connections.
+This replay searched one prepared day with no date or clock supplied. The
+separate wider-date tests continue.
+
+A [fresh one-hour recording](fresh-lake-recent-hour.json) is now being analyzed
+offline with three automatically selected provider days. It receives no recording
+date, clock, camera point, or video text clues. Data preparation and the actual
+launch command passed independent checks. The location result is pending.
 
 Revised Doppler ranking sums the covered improvement over linear frequency
 drift, with each sound capped at one unit. Proposal retention, refinement, and

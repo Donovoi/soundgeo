@@ -130,11 +130,112 @@
     "ci_build_receipt_sha256": "870f747ed199bec41665d721cea37ae0e899038ed95b1bc2dd5215493ffb0a13"
   },
   "offline_video_regression": {
-    "status": "running",
+    "status": "ambiguous",
     "source_commit": "7d979b7a902d300870baa15287110b3c42dbb270",
     "cli_sha256": "66b7b8eed61b9eb2a2165b40f8eaaac8be57df555a5a618299c0e2b9a4404c9d",
     "plan_sha256": "b9d47b50267589eb6299c0d41d2d7f9b96f70ff7cc485bcf5cd6ec8fce48f809",
-    "scope": "One prepared reference day, original broad area, no recording date or clock, audio only. The separate 58-date search remains unchanged.",
-    "accepted": false
+    "scope": "Single prepared-day native-cache regression. Wider-date acceptance and full-search controls remain separate.",
+    "accepted": false,
+    "result_sha256": "eaa78543427c309478f2883093819716c90128ce088790aeee8c3a1fa2973801",
+    "report_sha256": "2374cb2bc41c7c090649d131b56ffecccef9a810e50c3b65be597bad6c84d143",
+    "log_sha256": "b9942ce86c61b8620e58042e6556ee7abc16cea8e89c9f114b09fe204867356a",
+    "native_exit_code": 4,
+    "elapsed_s": 12857.841574999999,
+    "input_hashes_verified": true,
+    "original_cache_files_verified": 2480,
+    "original_cache_files_unchanged": true,
+    "new_derived_cache_files": [
+      "decoded-tracks/481d1515aa1392b198c5e22eb385754823100fd0a91b7da72fac916ddedaf30b.sgcache"
+    ],
+    "proxy_connections": 0,
+    "no_supplied_date_or_clock": true,
+    "original_broad_bounds_preserved": true,
+    "prepared_dates": [
+      "2026-11-01"
+    ],
+    "all_prepared_dates_searched": true,
+    "hypotheses": 15274007,
+    "track_count": 1314,
+    "events": 24,
+    "unmatched_events": 19,
+    "status_reasons": {
+      "fewer_than_two_detections": false,
+      "provisional_clock": false,
+      "unmatched_detections": true,
+      "competing_fit_under_current_residual_rule": false
+    },
+    "candidates": [
+      {
+        "rank": 1,
+        "error_m": 56.34390338288821,
+        "support": 4.489469355705654,
+        "matches": 5,
+        "relative_error_percent": 0.3628384437798451
+      },
+      {
+        "rank": 2,
+        "error_m": 17020.149482296263,
+        "support": 3.5550336737564567,
+        "matches": 4,
+        "relative_error_percent": 0.8069876189573181
+      },
+      {
+        "rank": 3,
+        "error_m": 10041.790479921876,
+        "support": 3.513924894032308,
+        "matches": 5,
+        "relative_error_percent": 0.8741121925056266
+      },
+      {
+        "rank": 4,
+        "error_m": 6563.983524915665,
+        "support": 3.385348941447964,
+        "matches": 4,
+        "relative_error_percent": 0.7234904050741279
+      },
+      {
+        "rank": 5,
+        "error_m": 7122.060294845624,
+        "support": 3.2908392326684526,
+        "matches": 4,
+        "relative_error_percent": 0.6689856076725245
+      },
+      {
+        "rank": 6,
+        "error_m": 7478.108160599781,
+        "support": 3.290432796969571,
+        "matches": 4,
+        "relative_error_percent": 0.9307288571703722
+      },
+      {
+        "rank": 7,
+        "error_m": 5501.2240190765,
+        "support": 3.2771018098683093,
+        "matches": 4,
+        "relative_error_percent": 0.8750433261366989
+      },
+      {
+        "rank": 8,
+        "error_m": 10980.640637743258,
+        "support": 3.2354384001825576,
+        "matches": 4,
+        "relative_error_percent": 0.9188908520873852
+      },
+      {
+        "rank": 9,
+        "error_m": 5760.503746670459,
+        "support": 3.226796156760485,
+        "matches": 4,
+        "relative_error_percent": 0.8628520178342952
+      },
+      {
+        "rank": 10,
+        "error_m": 7008.422221223875,
+        "support": 3.1478528130355476,
+        "matches": 4,
+        "relative_error_percent": 0.9267900247002667
+      }
+    ],
+    "independent_verification_sha256": "19ab7585e6141b285ddfdb2724edd99ffe5f1c580072f9ec392c2815daa7e3e4"
   }
 }
