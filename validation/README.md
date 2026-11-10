@@ -8,6 +8,24 @@ New results must state which target they use.
 
 ## Current checks
 
+Revision `8c46b16` makes [whole-activity Doppler controls](doppler-controls.md)
+use the application's date windows, proposal partitioning, and candidate merge.
+An identity replay checks saved observations before shuffled controls are used.
+The source passed all required local Linux checks, 225 Rust tests, 10 Python
+tests, and four native CLI checks. Independent checks matched 67 compiled input
+files to the committed source, allowing only text line-ending differences.
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42920141177)
+also passed all required checks, with 225 Rust and 10 Python tests per platform.
+These checks establish software behavior; they add no accepted location.
+
+The [additional Heathrow fixed-hour test](heathrow-fixed-hour-timing.json)
+returned insufficient evidence with zero timing sound peaks. It stopped before
+loading flight tracks, searching dates or running shuffled controls. Its fixed
+clip, broad area, default timing settings and prepared reference inputs were
+preserved. An independent terminal audit passed 123 checks and rehashed all
+35 material inputs. No location was returned. The separate Doppler baseline
+continues; neither method changes the original 27-recording benchmark below.
+
 The [completed-date recovery check](date-checkpoint-recovery.json) interrupted the
 existing Maho recording after its first saved date batch, resumed it, and compared
 the result with an uninterrupted search. Both Linux reports match exactly except

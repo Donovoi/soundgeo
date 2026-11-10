@@ -24,7 +24,7 @@ validation results. The audio-only benchmark does not use OCR.
 
 ## Real-video results
 
-The latest full audio run replayed 27 recordings with flight passage timing.
+The fixed audio benchmark replayed 27 recordings with flight passage timing.
 Each job used a broad search area and prepared free flight data. No recording
 date or start time was supplied. All analysis ran offline. The available dates
 differed by cache; the test covered a finite set of days.
@@ -51,9 +51,9 @@ Maho tests searched three, ten, and twelve prepared sample dates with the same r
 one accepted recording, one ambiguous, and one insufficient.
 The app has not been verified against a complete historical flight archive.
 
-Revision `4f8764c` passed all 221 Rust tests, 10 Python tests, and the required
+Revision `8c46b16` passed all 225 Rust tests, 10 Python tests, and the required
 checks locally on Linux and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42821378180).
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42920141177).
 Location accuracy needs separate tests against known positions.
 
 The latest detector change suppresses persistent tones in the fast frequency
@@ -62,6 +62,12 @@ Hood hours. A fresh hour still has no passing individual curve at its known
 camera point and clock. Its full location replay remains pending.
 A separate 20-minute Lake Hood recording produced no usable Doppler observations
 and returned insufficient evidence before searching flight dates.
+
+An additional fixed hour from Heathrow produced no timing sound peaks and
+returned insufficient evidence before loading reference tracks or searching
+dates. Its prepared three-date grid and shuffled controls were not executed.
+The [failure record](../validation/heathrow-fixed-hour-timing.json) preserves the
+unchanged inputs and terminal audit. The separate Doppler search remains pending.
 
 Optional video text tests matched an airport name within 31.06 m of the camera
 reference in two 360p Lake Hood clips. The reports also contained a broad
