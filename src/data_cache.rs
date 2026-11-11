@@ -61,6 +61,24 @@ impl PreparedCache {
         filter: &Filter,
         control: &Control,
     ) -> Result<Option<Self>> {
+        // Dependency features are absent from the source-file fingerprint below.
+        // Invalidate tracks parsed before correctly rounded JSON floats were enabled.
+        Self::for_job_with_parser_version(
+            job,
+            sources,
+            filter,
+            control,
+            b"soundgeo-decoded-tracks-v2-float-roundtrip",
+        )
+    }
+
+    fn for_job_with_parser_version(
+        job: &Job,
+        sources: &[PathBuf],
+        filter: &Filter,
+        control: &Control,
+        parser_version: &[u8],
+    ) -> Result<Option<Self>> {
         let Some(archive) = &job.archive else {
             return Ok(None);
         };
@@ -95,7 +113,7 @@ impl PreparedCache {
             catalog,
         ))?;
         let mut digest = Sha256::new();
-        digest.update(b"soundgeo-decoded-tracks-v1");
+        digest.update(parser_version);
         for source in [
             include_str!("data.rs"),
             include_str!("data_cache.rs"),
@@ -332,5 +350,102 @@ mod tests {
         std::fs::remove_file(source).unwrap();
         job.analysis_method = AnalysisMethod::PassageTiming;
         assert!(super::super::load_for_job(&job, 600., &control).is_err());
+    }
+
+    #[test]
+    fn readsb_cache_preserves_correctly_rounded_samples_and_ignores_prior_parser() {
+        const LATITUDE_BITS: u64 = 0x4033_8e37_c000_0000;
+        let root = tempfile::tempdir().unwrap();
+        let source = root.path().join("trace_full_fixture.json");
+        std::fs::write(
+            &source,
+            br#"{"icao":"fixture","timestamp":10000,"trace":[
+                [0,19.555538177490234,-87.0,500,100,90,0,0,null,null,500],
+                [5,19.555538177490234,-86.997,500,100,90,0,0,null,null,500],
+                [10,19.555538177490234,-86.994,500,100,90,0,0,null,null,500]]}"#,
+        )
+        .unwrap();
+        let job = Job {
+            tracks: source.clone(),
+            archive: Some(ArchiveRequest {
+                date_from: String::new(),
+                date_to: None,
+                cache: root.path().join("cache"),
+                provider: Default::default(),
+            }),
+            analysis_method: AnalysisMethod::PassageTiming,
+            smooth_tracks: false,
+            ..Default::default()
+        };
+        let control = Control::default().with_offline(true);
+        let filter = Filter {
+            bounds: job.bounds,
+            aircraft: job.aircraft_filter,
+            minimum_positions: 3,
+            ..Default::default()
+        };
+        let mut uncached_job = job.clone();
+        uncached_job.archive = None;
+        let mut prior = super::super::load_for_job(&uncached_job, 600., &control).unwrap();
+        assert_eq!(prior.tracks.len(), 1);
+        assert_eq!(prior.tracks[0].samples.len(), 3);
+        for sample in &mut prior.tracks[0].samples {
+            assert_eq!(sample.point.lat.to_bits(), LATITUDE_BITS);
+            let mut point = sample.point;
+            point.lat = f64::from_bits(LATITUDE_BITS - 1);
+            *sample = Sample::new(sample.time, point);
+        }
+        // Hold sources/settings fixed and change only the parser-version boundary.
+        // This is a valid legacy-parser entry, not a historical-build fingerprint.
+        let legacy = PreparedCache::for_job_with_parser_version(
+            &job,
+            std::slice::from_ref(&source),
+            &filter,
+            &control,
+            b"soundgeo-decoded-tracks-v1",
+        )
+        .unwrap()
+        .unwrap();
+        legacy.save(&prior, &control).unwrap();
+        assert_eq!(
+            legacy.load().unwrap().unwrap().tracks[0].samples[0]
+                .point
+                .lat
+                .to_bits(),
+            LATITUDE_BITS - 1
+        );
+        let legacy_bytes = std::fs::read(&legacy.path).unwrap();
+        let current =
+            PreparedCache::for_job(&job, std::slice::from_ref(&source), &filter, &control)
+                .unwrap()
+                .unwrap();
+        assert_ne!(legacy.path, current.path);
+        assert!(!current.path.exists());
+        let cold = super::super::load_for_job(&job, 600., &control).unwrap();
+        assert!(current.path.is_file());
+        let warm = super::super::load_for_job(&job, 1200., &control).unwrap();
+        assert_eq!(cold.warnings, warm.warnings);
+        assert_eq!(cold.tracks.len(), 1);
+        assert_eq!(warm.tracks.len(), 1);
+        assert_eq!(cold.tracks[0].id, warm.tracks[0].id);
+        assert_eq!(cold.tracks[0].kind, warm.tracks[0].kind);
+        assert_eq!(cold.tracks[0].samples.len(), 3);
+        assert_eq!(warm.tracks[0].samples.len(), 3);
+        let bits = |sample: &Sample| {
+            [
+                sample.time.to_bits(),
+                sample.point.lat.to_bits(),
+                sample.point.lon.to_bits(),
+                sample.point.alt.to_bits(),
+                sample.xyz.0.to_bits(),
+                sample.xyz.1.to_bits(),
+                sample.xyz.2.to_bits(),
+            ]
+        };
+        for (a, b) in cold.tracks[0].samples.iter().zip(&warm.tracks[0].samples) {
+            assert_eq!(a.point.lat.to_bits(), LATITUDE_BITS);
+            assert_eq!(bits(a), bits(b));
+        }
+        assert_eq!(std::fs::read(&legacy.path).unwrap(), legacy_bytes);
     }
 }

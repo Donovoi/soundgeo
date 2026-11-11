@@ -124,15 +124,18 @@ fn control_identity_replays_overlapping_dates_partitions_and_competing_clocks() 
                 .any(|c| (c.recording_start_unix - demo::EPOCH - offset).abs() < 30.)
         );
     }
-    let binding = bind_search(&baseline, &Control::default()).unwrap();
-    let mut incomplete = baseline.clone();
+    let saved = dir.path().join("identity-baseline.json");
+    soundgeo::save_report(&baseline, &saved).unwrap();
+    let loaded: Report = serde_json::from_slice(&std::fs::read(saved).unwrap()).unwrap();
+    let binding = bind_search(&loaded, &Control::default()).unwrap();
+    let mut incomplete = loaded.clone();
     incomplete.doppler_partitions[0].complete = false;
     assert!(bind_search(&incomplete, &Control::default()).is_err());
     let binding = serde_json::from_slice(&serde_json::to_vec(&binding).unwrap()).unwrap();
     let replay = replay_observations(
-        &baseline,
+        &loaded,
         &binding,
-        baseline.events.clone(),
+        loaded.events.clone(),
         &Control::default(),
         &|_, _| {},
     )
