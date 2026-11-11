@@ -8,6 +8,15 @@ New results must state which target they use.
 
 ## Current checks
 
+The [JSON numeric-fidelity fix](json-numeric-fidelity.json) prevents one-ULP
+changes when saved observations and modeled curves are read back. Two original
+Lake Hood reports were restored exactly without excluded fields or a numeric
+tolerance. The JSON parser setting also affects reference data, so a new decoded
+cache version ignores and preserves prior entries. The actual report writer,
+saved-report identity replay, and raw readsb cold/warm cache regressions passed.
+All required local Linux checks passed with 228 Rust tests and 10 Python tests.
+The three new executables were frozen separately from existing field runs.
+
 The [cached-attribution regression](archive-attribution-reuse.json) fixes an
 offline archive failure when the correct attribution file is read-only. The app
 now leaves identical attribution untouched and still creates or repairs missing
@@ -15,7 +24,9 @@ or stale text. The real archive-reader regression preserves the protected file's
 bytes, timestamp and permissions. All required local Linux checks passed, with
 226 Rust tests and 10 Python tests. Independent review matched all 67 compiled
 input files to the tested source; the executables were frozen separately from
-ongoing validation runs.
+ongoing validation runs. Revision `d182aa1` also passed all required checks and
+the same test counts in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42931899906).
 
 Revision `8c46b16` makes [whole-activity Doppler controls](doppler-controls.md)
 use the application's date windows, proposal partitioning, and candidate merge.
@@ -33,6 +44,33 @@ completed 14,057,219 hypotheses and remained ambiguous. Its top candidate was
 A candidate 8.25 km away also matched five sounds. The unchanged inputs,
 observations, reference-day coverage and terminal report passed independent
 audits. This diagnostic proximity adds no accepted location.
+
+The [later Lake Hood hour](native-lake-later-replay-82.json) completed
+16,924,416 hypotheses and remained ambiguous. Its top candidate was 446.72 m
+from the unsurveyed reference, with five of fourteen sounds matched. Retained
+competitors included locations 4.95 to 9.08 km away. All inputs and the full
+single-day search passed independent checks.
+
+The [fresh Lake Hood hour](native-lake-fresh-replay-4f.json) completed both
+overlapping windows across three prepared dates, totalling 24,306,780 hypotheses.
+It remained ambiguous; each of eight candidates matched three of ten sounds,
+with distances from 5.79 to 10.91 km. The original wrapper rejected three new
+archive-completion receipts. A supplemental audit passed 230 checks, verified
+all original inputs and the derived files, and preserved that wrapper failure.
+Both runs are additional negative evidence; the original timing benchmark is unchanged.
+
+The [prospective Amsterdam fixed-hour test](amsterdam-fixed-hour-timing.json)
+passed the conditional 1 km target with frozen `4f8764c`. Its returned region
+center was 268.54 m from the mapped reference, or 488.54 m including the declared
+220 m microphone-location allowance. It matched 25 passages, searched all three
+prepared dates and both 38,335-point grids, and beat all 19 merged controls
+after 38 per-window control searches. The model region radius was 806 m.
+All 35 inputs and 70 metadata pins remained unchanged. Two terminal service
+checks failed after Linux removed the completed transient unit; preserved live
+startup records and the exact-invocation journal resolved those lifecycle checks.
+Independent review recomputed the date/control merges and center error.
+This adds a third successful site under the stated microphone co-location and
+movement assumptions. The original 27-recording benchmark remains unchanged.
 
 The [additional Heathrow fixed-hour test](heathrow-fixed-hour-timing.json)
 returned insufficient evidence with zero timing sound peaks. It stopped before

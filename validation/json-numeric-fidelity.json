@@ -1,0 +1,246 @@
+{
+  "scope": "Preserve binary64 values when saved reports and JSON flight references are read. This is numeric and cache correctness evidence; it adds no location acceptance claim.",
+  "source_commit": "65669df095316358eecc78145ae567ddb0aac42b",
+  "changes": {
+    "serde_json_version": "1.0.154",
+    "enabled_feature": "float_roundtrip",
+    "feature_scope": "Unified serde_json dependency across the application, including JSON reference readers; not limited to the diagnostic helper.",
+    "decoded_cache_parser_version": "soundgeo-decoded-tracks-v2-float-roundtrip",
+    "old_cache_behavior": "Prior parser-version entries are ignored and preserved. Freshly decoded references populate a separate key.",
+    "numeric_tolerance_added": false,
+    "acceptance_thresholds_changed": false
+  },
+  "saved_report_evidence": {
+    "source_url": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+    "original_report_source_commit": "82fc48cbcc00e1207086f6277b26a4b3f246e37e",
+    "cases": {
+      "first": {
+        "original_report_sha256": "dec343573c6972b3ffaf80c293de52bf2c73d27717e6d5532c5df056ad8cd695",
+        "default_typed_report_sha256": "cd11d9e5218ec55618657fbf99278b4c65ffb3aca5a913506f517dda733f7a83",
+        "roundtrip_typed_report_sha256": "305a332c2f21717fc2c1d1f8211a753aa72a04ff37538db70fd17f0787b7ce45",
+        "default_one_ulp_differences": 1935,
+        "difference_groups": {
+          "candidates": 672,
+          "events": 1263
+        },
+        "fixed_lexically_minified_original_exact": true,
+        "fixed_differences": 0
+      },
+      "later": {
+        "original_report_sha256": "3e72de016f9e7a0fbda9e474aba2335c37d5008110904890e761b7344dbdcca9",
+        "default_typed_report_sha256": "eb3fee3f56a980829596c7053a4219684de5a38ef243dbbd1decbf12d353a2d8",
+        "roundtrip_typed_report_sha256": "399f9abf6af6db40dfd95488d3763e4f412acf1805120d661441c70ea5d9ab6e",
+        "default_one_ulp_differences": 1690,
+        "difference_groups": {
+          "candidates": 702,
+          "events": 988
+        },
+        "fixed_lexically_minified_original_exact": true,
+        "fixed_differences": 0
+      }
+    },
+    "comparison": "Remove only whitespace outside JSON strings from each original. The feature-enabled typed Report serialization matches every remaining byte, including number tokens, field order and strings.",
+    "fields_excluded": [],
+    "numeric_tolerance": null,
+    "original_reports_preserved": true,
+    "model_replays_in_this_experiment": 0,
+    "decoder_runs": 0,
+    "default_parser_closure_sha256": "8184acfddcda6b8cb1a73ac3f971f1171f7d8c2eb5c7274ff74c4ecd56f6dd5a",
+    "feature_experiment_closure_sha256": "393c84ac86c8811a2265ee8dda8ffeecaeee18d327c6c78c7cd3844a357d7133",
+    "root_review_sha256": "6c80a4be9d501722350fdc571ffcd40aa4338ea061386ba4ee8f500ecd88cbf0"
+  },
+  "regressions": [
+    {
+      "name": "saved_report_preserves_ieee_observations_and_modeled_curves",
+      "behavior": "Actual save_report disk output preserves main and alternative ridge samples, modeled curves and all Report fields exactly.",
+      "default_parser_result": "Failed by one ULP",
+      "feature_enabled_result": "Passed"
+    },
+    {
+      "name": "control_identity_replays_overlapping_dates_partitions_and_competing_clocks",
+      "behavior": "Saves and reloads Report before the existing production identity replay. Full reports match the original apart from created_utc."
+    },
+    {
+      "name": "readsb_cache_preserves_correctly_rounded_samples_and_ignores_prior_parser",
+      "behavior": "Actual raw readsb decimal coordinates and cold/warm sample/XYZ bits remain exact. A checksum-valid wrong-bit cache under the prior version is ignored and preserved.",
+      "legacy_key_scope": "Controlled same-source/settings version-boundary test; not a claim to reproduce a historical build fingerprint."
+    }
+  ],
+  "qualification": {
+    "platform": "Native Linux",
+    "rust_tests_passed": 228,
+    "rust_failed": 0,
+    "rust_ignored": 0,
+    "python_unique_tests_passed": 10,
+    "commands": [
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "focused-report",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--test",
+          "report_roundtrip"
+        ],
+        "exit_code": 0,
+        "log_sha256": "0f5c9a0e5621dbead2aa3c38591780030d21e0eafb495725b146e66e2ef4c1bb"
+      },
+      {
+        "name": "focused-identity",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--test",
+          "offline_dates",
+          "control_identity_replays_overlapping_dates_partitions_and_competing_clocks"
+        ],
+        "exit_code": 0,
+        "log_sha256": "0ffd1c8eca6ac8616846327b524d1ca20892c88c3ee12e4332a33d6271a43f8b"
+      },
+      {
+        "name": "focused-cache",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--lib",
+          "readsb_cache_preserves_correctly_rounded_samples_and_ignores_prior_parser"
+        ],
+        "exit_code": 0,
+        "log_sha256": "cf751632ec7b044602394ed2958f4f7bdb6ce517bad9df644f05039ca3c2299b"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "log_sha256": "1f791985635c2b442ed735c73de1a3d0ba507fc53c53dd0fc867a615cedac121"
+      },
+      {
+        "name": "tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "log_sha256": "a3b6d2b274c308a473c0c85343ea57a3e368fe70f3510b8ad6a181989c700680"
+      },
+      {
+        "name": "doctests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--doc"
+        ],
+        "exit_code": 0,
+        "log_sha256": "fac50bbb10562e791c68b47bb04a662f1dd69ae1bf3f31e1db1afcf6d8a165cd"
+      },
+      {
+        "name": "bins",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--bins"
+        ],
+        "exit_code": 0,
+        "log_sha256": "a58a7822e22f5f9a949095cf5e2189dcdded99435193789598a16b73f325b4b1"
+      },
+      {
+        "name": "helper",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--example",
+          "doppler_controls"
+        ],
+        "exit_code": 0,
+        "log_sha256": "36e819f28ebf1c43bf3155a7c55856affd09fdf630c1c22b9e9018f93226c37e"
+      },
+      {
+        "name": "python",
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "validation",
+          "-p",
+          "test_run_timing.py"
+        ],
+        "exit_code": 0,
+        "log_sha256": "b2ab43978d736c5fcf8b33ded1a3c3dbf9412439caa8b757efa326de2cd0a6c2"
+      }
+    ],
+    "checks_sha256": "8b6b55951c16b8bf4b8006da8b1ce4eaa4da25cd95ea7fdc630fd6caa900d657",
+    "build_receipt_sha256": "1660835d880932363c25c213534316890bcef634e93cb7f8400829a8c8213da9",
+    "independent_completion_checks_passed": 575,
+    "independent_completion_audit_sha256": "860ce24af35538810d4c85c25ed4272061b9ac79ffa2830ec3386f1b142aeffe",
+    "python_source_supplement": {
+      "receipt_sha256": "41977dccac708fa1f60295b7d1ebb4848ed66873c8c6a09dbf4d30d5e7f1bdb7",
+      "files": [
+        "validation/test_run_timing.py",
+        "validation/run_timing.py",
+        "validation/run.py"
+      ],
+      "scope": "Python files were outside the original Rust compiled-input manifest. A targeted ten-test rerun bound their unchanged source before and after. These are the same ten unique tests, not twenty."
+    },
+    "compiled_inputs": 68,
+    "compiled_source_manifest_sha256": "5f9945a2e97f85e24266eb8188803b5e13f49b274959d67858446b5553f81793",
+    "committed_source_binding_sha256": "9e9ba0ae5adb6c9627ad92f198f64fc37372ba35847fe220912431f111f8ea4f",
+    "committed_binding_byte_exact_inputs": 25,
+    "committed_binding_line_ending_only_inputs": 43,
+    "build_executed_at_reported_source_commit": false,
+    "build_provenance": "Built and tested from a dirty older native checkout. The frozen source matches the reported committed revision, allowing only UTF-8 CRLF/LF equivalence.",
+    "native_build_checkout_head": "5c6d9e507e9a42509a3fd865051b540added9ec4",
+    "binaries_sha256": {
+      "soundgeo": "edeb3509beb4183865144126b0cca9ccc0e5deb199725a2087a04b2a70b9727c",
+      "soundgeo-cli": "59d24f088fa2f7660196db074ec316f7f8400c6c8a404cd83737b4b8de535686",
+      "examples/doppler_controls": "57f536c3f696563303ad02d6fe43628e5a174d3805adb49f0c0824473171db37"
+    },
+    "previous_frozen_executables_changed": false
+  },
+  "preserved_attempts": [
+    "The first metadata-only feature experiment stopped on an uncached non-native dependency before compilation. Native-target metadata corrected that diagnostic scope.",
+    "The feature-only report regression passed, but its subsequent identity build was superseded by the final cache-inclusive qualification. The intermediate phase is not claimed complete.",
+    "The completion auditor initially tried to create output inside the intentionally read-only freeze. A separate sibling audit preserved that permission failure and left the freeze unchanged."
+  ],
+  "limits": [
+    "The restored original reports are representation evidence; real observation replays with the new executable remain separate work.",
+    "JSON reference parsing and decoded-cache identities change. Earlier scientific reports retain their original binaries and are not presumed bitwise equivalent.",
+    "The original 27-recording timing benchmark and 250 m plans remain unchanged."
+  ]
+}

@@ -41,6 +41,14 @@ The eighth came from Maho Beach. Its error was within 550 m, including a planned
 200 m allowance for the unsurveyed microphone. These repeated development tests
 cover two successful sites. Broader accuracy remains unmeasured.
 
+A separate [prospective Amsterdam hour](../validation/amsterdam-fixed-hour-timing.json)
+adds a conditional third successful site. The returned region's center was
+268.54 m from the mapped reference, or 488.54 m including the declared 220 m
+allowance. Both date windows completed all 19 controls. This result assumes
+the ambient microphone and headset stayed within the mapped spectator area
+and allowance; their positions were not surveyed. The model region radius
+was 806 m. This frozen `4f8764c` test is separate from the original 27 recordings.
+
 Six compression and duration checks used copies of three existing recordings.
 Full-length 16 kbit/s Opus audio passed for Maho and Midway. Compressed Lake Hood
 remained ambiguous. The first 15 minutes of all three recordings remained
@@ -52,17 +60,30 @@ one accepted recording, one ambiguous, and one insufficient.
 The app has not been verified against a complete historical flight archive.
 
 The [cached-attribution change](../validation/archive-attribution-reuse.json)
-passed all 226 Rust tests, 10 Python tests and the required local Linux checks.
+passed all 226 Rust tests, 10 Python tests and the required local Linux checks,
+plus [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42931899906).
 This verifies archive reuse; it adds no accepted location.
 Revision `8c46b16` passed all 225 Rust tests, 10 Python tests, and the required
 checks locally on Linux and in
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42920141177).
 Location accuracy needs separate tests against known positions.
 
+The [JSON numeric-fidelity change](../validation/json-numeric-fidelity.json)
+preserves saved reports when they are read back. It also changes parsing of
+JSON flight references, so decoded tracks use a new cache version. Older cache
+files are preserved. Exact report restoration and regression checks establish
+numeric fidelity; earlier field results retain their original executable versions.
+
 The latest detector change suppresses persistent tones in the fast frequency
 bands. Offline replays preserve ten previously matched curves across two Lake
 Hood hours. A fresh hour still has no passing individual curve at its known
-camera point and clock. Its full location replay remains pending.
+camera point and clock. Its [completed three-date location replay](../validation/native-lake-fresh-replay-4f.json)
+remained ambiguous: all eight retained candidates were 5.79 to 10.91 km from
+the reference, each matching three of ten sounds. The original audit rejected
+new cache receipts; a supplemental audit verified those receipts and unchanged inputs.
+The [later original hour](../validation/native-lake-later-replay-82.json) also
+remained ambiguous, with its top candidate 446.72 m away and competitors several
+kilometres away. These runs add no accepted location.
 A separate 20-minute Lake Hood recording produced no usable Doppler observations
 and returned insufficient evidence before searching flight dates.
 
