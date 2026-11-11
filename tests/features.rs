@@ -289,6 +289,138 @@ fn quiet_gap_constraint_uses_only_known_closer_propellers() {
 }
 
 #[test]
+fn shared_tiled_corridors_match_legacy_serial_candidates_and_counts() {
+    let (dir, mut job, events) = events();
+    job.search_mode = SearchMode::FlightCorridors;
+    job.search_threads = Some(2);
+    let root = dir.path().join("tiles");
+    std::fs::create_dir(&root).unwrap();
+    let bytes: Vec<_> = (0..1201 * 1201)
+        .flat_map(|i| {
+            let value = if i % 19 == 0 {
+                i16::MIN
+            } else {
+                (140 + (i % 11)) as i16
+            };
+            value.to_be_bytes()
+        })
+        .collect();
+    for name in ["N34W110.hgt", "N34W111.hgt", "N35W110.hgt", "N35W111.hgt"] {
+        std::fs::write(root.join(name), &bytes).unwrap();
+    }
+    job.terrain = Some(root.clone());
+    let tracks = soundgeo::demo::tracks();
+    // An unsupported tile entry far outside all queries forces the original
+    // serial loader without changing the actual sampled files or fallback.
+    let unsupported = root.join("N00E000.hgt");
+    std::fs::create_dir(&unsupported).unwrap();
+    let mut terrain = Terrain::new(Some(root.clone()), job.ground_m + 7.5);
+    let legacy = soundgeo::search::locate(
+        &job,
+        &events,
+        &tracks,
+        &mut terrain,
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    let expected_missing = terrain.missing;
+    assert!(!legacy.candidates.is_empty());
+    assert!(expected_missing > 0);
+    std::fs::remove_dir(unsupported).unwrap();
+    for workers in [1, 2] {
+        job.search_threads = Some(workers);
+        let mut terrain = Terrain::new(Some(root.clone()), job.ground_m + 7.5);
+        let messages = std::sync::Mutex::new(Vec::new());
+        let result = soundgeo::search::locate(
+            &job,
+            &events,
+            &tracks,
+            &mut terrain,
+            &Control::default(),
+            &|message, _| messages.lock().unwrap().push(message.to_owned()),
+        )
+        .unwrap();
+        let used = workers.min(std::thread::available_parallelism().map_or(1, |n| n.get()));
+        assert!(
+            messages
+                .lock()
+                .unwrap()
+                .contains(&format!("Flight-corridor workers: {used}"))
+        );
+        assert_eq!(result.hypotheses, legacy.hypotheses);
+        assert_eq!(
+            serde_json::to_vec(&result.candidates).unwrap(),
+            serde_json::to_vec(&legacy.candidates).unwrap()
+        );
+        assert_eq!(result.warnings, legacy.warnings);
+        assert_eq!(result.method, legacy.method);
+        assert_eq!(
+            result.coarse_grid_m.to_bits(),
+            legacy.coarse_grid_m.to_bits()
+        );
+        assert_eq!(
+            serde_json::to_vec(&result.partition).unwrap(),
+            serde_json::to_vec(&legacy.partition).unwrap()
+        );
+        assert_eq!(terrain.missing, expected_missing);
+    }
+    for stage in [
+        "Ranking complete Doppler curves",
+        "Refining location and shared clock",
+    ] {
+        let changed = std::sync::atomic::AtomicBool::new(false);
+        let mut terrain = Terrain::new(Some(root.clone()), job.ground_m + 7.5);
+        let result = soundgeo::search::locate(
+            &job,
+            &events,
+            &tracks,
+            &mut terrain,
+            &Control::default(),
+            &|message, _| {
+                if message.starts_with(stage)
+                    && !changed.swap(true, std::sync::atomic::Ordering::Relaxed)
+                {
+                    use std::io::Write;
+                    std::fs::OpenOptions::new()
+                        .write(true)
+                        .open(root.join("N35W110.hgt"))
+                        .unwrap()
+                        .write_all(&300_i16.to_be_bytes())
+                        .unwrap();
+                }
+            },
+        );
+        assert!(
+            changed.load(std::sync::atomic::Ordering::Relaxed),
+            "{stage} not reached"
+        );
+        let error = result
+            .err()
+            .expect("changed terrain must not return a location");
+        assert!(error.to_string().contains("Terrain"), "{error:#}");
+        std::fs::write(root.join("N35W110.hgt"), &bytes).unwrap();
+    }
+    let control = Control::default();
+    let mut terrain = Terrain::new(Some(root), job.ground_m + 7.5);
+    assert!(
+        soundgeo::search::locate(
+            &job,
+            &events,
+            &tracks,
+            &mut terrain,
+            &control,
+            &|message, _| {
+                if message.starts_with("Ranking complete Doppler curves") {
+                    control.stop();
+                }
+            }
+        )
+        .is_err()
+    );
+}
+
+#[test]
 fn parallel_corridors_match_serial_fallback_terrain() {
     let (dir, mut job, events) = events();
     job.search_mode = SearchMode::FlightCorridors;

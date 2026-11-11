@@ -856,6 +856,21 @@ pub fn locate(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<SearchResult> {
+    // Corridor snapshots can be released before serial refinement, but their
+    // input fingerprint must survive every proposal batch and final callback.
+    terrain.with_search_scope(control, |terrain| {
+        locate_inner(job, events, tracks, terrain, control, progress)
+    })
+}
+
+fn locate_inner(
+    job: &Job,
+    events: &[Event],
+    tracks: &[Track],
+    terrain: &mut Terrain,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<SearchResult> {
     match locate_once(job, events, tracks, terrain, control, progress, None) {
         Err(error)
             if error
