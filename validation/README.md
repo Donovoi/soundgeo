@@ -8,6 +8,15 @@ New results must state which target they use.
 
 ## Current checks
 
+The [cached-attribution regression](archive-attribution-reuse.json) fixes an
+offline archive failure when the correct attribution file is read-only. The app
+now leaves identical attribution untouched and still creates or repairs missing
+or stale text. The real archive-reader regression preserves the protected file's
+bytes, timestamp and permissions. All required local Linux checks passed, with
+226 Rust tests and 10 Python tests. Independent review matched all 67 compiled
+input files to the tested source; the executables were frozen separately from
+ongoing validation runs.
+
 Revision `8c46b16` makes [whole-activity Doppler controls](doppler-controls.md)
 use the application's date windows, proposal partitioning, and candidate merge.
 An identity replay checks saved observations before shuffled controls are used.
@@ -17,6 +26,13 @@ files to the committed source, allowing only text line-ending differences.
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42920141177)
 also passed all required checks, with 225 Rust and 10 Python tests per platform.
 These checks establish software behavior; they add no accepted location.
+
+The [new native Linux replay of the first Lake Hood hour](native-lake-first-replay-82.json)
+completed 14,057,219 hypotheses and remained ambiguous. Its top candidate was
+60.13 m from the unsurveyed reference pin, with five of 18 sounds matched.
+A candidate 8.25 km away also matched five sounds. The unchanged inputs,
+observations, reference-day coverage and terminal report passed independent
+audits. This diagnostic proximity adds no accepted location.
 
 The [additional Heathrow fixed-hour test](heathrow-fixed-hour-timing.json)
 returned insufficient evidence with zero timing sound peaks. It stopped before

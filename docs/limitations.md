@@ -51,6 +51,9 @@ Maho tests searched three, ten, and twelve prepared sample dates with the same r
 one accepted recording, one ambiguous, and one insufficient.
 The app has not been verified against a complete historical flight archive.
 
+The [cached-attribution change](../validation/archive-attribution-reuse.json)
+passed all 226 Rust tests, 10 Python tests and the required local Linux checks.
+This verifies archive reuse; it adds no accepted location.
 Revision `8c46b16` passed all 225 Rust tests, 10 Python tests, and the required
 checks locally on Linux and in
 [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42920141177).

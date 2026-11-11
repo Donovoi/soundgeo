@@ -1,0 +1,155 @@
+{
+  "scope": "Completed native Linux replay of the original first Lake Hood hour using the unchanged broad-area Doppler job. Additional development evidence; the original 27-recording timing benchmark and 250 m plans are unchanged.",
+  "source_url": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+  "target_error_m": 1000,
+  "accepted": false,
+  "source_commit": "82fc48cbcc00e1207086f6277b26a4b3f246e37e",
+  "cli_sha256": "4f2a7a7cc4720d7041d1b2fbfdd5e867ce4c8257bfb2d53014a69ec43a06346a",
+  "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+  "decoded_duration_s": 3599.998625,
+  "reference_dates": [
+    "2026-11-01"
+  ],
+  "recording_clock_supplied": false,
+  "camera_point_supplied": false,
+  "video_clues_used": false,
+  "bounds": {
+    "south": 61.0,
+    "north": 61.36,
+    "west": -150.36,
+    "east": -149.62
+  },
+  "ground_m": 27.0,
+  "ground_datum": "egm96",
+  "grid_m": 200.0,
+  "maximum_hypotheses": 20000000,
+  "search_workers": 2,
+  "native_exit_code": 4,
+  "native_elapsed_s": 4887.859292221998,
+  "status": "ambiguous",
+  "events": 18,
+  "tracks": 1166,
+  "hypotheses": 14057219,
+  "candidates": [
+    {
+      "rank": 1,
+      "latitude": 61.17909706757761,
+      "longitude": -149.9721154595299,
+      "matches": 5,
+      "relative_curve_error_percent": 0.7293553759276806,
+      "reference_distance_m": 60.125521015369024,
+      "fitted_clock_rate": 1.0002734375
+    },
+    {
+      "rank": 2,
+      "latitude": 61.17994734745977,
+      "longitude": -149.9689795921382,
+      "matches": 4,
+      "relative_curve_error_percent": 0.6695627589726522,
+      "reference_distance_m": 163.8780886019878,
+      "fitted_clock_rate": 1.0039453125
+    },
+    {
+      "rank": 3,
+      "latitude": 61.211197647239885,
+      "longitude": -149.8326688411201,
+      "matches": 5,
+      "relative_curve_error_percent": 0.9028160174797892,
+      "reference_distance_m": 8247.190459865256,
+      "fitted_clock_rate": 1.00390625
+    },
+    {
+      "rank": 4,
+      "latitude": 61.208543465945006,
+      "longitude": -149.86000706975437,
+      "matches": 4,
+      "relative_curve_error_percent": 0.6638391716036042,
+      "reference_distance_m": 6805.721204165189,
+      "fitted_clock_rate": 0.99560546875
+    },
+    {
+      "rank": 5,
+      "latitude": 61.2164274213451,
+      "longitude": -149.81345398327133,
+      "matches": 5,
+      "relative_curve_error_percent": 0.9690093599176172,
+      "reference_distance_m": 9426.032903700112,
+      "fitted_clock_rate": 0.9965429687499999
+    },
+    {
+      "rank": 6,
+      "latitude": 61.18565015289472,
+      "longitude": -150.2435872265148,
+      "matches": 4,
+      "relative_curve_error_percent": 0.6931919587649651,
+      "reference_distance_m": 14573.706376961547,
+      "fitted_clock_rate": 1.0033984375
+    },
+    {
+      "rank": 7,
+      "latitude": 61.217859692923135,
+      "longitude": -149.81524023065555,
+      "matches": 4,
+      "relative_curve_error_percent": 0.8016600588162464,
+      "reference_distance_m": 9410.599931992843,
+      "fitted_clock_rate": 1.0016992187500002
+    },
+    {
+      "rank": 8,
+      "latitude": 61.247865271033945,
+      "longitude": -149.64202645668416,
+      "matches": 4,
+      "relative_curve_error_percent": 0.9501522314094165,
+      "reference_distance_m": 19226.934487991377,
+      "fitted_clock_rate": 1.005
+    },
+    {
+      "rank": 9,
+      "latitude": 61.15813272434742,
+      "longitude": -150.06921941279475,
+      "matches": 4,
+      "relative_curve_error_percent": 0.8877616475885043,
+      "reference_distance_m": 5736.736620258596,
+      "fitted_clock_rate": 0.995
+    },
+    {
+      "rank": 10,
+      "latitude": 61.1572254165279,
+      "longitude": -150.06212514602197,
+      "matches": 4,
+      "relative_curve_error_percent": 0.9616943205738723,
+      "reference_distance_m": 5438.804194316005,
+      "fitted_clock_rate": 0.9955078125
+    }
+  ],
+  "reference": {
+    "latitude": 61.179633,
+    "longitude": -149.9719665,
+    "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+  },
+  "original_reference_allowance_m": 0,
+  "interpretation": "The top candidate is 60.13 m from the unsurveyed reference pin with five of eighteen observations matched. A candidate 8.25 km away also has five matches. Partial consensus and competing locations/times keep the native result ambiguous. Diagnostic proximity is not acceptance.",
+  "audit": {
+    "input_hashes_unchanged": true,
+    "native_observations_exactly_preserved": true,
+    "all_prepared_dates_searched": true,
+    "proposal_partitions": {
+      "all_reported_partitions_complete": true,
+      "partition_count": 0,
+      "partition_hypotheses": 0,
+      "partitions": []
+    },
+    "proxy_connections": 0,
+    "shuffled_control_runs": 0,
+    "report_sha256": "dec343573c6972b3ffaf80c293de52bf2c73d27717e6d5532c5df056ad8cd695",
+    "result_sha256": "025d0c2940af42a2963da81520b79fa60180021948808f481d0527dfeed6ef8d",
+    "terminal_audit_sha256": "bed257984a342e5cd641b6bc84bf001ffd7db7c836eaadbb25112c6bc70f7fe1",
+    "partition_audit_sha256": "f77be63828f35c24b8aff886c2431fedf97c1a295f766e34e854f98b61290044"
+  },
+  "limits": [
+    "Native Linux results are not claimed bitwise equivalent to earlier Windows runs.",
+    "The single prepared reference day is not a search over all historical dates.",
+    "The original camera reference is a public owner pin, not a survey.",
+    "Other replay attempts and failed or interrupted outputs remain separately preserved."
+  ]
+}

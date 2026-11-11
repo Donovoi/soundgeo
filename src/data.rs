@@ -672,7 +672,16 @@ pub fn download_day(
         completed += size;
     }
     let license = "Source: https://www.adsb.lol/docs/open-data/historical\nDaily archive: Open Database License 1.0 https://opendatacommons.org/licenses/odbl/1-0/\nKeep attribution and check share-alike requirements when redistributing derived databases.\n";
-    std::fs::write(dir.join("DATA-LICENSE.txt"), license)?;
+    let license_path = dir.join("DATA-LICENSE.txt");
+    // Reusing verified archives must not require rewriting unchanged attribution.
+    if !std::fs::read(&license_path).is_ok_and(|saved| saved == license.as_bytes()) {
+        std::fs::write(&license_path, license).with_context(|| {
+            format!(
+                "Could not update archive attribution {}",
+                license_path.display()
+            )
+        })?;
+    }
     std::fs::write(
         dir.join("archive-manifest.json"),
         serde_json::to_vec_pretty(&release)?,

@@ -85,6 +85,45 @@ fn older_unsplit_archive_reuses_verified_cache_offline() {
 }
 
 #[test]
+fn cached_attribution_is_created_repaired_and_reused_readonly_offline() {
+    let dir = tempfile::tempdir().unwrap();
+    let date = "2024-03-01";
+    cached_day(dir.path(), date);
+    let control = Control::default().with_offline(true);
+    let progress = |_: &str, _: f32| {};
+    let ensure = || soundgeo::data::download_day(date, dir.path(), &control, &progress);
+    let license = dir.path().join(date).join("DATA-LICENSE.txt");
+
+    // A new or stale attribution still needs the current text.
+    let archive = ensure().unwrap();
+    let expected = std::fs::read(&license).unwrap();
+    assert!(String::from_utf8_lossy(&expected).contains("Open Database License 1.0"));
+    std::fs::write(&license, "outdated attribution").unwrap();
+    assert_eq!(ensure().unwrap(), archive);
+    assert_eq!(std::fs::read(&license).unwrap(), expected);
+
+    // A protected, correct attribution must retain both its bytes and timestamp.
+    let timestamp = std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_secs(1_000_000);
+    std::fs::OpenOptions::new()
+        .write(true)
+        .open(&license)
+        .unwrap()
+        .set_times(std::fs::FileTimes::new().set_modified(timestamp))
+        .unwrap();
+    let original_permissions = std::fs::metadata(&license).unwrap().permissions();
+    let mut readonly = original_permissions.clone();
+    readonly.set_readonly(true);
+    std::fs::set_permissions(&license, readonly).unwrap();
+    let result = ensure();
+    let after = std::fs::metadata(&license).unwrap();
+    std::fs::set_permissions(&license, original_permissions).unwrap();
+    assert_eq!(result.unwrap(), archive);
+    assert_eq!(std::fs::read(&license).unwrap(), expected);
+    assert_eq!(after.modified().unwrap(), timestamp);
+    assert!(after.permissions().readonly());
+}
+
+#[test]
 fn invalid_ranges_and_wrong_date_cache_are_rejected() {
     let dir = tempfile::tempdir().unwrap();
     let mut request = ArchiveRequest {
