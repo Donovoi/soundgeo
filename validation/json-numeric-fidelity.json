@@ -1,5 +1,5 @@
 {
-  "scope": "Preserve binary64 values when saved reports and JSON flight references are read. This is numeric and cache correctness evidence; it adds no location acceptance claim.",
+  "scope": "Preserve binary64 values when saved reports and JSON flight references are read. Numeric and cache correctness evidence includes a regression on the same Amsterdam recording; no additional validation sample or site is counted.",
   "source_commit": "65669df095316358eecc78145ae567ddb0aac42b",
   "changes": {
     "serde_json_version": "1.0.154",
@@ -239,8 +239,41 @@
     "The completion auditor initially tried to create output inside the intentionally read-only freeze. A separate sibling audit preserved that permission failure and left the freeze unchanged."
   ],
   "limits": [
-    "The restored original reports are representation evidence; real observation replays with the new executable remain separate work.",
-    "JSON reference parsing and decoded-cache identities change. Earlier scientific reports retain their original binaries and are not presumed bitwise equivalent.",
+    "The same Amsterdam recording was replayed with this executable under its frozen conditional protocol. This repeat adds no independent recording or site.",
+    "JSON reference parsing and decoded-cache identities change. Earlier scientific reports retain their original binaries; exact equality was verified only for this Amsterdam repeat.",
     "The original 27-recording timing benchmark and 250 m plans remain unchanged."
-  ]
+  ],
+  "same_recording_field_regression": {
+    "record": "amsterdam-float-roundtrip-regression.json",
+    "status": "accepted_under_frozen_conditional_protocol",
+    "source_url": "https://www.youtube.com/watch?v=fBb1dzRteNo",
+    "source_commit": "65669df095316358eecc78145ae567ddb0aac42b",
+    "baseline_source_commit": "4f8764c557339bc02da8b6464b3c6bfce1564d80",
+    "native_exit_code": 0,
+    "native_report_sha256": "a1f31de210b71b2978dbfb57b6036a1adbab4bd593ededf2c81a6a613bf3d931",
+    "baseline_report_sha256": "37aec51b4b4f028ae80419d5b0407daefb79d6dd32c4e9bf4daef388f8e3a10d",
+    "report_and_checkpoint_report_difference_paths": [
+      "created_utc"
+    ],
+    "decoded_reference_payload_differences": 0,
+    "prior_decoded_cache_files_preserved": 3,
+    "new_parser_cache_files_created": 2,
+    "complete_reference_dates": [
+      "2026-11-01",
+      "2026-11-03",
+      "2026-11-04"
+    ],
+    "completed_date_windows": 2,
+    "completed_per_window_control_searches": 38,
+    "merged_control_identities": 19,
+    "region_center_error_m": 268.53615149128467,
+    "conditional_microphone_allowance_m": 220,
+    "conditional_upper_error_m": 488.53615149128467,
+    "terminal_independent_checks_passed": 349,
+    "terminal_audit_sha256": "2879809c99834b42193c52d6c6f553b4ecc36ae96b05d0dd07956b04b56615a6",
+    "root_scientific_review_sha256": "08a5e9f6978ba1452c6b4fd7335ff4292020be24a91829e10a88b29cba09de88",
+    "new_independent_site_or_sample": false,
+    "general_parser_equivalence_claim": false,
+    "controlled_speedup_claim": false
+  }
 }

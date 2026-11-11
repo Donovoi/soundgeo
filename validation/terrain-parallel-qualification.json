@@ -1,0 +1,257 @@
+{
+  "schema": 1,
+  "source_commit": "fa4cb5b0da56817a7fba8af72a9868d8eeb6e34f",
+  "scope": "Software qualification of shared terrain sampling for flight-corridor searches, including full-search source guards. Field throughput and new location accuracy were not evaluated.",
+  "platform": "Native Linux in Ubuntu WSL2",
+  "guest_logical_processors": 11,
+  "build_cpu_limit": 2,
+  "build_memory_limit_bytes": 8589934592,
+  "cargo_build_jobs": 2,
+  "rust_test_threads": 2,
+  "build_provenance": {
+    "built_from_dirty_native_snapshot": true,
+    "native_checkout_head": "5c6d9e507e9a42509a3fd865051b540added9ec4",
+    "primary_base_at_build": "afb68a03daf16a04be58d7308cdac0a1a4fbdf47",
+    "built_at_source_commit": false,
+    "subsequently_bound_to_git_commit_objects": true,
+    "compiled_input_files": 68,
+    "python_source_files_compared_separately": 3,
+    "git_blob_comparison": {
+      "files": 71,
+      "exact": 26,
+      "verified_utf8_crlf_only": 45,
+      "binary_assets": 2,
+      "binary_assets_exact": true
+    }
+  },
+  "qualification": {
+    "complete": true,
+    "finished_utc": "2026-11-11T03:12:44.285043+00:00",
+    "rust_tests_passed": 237,
+    "rust_failed": 0,
+    "rust_ignored": 0,
+    "rust_filtered_out": 0,
+    "python_tests_passed": 10,
+    "checks": [
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "log_sha256": "2d778cc63bd4c07bffa1617b378eb7fde211a46fe625f5db25943b572fa423a7"
+      },
+      {
+        "name": "tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "log_sha256": "b746e8bcdcba83d367a7645efadef7f08ae0b2ddb034e8c49e9734f21589eadf"
+      },
+      {
+        "name": "doctests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--doc"
+        ],
+        "exit_code": 0,
+        "log_sha256": "c0bcbc43fcfac817bb94809d38f3e88873d621ba65afb34a490dafeb72807f01"
+      },
+      {
+        "name": "bins",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--bins"
+        ],
+        "exit_code": 0,
+        "log_sha256": "5089e1c94f049189c2882fc87c84f7dc7b10bacee71a9d1d0a37f5d69d73d594"
+      },
+      {
+        "name": "helper",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--example",
+          "doppler_controls"
+        ],
+        "exit_code": 0,
+        "log_sha256": "f58c23c08bb1b9b89a885fb722a0d346d4013d03e5108feb9e43a47c93f78612"
+      },
+      {
+        "name": "python",
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "validation",
+          "-p",
+          "test_run_timing.py"
+        ],
+        "exit_code": 0,
+        "log_sha256": "8b7e4696d601a5e318414ca516574be88728da0bf26085a20ae20420dbc567c7"
+      }
+    ],
+    "new_rust_tests": [
+      "geo::terrain_tests::shared_tile_cap_counts_live_cache_and_raw_decode_overlap",
+      "geo::terrain_tests::shared_source_guard_is_restored_after_success_error_and_cancellation",
+      "geo::terrain_tests::shared_tiles_keep_filesystem_case_lookup_and_unsupported_serial_fallback",
+      "geo::terrain_tests::shared_tiles_detect_changes_growth_and_cancellation",
+      "geo::terrain_tests::shared_tiles_reject_stale_cached_heights_and_misses",
+      "geo::terrain_tests::shared_tiles_preserve_legacy_sample_bits_datums_edges_and_misses",
+      "index::tests::tiled_search_rejects_progress_mutations_before_budget_recovery_or_success",
+      "index::tests::tiled_budget_and_partitions_match_legacy_with_one_and_two_shared_workers",
+      "shared_tiled_corridors_match_legacy_serial_candidates_and_counts"
+    ],
+    "new_rust_test_count": 9,
+    "focused_unique_rust_tests_passed": 11,
+    "focused_existing_regressions": [
+      "parallel_corridors_match_serial_fallback_terrain",
+      "srtm_big_endian_and_missing_tiles_use_explicit_fallback"
+    ],
+    "focused_pass_preceded_final_changes": [
+      "Saturating memory-byte totals prevent overflow before the cap decision.",
+      "A nested if-let became a let-chain to satisfy strict Clippy."
+    ],
+    "full_required_suite_covers_both_final_changes": true,
+    "source_binding_before_and_after_checks": "All 68 application/test/asset/Cargo inputs and three Python source files matched the primary and native checkout exactly.",
+    "terminal_success": "Exact service invocation was observed live with kernel resource limits and later matched to PID-1 successful-deactivation journal evidence. Autocollected unit defaults were not used as exit proof."
+  },
+  "terrain_behavior": {
+    "shared_snapshot_memory_limit_bytes": 134217728,
+    "memory_accounting": "Includes retained caller tile vectors, new decoded tiles, simultaneous bounded raw-file reads and inventory/verification overhead.",
+    "maximum_snapshot_entries": 256,
+    "serial_fallback": "Memory requirements above the cap or unsupported directory layouts use the original serial lazy loader.",
+    "sampling": "Existing nearest-sample rounding for 1201 and 3601 HGT grids, EGM96 conversion, configured missing/void fallback and filesystem canonical-name lookup are preserved.",
+    "snapshot_scope": "All recognized top-level tiles are considered, including aircraft anchor queries outside the observer bounds.",
+    "missing_counts": "Actual worker fallback queries are summed in deterministic track order.",
+    "source_guards": "Prepared sources are checked before budget-error recovery and after callbacks; the original fingerprint remains through ranking and refinement until locate returns. Detected changes or cancellation reject the result.",
+    "stale_caller_cache": "Cached heights and cached misses must agree with a prepared view; changed cached inputs are rejected.",
+    "parity": "Legacy serial sampling and shared one- and two-worker searches produced identical serialized candidates and partitions, warnings, method, grid float bits, hypothesis counts and missing counts in the focused regressions.",
+    "matching_thresholds_and_acceptance_rules_changed": false,
+    "field_speedup_measured": false,
+    "new_location_result_claimed": false
+  },
+  "binaries": {
+    "soundgeo": {
+      "artifact": "terrain-parallel-freeze-v1/soundgeo",
+      "sha256": "2e2240a00870c236c9d664955ba8d6eef8c0f32dc2e9af50054f86adec300f36",
+      "format": "Linux x86-64 ELF"
+    },
+    "soundgeo-cli": {
+      "artifact": "terrain-parallel-freeze-v1/soundgeo-cli",
+      "sha256": "d177bd7cad1fb2d5702fd10b167b0f6edb926e1bdc3914860e9fa62589cf9040",
+      "format": "Linux x86-64 ELF"
+    },
+    "examples/doppler_controls": {
+      "artifact": "terrain-parallel-freeze-v1/doppler-controls",
+      "sha256": "e9d3eb4afd2d0069870aa23dfd784712d94288e831396017f82e507831bafbee",
+      "format": "Linux x86-64 ELF"
+    }
+  },
+  "preserved_failed_attempts": [
+    {
+      "attempt": "focused-v1",
+      "stage": "test compilation",
+      "outcome": "An assertion required Debug on Seed. Compilation stopped before tests ran; the assertion was corrected.",
+      "evidence": {
+        "artifact": "terrain-parallel-freeze-v1/focused-history/v1/completion.json",
+        "sha256": "c320413628f726b2d7a367aa548a6ce41672acf3d4151c43e41102c962f15ccd"
+      }
+    },
+    {
+      "attempt": "qualification-v1",
+      "stage": "launcher preflight",
+      "outcome": "Cross-platform Git line-ending/filemode defaults reported extra changed files. The launcher was corrected before any check or build.",
+      "evidence": {
+        "artifact": "terrain-parallel-freeze-v1/qualification-history/failed-preflight-v1/failure.json",
+        "sha256": "b884038fd46285192847fd9f1d831a910eaffe8c744d5f827880205565a7df90"
+      }
+    },
+    {
+      "attempt": "qualification-v2",
+      "stage": "strict Clippy",
+      "outcome": "Clippy rejected nested if-let conditions. Formatting had passed; all-target tests had not started. The let-chain fix is covered by the final suite.",
+      "evidence": {
+        "artifact": "terrain-parallel-freeze-v1/qualification-history/failed-clippy-v2/failure.json",
+        "sha256": "2021c3d4fe7f3ac99c7b4a8f6d8cbf510ac3990b173fc04ce8822be4706a60a6"
+      }
+    }
+  ],
+  "receipts": {
+    "qualification": {
+      "artifact": "terrain-parallel-freeze-v1/qualification/checks.json",
+      "sha256": "f1a19596106b6eeab70d7914a67c973e1bf469e5aca904da966424c66f1d73cd"
+    },
+    "freeze": {
+      "artifact": "terrain-parallel-freeze-v1/build-receipt.json",
+      "sha256": "ffdf003949f6b139e374ba786bd859de4074f030478942863f24908a8b414a84"
+    },
+    "final_compiled_source_manifest": {
+      "artifact": "terrain-parallel-freeze-v1/final-source-binding/source-manifest.json",
+      "sha256": "0c5e8803ff24cb3daf61d3329e6b2f9195870d18d7d909965230c0667d61bef2"
+    },
+    "focused_completion": {
+      "artifact": "terrain-parallel-freeze-v1/focused-history/v2/completion.json",
+      "sha256": "717789792c52d7519fd737131c8a7e59474a79e1ee32ba31753b9cecd100e2be"
+    },
+    "memory_hardening_delta": {
+      "artifact": "terrain-parallel-freeze-v1/post-focus-hardening-binding/focused-v2-to-final-v3.patch",
+      "sha256": "a4680eaa026b49a1af69c492039a57fbda8ba2206059773431531a44f93c4bad"
+    },
+    "clippy_delta": {
+      "artifact": "terrain-parallel-freeze-v1/final-source-binding/final-v3-to-final-v4.patch",
+      "sha256": "c4c2e00d4685e59c219fe1f727b4af017603fec92baa6a52fb401a035e2040db"
+    },
+    "live_service_proof": {
+      "artifact": "terrain-parallel-freeze-v1/service-proof/startup.json",
+      "sha256": "03183a824e9b666258a6a18987a0dbd60da5cc6bf0f45382fad0612b673f1056"
+    },
+    "terminal_service_proof": {
+      "artifact": "terrain-parallel-freeze-v1/service-proof/terminal.json",
+      "sha256": "24ecaed2e003fe4673a45ba413fa07029d335490661cf658249fb36313d46bfc"
+    },
+    "committed_source_binding": {
+      "artifact": "terrain-parallel-commit-binding-fa4cb5b/committed-source-binding.json",
+      "sha256": "c082cf44b88a94a98b791e3cc2ae5db0034a6f402d741a97a1da80c2c28cea67"
+    },
+    "git_blob_comparisons": {
+      "artifact": "terrain-parallel-commit-binding-fa4cb5b/file-bindings.json",
+      "sha256": "c88e19b62f9423e0ba43a8e94eaf90462c875d50b1c6fe8946bc798d0a56885c"
+    }
+  },
+  "artifact_labels": "Relative labels identify separately retained evidence; SHA-256 values bind the files."
+}

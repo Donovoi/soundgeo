@@ -48,6 +48,10 @@ allowance. Both date windows completed all 19 controls. This result assumes
 the ambient microphone and headset stayed within the mapped spectator area
 and allowance; their positions were not surveyed. The model region radius
 was 806 m. This frozen `4f8764c` test is separate from the original 27 recordings.
+A [same-hour regression](../validation/amsterdam-float-roundtrip-regression.json)
+with `65669df` preserved the result exactly apart from creation time. Its new
+decoded-cache entries contained the same reference data. This repeat adds no
+independent recording or site; the same microphone-location assumptions apply.
 
 Six compression and duration checks used copies of three existing recordings.
 Full-length 16 kbit/s Opus audio passed for Maho and Midway. Compressed Lake Hood
@@ -91,7 +95,8 @@ An additional fixed hour from Heathrow produced no timing sound peaks and
 returned insufficient evidence before loading reference tracks or searching
 dates. Its prepared three-date grid and shuffled controls were not executed.
 The [failure record](../validation/heathrow-fixed-hour-timing.json) preserves the
-unchanged inputs and terminal audit. The separate Doppler search remains pending.
+unchanged inputs and terminal audit. The separate Doppler attempt was stopped
+before completing its first date batch; it provides no completed location result.
 
 Optional video text tests matched an airport name within 31.06 m of the camera
 reference in two 360p Lake Hood clips. The reports also contained a broad
@@ -291,7 +296,11 @@ substantial memory, storage, and processing time. A hypothesis-budget overrun
 stops the search with an error and no partial location result.
 
 The `--search-threads` option controls flight-corridor matching. Other search
-stages keep their existing worker settings. A search with a terrain tile folder
-uses one corridor worker because it loads and updates the tile cache during the
-search. More workers can use more memory. Speed depends on the search and the
-other work running on the computer.
+stages keep their existing worker settings. Terrain-folder searches can share
+an immutable tile snapshot within a 128 MiB combined cache, decoded-tile and
+temporary-read bound. Larger or unsupported layouts keep serial corridor
+matching. Prepared tile fingerprints remain active through refinement, and a
+detected file change or cancellation rejects the result. Missing-sample counts
+use the actual worker queries. More workers can use more memory. Field speedup
+has not been measured for this change; speed depends on the search and other
+work running on the computer.

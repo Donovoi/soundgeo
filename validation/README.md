@@ -16,6 +16,10 @@ cache version ignores and preserves prior entries. The actual report writer,
 saved-report identity replay, and raw readsb cold/warm cache regressions passed.
 All required local Linux checks passed with 228 Rust tests and 10 Python tests.
 The three new executables were frozen separately from existing field runs.
+The same checks and counts passed in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42943103677).
+The subsequent [terrain snapshot change](terrain-parallel-qualification.json)
+passed all required local Linux checks with 237 Rust tests and 10 Python tests.
 
 The [cached-attribution regression](archive-attribution-reuse.json) fixes an
 offline archive failure when the correct attribution file is read-only. The app
@@ -72,13 +76,23 @@ Independent review recomputed the date/control merges and center error.
 This adds a third successful site under the stated microphone co-location and
 movement assumptions. The original 27-recording benchmark remains unchanged.
 
+The [same-hour parser regression](amsterdam-float-roundtrip-regression.json)
+repeated that frozen protocol with qualified `65669df` and new decoded-cache
+keys. The final report and both date reports matched the earlier results exactly
+except for creation time; decoded reference payloads also matched exactly.
+All scientific gates passed, with the same 488.54 m conditional error bound.
+This verifies the changed parser on an accepted real recording and adds no new
+sample or site. The elapsed times are not a controlled speed comparison.
+
 The [additional Heathrow fixed-hour test](heathrow-fixed-hour-timing.json)
 returned insufficient evidence with zero timing sound peaks. It stopped before
 loading flight tracks, searching dates or running shuffled controls. Its fixed
 clip, broad area, default timing settings and prepared reference inputs were
 preserved. An independent terminal audit passed 123 checks and rehashed all
-35 material inputs. No location was returned. The separate Doppler baseline
-continues; neither method changes the original 27-recording benchmark below.
+35 material inputs. No location was returned. The separate Doppler attempt was
+stopped before its first date checkpoint and has no completed location result.
+Its partial logs remain preserved. Neither method changes the original
+27-recording benchmark below.
 
 The [completed-date recovery check](date-checkpoint-recovery.json) interrupted the
 existing Maho recording after its first saved date batch, resumed it, and compared
@@ -1952,6 +1966,29 @@ An initial test-script assertion incorrectly required a null clock in these
 computed-proposal jobs. The corrected check preserves the original inferred
 clock. The first log and completed runs remain saved; they were not rerun.
 See [terrain-download-evidence.json](terrain-download-evidence.json).
+
+### Shared terrain snapshot qualification
+
+The source snapshot later bound to commit `fa4cb5b` passed 237 Rust tests and
+10 Python tests in the capped Linux VM. Formatting, strict release Clippy,
+all-target tests, documentation tests,
+release binaries, the Doppler control helper build and Python tests all passed.
+Nine new regressions cover tile sampling, memory bounds, cached misses and
+heights, cancellation, file changes, and serial/parallel search equivalence.
+The focused run passed 11 tests, including two existing fallback regressions.
+
+Legacy serial sampling and shared one- and two-worker searches produced the
+same candidate and partition bytes, warnings, method, grid float bits,
+hypothesis counts and actual missing-sample counts. Tile fingerprints remain
+active through ranking and refinement; a detected change rejects the result.
+The snapshot's 128 MiB memory bound includes the existing cache and temporary
+reads. Larger or unsupported layouts retain serial matching.
+
+The three native executables were built from a recorded dirty source snapshot
+and subsequently bound to the commit's Git objects: 68 application, test, asset
+and Cargo files and three separately listed Python files. Earlier failed attempts
+remain recorded. Field speedup and new location accuracy have not been measured
+for this change. See [terrain-parallel-qualification.json](terrain-parallel-qualification.json).
 
 ## Whole-day temperature diagnostic
 
