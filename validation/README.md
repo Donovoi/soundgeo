@@ -23,6 +23,12 @@ ran headlessly in WSL2 with limits of two CPU cores and 8 GiB RAM.
 This verifies the restored development environment; location accuracy
 is evaluated separately.
 
+The [Heathrow reference evidence](heathrow-reconstruction-reference-evidence.json)
+records nine fixed sample-frame hashes and the mapped hotel footprint.
+Re-extraction matched all nine PNGs; the evaluation plan still matches its
+original input pin. Microphone co-location and the 200 m allowance remain
+assumptions. The full three-date native search is still running.
+
 The [JSON numeric-fidelity fix](json-numeric-fidelity.json) prevents one-ULP
 changes when saved observations and modeled curves are read back. Two original
 Lake Hood reports were restored exactly without excluded fields or a numeric
