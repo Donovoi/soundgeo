@@ -1,0 +1,74 @@
+{
+  "schema": 1,
+  "recorded_utc": "2026-11-14T14:40:47.069396+00:00",
+  "source_commit": "c1b2403365bf34ace50fe0da264b51e42dffa46c",
+  "source_file": "src/data_cache.rs",
+  "scope": "Software qualification of buffered decoded-cache writes. The I/O observation is from the separately frozen earlier executable. No controlled field speedup or new accepted location is claimed.",
+  "change": {
+    "buffer_bytes": 262144,
+    "explicit_flush_before_atomic_publication": true,
+    "payload_schema_changed": false,
+    "model_options_or_thresholds_changed": false,
+    "derived_cache_keys_change_with_source_fingerprint": true,
+    "older_cache_entries_preserved": true
+  },
+  "prior_build_observation": {
+    "source_commit": "305bd324a22d4fffe041b9189942feddf590ee7d",
+    "environment": "WSL2 process writing a decoded flight cache on the Windows-mounted filesystem; two CPU cores, 8 GiB RAM, nice 10, idle I/O scheduling.",
+    "elapsed_seconds": 30.012880503999895,
+    "cache_bytes_written": 702656,
+    "process_write_syscalls": 86263,
+    "cache_bytes_per_process_write_syscall": 8.145508503066205,
+    "read_chars_changed": 0,
+    "scope": "Live I/O observation during a frozen validation run on a Windows-mounted filesystem; not a controlled before/after performance benchmark."
+  },
+  "qualification": {
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/43602093274",
+    "tested_merge_commit": "d6f65bcb2d9fd097d6bd9e9f18a434e95e8f5508",
+    "tested_tree_matches_source_tree": true,
+    "platforms": {
+      "ubuntu": {
+        "job_id": 132468833198,
+        "rust_passed": 237,
+        "rust_failed": 0,
+        "rust_ignored": 0,
+        "python_passed": 10,
+        "all_required_steps_passed": true
+      },
+      "windows": {
+        "job_id": 132468833039,
+        "rust_passed": 237,
+        "rust_failed": 0,
+        "rust_ignored": 0,
+        "python_passed": 10,
+        "all_required_steps_passed": true
+      }
+    },
+    "test_names_match_source": true,
+    "required_steps": [
+      "Run cargo fmt --all -- --check",
+      "Run python -m unittest discover -s validation -p test_run_timing.py",
+      "Run cargo clippy --release --all-targets --locked -- -D warnings",
+      "Run cargo test --release --locked --all-targets",
+      "Run cargo test --release --locked --doc",
+      "Run cargo build --release --locked --bins"
+    ],
+    "cache_regressions": [
+      "data::cache::tests::cached_tracks_preserve_bits_invalidate_sources_and_repair_corruption",
+      "data::cache::tests::readsb_cache_preserves_correctly_rounded_samples_and_ignores_prior_parser"
+    ]
+  },
+  "windows_artifact": {
+    "artifact_id": 14116874310,
+    "archive_sha256": "921d5c3b0812db37d784ea766ecbefffa240b014cc4fe00622ffb0b558d8c1ab",
+    "soundgeo_sha256": "598cc7fc4653acd9ec2b36e592a37bd4f7459f8026126f4d9e1dfb7a600d8ba6",
+    "cli_sha256": "064df0d4ee79ca56b45c5b3b5bd9eb1e7d353f92983fa6a337dcc49c1db922c9"
+  },
+  "retained_evidence_sha256": {
+    "buffered-cache-ci/linux.log": "bff0ef88b7bfe63a304a28fe5702733db6d36bd4d4b561377b5adc9d8bd42e23",
+    "buffered-cache-ci/windows.log": "edd885a2474deba437306b39ea8305536b7dc36cef0fee4db85c82512b3263d7",
+    "buffered-cache-ci/completed-audit.json": "b23d24ed7f02cee394e25de51b839afeb8c4c2bd3ed00c9f57ae03240a4c5475",
+    "cache-write-observation.json": "3d45d5ee9d2f42196ead266a5befce04f4a100b0e9e643906120570c013562b0"
+  },
+  "field_validation": "The fixed Heathrow reconstruction protocol uses the separately frozen 305bd32 executable. Its location outcome is recorded separately from this software qualification."
+}

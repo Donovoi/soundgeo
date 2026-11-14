@@ -8,6 +8,13 @@ New results must state which target they use.
 
 ## Current checks
 
+The [buffered cache writer](buffered-cache-writes.json) groups decoded-flight
+JSON writes into 256 KiB blocks and flushes before atomic publication.
+Revision `c1b2403` passed all required Windows and Ubuntu checks, with
+237 Rust tests and 10 Python tests per platform. Test names match the
+source. Existing cache entries and their original field results remain
+preserved; the source fingerprint gives new builds distinct cache keys.
+
 A [fresh VM qualification](restored-vm-qualification.json) of clean revision
 `305bd32` passed all required release checks, 237 Rust tests and 10 Python
 tests. A separate artifact check matched test names to the source and
