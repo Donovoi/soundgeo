@@ -100,9 +100,15 @@ enum Commands {
         /// Download/reuse free terrain for the configured search area in this folder.
         #[arg(long)]
         terrain_cache: Option<PathBuf>,
-        /// Maximum search hypotheses; overrides the saved job. Larger limits take longer.
+        /// Maximum hypotheses per proposal batch; overrides the saved job. Large searches divide automatically.
         #[arg(long, value_parser = clap::value_parser!(u64).range(100..=100_000_000))]
         max_hypotheses: Option<u64>,
+        /// Maximum CPU workers for flight-corridor matching (default: up to 4).
+        #[arg(long)]
+        search_threads: Option<std::num::NonZeroUsize>,
+        /// Reuse complete offline archive date batches from this checkpoint folder.
+        #[arg(long)]
+        date_checkpoints: Option<PathBuf>,
         /// Sound matching method; passage timing needs bounds and at least eight minutes.
         #[arg(long)]
         method: Option<soundgeo::AnalysisMethod>,
@@ -123,6 +129,9 @@ enum Commands {
     },
     /// Prepare flight data and optional terrain for later offline analysis.
     Download {
+        /// Retry source files recorded as unavailable in prepared free sample days.
+        #[arg(long, conflicts_with = "offline")]
+        refresh_gaps: bool,
         /// First date. Omit both dates to discover the provider's available days.
         #[arg(long)]
         date: Option<String>,
@@ -284,6 +293,8 @@ fn run(args: Args) -> Result<u8> {
             provider,
             terrain_cache,
             max_hypotheses,
+            search_threads,
+            date_checkpoints,
             method,
             output,
             require_match,
@@ -365,6 +376,9 @@ fn run(args: Args) -> Result<u8> {
                 // Clap limits this to 100 million, which also fits 32-bit usize.
                 job.max_hypotheses = limit as usize;
             }
+            if let Some(threads) = search_threads {
+                job.search_threads = Some(threads.get());
+            }
             if let Some(method) = method {
                 job.analysis_method = method;
             }
@@ -372,6 +386,10 @@ fn run(args: Args) -> Result<u8> {
                 job.terrain = Some(path);
                 job.download_terrain = true;
             }
+            let control = match date_checkpoints {
+                Some(path) => control.with_date_checkpoints(path),
+                None => control,
+            };
             let report = soundgeo::analyze(&job, &control, &progress)?;
             if output == std::path::Path::new("-") {
                 use std::io::Write;
@@ -404,6 +422,7 @@ fn run(args: Args) -> Result<u8> {
             }
         }
         Some(Commands::Download {
+            refresh_gaps,
             date,
             date_to,
             terrain_cache,
@@ -436,7 +455,12 @@ fn run(args: Args) -> Result<u8> {
                 offline: args.offline,
                 ..Default::default()
             };
-            let prepared = soundgeo::prepare_data(&job, &control, &progress)?;
+            let download_control = if refresh_gaps {
+                control.with_source_gap_refresh()
+            } else {
+                control.clone()
+            };
+            let prepared = soundgeo::prepare_data(&job, &download_control, &progress)?;
             let paths = prepared.flight_sources;
             if !args.quiet {
                 for path in paths {

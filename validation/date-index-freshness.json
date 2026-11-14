@@ -1,0 +1,345 @@
+{
+  "reproduction": {
+    "observed_utc": "2026-11-10T00:52:19.248741+00:00",
+    "scope": "Read-only reproduction of a cached discovery index omitting a newly published day. Six-hour reuse is current documented behavior.",
+    "cli_sha256": "66b7b8eed61b9eb2a2165b40f8eaaac8be57df555a5a618299c0e2b9a4404c9d",
+    "native_exit_code": 0,
+    "cache_sha256": "a51d0e64531df46b82aefd3fe8b2a2a8d8dbbdbb52b0ad02dec034b2acab1013",
+    "cache_unchanged": true,
+    "catalog_retrieved_utc": "2026-11-09T23:44:35.735664300+00:00",
+    "catalog_last_date": "2026-11-08",
+    "provider_payload_sha256": "b57b1ce73d344673b50d5862730124f22fc7427327bedf25593747b37b37a2a2",
+    "latest_supported_release": "v2026.11.09-planes-readsb-staging-0",
+    "latest_release_published_at": "2026-11-10T00:17:26Z",
+    "latest_supported_date_in_native_catalog": false,
+    "assets": [
+      {
+        "name": "v2026.11.09-planes-readsb-staging-0.tar",
+        "size": 1859851264,
+        "state": "uploaded",
+        "updated_at": "2026-11-10T00:18:39Z"
+      }
+    ],
+    "production_behavior_changed": false
+  },
+  "reproduction_sha256": "97e960ae8b0f6685c3f806ad24a47ef4f7d9b8f52503adb6aae1dc9f20fded1e",
+  "change": "For a valid saved ADSB.lol index, check recent release pages after 15 minutes. Preserve older dates, the full-scan timestamp, and offline cache-only behavior. Full discovery still runs after 6 hours.",
+  "focused_tests": {
+    "passed": 8,
+    "failed": 0,
+    "ignored": 0,
+    "new_tests": 3,
+    "coverage": [
+      "Legacy index loading and unchanged full-scan time",
+      "New-day merging without losing older dates",
+      "Repeated checks within 15 minutes avoid requests",
+      "Offline reads and provider failures preserve cached bytes",
+      "Cancellation stops refresh",
+      "Year boundaries and invalid timestamps"
+    ]
+  },
+  "full_qualification_complete": true,
+  "native_fixed_cache_replay_complete": true,
+  "native_fixed_cache_replay": {
+    "complete": true,
+    "source_commit": "fb042a0165eef1a988c0bb05f568ff3939dd4679",
+    "cli_sha256": "feca57ed5e6a3014143eb587fee64ae4784d6370e13812991f14da90f1e794ba",
+    "original_dates": 1329,
+    "updated_dates": 1330,
+    "added_dates": [
+      "2026-11-09"
+    ],
+    "retained_all_original_dates": true,
+    "full_scan_timestamp_unchanged": true,
+    "additional_provider_pages": 1,
+    "warm_and_offline_reports_identical": true,
+    "warm_and_offline_proxy_connections": 0,
+    "warm_cache_unchanged": true,
+    "original_cache_unchanged": true,
+    "new_cache_sha256": "1378166f39ccb13ebb70a79e162af944bd1f1a14ce8a588322769a6a3ecbd604",
+    "steps": [
+      {
+        "step": "online-refresh",
+        "exit_code": 0,
+        "elapsed_s": 1.3772293999936664,
+        "log_sha256": "35b04eba7fe0d576da317c580b30ebf2668bedc2cfd5b38be229650ca79e3e2c"
+      },
+      {
+        "step": "warm-online",
+        "exit_code": 0,
+        "elapsed_s": 0.17258260000380687,
+        "log_sha256": "bce99e5c27d1618e92ef4bd692302ed7f1d08caf84d11a0339c8409ff4d695b6"
+      },
+      {
+        "step": "offline",
+        "exit_code": 0,
+        "elapsed_s": 0.16949230000318494,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "result_sha256": "9353645a9adc2016f29bf40e9fc7fda61cdc722c644eb5cc44414104d36ff321"
+  },
+  "qualification": {
+    "source_commit": "c5bcadeb78a58fccb267985f73dfb1c5f5454fd5",
+    "scope": "Date-discovery fix qualification. Location acceptance remains under test.",
+    "local": {
+      "cli": "date-index-refresh-local-freeze/soundgeo-cli.exe",
+      "cli_sha256": "feca57ed5e6a3014143eb587fee64ae4784d6370e13812991f14da90f1e794ba",
+      "desktop": "date-index-refresh-local-freeze/soundgeo.exe",
+      "desktop_sha256": "f5486294dcf978ee99ac48a93d15cf7fd17eb403fbf9b3479209343efbb8726f",
+      "control_tool": "date-index-refresh-local-freeze/doppler_controls.exe",
+      "control_tool_sha256": "e2d3a3451436025b6f5bd7ff25eeb7128f3aeeddb2999caf26143947ab99ba85",
+      "source_commit": "c5bcadeb78a58fccb267985f73dfb1c5f5454fd5",
+      "source_tree": "c22fb7cfc636592cf7c4e2b0b1af9d6980c8d459",
+      "all_required_checks_passed": true,
+      "rust_tests_passed": 199,
+      "python_tests_passed": 10,
+      "checks_sha256": "51c0b1768a2af2b9a3e7b382239f39c167f002b58d7bd2026d5a6eb01954ab93",
+      "source_hashes_unchanged": true,
+      "cli_version": "soundgeo 0.3.0-dev.1",
+      "steps": [
+        {
+          "name": "fmt",
+          "command": [
+            "cargo",
+            "fmt",
+            "--all",
+            "--",
+            "--check"
+          ],
+          "exit_code": 0,
+          "elapsed_s": 2.3669972000061534,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        {
+          "name": "clippy",
+          "command": [
+            "cargo",
+            "clippy",
+            "--release",
+            "--all-targets",
+            "--locked",
+            "--",
+            "-D",
+            "warnings"
+          ],
+          "exit_code": 0,
+          "elapsed_s": 22.75481729999592,
+          "log_sha256": "e9f22181cb632307f18ecdf2ac686aff840fa52c9c289e16f4c836813616ae82"
+        },
+        {
+          "name": "tests",
+          "command": [
+            "cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--all-targets"
+          ],
+          "exit_code": 0,
+          "elapsed_s": 1507.4598316000047,
+          "log_sha256": "86d72fdfd46d45c4668c41a72dbc6dc9ab02761d6207ec48402d6b1d489e336e"
+        },
+        {
+          "name": "doc-tests",
+          "command": [
+            "cargo",
+            "test",
+            "--release",
+            "--locked",
+            "--doc"
+          ],
+          "exit_code": 0,
+          "elapsed_s": 3.550858700007666,
+          "log_sha256": "30f13caaf150b065bfafa0e20a5a0c77ac64a6cf9bc443a197a4f0da8ca3b140"
+        },
+        {
+          "name": "build",
+          "command": [
+            "cargo",
+            "build",
+            "--release",
+            "--locked",
+            "--bins"
+          ],
+          "exit_code": 0,
+          "elapsed_s": 1.2421620999957668,
+          "log_sha256": "a7968f9580ff611b4c74689e14c8e9206049074ac6e6f538ac82e2e898161374"
+        },
+        {
+          "name": "python",
+          "command": [
+            "python",
+            "-m",
+            "unittest",
+            "discover",
+            "-s",
+            "validation",
+            "-p",
+            "test_run_timing.py"
+          ],
+          "exit_code": 0,
+          "elapsed_s": 0.6212877999932971,
+          "log_sha256": "0a62d1318f28757ad3d0bea1e9a4ba1195773e645eb4b729ce692399dab10ed2"
+        },
+        {
+          "name": "control-example",
+          "command": [
+            "cargo",
+            "build",
+            "--release",
+            "--locked",
+            "--example",
+            "doppler_controls"
+          ],
+          "exit_code": 0,
+          "elapsed_s": 64.81844940000155,
+          "log_sha256": "e3c8190ce25e2f76fec65a6d10e2ec5ee648f8a526e98762b1f3e59a8b022723"
+        }
+      ]
+    },
+    "ci": {
+      "head_commit": "c5bcadeb78a58fccb267985f73dfb1c5f5454fd5",
+      "url": "https://github.com/Donovoi/soundgeo/actions/runs/42734990519",
+      "conclusion": "success",
+      "jobs": [
+        {
+          "name": "check (windows-latest)",
+          "conclusion": "success",
+          "rust_tests_passed": 199,
+          "python_tests_passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "required_steps": [
+            {
+              "name": "Run cargo fmt --all -- --check",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo test --release --locked --all-targets",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo test --release --locked --doc",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo build --release --locked --bins",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "name": "check (ubuntu-latest)",
+          "conclusion": "success",
+          "rust_tests_passed": 199,
+          "python_tests_passed": 10,
+          "failed": 0,
+          "ignored": 0,
+          "required_steps": [
+            {
+              "name": "Run cargo fmt --all -- --check",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo test --release --locked --all-targets",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo test --release --locked --doc",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run cargo build --release --locked --bins",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ],
+      "required_test_names": [
+        "recent_dates_extend_legacy_index_without_postponing_full_discovery",
+        "recent_date_failures_and_offline_reads_preserve_saved_bytes",
+        "recent_checks_cover_year_boundary_and_validate_timestamps"
+      ]
+    },
+    "ci_verification_sha256": "bdfc575e9276e2a99c2cc67816abc1268fe5499338d766d4af22c3f3be59224f",
+    "ci_log_sha256": "1e25ee2a2b3ec993b1a511829d67f92dbdfd7bb3e88226cae1db65a06f8bd171",
+    "windows_artifact": {
+      "source_commit": "c5bcadeb78a58fccb267985f73dfb1c5f5454fd5",
+      "source_tree": "c22fb7cfc636592cf7c4e2b0b1af9d6980c8d459",
+      "ci_run": 42734990519,
+      "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42734990519",
+      "checkout_tree_matches_source": true,
+      "checkout_verification_sha256": "0de8277c58433caf519c880e8670d0cf31bab0da3f0ff59954f7afa9dffe9719",
+      "ci_artifact_id": 13726449971,
+      "archive_sha256": "3ba3381a5d31c7bfdbab2b983056663d633d730d166f84f5c95ce05b1e3fbef9",
+      "archive_digest_matches_provider": true,
+      "all_required_checks_passed": true,
+      "rust_tests_passed": 199,
+      "python_tests_passed": 10,
+      "ci_verification_sha256": "bdfc575e9276e2a99c2cc67816abc1268fe5499338d766d4af22c3f3be59224f",
+      "cli": "date-index-refresh-ci-artifact/soundgeo-cli.exe",
+      "cli_sha256": "92ae98628b030cc5ba58bb03934472e7e64a9938a4661de0512ce8f9ffe595f2",
+      "desktop": "date-index-refresh-ci-artifact/soundgeo.exe",
+      "desktop_sha256": "b869b5506f387af308ed65458a594d56240df14ae348dc6e20b8c2b2075aa5b1",
+      "cli_version": "soundgeo 0.3.0-dev.1"
+    }
+  },
+  "ci_artifact_native_replay": {
+    "complete": true,
+    "source_commit": "c5bcadeb78a58fccb267985f73dfb1c5f5454fd5",
+    "cli_sha256": "92ae98628b030cc5ba58bb03934472e7e64a9938a4661de0512ce8f9ffe595f2",
+    "ci_artifact_id": 13726449971,
+    "build_receipt_sha256": "1445f3b2b34bb647318dd604506a860380b6400a8c3635758b0a3c92c407fc5a",
+    "original_dates": 1329,
+    "updated_dates": 1330,
+    "added_dates": [
+      "2026-11-09"
+    ],
+    "retained_all_original_dates": true,
+    "full_scan_timestamp_unchanged": true,
+    "additional_provider_pages": 1,
+    "warm_and_offline_reports_identical": true,
+    "warm_and_offline_proxy_connections": 0,
+    "warm_cache_unchanged": true,
+    "original_cache_unchanged": true,
+    "new_cache_sha256": "e0406d89c4d409daa02bdcb6c390de15573ce89934a8e6eed5f3c1c9265d3670",
+    "steps": [
+      {
+        "step": "online-refresh",
+        "exit_code": 0,
+        "elapsed_s": 1.1401044000085676,
+        "log_sha256": "35b04eba7fe0d576da317c580b30ebf2668bedc2cfd5b38be229650ca79e3e2c"
+      },
+      {
+        "step": "warm-online",
+        "exit_code": 0,
+        "elapsed_s": 0.15738739998778328,
+        "log_sha256": "bce99e5c27d1618e92ef4bd692302ed7f1d08caf84d11a0339c8409ff4d695b6"
+      },
+      {
+        "step": "offline",
+        "exit_code": 0,
+        "elapsed_s": 0.20014699999592267,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    ],
+    "result_sha256": "9a31275432b28d1e60bae9f241e8488bca46d2821b6c4d0f7b65397744f046f0"
+  }
+}

@@ -1,0 +1,360 @@
+{
+  "scope": "Baseline paired Doppler source diagnostic. Both original clips search the complete prepared November 1 sample over the original broad area.",
+  "plan": {
+    "scope": "Paired single-day Doppler source diagnostic over the original broad area. The multi-date timing benchmark remains separate.",
+    "source_commit": "598691d5098fad3f52bcc7fbc9fa898e6f04b1fa",
+    "cli_sha256": "fb9c7aa3c32556769642a3631329ccdb383216684d3fbb0bc69fc62fe943f2c9",
+    "script_sha256": "d972ee45271b66d5bb94f4dd96ce96cfb858342f5623c6ed1350b29fec5977d9",
+    "original_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+    "reference_exports": [
+      {
+        "variant": "traces",
+        "points": 156946,
+        "tracks": 1291,
+        "sha256": "4d790cb6dc00c6a7f82d3be33f5f2fab9bc304b14fa8be7c28a0ed5b3c0249a1",
+        "elapsed_s": 3.1078347000002395
+      },
+      {
+        "variant": "hires-traces",
+        "points": 432574,
+        "tracks": 1489,
+        "sha256": "bc1faa1b1b44dce1dfdb51bbc6a365c20ac1309e839b8b7c68901490bd9b6416",
+        "elapsed_s": 49.543430500001705
+      }
+    ],
+    "case_ids": [
+      "lake-hood-nov1",
+      "lake-hood-nov1-later"
+    ],
+    "case_selection": "Both existing Lake Hood recordings originally validated with the November 1 free sample.",
+    "reference_coverage": "Complete prepared November 1 standard or high-resolution sample",
+    "recording_date_argument_supplied": false,
+    "recording_clock_supplied": false,
+    "known_position_supplied_to_app": false,
+    "video_clues": false,
+    "offline": true,
+    "search_mode": "flight_corridors",
+    "max_hypotheses": 20000000,
+    "model_options": "Current frozen CLI defaults and original case settings; only method, search mode, reference variant, and hypothesis budget are specified above.",
+    "workers": 2,
+    "timeout_per_case_s": 7200,
+    "target_error_m": 1000
+  },
+  "completion": {
+    "complete": true,
+    "cases": 4,
+    "accepted": 0,
+    "wrong_accepted": 0,
+    "processing_errors": 3,
+    "proxy_connections": 0,
+    "reference_exports_unchanged": true
+  },
+  "cases": [
+    {
+      "case": "lake-hood-nov1",
+      "variant": "hires-traces",
+      "job_sha256": "2116f9fc436bb17df283c576681be723ac1ff5e905f5b2a9f9db0501cecbec70",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "elapsed_s": 48.243447100001504,
+      "run_log": {
+        "file": "lake-hires-doppler-pair/hires-traces--lake-hood-nov1/run.log",
+        "sha256": "5634f462a26948aca69e334b3bc35dfa8d0d27b12e3af7a3bc091cb5296ca7a2"
+      },
+      "outcome": "hypothesis_budget_exceeded",
+      "analysis_completed": false,
+      "original_wrapper_error": "FileNotFoundError while reading the uncreated report",
+      "native_exit_code_recorded": false,
+      "accepted": false
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "variant": "traces",
+      "job_sha256": "890a1463c6b8d9871fb01c98659732cccbcb74e3aa314d783802e8a4704a497c",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "elapsed_s": 52.420476999999664,
+      "run_log": {
+        "file": "lake-hires-doppler-pair/traces--lake-hood-nov1-later/run.log",
+        "sha256": "b1dd3190756f74b99a0b032fbcdee548f46106fec819e65d0e0ed38e063967e0"
+      },
+      "outcome": "hypothesis_budget_exceeded",
+      "analysis_completed": false,
+      "original_wrapper_error": "FileNotFoundError while reading the uncreated report",
+      "native_exit_code_recorded": false,
+      "accepted": false
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "variant": "hires-traces",
+      "job_sha256": "576424c1328cf581d7c79522085adf4fbcdba2760347408b147bfe66274299c3",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "elapsed_s": 53.22281959999964,
+      "run_log": {
+        "file": "lake-hires-doppler-pair/hires-traces--lake-hood-nov1-later/run.log",
+        "sha256": "73b108bc739849caa84723661e31cc8e978bffa4ae130bf23182be3d2584b85d"
+      },
+      "outcome": "hypothesis_budget_exceeded",
+      "analysis_completed": false,
+      "original_wrapper_error": "FileNotFoundError while reading the uncreated report",
+      "native_exit_code_recorded": false,
+      "accepted": false
+    },
+    {
+      "case": "lake-hood-nov1",
+      "variant": "traces",
+      "job_sha256": "41b15c6b28cc8d28a20b00ddc88ef85c7354f3a69fc3845c96665b246b469ffd",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "elapsed_s": 4097.769317700004,
+      "run_log": {
+        "file": "lake-hires-doppler-pair/traces--lake-hood-nov1/run.log",
+        "sha256": "32b266700c2968a9af6f8bfd2c39dcd5247f9686fb6fb8f5d5d92bc7b41c3467"
+      },
+      "outcome": "ambiguous",
+      "analysis_completed": true,
+      "accepted": false,
+      "events": 24,
+      "hypotheses": 19816431,
+      "report": {
+        "file": "lake-hires-doppler-pair/traces--lake-hood-nov1/report.json",
+        "sha256": "93e75934d15184ff2ebbdba45437937053b5797a6eac3b638eda434583957836"
+      },
+      "candidates": [
+        {
+          "latitude": 61.17922178303369,
+          "longitude": -149.97193877809403,
+          "relative_error_percent": 0.5456012319137137,
+          "recording_start_utc": "2026-11-01T19:59:55.614+00:00",
+          "recording_clock_rate": 1.0002539062500002,
+          "rank": 1,
+          "error_m": 45.749443337361726,
+          "matches": 5,
+          "unique_aircraft": 3,
+          "matched_event_indices": [
+            2,
+            3,
+            5,
+            7,
+            23
+          ]
+        },
+        {
+          "latitude": 61.208884514697786,
+          "longitude": -149.88146120050453,
+          "relative_error_percent": 0.7056400864250266,
+          "recording_start_utc": "2026-11-01T20:45:03.680+00:00",
+          "recording_clock_rate": 1.00203125,
+          "rank": 2,
+          "error_m": 5838.973558464294,
+          "matches": 4,
+          "unique_aircraft": 4,
+          "matched_event_indices": [
+            4,
+            5,
+            15,
+            23
+          ]
+        },
+        {
+          "latitude": 61.208160171704364,
+          "longitude": -149.86062329005946,
+          "relative_error_percent": 0.7350948868773644,
+          "recording_start_utc": "2026-11-01T22:59:39.411+00:00",
+          "recording_clock_rate": 0.9950781249999999,
+          "rank": 3,
+          "error_m": 6756.565667975956,
+          "matches": 4,
+          "unique_aircraft": 4,
+          "matched_event_indices": [
+            5,
+            7,
+            15,
+            23
+          ]
+        },
+        {
+          "latitude": 61.21034978009597,
+          "longitude": -149.83578399791116,
+          "relative_error_percent": 0.7546241393268329,
+          "recording_start_utc": "2026-11-01T21:52:52.266+00:00",
+          "recording_clock_rate": 1.0047460937500001,
+          "rank": 4,
+          "error_m": 8056.150126199246,
+          "matches": 4,
+          "unique_aircraft": 4,
+          "matched_event_indices": [
+            2,
+            4,
+            5,
+            15
+          ]
+        },
+        {
+          "latitude": 61.211583219565654,
+          "longitude": -149.80179138253,
+          "relative_error_percent": 0.9640830633128201,
+          "recording_start_utc": "2026-11-01T22:23:18.970+00:00",
+          "recording_clock_rate": 1.005,
+          "rank": 5,
+          "error_m": 9785.049259756497,
+          "matches": 4,
+          "unique_aircraft": 4,
+          "matched_event_indices": [
+            2,
+            5,
+            7,
+            23
+          ]
+        },
+        {
+          "latitude": 61.297369442124484,
+          "longitude": -149.9828613817134,
+          "relative_error_percent": 0.27248237772027323,
+          "recording_start_utc": "2026-11-01T18:44:34.554+00:00",
+          "recording_clock_rate": 1.0041796875,
+          "rank": 6,
+          "error_m": 13104.683740904215,
+          "matches": 3,
+          "unique_aircraft": 3,
+          "matched_event_indices": [
+            4,
+            5,
+            23
+          ]
+        },
+        {
+          "latitude": 61.18177734545186,
+          "longitude": -149.970685611587,
+          "relative_error_percent": 0.27465415657967696,
+          "recording_start_utc": "2026-11-01T20:00:02.403+00:00",
+          "recording_clock_rate": 0.9981054687500002,
+          "rank": 7,
+          "error_m": 248.12859460692505,
+          "matches": 3,
+          "unique_aircraft": 2,
+          "matched_event_indices": [
+            5,
+            7,
+            23
+          ]
+        },
+        {
+          "latitude": 61.17705711223359,
+          "longitude": -149.97403737729238,
+          "relative_error_percent": 0.2809005908422499,
+          "recording_start_utc": "2026-11-01T19:59:48.992+00:00",
+          "recording_clock_rate": 1.0023242187500003,
+          "rank": 8,
+          "error_m": 307.18589608861015,
+          "matches": 3,
+          "unique_aircraft": 2,
+          "matched_event_indices": [
+            5,
+            7,
+            23
+          ]
+        },
+        {
+          "latitude": 61.18427934623459,
+          "longitude": -149.97014876755952,
+          "relative_error_percent": 0.28837748937443336,
+          "recording_start_utc": "2026-11-01T20:00:08.230+00:00",
+          "recording_clock_rate": 0.99669921875,
+          "rank": 9,
+          "error_m": 525.7571179809106,
+          "matches": 3,
+          "unique_aircraft": 2,
+          "matched_event_indices": [
+            5,
+            7,
+            23
+          ]
+        },
+        {
+          "latitude": 61.172262599599215,
+          "longitude": -150.3432042324748,
+          "relative_error_percent": 0.3004845563432169,
+          "recording_start_utc": "2026-11-01T08:59:10.997+00:00",
+          "recording_clock_rate": 1.0044531249999997,
+          "rank": 10,
+          "error_m": 19918.72394154934,
+          "matches": 3,
+          "unique_aircraft": 3,
+          "matched_event_indices": [
+            5,
+            7,
+            23
+          ]
+        }
+      ],
+      "top_matches": [
+        {
+          "event_index": 2,
+          "event_variant": 2,
+          "aircraft": "a35d25/0/0",
+          "rmse_hz": 2.2256065272935475,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 7.190189418948736
+        },
+        {
+          "event_index": 3,
+          "event_variant": 2,
+          "aircraft": "a0e69b/4/0",
+          "rmse_hz": 1.7147829290370356,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 9.191510254575961
+        },
+        {
+          "event_index": 5,
+          "event_variant": 2,
+          "aircraft": "a8d9ef/0/0",
+          "rmse_hz": 0.5304171342127045,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 3.4752631182697127
+        },
+        {
+          "event_index": 7,
+          "event_variant": 3,
+          "aircraft": "a0e69b/5/0",
+          "rmse_hz": 0.47204263538743085,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 2.5986157154992946
+        },
+        {
+          "event_index": 23,
+          "event_variant": 2,
+          "aircraft": "a0e69b/6/0",
+          "rmse_hz": 0.5341408250777422,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 0.8039542155151506
+        }
+      ]
+    }
+  ],
+  "completed_analyses": 1,
+  "budget_aborts": 3,
+  "accepted": 0,
+  "recording_date_argument_supplied": false,
+  "recording_clock_supplied": false,
+  "known_position_supplied_to_app": false,
+  "video_clues": false,
+  "offline": true,
+  "interpretation": "The completed standard-reference search ranks a point within 46 m first. Five of 24 detected sounds support it, using three aircraft. Distant competing candidates remain, and the native report is ambiguous.",
+  "wrapper_failure_note": "Three native budget aborts were followed by missing-report errors in the original wrapper. The original files remain unchanged; the spacing replay wrapper records native failures before reading a report.",
+  "artifacts": [
+    {
+      "file": "lake-hires-doppler-pair/plan.json",
+      "sha256": "9ac0b7036e2bc31832a1ee5173cc6ef72d786d76af1d2f6092a12a1340ed3f43"
+    },
+    {
+      "file": "lake-hires-doppler-pair/result.json",
+      "sha256": "3d91b393de1dbefe0ee3ce1abc3e0c9df05c80739bc0f36c075e249c35eecbf1"
+    },
+    {
+      "file": "lake-hires-doppler-pair/results.json",
+      "sha256": "a5200857c48d95330b0183844e3a37710b4908dee7ea61e0c61e718e950f47be"
+    },
+    {
+      "file": "lake-hires-doppler-pair/proxy-observation.json",
+      "sha256": "cc613c5b17db29f551703bba2fc9294d055621569ef8f77906a5415a16bd688f"
+    }
+  ]
+}

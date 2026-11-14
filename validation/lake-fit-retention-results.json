@@ -1,0 +1,189 @@
+{
+  "scope": "Four-case offline replay of fit retention with unchanged single-day reference jobs. Expanded-date tests are separate.",
+  "plan": {
+    "scope": "Paired single-day Doppler source diagnostic over the original broad area. The multi-date timing benchmark remains separate.",
+    "source_commit": "bd4d948254d1993d0fc93d5fe0e40878304c6101",
+    "cli_sha256": "4d34769b2db63dae58044895914eb9d2adbc12acbaaee99fbd6db012358a2c6b",
+    "script_sha256": "8c849778f0bcb5a11afa5518969ae94ca0bb455f838a263b7d6bea3898df83a4",
+    "original_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+    "reference_exports": [
+      {
+        "variant": "traces",
+        "points": 156946,
+        "tracks": 1291,
+        "sha256": "4d790cb6dc00c6a7f82d3be33f5f2fab9bc304b14fa8be7c28a0ed5b3c0249a1",
+        "elapsed_s": 3.1078347000002395
+      },
+      {
+        "variant": "hires-traces",
+        "points": 432574,
+        "tracks": 1489,
+        "sha256": "bc1faa1b1b44dce1dfdb51bbc6a365c20ac1309e839b8b7c68901490bd9b6416",
+        "elapsed_s": 49.543430500001705
+      }
+    ],
+    "case_ids": [
+      "lake-hood-nov1",
+      "lake-hood-nov1-later"
+    ],
+    "case_selection": "Both existing Lake Hood recordings originally validated with the November 1 free sample.",
+    "reference_coverage": "Complete prepared November 1 standard or high-resolution sample",
+    "recording_date_argument_supplied": false,
+    "recording_clock_supplied": false,
+    "known_position_supplied_to_app": false,
+    "video_clues": false,
+    "offline": true,
+    "search_mode": "flight_corridors",
+    "max_hypotheses": 20000000,
+    "model_options": "Current frozen CLI defaults and original case settings; only method, search mode, reference variant, and hypothesis budget are specified above.",
+    "workers": 2,
+    "timeout_per_case_s": 7200,
+    "baseline": "lake-hires-doppler-spacing",
+    "start_condition": "The preceding paired run must finish before any new analysis starts.",
+    "change": "Refinement retains a lower-error fit when it has the same number of supported sounds. All four input jobs are byte-identical to the preceding run.",
+    "target_error_m": 1000
+  },
+  "result": {
+    "complete": true,
+    "cases": 4,
+    "accepted": 0,
+    "wrong_accepted": 0,
+    "processing_errors": 0,
+    "proxy_connections": 0,
+    "reference_exports_unchanged": true
+  },
+  "cases": [
+    {
+      "case": "lake-hood-nov1",
+      "variant": "traces",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "41b15c6b28cc8d28a20b00ddc88ef85c7354f3a69fc3845c96665b246b469ffd",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "exit_code": 4,
+      "status": "ambiguous",
+      "events": 24,
+      "candidates": 10,
+      "hypotheses": 15277836,
+      "report_sha256": "db0ed1f4db1289d499b8b10b495585df23172e16c6a4ffdb77b70a5741651e66",
+      "top_candidate_error_m": 166.15922971789504,
+      "top_matches": 5,
+      "competitive_candidates": 10,
+      "maximum_competitor_distance_m": 12994.406124352157,
+      "elapsed_s": 2963.9404538000017
+    },
+    {
+      "case": "lake-hood-nov1",
+      "variant": "hires-traces",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "2116f9fc436bb17df283c576681be723ac1ff5e905f5b2a9f9db0501cecbec70",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "exit_code": 4,
+      "status": "ambiguous",
+      "events": 24,
+      "candidates": 10,
+      "hypotheses": 15274007,
+      "report_sha256": "57ccf18f6d4836b07c8003260f47516355629afd694d0fc74bbb8cbfc8c30cf7",
+      "top_candidate_error_m": 99.54233853802819,
+      "top_matches": 5,
+      "competitive_candidates": 6,
+      "maximum_competitor_distance_m": 6199.371862613281,
+      "elapsed_s": 3695.774829400005
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "variant": "traces",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "890a1463c6b8d9871fb01c98659732cccbcb74e3aa314d783802e8a4704a497c",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "exit_code": 4,
+      "status": "ambiguous",
+      "events": 16,
+      "candidates": 10,
+      "hypotheses": 16721120,
+      "report_sha256": "cc21e5c7521ec21ea3700a18f47a6e21cd286342fe0a66dd5c18eb66eae00246",
+      "top_candidate_error_m": 5208.44706578563,
+      "top_matches": 4,
+      "competitive_candidates": 10,
+      "maximum_competitor_distance_m": 18232.568683334597,
+      "elapsed_s": 4722.5121413000015
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "variant": "hires-traces",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "576424c1328cf581d7c79522085adf4fbcdba2760347408b147bfe66274299c3",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "exit_code": 4,
+      "status": "ambiguous",
+      "events": 16,
+      "candidates": 10,
+      "hypotheses": 16731508,
+      "report_sha256": "e53a78fb5b24353ae9150c6802d57ac368b0a62adf53d361f8eaf450b27a55a4",
+      "top_candidate_error_m": 8116.122492719879,
+      "top_matches": 4,
+      "competitive_candidates": 9,
+      "maximum_competitor_distance_m": 25319.444800119505,
+      "elapsed_s": 5856.029731900002
+    }
+  ],
+  "comparison": [
+    {
+      "case": "lake-hood-nov1",
+      "variant": "traces",
+      "before_error_m": 166.15922971789504,
+      "after_error_m": 166.15922971789504,
+      "before_matches": 5,
+      "after_matches": 5,
+      "input_jobs_byte_identical": true
+    },
+    {
+      "case": "lake-hood-nov1",
+      "variant": "hires-traces",
+      "before_error_m": 99.54233853802819,
+      "after_error_m": 99.54233853802819,
+      "before_matches": 5,
+      "after_matches": 5,
+      "input_jobs_byte_identical": true
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "variant": "traces",
+      "before_error_m": 5208.44706578563,
+      "after_error_m": 5208.44706578563,
+      "before_matches": 4,
+      "after_matches": 4,
+      "input_jobs_byte_identical": true
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "variant": "hires-traces",
+      "before_error_m": 8103.079077783329,
+      "after_error_m": 8116.122492719879,
+      "before_matches": 4,
+      "after_matches": 4,
+      "input_jobs_byte_identical": true
+    }
+  ],
+  "artifacts": [
+    {
+      "file": "lake-hires-doppler-corroboration/plan.json",
+      "sha256": "eb4e423d386cd74b58b9f65e54737a994e8c4307e76239d5395de22819c72500"
+    },
+    {
+      "file": "lake-hires-doppler-corroboration/result.json",
+      "sha256": "e3b1ecf5ca8347d4ba641e57e2a1fb3d542100e4e68d499025f634f9b6933d79"
+    },
+    {
+      "file": "lake-hires-doppler-corroboration/results.json",
+      "sha256": "a3885641c18a2f98a683120292ec54bfa8bfb2e897b9fc882fbac721a5bf68f4"
+    },
+    {
+      "file": "run_lake_hires_doppler_corroboration.py",
+      "sha256": "8c849778f0bcb5a11afa5518969ae94ca0bb455f838a263b7d6bea3898df83a4"
+    }
+  ]
+}

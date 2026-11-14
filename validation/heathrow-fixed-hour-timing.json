@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "case": "heathrow-fixed-hour-prospective-passage-timing-baseline-v1",
+  "recorded_utc": "2026-11-10T23:18:47.423729+00:00",
+  "outcome": "valid_early_insufficient_evidence",
+  "accepted": false,
+  "source_commit": "4f8764c557339bc02da8b6464b3c6bfce1564d80",
+  "source_video": "https://www.youtube.com/watch?v=3i-UaF6biQo",
+  "fixed_source_interval_seconds": [
+    1200,
+    4800
+  ],
+  "media_sha256": "7f3a58192fccd8a1e78a50a23b4869cc3ddba8476443cfd04ff0512910ef984f",
+  "decoded_duration_seconds": 3600.02175,
+  "analysis_method": "passage_timing",
+  "only_job_change_from_frozen_Doppler_baseline": "analysis_method",
+  "input_recording_date_blank": true,
+  "input_recording_clock_null": true,
+  "input_camera_microphone_point_supplied": false,
+  "input_rooftop_height_supplied": false,
+  "actual": {
+    "native_exit_code": 3,
+    "runner_exit_code": 1,
+    "native_elapsed_seconds": 19.41847981799947,
+    "timing_sound_peaks": 0,
+    "loaded_reference_tracks": 0,
+    "hypotheses": 0,
+    "dates_searched": 0,
+    "date_windows_completed": 0,
+    "grid_searches": 0,
+    "native_shuffled_controls_executed": 0,
+    "additional_external_controls": 0,
+    "location_candidates": 0,
+    "timing_regions": 0,
+    "date_search_report": null,
+    "timing_search_report": null
+  },
+  "prepared_but_unexecuted": {
+    "reference_dates": [
+      "2026-11-01",
+      "2026-11-03",
+      "2026-11-04"
+    ],
+    "date_windows": [
+      [
+        "2026-11-01",
+        "2026-11-01"
+      ],
+      [
+        "2026-11-03",
+        "2026-11-04"
+      ]
+    ],
+    "default_timing_options": {
+      "grid_m": 300.0,
+      "maximum_grid_points": 50000,
+      "maximum_passage_distance_m": 500.0,
+      "timing_sigma_s": 1.0,
+      "retained_candidates": 256
+    },
+    "grid_points_per_search": 43384,
+    "shuffled_control_identities": 19,
+    "shuffled_control_searches_across_both_windows": 38
+  },
+  "reason": "The hour exceeds the minimum duration, but zero detected sound peaks fails the minimum-six-peak gate. Native processing returned before reference loading, date search, grid search or shuffled controls.",
+  "source_integrity": {
+    "runner_verified_before": true,
+    "runner_verified_after": true,
+    "independent_full_hash_files": 35,
+    "all_independent_hashes_matched": true,
+    "proxy_observed_connections": 0
+  },
+  "independent_audit": {
+    "passed": true,
+    "checks_passed": 123,
+    "live_startup_observed": false,
+    "startup_limit": "Run finished before independent first probe; recorded native identity and retained service configuration/invocation/exit were verified retrospectively.",
+    "model_runs_by_auditor": 0
+  },
+  "artifacts_sha256": {
+    "approval": "a42d8425010149758e310181c4274ab012389780e32871aef67092143e994aac",
+    "runner": "c885229d766ccf3e463663d52661b8f32668a7b5bd108a8d2ad7ece4350de3c7",
+    "job": "24deb2d9d1f758ea59195b061372c11c8a44f8850e0a18db50f65c8874b2ce40",
+    "input_manifest": "fc86e02f0c4c9ef9a0dacf9b8a4111d74e9a2e8b432483abf862a6e11f1a0fe3",
+    "report": "373835e1b6d3b21f4cab05d2c91361dfaef69b96edb122faba32646a58e7ccb0",
+    "result": "8ede34adba3f8862138462c2bbc1e5a8253c49882e7e02cfc8f1c125712a2d98",
+    "native_log": "59c4f47f8b385223fc56068146d022d8adfb4070b031f704c0eb3fa05b879986",
+    "independent_terminal_audit": "7b8e72c9ccd6c3d7ea055f34cbef526b54f27d24e2428f5955a4cc4a470a6288",
+    "audit_script": "b507623bddd6eb779990ba5c3af46e7e982f527adee8ad6a8551d8e67e7d631b"
+  },
+  "scope_limits": [
+    "No accepted location exists, so point/region accuracy and the conditional100m evaluator rule are unused.",
+    "This failure does not exercise date matching, full-grid timing searches or the production shuffled-control screen.",
+    "Preserve this fixed input and failure; no retry, interval selection, threshold tuning or replacement was performed by the run or audit.",
+    "Zero proxy contacts are an observation, not operating-system network isolation.",
+    "The original fixed source and default detector were not changed after this result; separate audio-only diagnostics cannot turn it into a passing location test."
+  ],
+  "scope": "Additional fixed-hour development recording; the original 27-recording timing benchmark is unchanged.",
+  "target_error_m": 1000,
+  "original_250m_plans_and_failures_preserved": true,
+  "offline": true,
+  "broad_bounds": {
+    "south": 51.25,
+    "north": 51.75,
+    "west": -0.8,
+    "east": 0.2
+  },
+  "video_clues_used": false,
+  "source_interval_is_sample_exact": false,
+  "container_video_preroll_retained": true,
+  "fixed_interval_selected_before_audio_or_flight_count_inspection": true,
+  "method_comparison_fixed_before_Doppler_terminal_result": true,
+  "native_cli_sha256": "be3be6e40b04d14a0bd8bd1d0bf8cf9edfc625b2a75e9d46751105e5a5784cf9",
+  "decoder_sha256": "ed16af623947494a72e284b6eb8ff225f2da22b38b5d5069c2fd4b4ba3384e41",
+  "prospective_method_intent_sha256": "be02cfa789f2e8b9e2b032bee88fc148e715822517360cdaa5d9f4901ded36d0",
+  "independent_timing_plan_review_sha256": "ca098cf9f1a1a8f9fb0fce6c2620838242adfc89bd369d8d75fa2247cf119713"
+}

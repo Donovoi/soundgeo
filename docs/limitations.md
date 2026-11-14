@@ -24,7 +24,7 @@ validation results. The audio-only benchmark does not use OCR.
 
 ## Real-video results
 
-The latest full audio run replayed 27 recordings with flight passage timing.
+The fixed audio benchmark replayed 27 recordings with flight passage timing.
 Each job used a broad search area and prepared free flight data. No recording
 date or start time was supplied. All analysis ran offline. The available dates
 differed by cache; the test covered a finite set of days.
@@ -41,6 +41,18 @@ The eighth came from Maho Beach. Its error was within 550 m, including a planned
 200 m allowance for the unsurveyed microphone. These repeated development tests
 cover two successful sites. Broader accuracy remains unmeasured.
 
+A separate [prospective Amsterdam hour](../validation/amsterdam-fixed-hour-timing.json)
+adds a conditional third successful site. The returned region's center was
+268.54 m from the mapped reference, or 488.54 m including the declared 220 m
+allowance. Both date windows completed all 19 controls. This result assumes
+the ambient microphone and headset stayed within the mapped spectator area
+and allowance; their positions were not surveyed. The model region radius
+was 806 m. This frozen `4f8764c` test is separate from the original 27 recordings.
+A [same-hour regression](../validation/amsterdam-float-roundtrip-regression.json)
+with `65669df` preserved the result exactly apart from creation time. Its new
+decoded-cache entries contained the same reference data. This repeat adds no
+independent recording or site; the same microphone-location assumptions apply.
+
 Six compression and duration checks used copies of three existing recordings.
 Full-length 16 kbit/s Opus audio passed for Maho and Midway. Compressed Lake Hood
 remained ambiguous. The first 15 minutes of all three recordings remained
@@ -51,11 +63,40 @@ Maho tests searched three, ten, and twelve prepared sample dates with the same r
 one accepted recording, one ambiguous, and one insufficient.
 The app has not been verified against a complete historical flight archive.
 
-Revision `12ef5bf` passed all 144 Rust tests and the required checks locally and in
-[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42367454627).
-Revision `ac17fdd` passed all 145 Rust tests and the required local checks.
-Nine Python tests check the benchmark runner.
+The [cached-attribution change](../validation/archive-attribution-reuse.json)
+passed all 226 Rust tests, 10 Python tests and the required local Linux checks,
+plus [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42931899906).
+This verifies archive reuse; it adds no accepted location.
+Revision `8c46b16` passed all 225 Rust tests, 10 Python tests, and the required
+checks locally on Linux and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42920141177).
 Location accuracy needs separate tests against known positions.
+
+The [JSON numeric-fidelity change](../validation/json-numeric-fidelity.json)
+preserves saved reports when they are read back. It also changes parsing of
+JSON flight references, so decoded tracks use a new cache version. Older cache
+files are preserved. Exact report restoration and regression checks establish
+numeric fidelity; earlier field results retain their original executable versions.
+
+The latest detector change suppresses persistent tones in the fast frequency
+bands. Offline replays preserve ten previously matched curves across two Lake
+Hood hours. A fresh hour still has no passing individual curve at its known
+camera point and clock. Its [completed three-date location replay](../validation/native-lake-fresh-replay-4f.json)
+remained ambiguous: all eight retained candidates were 5.79 to 10.91 km from
+the reference, each matching three of ten sounds. The original audit rejected
+new cache receipts; a supplemental audit verified those receipts and unchanged inputs.
+The [later original hour](../validation/native-lake-later-replay-82.json) also
+remained ambiguous, with its top candidate 446.72 m away and competitors several
+kilometres away. These runs add no accepted location.
+A separate 20-minute Lake Hood recording produced no usable Doppler observations
+and returned insufficient evidence before searching flight dates.
+
+An additional fixed hour from Heathrow produced no timing sound peaks and
+returned insufficient evidence before loading reference tracks or searching
+dates. Its prepared three-date grid and shuffled controls were not executed.
+The [failure record](../validation/heathrow-fixed-hour-timing.json) preserves the
+unchanged inputs and terminal audit. The separate Doppler attempt was stopped
+before completing its first date batch; it provides no completed location result.
 
 Optional video text tests matched an airport name within 31.06 m of the camera
 reference in two 360p Lake Hood clips. The reports also contained a broad
@@ -77,8 +118,20 @@ plans, failed tests, older wrong Doppler results, source records, and build chec
 - Date discovery reads provider metadata. Each flight archive still needs a
   complete download and integrity check. Airport indexes use the advertised
   replay period and exclude partial UTC days. Source gaps can stop a download.
-- Saved date indexes are reused for up to six hours online. The `dates --offline`
-  command reads a saved index; flight files must be downloaded separately.
+- Full date indexes are reused for up to six hours online. During discovery,
+  ADSB.lol checks recent publications if the last check is at least 15 minutes
+  old. A failed recent check
+  keeps the saved dates and adds a warning. The `dates --offline` command reads
+  a saved index; flight files must be downloaded separately.
+- Online preparation checks for a preferred ADSB.lol production release when a
+  saved date uses a fallback release. Checks are at least 15 minutes apart.
+  If a complete saved archive is available, a failed check or replacement download
+  keeps that archive in use and reports the failure. Offline runs use the saved selection. New releases
+  can contain more flight positions, but coverage still depends on the source.
+- A release can appear before all its parts finish uploading. Online preparation
+  refreshes an incomplete release and downloads newly listed parts. Incomplete
+  archives stop offline preparation. Part checksums and the full archive end marker
+  must pass before a split archive is marked ready.
 - A worldwide search across all available dates can need several TB of storage
   and a long processing time. Downloads can be cancelled and resumed. Use the
   `dates` command to inspect coverage before preparing a large cache.
@@ -121,10 +174,45 @@ keeps these source files and records the overlap. Sample analysis uses positions
 within the selected archive dates.
 Missing traces, snapshot replacements, and unavailable discovery slots appear
 in the report and cache manifest. A slot is recorded as unavailable when its
-file and the checked neighboring files all return HTTP 404. Online preparation
-retries recorded gaps. Offline reuse preserves them and rejects missing or
-damaged downloaded files. Preparation stops if no discovery snapshot is
+file and the checked neighboring files all return HTTP 404. Preparation reuses
+verified completed days, including their recorded source gaps. The download
+option `--refresh-gaps` retries unavailable source files. The desktop provides
+the same action with **Retry unavailable source files**. Offline reuse preserves
+recorded gaps and rejects missing or damaged downloaded files. Online preparation
+repairs missing or damaged cache files. Preparation stops if no discovery snapshot is
 available for the day. This source permits testing and evaluation.
+
+When a daily trace is unavailable, the downloader checks for an airborne
+position in the discovery snapshots. It then downloads five-second snapshots
+from five minutes before to five minutes after that position. Overlapping
+windows share the same source files. This can recover short flight segments.
+The cache records the source snapshots, attempted slots, missing files, and
+derived traces. The missing daily trace remains listed in the manifest.
+Online preparation also runs this recovery once for older caches with missing
+daily traces. It keeps the original manifest and reuses saved source files.
+Offline reads leave older caches unchanged; prepare them online to add recovery
+data before offline use.
+
+Discovery uses the same nearby flight area as the flight reader. It extends
+0.6 degrees beyond the observer's latitude bounds and adjusts the longitude
+margin for latitude. Older caches selected aircraft only inside the observer
+bounds. Online preparation builds a separate cache with the wider selection.
+It reuses verified source files and recorded source gaps. The older cache stays
+available for offline use if preparation stops. A completed wider cache must
+pass its own integrity checks before offline use.
+
+Recovered positions use the snapshot time minus the reported position age.
+Geometric and barometric altitude remain separate. Duplicate position times
+are counted once, and gaps over 20 seconds split the path. Ground records do
+not supply flight altitude. These windows can miss other parts of a flight.
+Snapshot recovery also needs an airborne discovery position; a flight between
+discovery snapshots can remain absent. Samples before May 2020 use the source's
+one-minute snapshot interval. Offline use requires a prepared cache.
+
+The high-resolution sample uses the same discovery snapshots and first-of-month
+coverage. It can add positions for a recorded flight, but source gaps and flights
+missed during discovery remain. Downloads and disk use can be larger. Selecting
+high-resolution data does not establish a location by itself.
 
 The free sample downloader retrieved all 288 snapshots and 97 Maho traces in
 validation. Every file matched an independent download. Cache reuse and recovery
@@ -153,6 +241,14 @@ the report status. A clock-rate fit with only three matched sounds remains
 provisional.
 
 Error percentages measure residual fit. Signal contrast controls detection.
+Doppler candidates are ranked by their improvement over a straight-line
+frequency drift. Each matched sound contributes its covered fraction multiplied
+by `1 - (model RMSE / linear RMSE)^2`, bounded between zero and one. Contributions
+are added across sounds. Match count and residual error break ties; quiet-gap
+conflicts retain their residual penalty. Missing or invalid baseline measurements
+contribute zero. This score still needs full-search testing on further recordings
+and shuffled controls. The existing ambiguity checks remain in effect.
+
 The timing region encloses competitive search points, and `enclosing_radius_m`
 describes that region. Calibrated probabilities and location error bounds remain
 unavailable. Decimal places and grid spacing describe numerical precision.
@@ -183,7 +279,14 @@ Current processing bounds are:
 - 10 million retained flight positions.
 - 32 MB decoded per aircraft trace.
 - 50,000 regional grid points.
-- A default budget of 5 million hypotheses, configurable up to 100 million.
+- A default budget of 5 million hypotheses per flight-proposal batch, configurable
+  up to 100 million. Large corridor searches divide automatically by flight
+  timestamp. Matching and refinement use the complete reference set in every
+  batch. The recording clock remains unknown when no time was supplied.
+- Automatic proposal division stops at a one-second flight interval or 4,096
+  batches. Every batch must pass its budget check before matching starts. A
+  failed check returns no location. Reports record all completed partitions in
+  `doppler_partitions`; the total work can exceed the budget for one batch.
 - Latitudes from 85 degrees south to 85 degrees north.
 - 64 terrain tiles per download request. Each expanded tile uses about 3 MB or
   26 MB, depending on resolution.
@@ -191,3 +294,13 @@ Current processing bounds are:
 Split search regions that cross the date line. Large archives can require
 substantial memory, storage, and processing time. A hypothesis-budget overrun
 stops the search with an error and no partial location result.
+
+The `--search-threads` option controls flight-corridor matching. Other search
+stages keep their existing worker settings. Terrain-folder searches can share
+an immutable tile snapshot within a 128 MiB combined cache, decoded-tile and
+temporary-read bound. Larger or unsupported layouts keep serial corridor
+matching. Prepared tile fingerprints remain active through refinement, and a
+detected file change or cancellation rejects the result. Missing-sample counts
+use the actual worker queries. More workers can use more memory. Field speedup
+has not been measured for this change; speed depends on the search and other
+work running on the computer.

@@ -1,0 +1,86 @@
+{
+  "scope": "Selected-flight proposal diagnostic using aircraft and a point from an earlier known-area fit. Original broad bounds and all imported tracks were used to assemble proposals. The point filtered output. No location acceptance claim.",
+  "counts_as_location_acceptance": false,
+  "plan": {
+    "source_commit": "64f91d0f193a3a56e9df2c6817eab4217941a0ef",
+    "scope": "Selected aircraft from an earlier hinted solution; all reference tracks compete for associations. Inspect worker-retained proposals and sampled ranks. No acceptance claim.",
+    "counts_as_location_acceptance": false,
+    "script_sha256": "fac97a1464692819e0d1df2c3dad464379851080a0100db07e8372dff82b367e",
+    "diagnostic_source_sha256": "fc413c1f93ff81a49a5deb057815248a21d799a410b1a2376c7c9e0b20fa226b",
+    "unmodified_sources": {
+      "search.rs": "262eb9db4543cb1aa1f12f607d159bc0f713404026f8d70cb87690bec1fd6940",
+      "index.rs": "baec90fe1d27aa1bf01980405b9efb25d5d1900d440eabfcd8fdd289998f20aa"
+    }
+  },
+  "binary": {
+    "sha256": "30508b43ddcda853c1e25d4ec163745ed2a73807857b7acdfdb3804bec4221b1",
+    "file": "proposal-retention-tests.exe",
+    "source_commit": "64f91d0f193a3a56e9df2c6817eab4217941a0ef",
+    "instrumented": true
+  },
+  "complete": {
+    "complete": true,
+    "cases": 2,
+    "counts_as_location_acceptance": false,
+    "production_sources_restored": true
+  },
+  "results": [
+    {
+      "variant": "traces",
+      "all_reference_tracks": 1166,
+      "selected_tracks": [
+        {
+          "aircraft": "a6ad7d/2/0",
+          "anchor": 7,
+          "best_nearby_corroborated_rank": 1,
+          "hypotheses": 5353,
+          "worker_retained": 4383
+        },
+        {
+          "aircraft": "a682b3/0/0",
+          "anchor": 8,
+          "best_nearby_corroborated_rank": null,
+          "hypotheses": 7006,
+          "worker_retained": 5778
+        },
+        {
+          "aircraft": "a04088/0/0",
+          "anchor": 15,
+          "best_nearby_corroborated_rank": 4,
+          "hypotheses": 5597,
+          "worker_retained": 4684
+        }
+      ],
+      "report_sha256": "b32538f5f607fc244bece81650ce0990296313e51bc245a4a21781c9c39946a4"
+    },
+    {
+      "variant": "hires-traces",
+      "all_reference_tracks": 1316,
+      "selected_tracks": [
+        {
+          "aircraft": "a6ad7d/2/0",
+          "anchor": 7,
+          "best_nearby_corroborated_rank": 2,
+          "hypotheses": 5401,
+          "worker_retained": 4427
+        },
+        {
+          "aircraft": "a682b3/0/0",
+          "anchor": 8,
+          "best_nearby_corroborated_rank": null,
+          "hypotheses": 7088,
+          "worker_retained": 5803
+        },
+        {
+          "aircraft": "a04088/0/0",
+          "anchor": 15,
+          "best_nearby_corroborated_rank": 1,
+          "hypotheses": 5605,
+          "worker_retained": 4674
+        }
+      ],
+      "report_sha256": "742a8c755cfbeaa9aabf368382dfd603c89e7b4a33af5115b3b498768d1f3e3b"
+    }
+  ],
+  "interpretation": "Nearby proposals with four passing curves occur among the best four worker-returned proposals for two selected flights with each source. This establishes that proposal generation still reaches useful nearby basins. It does not identify a later pruning stage or establish broad-search success."
+}

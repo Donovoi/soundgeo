@@ -1,0 +1,321 @@
+{
+  "source_url": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+  "target_error_m": 1000,
+  "accepted": false,
+  "source_commit": "4f8764c557339bc02da8b6464b3c6bfce1564d80",
+  "cli_sha256": "be3be6e40b04d14a0bd8bd1d0bf8cf9edfc625b2a75e9d46751105e5a5784cf9",
+  "media_sha256": "90cb2edebafb324422e8b99373f2b8a0fd1cd66381ce342d4bcfecb27807ef90",
+  "decoded_duration_s": 3599.998625,
+  "reference_dates": [
+    "2026-11-07",
+    "2026-11-08",
+    "2026-11-09"
+  ],
+  "recording_clock_supplied": false,
+  "camera_point_supplied": false,
+  "video_clues_used": false,
+  "bounds": {
+    "south": 61.0,
+    "north": 61.36,
+    "west": -150.36,
+    "east": -149.62
+  },
+  "ground_m": 27.0,
+  "ground_datum": "egm96",
+  "grid_m": 200.0,
+  "maximum_hypotheses": 20000000,
+  "search_workers": 2,
+  "native_exit_code": 4,
+  "native_elapsed_s": 3010.540531849001,
+  "elapsed_time_basis": "Recorded monotonic process duration; UTC wall span is not substituted.",
+  "status": "ambiguous",
+  "events": 10,
+  "tracks": 5703,
+  "hypotheses": 24306780,
+  "candidates": [
+    {
+      "rank": 1,
+      "latitude": 61.21427805107757,
+      "longitude": -149.8420201540333,
+      "matches": 3,
+      "relative_curve_error_percent": 0.8204401658077993,
+      "reference_distance_m": 7956.508828894594,
+      "fitted_clock_rate": 1.00376953125,
+      "fitted_recording_start_utc": "2026-11-07T20:04:19.443+00:00"
+    },
+    {
+      "rank": 2,
+      "latitude": 61.21742890527276,
+      "longitude": -149.84315644391694,
+      "matches": 3,
+      "relative_curve_error_percent": 0.8066432552633209,
+      "reference_distance_m": 8079.575850916464,
+      "fitted_clock_rate": 1.0050000000000001,
+      "fitted_recording_start_utc": "2026-11-07T20:04:19.719+00:00"
+    },
+    {
+      "rank": 3,
+      "latitude": 61.21475928109583,
+      "longitude": -149.83869919016377,
+      "matches": 3,
+      "relative_curve_error_percent": 0.8869861661351882,
+      "reference_distance_m": 8138.135937226674,
+      "fitted_clock_rate": 0.995,
+      "fitted_recording_start_utc": "2026-11-07T20:03:37.793+00:00"
+    },
+    {
+      "rank": 4,
+      "latitude": 61.2142897788947,
+      "longitude": -149.85443013494478,
+      "matches": 3,
+      "relative_curve_error_percent": 0.9378418515147087,
+      "reference_distance_m": 7382.487628652538,
+      "fitted_clock_rate": 1.0026953125,
+      "fitted_recording_start_utc": "2026-11-07T19:30:44.762+00:00"
+    },
+    {
+      "rank": 5,
+      "latitude": 61.23166493927507,
+      "longitude": -149.9739693235929,
+      "matches": 3,
+      "relative_curve_error_percent": 0.9438372938720653,
+      "reference_distance_m": 5786.6819927503375,
+      "fitted_clock_rate": 1.00146484375,
+      "fitted_recording_start_utc": "2026-11-09T00:29:09.314+00:00"
+    },
+    {
+      "rank": 6,
+      "latitude": 61.232844427662634,
+      "longitude": -149.97588768384173,
+      "matches": 3,
+      "relative_curve_error_percent": 0.9420864782787305,
+      "reference_distance_m": 5920.566646141999,
+      "fitted_clock_rate": 0.9971874999999998,
+      "fitted_recording_start_utc": "2026-11-09T00:29:12.167+00:00"
+    },
+    {
+      "rank": 7,
+      "latitude": 61.2152317195744,
+      "longitude": -149.8125046859171,
+      "matches": 3,
+      "relative_curve_error_percent": 0.9788009647237952,
+      "reference_distance_m": 9415.35476182987,
+      "fitted_clock_rate": 0.9977343750000002,
+      "fitted_recording_start_utc": "2026-11-08T22:21:51.259+00:00"
+    },
+    {
+      "rank": 8,
+      "latitude": 61.21679888055681,
+      "longitude": -149.78354511217705,
+      "matches": 3,
+      "relative_curve_error_percent": 0.9991167353410808,
+      "reference_distance_m": 10907.25853240094,
+      "fitted_clock_rate": 0.9960937499999999,
+      "fitted_recording_start_utc": "2026-11-07T20:30:16.006+00:00"
+    }
+  ],
+  "reference": {
+    "latitude": 61.179633,
+    "longitude": -149.9719665,
+    "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+  },
+  "original_reference_allowance_m": 0,
+  "reference_uncertainty": "The public owner pin is not surveyed. The original zero-metre allowance is preserved; it is not a measured uncertainty bound.",
+  "limits": [
+    "Native Linux results are not claimed bitwise equivalent to earlier Windows runs.",
+    "Diagnostic candidate proximity does not override the ambiguous application status.",
+    "The original camera reference is a public owner pin, not a survey.",
+    "No full shuffled-control qualification or new acceptance claim is made.",
+    "Earlier failed or interrupted attempts remain separately preserved.",
+    "The finite prepared archive dates are 2026-11-07, 08 and 09; this is not a search over all historical dates.",
+    "Track counts include the overlapping 2026-11-08 archive in both date batches.",
+    "The supplemental audit corrects the interpretation of a restrictive addition allowlist; the original wrapper complete=false and its failure evidence remain preserved."
+  ],
+  "scope": "Completed native Linux replay of the original fresh Lake Hood hour using the frozen 4f executable and unchanged broad-area Doppler settings. Additional development evidence; the original 27-recording timing benchmark and 250 m plans are unchanged.",
+  "date_batching_used": true,
+  "date_batch_windows": [
+    [
+      "2026-11-07",
+      "2026-11-08"
+    ],
+    [
+      "2026-11-08",
+      "2026-11-09"
+    ]
+  ],
+  "date_search": {
+    "dates": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09"
+    ],
+    "completed_batches": 2,
+    "complete": true,
+    "track_count_includes_overlap": true
+  },
+  "hypothesis_budget_scope": "20,000,000 hypotheses per complete overlapping date batch; total 24,306,780 across two batches. Each batch fits its budget without automatic proposal partitioning.",
+  "native_checkpoint_resumed": false,
+  "interpretation": "The native search completed all three prepared dates and returned ambiguous with 8 retained candidates, each matching 3 of 10 observations. The top candidate is 7,956.51 m from the unsurveyed pin; all retained candidates are 5.79\u201310.91 km away. This is a completed negative location result. The original wrapper additionally failed its post-run cache-addition audit; a separate supplemental audit verifies the native result and unchanged inputs without rewriting that failure.",
+  "build_qualification": {
+    "platform": "Linux",
+    "rust_tests_passed": 221,
+    "python_tests_passed": 10,
+    "build_executed_from_dirty_snapshot": true,
+    "build_base_commit": "82fc48cbcc00e1207086f6277b26a4b3f246e37e",
+    "built_at_reported_source_commit": false,
+    "committed_source_matches_qualified_snapshot": true,
+    "build_receipt_sha256": "2648e9cadf7043f2ee0a20ce146059919d3b945b72511a3c9ac3a45f14937fc5",
+    "committed_source_binding_sha256": "0f5c4812ec8ae35b1b0eb72fc18574954609b3620a2a558d3f66aec0f68a8292"
+  },
+  "audit": {
+    "original_wrapper": {
+      "complete": false,
+      "accepted": false,
+      "input_hashes_unchanged_after_attempt": false,
+      "post_audit_error": "AssertionError()",
+      "result_sha256": "3c66abd9ae494ea88413b6114c61b8ac332aac7344daafe9b02e76a24de9aff5",
+      "preserved_unchanged": true,
+      "cause": "The frozen wrapper permitted new decoded-tracks files only. It rejected three archive-complete receipts created by the frozen offline archive loader after native completion."
+    },
+    "supplemental": {
+      "audit_complete": true,
+      "native_scientific_run_complete": true,
+      "accepted": false,
+      "checks_passed": 230,
+      "input_hashes_unchanged": true,
+      "unique_pins_verified": 70,
+      "qualification_artifact_pins_verified": 6,
+      "preexisting_cache_files_verified": 35,
+      "unexpected_mutations": [],
+      "marker_additions": [
+        {
+          "date": "2026-11-07",
+          "selected_release_folder": "dated-cache-root",
+          "marker_sha256": "001cdf2f97fbabd512169d76b841ff84dfe1a9f14bd8430a14c6ff4131d42104",
+          "manifest_sha256": "984fd7820f53ddbbd41c40c94c4fea532f07fb05f09a30bded39734c567709b6",
+          "canonical_manifest_sha256": "92eb8cba4472e7cfad2f25ce1c5c4d9d74f918e936181fa280482ed095ca7c40",
+          "parts": [
+            {
+              "name": "v2026.11.07-planes-readsb-prod-0.tar.aa",
+              "bytes": 2000000000,
+              "sha256": "c8c36357036ea033f318cc3a46f461960324341586354cda9ade17f3640ef5d6"
+            },
+            {
+              "name": "v2026.11.07-planes-readsb-prod-0.tar.ab",
+              "bytes": 1404765184,
+              "sha256": "69623e9ace4363fc935bcfbe83e774a51019667f0423bf7867bd0162876602b9"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-08",
+          "selected_release_folder": "dated-cache-root",
+          "marker_sha256": "acb400c41a1730ee0527a00e13c361e4366628886f0438daaca4cacbfe5518f5",
+          "manifest_sha256": "39ef7b8e4721cfb9b1e2df539bca67b909dd0926342e28ab7fd8abc4eef08a71",
+          "canonical_manifest_sha256": "6b4f70b8c0498a4370754afb9b54c6e4a7fff98cc8a39b6d9b0689aab1d735d4",
+          "parts": [
+            {
+              "name": "v2026.11.08-planes-readsb-prod-0.tar.aa",
+              "bytes": 2000000000,
+              "sha256": "f9409537eb9e73e636f51617f5f7225c422772733f06ccffec26bd024dbefb61"
+            },
+            {
+              "name": "v2026.11.08-planes-readsb-prod-0.tar.ab",
+              "bytes": 1459915264,
+              "sha256": "ef7388db202249620aa7c02d667d076d811cfce5e42dfc5374d17f3fb648edd7"
+            }
+          ]
+        },
+        {
+          "date": "2026-11-09",
+          "selected_release_folder": "preferred-versioned-release",
+          "marker_sha256": "d0659e33817c3792776d4547b350b8cdb7e0d87800a4765934810ce198b3d729",
+          "manifest_sha256": "513dc6082ae7be28f7587d9c853724c8bac16479cf51be3fece00020fac1c57b",
+          "canonical_manifest_sha256": "efe190ccaa52ba88ccfa48b1f4fd8f733a39863a980e3ea5e4290b1341fedffd",
+          "parts": [
+            {
+              "name": "v2026.11.09-planes-readsb-prod-0.tar.aa",
+              "bytes": 2000000000,
+              "sha256": "76beafbe30e2e05766cb57b41b87d3b8eb59aca6ec0dd3a37a46f4dd787d987d"
+            },
+            {
+              "name": "v2026.11.09-planes-readsb-prod-0.tar.ab",
+              "bytes": 1723313664,
+              "sha256": "68cf603c5c61407d119095793bc08bc0618c9a06043ec18d26d6e587a2be265e"
+            }
+          ]
+        }
+      ],
+      "decoded_cache_additions": [
+        {
+          "sha256": "1e3f1f51e8760b3ce8aad1951c64019dbbdd6ac59c01b5946a24be1d769552eb",
+          "derived_key": "710467040f45a095e6d9aaa021d961d346e4a371e9bc5136651ddbf0c7081a74",
+          "payload_sha256": "ec417eda97ee85352bf882b48a1d6e83d6fbe418dd2a14e33aacd97647c8d9fe",
+          "tracks": 3087,
+          "samples": 421837,
+          "parser_source_key_independently_recomputed": true
+        },
+        {
+          "sha256": "9f9145f410bcac2e07295d3c0ae3197bfb7e1fb1f8939ebe1fff445b44f5221d",
+          "derived_key": "2d7d523615282054e8bb9d557831bd05b6018d2da5503ec0ccbdfbde3c84d043",
+          "payload_sha256": "910b2124845643f6500d94871f28526a84763f2f654210cdee6bfc4a5a5e2e84",
+          "tracks": 2616,
+          "samples": 378932,
+          "parser_source_key_independently_recomputed": true
+        }
+      ],
+      "audit_sha256": "f86854da2df8718db6c0605551e164e2262f4b886a094cc1143fdaabd0098d4b",
+      "receipt_sha256": "10bf46b4cd6c39cb964d97b575eb849afcfb94388ba2bb43591790c9c23bc327",
+      "auditor_sha256": "48705113a064fc561e813e20d67dae9f1f2070c126225bb4aaa8a9ec4f4af93f",
+      "no_processing_retry": true,
+      "original_runner_not_retroactively_changed": true
+    },
+    "native_observations_exactly_preserved": true,
+    "all_prepared_dates_searched": true,
+    "proposal_partitions": {
+      "all_reported_partitions_complete": true,
+      "partition_count": 0,
+      "partition_hypotheses": 0,
+      "partitions": []
+    },
+    "date_batch_audits": [
+      {
+        "index": 0,
+        "window": [
+          "2026-11-07",
+          "2026-11-08"
+        ],
+        "checkpoint_sha256": "c76a2dc86a57a18be7b51e2716c28e933819a21f5dbec202497e441cd233eec5",
+        "payload_sha256": "1ebab71ff0e4c95143b81c90f2bd3721b96eaad95605df1c039796383acae5be",
+        "batch_key_recomputed": true,
+        "complete": true,
+        "hypotheses": 13247500,
+        "tracks": 3087,
+        "proposal_partition_count": 0
+      },
+      {
+        "index": 1,
+        "window": [
+          "2026-11-08",
+          "2026-11-09"
+        ],
+        "checkpoint_sha256": "3cb5b383422628bac3c6fd6766301032d1a9b377549f764152deaed178fe6569",
+        "payload_sha256": "547d5714458421d85954615d51f123884648fcbc76163ef59cc75999e99e43df",
+        "batch_key_recomputed": true,
+        "complete": true,
+        "hypotheses": 11059280,
+        "tracks": 2616,
+        "proposal_partition_count": 0
+      }
+    ],
+    "proxy_connections": 0,
+    "shuffled_control_runs": 0,
+    "native_timed_out": false,
+    "report_sha256": "5d69756adfc8c9ed602107078d6e987e578361000a8ec4c6ae58092eee7a6f70",
+    "native_log_sha256": "9df4d6eda656a712ae3a8c25b73b6b0095b2470cf721d9c04297e632cd20bdc1",
+    "execution_receipt_sha256": "95f007cd4042c01859c45149d0353019567237d53fc7cb50771ece14f237b455",
+    "plan_sha256": "054cf635eb13aefae1e1b19389fcb2af5a2e1b675af89d5bb3fb78a287579ef2",
+    "startup_audit_sha256": "15b2a7984c6fe70cbc87da005b8026beb8e70a5839c37a4df0db23fb6c82eeb6",
+    "parent_review_sha256": "0cbab40a50fca666f414f535979a3a88633bd88d272789390b02e80672c265a0"
+  }
+}

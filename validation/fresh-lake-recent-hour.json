@@ -1,0 +1,149 @@
+{
+  "scope": "Fresh one-hour Lake Hood recording, tested offline against the three latest supported provider days selected from published metadata. This finite-cache test is separate from the 58-date benchmark.",
+  "source": {
+    "url": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+    "recording_sha256": "90cb2edebafb324422e8b99373f2b8a0fd1cd66381ce342d4bcfecb27807ef90",
+    "duration_s": 3600,
+    "segments_verified": 1440,
+    "full_decode_passed": true,
+    "source_verification_sha256": "da0cd93002b23a984ed7b2aed7dd345a2e6debbed0a61bf35160bb222cf1d5eb",
+    "reference": {
+      "latitude": 61.179633,
+      "longitude": -149.9719665
+    },
+    "reference_basis": "Public camera owner map pin",
+    "reference_surveyed": false,
+    "reference_allowance_m": 0,
+    "reference_used_only_by_evaluator": true,
+    "media_redistributed": false
+  },
+  "preparation": {
+    "complete": true,
+    "prepared_dates": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09"
+    ],
+    "source_commit": "8e3092c1173ad577964efd5eccec8c691c659665",
+    "cli_sha256": "fdddd67487a14d4164633dd80055dff95341e3e495a03f13417f6fc3ef95c4c4",
+    "exit_code": 0,
+    "elapsed_s": 11.875220700007048,
+    "cache_unchanged": true,
+    "offline_proxy_connections": 0,
+    "inventory_sha256": "22c703ead3181a719199cd7bfe325a3078c093fdb27f007d7414e8bebbf47bf6",
+    "log_sha256": "3f0070fb2fef0f1d0db44ce0ebb9d7780de61a79d6ae13adea70735c6d271d38"
+  },
+  "initial_preparation_check": {
+    "complete": false,
+    "result_sha256": "c58a4dba6d03377c2adb173617f5fa1c66f5d8f2347ac9a18b6449cf0d9d754c",
+    "downloads_and_offline_archive_reuse_passed": true,
+    "failed_step": "offline-dates",
+    "reason": "The harness expected a saved provider index after explicit-date downloads. Those downloads save flight archives.",
+    "correction": "Check the archive paths returned by native offline download with no dates. Preserve and reuse the original cache.",
+    "download_restarted": false
+  },
+  "corrected_preparation_result_sha256": "88c490f220dff090f2f53acb4f1f4d061e2b2d0996ad45e59e5fa851a2405344",
+  "analysis": {
+    "launch_verified": true,
+    "analysis_result_pending": false,
+    "pid": 10808,
+    "started_unix": 1794276840.1711123,
+    "source_commit": "8e3092c1173ad577964efd5eccec8c691c659665",
+    "cli_sha256": "aba8bc819096a838589e4898d4e4c62b47ab27824a4ea3020d34c0b53089fa75",
+    "plan_sha256": "2e0c0a93b70622d8b5310406f56f99cd4e04776a76c5a9b7ca357a2c36606311",
+    "job_sha256": "3085352cdfa0c992193b97b7f0e3a05d928a50ce66b626d62406ec052ee398b4",
+    "schedule_sha256": "8020c8d2f6418cc92532589cdf8c756bffafed0c4491925c39f32cd8d0569c54",
+    "start_gates_sha256": "397788f122d655d64b6f2336d60f9b0467e45a36d63e748deb4dba5bb9b09ef1",
+    "media_sha256": "90cb2edebafb324422e8b99373f2b8a0fd1cd66381ce342d4bcfecb27807ef90",
+    "reference_dates": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09"
+    ],
+    "actual_process_command_matches_plan": true,
+    "no_supplied_recording_date_or_clock": true,
+    "no_known_point_or_video_clues_supplied": true,
+    "original_broad_bounds_preserved": true,
+    "offline": true,
+    "workers": 2,
+    "timeout_s": 21600,
+    "complete_local_ci_and_preparation_gates_verified": true,
+    "start_verification_sha256": "9efd550f39512079e34727c5d47fc294e10c7d65275feb59c774b8948f1b9f82",
+    "target_error_m": 1000,
+    "acceptance": "Complete coverage of all three prepared dates, native exit 0 with candidates_found, independently checked error including reference allowance within 1 km, unchanged inputs, and no proxy connections.",
+    "terminal_result": {
+      "complete": false,
+      "accepted": false,
+      "error": "FileNotFoundError(2, 'No such file or directory')",
+      "elapsed_s": 4655.203821500007,
+      "source_files_unchanged": true,
+      "inputs_unchanged": true,
+      "additional_cache_files": [
+        "decoded-tracks/9de9f0bd0aa5758f68980c5fee03dff678d230524e5e8c0a2b9d8a6acb32a09d.sgcache"
+      ],
+      "proxy_connections": 0,
+      "native_exit_code": 1,
+      "native_error": "unexpected end of file",
+      "native_elapsed_s": 4655.201430299989,
+      "first_batch_completed": true,
+      "second_batch_completed": false,
+      "report_written": false,
+      "failure_verification_sha256": "22c31dade04078185fb438c657b65f5af2bed5a417e1abcb97e9fd4d62c29567"
+    }
+  },
+  "accepted_location": false,
+  "source_archive_diagnostic": {
+    "source_url": "https://github.com/adsblol/globe_history_2026/releases/download/v2026.11.09-planes-readsb-staging-0/v2026.11.09-planes-readsb-staging-0.tar",
+    "source_release": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.09-planes-readsb-staging-0",
+    "bytes": 1859851264,
+    "sha256": "91b8e85fb96d16affea00d1a9afff9d73f9f8135cbc6073baefc847b84b91a11",
+    "provider_digest_matches": true,
+    "members": 51954,
+    "trace_members": 51666,
+    "empty_traces": [
+      "./traces/5f/trace_full_407e5f.json.readsb_tmp"
+    ],
+    "small_traces": [
+      {
+        "name": "./traces/5f/trace_full_407e5f.json.readsb_tmp",
+        "size": 0,
+        "offset": 1763041280
+      }
+    ],
+    "tar_structure_complete": true,
+    "upstream_temporary_file_convention": "https://github.com/wiedehopf/readsb/blob/dev/json_out.c#L1898-L1963",
+    "scope": "Provider-byte and tar-structure check; the archive is preserved unchanged."
+  },
+  "corrected_importer_replay": {
+    "record": "readsb-temporary-traces.json",
+    "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+    "complete": true,
+    "segments": 717,
+    "points": 99042,
+    "unfinished_traces": 1,
+    "archive_unchanged": true,
+    "proxy_connections": 0,
+    "independent_verification_sha256": "75833257ba490e11c17174fe6837d6bf32770bfb441457bfa0708944313c0fa6"
+  },
+  "audio_retry": {
+    "complete": true,
+    "scope": "Actual native launch and unchanged original v2 analysis inputs; final location and input/network checks remain pending.",
+    "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+    "cli_sha256": "2f4b912203c29d3395e741f0e58e8891bb93ecdf3343e3d0cd6a06ee178d97ee",
+    "pid": 21344,
+    "started_unix": 1794284202.705716,
+    "original_analysis_job_unchanged": true,
+    "no_recording_date_clock_or_point_supplied": true,
+    "video_clues": false,
+    "offline": true,
+    "workers": 2,
+    "timeout_s": 21600,
+    "plan_sha256": "f16f87d0794998bb4c70172f95e40298cc1ee28e55039de9f0ed92c1ac545cff",
+    "job_sha256": "3085352cdfa0c992193b97b7f0e3a05d928a50ce66b626d62406ec052ee398b4",
+    "native_witness_sha256": "9f83f5b2af3af9a859916d3219b8a81dc04f136abdb1d6d58310f4ecd00f32bf",
+    "parser_result_sha256": "2c23068ace64720c5c9568a9577e88480e33da3e65efed61e833700d209257d2",
+    "parser_independent_verification_sha256": "75833257ba490e11c17174fe6837d6bf32770bfb441457bfa0708944313c0fa6",
+    "location_result_pending": true,
+    "accepted_location": false
+  }
+}

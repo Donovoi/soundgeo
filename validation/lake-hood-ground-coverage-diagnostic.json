@@ -1,0 +1,197 @@
+{
+  "scope": "Known-camera source and geometry diagnostics for the fresh Lake Hood hour. These calculations use the independent reference position and recording clock. They are separate from no-date location acceptance tests.",
+  "location_acceptance": false,
+  "application_changed": false,
+  "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.09-planes-readsb-prod-0",
+  "raw_coverage": {
+    "complete": true,
+    "scope": "Raw positions inside the original broad region during the complete source hour. No smoothing or interpolation.",
+    "counts": {
+      "members": 72086,
+      "completed_traces": 71773,
+      "all_rows": 102834206
+    },
+    "groups": {
+      "airborne_altitude": {
+        "positions_in_region_hour": 9883,
+        "aircraft_in_region_hour": 69,
+        "closest_distance_m": 1092.089308149145,
+        "radii": [
+          {
+            "radius_m": 1000,
+            "positions": 0,
+            "aircraft": 0,
+            "with_geometric_altitude": 0
+          },
+          {
+            "radius_m": 5000,
+            "positions": 2455,
+            "aircraft": 40,
+            "with_geometric_altitude": 2438
+          },
+          {
+            "radius_m": 20000,
+            "positions": 9431,
+            "aircraft": 67,
+            "with_geometric_altitude": 9197
+          }
+        ]
+      },
+      "ground": {
+        "positions_in_region_hour": 7992,
+        "aircraft_in_region_hour": 59,
+        "closest_distance_m": 461.46918322985294,
+        "radii": [
+          {
+            "radius_m": 1000,
+            "positions": 619,
+            "aircraft": 19,
+            "with_geometric_altitude": 22
+          },
+          {
+            "radius_m": 5000,
+            "positions": 5712,
+            "aircraft": 42,
+            "with_geometric_altitude": 1264
+          },
+          {
+            "radius_m": 20000,
+            "positions": 7992,
+            "aircraft": 59,
+            "with_geometric_altitude": 1749
+          }
+        ]
+      },
+      "missing_altitude": {
+        "positions_in_region_hour": 1,
+        "aircraft_in_region_hour": 1,
+        "closest_distance_m": 16794.20470682743,
+        "radii": [
+          {
+            "radius_m": 1000,
+            "positions": 0,
+            "aircraft": 0,
+            "with_geometric_altitude": 0
+          },
+          {
+            "radius_m": 5000,
+            "positions": 0,
+            "aircraft": 0,
+            "with_geometric_altitude": 0
+          },
+          {
+            "radius_m": 20000,
+            "positions": 1,
+            "aircraft": 1,
+            "with_geometric_altitude": 0
+          }
+        ]
+      }
+    },
+    "maximum_ground_speed_knots_within_1km": 33.5,
+    "ground_positions_at_least_25mps_within_1km": 0,
+    "inputs_unchanged": true,
+    "plan_sha256": "539ccd88514f1c523aac09ff06f2d292e7238621ae5a7feb73ef7602f5d8faa0",
+    "rows_sha256": "f7400bfe4f889eec9ec3a2d0e6f9a647ae19fbdbbd7539d9c8cd0f0635689c4b",
+    "result_sha256": "48a30700ab9711d8470abaa7f0fa9fc9c87720952a12a4ea6cec239906a96d3f"
+  },
+  "airborne_curve_diagnostic": {
+    "complete": true,
+    "location_acceptance": false,
+    "inputs_unchanged": true,
+    "events": 24,
+    "reference_segments_overlapping_hour": 114,
+    "full_coverage_fits": 562,
+    "events_with_passing_individual_fit": 0,
+    "elapsed_s": 3.7439237000071444,
+    "factor_checks": 1000,
+    "maximum_factor_difference": 2.220446049250313e-16,
+    "plan_sha256": "60f79d3372a8b2dad346b5732a271f56dcf9cce56c346d78d68a3009b5ff933b",
+    "fits_sha256": "82ddc2249df0f08728a4e7617dfd5e81cd21936db2bd1b77241800b5126c34ff"
+  },
+  "ground_transition_hypothesis": {
+    "scope": "Preserve full-day raw traces for the 81 aircraft recorded within 20 km in the source hour. Include ground positions, with recorded GNSS altitude or the existing 27 m EGM96 ground fallback. Compare individual sound curves at the known point and clock.",
+    "airborne_import_validation": {
+      "complete": true,
+      "scope": "Selected-aircraft Python import and smoothing compared with the existing native full-archive CSV. Every segment ID, position timestamp and coordinate checked.",
+      "aircraft": 81,
+      "segments": 244,
+      "positions": 43023,
+      "maximum_coordinate_difference": [
+        0.0,
+        0.0,
+        2.2737367544323206e-13
+      ],
+      "native_reference_sha256": "4d6467d74e2e755b0089d476db60e5fa0d8540656cfa12d0310ca0ecaf934ac1",
+      "script_sha256": "fc5c112dc7bbd749b8c02b72110cee6e36dcc3328985c991aaa54c85e5752121"
+    },
+    "result": {
+      "complete": true,
+      "location_acceptance": false,
+      "application_unchanged": true,
+      "airborne_import_matches_native_export": true,
+      "airborne_segments": 244,
+      "surface_inclusive_segments": 435,
+      "retained_ground_rows_before_segmentation": 21529,
+      "ground_rows_using_fallback": 18377,
+      "airborne_passing_individual_fits": [],
+      "surface_passing_individual_fits": [],
+      "factor_checks": 1000,
+      "maximum_factor_difference": 4.440892098500626e-16,
+      "plan_sha256": "39602ec5b792d93f6efc45405bb816688b04b4f824d647737a56a21fd32e0f08",
+      "airborne_fit_sha256": "9ffa11575912185e2e567c97d11aacb70de2c5b74bf4d7deb97175e076353381",
+      "surface_fit_sha256": "e0de87a41e9bc9cc3871a5eb0d208b400b249d5ee97f53b5fcfd597ee2347ff5"
+    },
+    "source_preparation": {
+      "complete": true,
+      "location_acceptance": false,
+      "source_parts_unchanged": true,
+      "selected_traces": 81,
+      "raw_rows": 171361,
+      "plan_sha256": "3648b4f7b6e212c90bbfdd8c38c5bfd4376cc9fa6a7c3e2837c179d28394013a",
+      "manifest_sha256": "5e4ca047f36a0a7a0ec9f37bf21bacf1def63677e00725312452cbe0122f1bc3"
+    }
+  },
+  "interpretation": "Adding ground-to-air transitions produced no passing individual curves at this fixed point and clock. The diagnostic does not support changing ground-record handling to solve this recording. The audio observations and physical-model assumptions need further investigation.",
+  "diagnostic_limits": "The ground fallback is constant. The Python diagnostic has no location, clock-rate, start-time or weather optimization. It checks individual curves and does not run the complete native search or its negative controls.",
+  "source_stream_timing": {
+    "scope": "Read-only source-container timing check. It does not identify audible aircraft or prove location accuracy.",
+    "complete": true,
+    "source_streams": {
+      "video": [
+        {
+          "index": 0,
+          "codec_type": "video",
+          "start_time": "20781321.600000",
+          "duration": "20784921.600000"
+        }
+      ],
+      "audio": [
+        {
+          "index": 0,
+          "codec_type": "audio",
+          "start_time": "20781321.613061",
+          "duration": "20784921.611610"
+        }
+      ],
+      "recording": [
+        {
+          "index": 0,
+          "codec_type": "audio",
+          "start_time": "0.000000",
+          "duration": "3599.998549"
+        },
+        {
+          "index": 1,
+          "codec_type": "video",
+          "start_time": "0.000000",
+          "duration": "3600.000000"
+        }
+      ]
+    },
+    "source_audio_minus_video_start_s": 0.013060998171567917,
+    "recording_streams_start_at_zero": true,
+    "source_verification_sha256": "da0cd93002b23a984ed7b2aed7dd345a2e6debbed0a61bf35160bb222cf1d5eb"
+  },
+  "lake_hood_reliability_verified": false
+}

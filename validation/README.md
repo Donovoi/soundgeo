@@ -8,6 +8,610 @@ New results must state which target they use.
 
 ## Current checks
 
+The [buffered cache writer](buffered-cache-writes.json) groups decoded-flight
+JSON writes into 256 KiB blocks and flushes before atomic publication.
+Revision `c1b2403` passed all required Windows and Ubuntu checks, with
+237 Rust tests and 10 Python tests per platform. Test names match the
+source. Existing cache entries and their original field results remain
+preserved; the source fingerprint gives new builds distinct cache keys.
+
+A [fresh VM qualification](restored-vm-qualification.json) of clean revision
+`305bd32` passed all required release checks, 237 Rust tests and 10 Python
+tests. A separate artifact check matched test names to the source and
+verified all source files, logs and frozen executables. Builds and tests
+ran headlessly in WSL2 with limits of two CPU cores and 8 GiB RAM.
+This verifies the restored development environment; location accuracy
+is evaluated separately.
+
+The [Heathrow reference evidence](heathrow-reconstruction-reference-evidence.json)
+records nine fixed sample-frame hashes and the mapped hotel footprint.
+Re-extraction matched all nine PNGs; the evaluation plan still matches its
+original input pin. Microphone co-location and the 200 m allowance remain
+assumptions. The full three-date native search is still running.
+
+The [JSON numeric-fidelity fix](json-numeric-fidelity.json) prevents one-ULP
+changes when saved observations and modeled curves are read back. Two original
+Lake Hood reports were restored exactly without excluded fields or a numeric
+tolerance. The JSON parser setting also affects reference data, so a new decoded
+cache version ignores and preserves prior entries. The actual report writer,
+saved-report identity replay, and raw readsb cold/warm cache regressions passed.
+All required local Linux checks passed with 228 Rust tests and 10 Python tests.
+The three new executables were frozen separately from existing field runs.
+The same checks and counts passed in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42943103677).
+The subsequent [terrain snapshot change](terrain-parallel-qualification.json)
+passed all required local Linux checks with 237 Rust tests and 10 Python tests.
+
+The [cached-attribution regression](archive-attribution-reuse.json) fixes an
+offline archive failure when the correct attribution file is read-only. The app
+now leaves identical attribution untouched and still creates or repairs missing
+or stale text. The real archive-reader regression preserves the protected file's
+bytes, timestamp and permissions. All required local Linux checks passed, with
+226 Rust tests and 10 Python tests. Independent review matched all 67 compiled
+input files to the tested source; the executables were frozen separately from
+ongoing validation runs. Revision `d182aa1` also passed all required checks and
+the same test counts in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42931899906).
+
+Revision `8c46b16` makes [whole-activity Doppler controls](doppler-controls.md)
+use the application's date windows, proposal partitioning, and candidate merge.
+An identity replay checks saved observations before shuffled controls are used.
+The source passed all required local Linux checks, 225 Rust tests, 10 Python
+tests, and four native CLI checks. Independent checks matched 67 compiled input
+files to the committed source, allowing only text line-ending differences.
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42920141177)
+also passed all required checks, with 225 Rust and 10 Python tests per platform.
+These checks establish software behavior; they add no accepted location.
+
+The [new native Linux replay of the first Lake Hood hour](native-lake-first-replay-82.json)
+completed 14,057,219 hypotheses and remained ambiguous. Its top candidate was
+60.13 m from the unsurveyed reference pin, with five of 18 sounds matched.
+A candidate 8.25 km away also matched five sounds. The unchanged inputs,
+observations, reference-day coverage and terminal report passed independent
+audits. This diagnostic proximity adds no accepted location.
+
+The [later Lake Hood hour](native-lake-later-replay-82.json) completed
+16,924,416 hypotheses and remained ambiguous. Its top candidate was 446.72 m
+from the unsurveyed reference, with five of fourteen sounds matched. Retained
+competitors included locations 4.95 to 9.08 km away. All inputs and the full
+single-day search passed independent checks.
+
+The [fresh Lake Hood hour](native-lake-fresh-replay-4f.json) completed both
+overlapping windows across three prepared dates, totalling 24,306,780 hypotheses.
+It remained ambiguous; each of eight candidates matched three of ten sounds,
+with distances from 5.79 to 10.91 km. The original wrapper rejected three new
+archive-completion receipts. A supplemental audit passed 230 checks, verified
+all original inputs and the derived files, and preserved that wrapper failure.
+Both runs are additional negative evidence; the original timing benchmark is unchanged.
+
+The [prospective Amsterdam fixed-hour test](amsterdam-fixed-hour-timing.json)
+passed the conditional 1 km target with frozen `4f8764c`. Its returned region
+center was 268.54 m from the mapped reference, or 488.54 m including the declared
+220 m microphone-location allowance. It matched 25 passages, searched all three
+prepared dates and both 38,335-point grids, and beat all 19 merged controls
+after 38 per-window control searches. The model region radius was 806 m.
+All 35 inputs and 70 metadata pins remained unchanged. Two terminal service
+checks failed after Linux removed the completed transient unit; preserved live
+startup records and the exact-invocation journal resolved those lifecycle checks.
+Independent review recomputed the date/control merges and center error.
+This adds a third successful site under the stated microphone co-location and
+movement assumptions. The original 27-recording benchmark remains unchanged.
+
+The [same-hour parser regression](amsterdam-float-roundtrip-regression.json)
+repeated that frozen protocol with qualified `65669df` and new decoded-cache
+keys. The final report and both date reports matched the earlier results exactly
+except for creation time; decoded reference payloads also matched exactly.
+All scientific gates passed, with the same 488.54 m conditional error bound.
+This verifies the changed parser on an accepted real recording and adds no new
+sample or site. The elapsed times are not a controlled speed comparison.
+
+The [additional Heathrow fixed-hour test](heathrow-fixed-hour-timing.json)
+returned insufficient evidence with zero timing sound peaks. It stopped before
+loading flight tracks, searching dates or running shuffled controls. Its fixed
+clip, broad area, default timing settings and prepared reference inputs were
+preserved. An independent terminal audit passed 123 checks and rehashed all
+35 material inputs. No location was returned. The separate Doppler attempt was
+stopped before its first date checkpoint and has no completed location result.
+Its partial logs remain preserved. Neither method changes the original
+27-recording benchmark below.
+
+The [completed-date recovery check](date-checkpoint-recovery.json) interrupted the
+existing Maho recording after its first saved date batch, resumed it, and compared
+the result with an uninterrupted search. Both Linux reports match exactly except
+for creation time. Both searched all three prepared dates and passed 19 controls,
+with a location error of 549.65 m including the 200 m reference allowance.
+The first checkpoint stayed unchanged; 2,172 raw reference files and all other
+inputs passed an independent hash audit. This verifies recovery on an existing
+successful recording; successful-site coverage remains unchanged.
+Application revision `4f8764c` passes 221 Rust tests, 10 Python tests, and all
+required checks locally on Linux and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42821378180).
+
+The [separate 20-minute Lake Hood test](lake-final-20-minute.json) returned
+insufficient evidence with no usable Doppler observations or location candidates.
+The qualified `82fc48c` Windows CLI stopped before loading flight tracks or
+searching dates. Its offline job supplied the original broad area and ground
+elevation, with no recording date, clock, camera point, or video text clues.
+An independent audit verified 46 checks and 35 unchanged cache files. This
+additional development test fails the 1 km target; the 27-recording timing
+benchmark below remains unchanged.
+
+The [persistent-tone check](fast-stationary-tones.json) reproduces two flyovers
+hidden by louder fixed tones. The corrected detector recovers both flyovers.
+Revision `82fc48c` passes all 215 Rust tests, 10 Python tests, formatting,
+strict Clippy, doc tests, and release builds locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42785607130).
+The downloaded Windows binaries match the CI archive checksum and source tree.
+
+Six offline audio exports replayed three unchanged Lake Hood hours, with no
+recording dates or times supplied. The selected observation counts changed from
+24 to 18, 16 to 14, and 24 to 10. The first two hours retain all five previously
+matched sound curves. An independent audit checked the observation order, native
+exits, and input and executable hashes. The proxy recorded zero connections.
+The full location replay processes stopped before producing terminal reports.
+New attempts preserve their original inputs and partial logs. These audio
+checks establish no new location result.
+
+Separate checks used the known camera point and clock to examine the new
+observations. Five sounds in the first hour and four in the second had passing
+individual fits. The fresh hour had none. Testing that hour at 14 uniform
+temperatures from -30 to 35 degrees Celsius also produced no passing fit in
+3,679 comparisons. This temperature check kept the extracted sounds fixed.
+
+The [archive repair check](production-archive-repair.json) verifies automatic
+updates from a staging archive to a production release. It also reproduces and
+fixes a saved production manifest with a missing archive part. The CLI rejects
+that incomplete cache offline, downloads the missing 1.72 GB part online, and
+then reuses the completed cache offline with no date argument. Publisher hashes
+match, the original files remain intact, and the proxy records no connections.
+Revision `c21b314` passes all 214 Rust tests and 10 Python tests locally. The same
+application source also passes
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42770523346).
+
+The [completed Lake Hood searches](lake-hood-completed-searches.json) still fail
+the location target. Two earlier clips searched all 58 available free sample
+dates and returned insufficient evidence. The fresh one-hour clip searched
+three prepared dates and also returned insufficient evidence. These runs used
+no recording dates or times. All searched dates, native reports, and offline
+checks are recorded. The production-archive repeat also finished with
+insufficient evidence: 24 observations, 22,753,143 hypotheses, and no candidates.
+It searched all three dates. The independent audit verified the original 33
+cache files, media, decoder, executable, and zero proxy connections.
+
+The earlier [audio diagnostics](lake-hood-audio-diagnostics.json), from revision
+`709d38f`, export all 31 grouped observations. The default 24 match the original
+search. The seven observations below the
+limit produce no passing individual fit at the known camera and clock. Allowing
+the source pitch to change linearly also produces no passing fit at that clock.
+These results leave the event limit and pitch model unchanged.
+
+A separate [ground-coverage diagnostic](lake-hood-ground-coverage-diagnostic.json)
+checked the known camera point and clock. The raw source contains 619 ground
+positions within 1 km, across 19 aircraft IDs. Including ground-to-air
+transitions produced no passing individual sound curves in that diagnostic.
+Its airborne importer matched all 43,023 compared positions from the native
+export. The application and the no-date searches remain unchanged.
+
+To inspect observations before the 24-event search limit, run:
+
+```text
+cargo run --release --locked --example inspect_audio -- job.json all-events.json --all-observations
+```
+
+This diagnostic exports all grouped observations in quality order. Without the
+flag, it exports the observations selected for normal analysis.
+
+The [unfinished-trace check](readsb-temporary-traces.json) replays the provider
+archive that stopped the fresh Lake Hood recording. The corrected importer
+loads 717 flight segments and 99,042 positions, reports one unfinished file,
+and preserves the original archive. An independent check matched every exported
+timestamp to its source aircraft trace. Damaged completed traces still fail.
+
+Revision `5f6c4e1` passes all required checks locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42751843529):
+202 Rust tests and 10 Python tests pass, with no failures or ignored tests.
+The release binaries and diagnostic tools are frozen and hashed. Two earlier
+successful recordings also pass offline with blank recording dates and times.
+Maho remains within 550 m, including its 200 m reference allowance. Midway remains
+within 90 m after searching all three prepared dates. Both retain their original
+result regions. All 18,111 checked cache files and other inputs stayed unchanged;
+the proxy recorded no connections. The fresh one-hour Lake Hood retry completed
+with insufficient evidence; its result is in the completed-search record above.
+
+The [date-index freshness check](date-index-freshness.json) reproduced a newly
+published day missing from the saved provider index. The new CLI added that day
+with one metadata request and kept all 1,329 earlier dates. Warm-cache and offline
+repeats stayed identical, with no proxy connections. Revision `c5bcade` passed
+all required local checks and [Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42734990519):
+199 Rust tests and 10 Python tests passed, with no failures or ignored tests.
+The release binaries and control tool are frozen. The downloaded Windows CLI
+also passed the same date-discovery and offline reuse checks. Its source tree
+and archive checksum match the CI records.
+
+The [curve-fit runtime check](curve-fit-runtime.json) compared 1,842 fits from
+two Lake Hood recordings, including shifted proposals and short curves. Reusing
+flight geometry preserved every fit output. Median fit time fell by 24% and 31%
+in these diagnostics. Other searches were active; full-search speed is still
+unmeasured. A separate segment-lookup cache was slower and was discarded.
+
+Four cases in the four-date Lake Hood retry reached their six-hour limits.
+None wrote a location report. The fifth process stopped without a terminal
+report. These failures remain in the validation record.
+
+Revision `8e3092c` passes all 196 Rust tests, 10 Python tests, formatting,
+strict Clippy, doc tests, and release builds locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42729743227).
+The local control-tool build also passes.
+
+The [nearby-flight discovery check](flight-discovery-area.json) used the verified
+Windows CI executable to prepare a real Lake Hood reference cache. It selected
+565 aircraft, reused 387 traces, and downloaded 176 additional traces from the
+free source. Two daily traces remained unavailable. All 563 downloaded traces
+match independent source downloads. Offline reuse passed with no date arguments
+and no connections to the test proxy. The original cache stayed unchanged.
+The completed offline video replay placed its first candidate 56.34 m from the
+reference. It matched five of 24 detections and remained ambiguous, so it failed
+acceptance. The other retained points were 5.5 to 17.0 km away. All 2,480 original
+cache files and other inputs stayed unchanged. The proxy recorded no connections.
+This replay searched one prepared day with no date or clock supplied. The
+separate wider-date tests continue.
+
+The [full free-cache check](full-free-cache-offline.json) prepared all 58
+first-of-month dates listed by the high-resolution sample provider, from
+February 2022 to November 2026. Native offline preparation passed, with zero
+test-proxy connections and unchanged cache and source copies. The selected data
+contains 28,099 traces and all 16,704 snapshot slots. Source gaps remain recorded.
+Both original Lake Hood clips are now being searched against this full cache,
+with no recording date or clock supplied. Their location results are pending.
+
+A [fresh one-hour recording](fresh-lake-recent-hour.json) was tested offline with
+three automatically selected provider days. It received no recording date,
+clock, camera point, or video text clues. The first date batch completed. The
+second stopped with a decode error after 77.6 minutes; no location report was
+written. The provider archive passes its published checksum and contains an
+empty `.readsb_tmp` trace file. The importer tried to decode this unfinished
+file. The original failed run and archive remain preserved.
+
+The same recording passed a separate [optional video-text check](fresh-lake-video-clues.json)
+with the qualified Windows CI executable. It read **Lake Hood Seaplane Base**
+in three frames and matched a GeoNames point 31.06 m from the camera reference.
+No date, clock, region, or coordinates were supplied. It used the prepared
+worldwide place database offline, with zero test-proxy connections and unchanged
+inputs. The report also retains a broad Anchorage area clue 118.24 km away.
+These place clues do not establish an audio result or a camera-position radius.
+
+Revised Doppler ranking sums the covered improvement over linear frequency
+drift, with each sound capped at one unit. Proposal retention, refinement, and
+date merging use that score. Ambiguity checks inspect all retained competitors.
+The regression fixture below preserves the measured failure that prompted this
+change. Full-search testing of the revised score is pending.
+
+The [first full-search control](lake-doppler-counterexample.json) found a
+counterexample. Reordered audio matched five activities with 0.565% relative
+error, ahead of the original baseline's five matches and 0.810% error. Its top
+candidate was 8.53 km from the original camera. The experiment stopped under
+its recorded rule. All observations and alternatives stayed intact, with whole
+activity blocks moved in time. Inputs stayed unchanged, and the proxy recorded
+no connections. The count-and-error score failed this signal check. Acceptance rules
+remain unchanged.
+
+The [separate retries](lake-doppler-retry-results.json) completed within their
+four-hour limits. High-resolution traces placed the first Lake Hood clip
+56.34 m from the reference, with five matched activities. Its report remains
+ambiguous. The first control baseline also reproduced the earlier full report,
+apart from creation time: 89.81 m, five matches, and ambiguous status. Both
+original two-hour failures remain preserved. Expanded-date tests continue.
+
+The evidence commit `9cec17f` passed all required checks on Windows and Ubuntu:
+173 Rust tests and 10 Python tests passed on each platform, with no failed or
+ignored tests. That run covered application source `512c645`.
+
+The [corridor worker checks](corridor-worker-checks.json) cover the CLI override,
+saved jobs, and the desktop setting. Revision `512c645` passed all 173 Rust
+tests, 10 Python tests, formatting, strict Clippy, doc tests, and both release
+builds locally and in Windows and Ubuntu CI. The control-tool build passed
+locally. Six native offline runs preserve the full synthetic reports with the
+old default and with one or eight corridor workers. Saved jobs stay unchanged.
+An eight-worker replay also preserves the complete later Lake Hood report,
+apart from creation time and the explicit worker setting. The result remains
+ambiguous at 106.51 m. The proxy recorded no connections.
+
+The [four-case proposal-retention comparison](lake-proposal-retention-results.json)
+has completed. The standard-trace results place the first clip 89.81 m away
+and the later clip 106.51 m away. The later high-resolution result is 513.27 m
+away with six matched activities. All three reports remain ambiguous. The first
+high-resolution run reached its two-hour limit without a report. The source
+data covers one prepared day. Expanded-date tests remain separate. A separate
+audit confirms the location errors, unchanged original jobs, and source hashes.
+The earlier control baseline also reached its two-hour limit before it could
+start a shuffled search. Each timed-out job has a separate retry with a
+four-hour limit.
+
+The [coarse-fit bound](corroboration-bound-checks.json) skips curve fits that
+cannot add support to the retention step. All 480 equivalence cases preserve
+the original result. Both native search modes also produce the same complete
+reports on the synthetic demo, apart from creation time, with no proxy
+connections. Acceptance rules are unchanged.
+
+Revision `70735f5` passed 172 Rust tests, 10 Python tests, formatting, strict
+Clippy, doc tests, and release builds locally and in Windows and Ubuntu CI.
+The control-tool build also passed locally. Real-video validation continues.
+
+[Whole-activity controls](doppler-controls.md) reorder complete sound activities
+and repeat the original full location search. Curves, overlapping activity,
+and observation alternatives stay together. The 19 orders remain distinct
+after cyclic rotation. Acceptance rules remain unchanged.
+
+The [first control build](doppler-controls-checks.json) passed 169 Rust tests
+and 10 Python tests. A native check then found that JSON rounding prevented a
+real saved plan from loading. The queued experiment stopped before any search.
+
+The [plan reload fix](control-plan-roundtrip-checks.json) passed 171 Rust tests,
+10 Python tests, formatting, strict Clippy, doc tests, both app builds, and the
+control-tool build locally. The regression failed before the fix and passed
+afterward. All 19 reloaded controls now produce the same shifts as the original
+plan. The native tool accepts the real plan and rejects a changed source hash,
+permutation, or duration. A new offline run starts with a fresh baseline and
+compares it with up to 19 shuffled searches on the same frozen build.
+
+The plan reload source also passed all required checks in
+[Windows and Ubuntu CI](control-plan-ci.json): 171 Rust tests and 10 Python
+tests passed on each platform.
+
+The [same-build offline replay](control-plan-offline-audio.json) kept Maho within
+549.65 m, with 16 matched flights and all 19 timing controls passed. Lake Hood
+remained insufficient. Both reports match the preceding replay apart from
+creation time. The proxy recorded no connections, and source manifests stayed
+unchanged. These replays use the existing November sample caches.
+
+The [Windows CI executable](control-ci-artifact-audio.json) reproduced both
+reports apart from creation time, with no proxy connections or changed source
+manifests. Its downloaded ZIP matches GitHub's published SHA-256 checksum.
+
+[Adjacent-day source checks](next-day-carryover-checks.json) address a second
+download failure. A May source trace contains 580 valid positions on the next
+UTC day. Revision `9509903` preserves these positions and keeps date filtering
+in the analysis. All 170 Rust tests, 10 Python tests, and required local checks
+passed. The failing regression and original source bytes remain preserved.
+A new download reuses the verified partial cache and discovers all 58 free
+sample dates. Both Lake Hood audio tests wait for complete offline cache
+verification. Expanded-date location results remain pending.
+The native retry has accepted the original May object byte for byte, including
+all 580 positions from the following day.
+May completed with 377 traces and 1,116 unavailable identities recorded.
+Native offline reuse passed with unchanged source files and no proxy connections.
+The manifest also records other preceding-day and following-day positions.
+
+[Midnight-boundary checks](midnight-boundary-checks.json) fix a download failure
+in a March 2022 source trace. Its last position is 8 milliseconds after midnight.
+Revision `ab06bd3` preserved and recorded fractional endpoints within one second
+after the day ends. Analysis uses positions within the selected archive dates.
+Invalid dates still fail validation. Original source bytes remain unchanged.
+
+Revision `ab06bd3` passed all 165 Rust tests, 10 Python tests, formatting,
+strict Clippy, doc tests, and both release builds locally. Tests cover the
+boundary allowance, date filtering, source preservation, and offline cache reuse.
+The earlier failing regression and failed all-date download remain recorded.
+The retry reused those files and discovered dates without date arguments.
+It completed March and April, then stopped on a May trace with 580 positions
+from the following UTC day. No expanded-cache audio replay started. The May
+source bytes and failed attempt remain preserved. The adjacent-day fix is recorded above.
+
+The same source passed all required checks in
+[Windows and Ubuntu CI](midnight-boundary-ci.json), with 165 Rust tests and
+10 Python tests on each platform. The native retry passed the original March
+file and completed that month with 483 traces. Offline reuse then passed with
+no proxy connections or changed source files. The manifest records two
+following-day endpoints, 8 ms and 2 ms after midnight.
+
+An [offline compatibility replay](midnight-boundary-audio.json) used the same
+frozen build and existing November sample caches. Maho remained within 549.65 m;
+Lake Hood again reported insufficient evidence with passage timing. Both reports
+match the earlier high-resolution replay apart from creation time. The proxy
+recorded no connections, and source manifests stayed unchanged.
+
+[Proposal-retention checks](coarse-corroboration-checks.json) reproduce a
+four-curve proposal lost before refinement when another proposal has lower
+error across three curves. The search now keeps its error-ranked proposals
+and a bounded extra set supported by full curves. It can keep 512 extra coarse
+proposals and 128 extra refinement proposals. Coverage, curve shape, error,
+and shared-clock checks qualify the extra set. Location acceptance rules are unchanged.
+
+This adapts the earlier `a5e0a99` experiment to the current source. Revision
+`e5eeb2b` passed all 163 Rust tests, 10 Python tests, formatting, strict Clippy,
+doc tests, and both release builds locally. The regression failed before the
+change and passed afterward. Further tests cover weak curves, missing coverage,
+bounded retention, and parallel determinism. The four-case offline Lake Hood
+replay has started after the preceding comparison completed. Its location
+results remain pending.
+The same source passed all required steps in
+[Windows and Ubuntu CI](coarse-corroboration-ci.json). Its offline Maho control
+remained within 549.65 m with 16 matched flights and all 19 controls. Only the
+report creation time differs from the preceding high-resolution replay.
+
+The [completed old-search trace](lake-global-pruning-trace.json) followed a
+four-curve proposal through the original broad search. It survived coarse
+pruning, then ranked 1,492 of 3,731 proposals before the final 512-proposal
+selection. No proposal within the diagnostic position-and-clock filter reached
+refinement. The known-position hint only filtered diagnostic output. This trace
+does not count as a location pass. A completed uninstrumented search returns
+the same candidate coordinates, order, and hypothesis count. Differences in
+curve values are at most 1.43e-14. The new beam replay remains pending.
+
+[An early sample-source check](early-high-resolution-source-gaps.json) prepared
+February 1, 2022, the earliest date in the high-resolution catalog. It downloaded
+379 traces and recorded 1,478 unavailable identities, all with the `~` prefix.
+Twelve evenly spaced missing identities returned HTTP 404 from both free trace
+sources. The same probes through the documented public sample bucket also
+returned 404. The first all-date preparation stopped on the March midnight
+endpoint. Its failure and partial cache remain preserved. The retry uses the
+fixed downloader, blank dates, and the original broad Lake Hood bounds.
+
+[Native high-resolution sample checks](native-high-resolution-checks.json) cover
+the new download option in the CLI and desktop app. Standard and high-resolution
+traces have separate caches and share discovery snapshots. Offline date discovery
+skips unfinished sample folders. Tests cover download routing, cache separation,
+offline reuse, missing-file recovery, date catalogs, and CLI input checks.
+Revision `bdcb23b` passed all 160 Rust tests, 10 Python tests, formatting, strict
+Clippy, doc tests, and both release builds locally. The same source passed all
+required steps in [Windows and Ubuntu CI](native-high-resolution-ci.json).
+
+Native downloads retrieved 97 Maho traces and 387 Lake Hood traces. One selected
+Lake Hood trace was unavailable. All downloaded Lake Hood traces matched the
+independent copies. Offline cache reuse passed with blank dates and no proxy
+connections. A withheld trace caused the expected offline failure; online
+preparation restored the same bytes. Existing standard cache files stayed unchanged.
+Automatic discovery found 58 high-resolution sample dates. The saved date index
+replayed offline with identical output.
+
+Both recordings then ran offline through the native high-resolution provider,
+with no supplied recording dates or clocks and the original broad search areas.
+Maho remained within 549.65 m, with 16 matched flights and all 19 controls.
+Lake Hood reported insufficient evidence with the timing method. These replays
+add no new accepted recordings.
+
+[Corridor spacing checks](corridor-spacing-checks.json) fixed excess search
+proposals from dense flight traces. Proposals now keep their metre spacing
+along each continuous eligible path. The spacing follows turns and restarts
+after gaps or unsuitable motion. Curve fitting keeps the original positions.
+Revision `490cbef` passed all 156 Rust tests, 10 Python tests, and every required
+check locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42549220092).
+The record preserves an earlier CI failure from a newer Clippy rule in the
+regression helper and the correction.
+
+For the first November 1 Lake Hood clip, standard traces now need 15,277,836
+proposals, down from 19,816,431. High-resolution traces need 15,274,007 and fit
+the same 20-million-proposal budget. They previously exceeded that budget.
+All four [paired searches](lake-doppler-spacing-results.json) completed offline
+with no recording date or start time argument. These counts cover search preparation.
+The first clip's leading candidates were within 166.16 m with standard traces
+and 99.54 m with high-resolution traces. The later clip's leading candidates
+were 5,208.45 m and 8,103.08 m away. All four results were ambiguous. No location
+was accepted, and no processing error or proxy connection was recorded.
+
+An [association check](lake-curve-association-audit.json) tested all 40 computed
+candidates at their fixed positions and inferred clocks. Extra passing curves
+occurred at both nearby and distant candidates. The coarse range and speed
+checks rejected the extra first-clip association. A separate diagnostic supplied
+an earlier hinted estimate for the later clip. Five curves still passed with
+each source. These conditional checks add no accepted locations.
+
+A [selected-flight diagnostic](lake-proposal-retention-diagnostic.json) then
+traced proposals for three aircraft from that earlier hinted fit. For two of
+those aircraft, nearby proposals with four passing curves ranked among the
+best four worker results with each source. A full search trace is checking
+the later pruning stages. These tests use hints and add no location passes.
+
+The [preceding Doppler source test](lake-doppler-source-baseline.json) completed
+one of four planned analyses. Its first candidate was within 46 m of Lake Hood.
+Five of 24 detected sounds matched three aircraft, and distant candidates
+remained. The result was ambiguous. The other three analyses exceeded the
+proposal budget before curve matching. The record preserves those failures.
+
+[Local fit checks](lake-doppler-local-profiles.json) used the five matches from
+that result and the completed standard-trace spacing result. Both checks
+reproduced the original fit and found lower-error fits nearby. Each kept all
+five matches at 11 of 41 sampled points, up to 250 m from its computed position.
+These checks used the computed positions and clocks. They add no accepted
+locations. Other flight associations and distant alternatives remain unresolved.
+
+The refinement check found a lost-fit case: improving the three-curve objective
+can worsen the full fit while keeping the same number of supported sounds.
+Refinement now retains the earlier lower-error fit for candidate ranking.
+Each fit still receives its own quiet-gap checks. A four-curve regression failed
+before this change and passed afterward. Location acceptance rules are unchanged.
+[Revision `bd4d948`](equal-corroboration-checks.json) passed all 157 Rust tests,
+10 Python tests, formatting, strict Clippy, doc tests, and both release builds
+locally. Its [four-case offline replay](lake-fit-retention-results.json)
+completed with the same input jobs. All four results remained ambiguous.
+The first clip ranked within 166.16 m and 99.54 m; the later clip ranked
+5.21 km and 8.12 km away. No location was accepted, no processing failed,
+and the proxy recorded no connections.
+The same source passed all 157 Rust tests, 10 Python tests, and required steps in
+[Windows and Ubuntu CI](equal-corroboration-ci-checks.json) at `5348434`.
+
+The benchmark runner also records date arguments from the actual jobs and
+lists imported reference files separately. Earlier direct-file diagnostics
+could set the supplied-date flag when no date argument was present. Their
+original records remain saved with this issue documented.
+
+Both spacing builds repeated the original Maho recording offline with no
+supplied date or time. Each remained within 549.65 m, including the reference
+allowance. All report fields except creation time matched the preceding build.
+The test proxy saw no connections, and source manifests stayed unchanged.
+
+[Flight reference checks](flight-reference-fixes.json) found two lost-data
+problems. Passage timing kept only one visit when an aircraft left the search
+radius and returned. The trace reader also dropped the first recorded position
+after a reception gap. Both are fixed. Slow and stationary positions keep a
+visit connected. Reception gaps still split tracks.
+
+Revision `598691d` passed all 153 Rust tests, nine Python tests, formatting,
+strict Clippy, doc tests, and both release builds locally and in
+[Windows and Ubuntu CI](https://github.com/Donovoi/soundgeo/actions/runs/42541186372).
+The location acceptance rules are unchanged. The record includes the failing
+checks that led to the fixes and the upstream trace format evidence.
+
+The [offline replay](flight-reference-replays.json) with that build completed
+all 13 cases that use readsb flight traces. Maho remained within 550 m. All
+seven Lake Hood cases remained unresolved. No wrong accepted result or
+processing error occurred. Each job searched its prepared cache with empty
+date fields and no recording start time. The test proxy saw no connections,
+and the saved source manifests stayed unchanged.
+
+The earlier passage-only build, `5ec1283`, completed all 27 fixed recordings.
+Eight remained within 1 km, five were ambiguous, and fourteen had insufficient
+evidence. All seven Lake Hood recordings remained unresolved. The same record
+keeps both replays with their separate executable hashes and case selections.
+
+A [free archive comparison](lake-free-archive-comparison.json) checked the
+production and staging sources for all four prepared Lake Hood dates. All
+16 archive parts matched their published sizes and hashes. Staging added
+3,067 rounded position-seconds across the broad search area. Production held
+more regional positions overall.
+
+A [public-source recheck](free-history-recheck.json) found no November assets in
+ADSBiq's published releases; its latest daily file was October 10. ADSB.fi's
+documented open API lists aircraft queries and snapshots. One anonymous OpenSky
+historical-track request returned 403 and no track. No further request was made.
+These checks added no reference positions.
+
+The [completed archive replay](lake-combined-reference-results.json) searched
+all seven Lake Hood recordings against production data and the combined data.
+All 14 runs finished offline: twelve reported insufficient evidence and two
+remained ambiguous. No location was accepted. Each search used all four prepared
+dates, the original broad area, and no recording date or time argument. Source
+bytes and exported flight files stayed unchanged. The test proxy saw no connections.
+
+[High-resolution sample checks](lake-high-resolution-reference.json) downloaded
+both standard and high-resolution free traces for 570 aircraft on November 1.
+Two aircraft were unavailable in both variants. The original broad search area
+contained 64,701 standard airborne positions and 517,449 high-resolution
+positions. The Rust importer retained 156,946 and 432,574 positions, respectively,
+including its wider flight-data margin.
+
+All seven fixed Lake Hood recordings were searched against each complete
+sample reference, with no recording date or start time argument. All 14 runs
+reported insufficient evidence. The runs used the original broad bounds and
+unchanged sound detection and acceptance rules. They ran offline with no proxy
+connections and unchanged reference files. This was a paired single-day source
+diagnostic. The original multi-date benchmark is recorded separately.
+
+A separate diagnostic supplied the known camera position and kept the clock
+unknown. Within the default 500 m passage radius, both sources had fewer than
+six reference passages. Checks at 1, 2, and 5 km found additional candidate
+matches. These point checks did not test location acceptance. The record also
+preserves three failed preparation or diagnostic attempts and their corrections.
+
+[Broader-distance checks](lake-high-resolution-range-results.json) then searched
+the two sample-covered recordings at 1 km and 2 km passage distances. All four
+runs completed offline with the same sound peaks, original broad bounds, and
+no recording date or time argument. Each ran all 19 shuffled controls and
+reported insufficient evidence. The highest-ranked points were 2.87 to 7.07 km
+from the reference, including its allowance. Control scores also remained higher
+when both distance choices were evaluated together. Default settings are unchanged.
+
 [Automatic date discovery](automatic-date-discovery.json) found 1,327 ADSB.lol
 days, 125 first-of-month sample days, and 89 complete days for each airport
 provider on November 7, 2026. Each saved index replayed offline with identical
@@ -1383,6 +1987,29 @@ An initial test-script assertion incorrectly required a null clock in these
 computed-proposal jobs. The corrected check preserves the original inferred
 clock. The first log and completed runs remain saved; they were not rerun.
 See [terrain-download-evidence.json](terrain-download-evidence.json).
+
+### Shared terrain snapshot qualification
+
+The source snapshot later bound to commit `fa4cb5b` passed 237 Rust tests and
+10 Python tests in the capped Linux VM. Formatting, strict release Clippy,
+all-target tests, documentation tests,
+release binaries, the Doppler control helper build and Python tests all passed.
+Nine new regressions cover tile sampling, memory bounds, cached misses and
+heights, cancellation, file changes, and serial/parallel search equivalence.
+The focused run passed 11 tests, including two existing fallback regressions.
+
+Legacy serial sampling and shared one- and two-worker searches produced the
+same candidate and partition bytes, warnings, method, grid float bits,
+hypothesis counts and actual missing-sample counts. Tile fingerprints remain
+active through ranking and refinement; a detected change rejects the result.
+The snapshot's 128 MiB memory bound includes the existing cache and temporary
+reads. Larger or unsupported layouts retain serial matching.
+
+The three native executables were built from a recorded dirty source snapshot
+and subsequently bound to the commit's Git objects: 68 application, test, asset
+and Cargo files and three separately listed Python files. Earlier failed attempts
+remain recorded. Field speedup and new location accuracy have not been measured
+for this change. See [terrain-parallel-qualification.json](terrain-parallel-qualification.json).
 
 ## Whole-day temperature diagnostic
 

@@ -1,0 +1,381 @@
+{
+  "scope": "Flight import and passage geometry checks. Location acceptance is evaluated in separate real-video replays.",
+  "source_commit": "598691d5098fad3f52bcc7fbc9fa898e6f04b1fa",
+  "source_tree": "6d8f44f277e3af0c0e1ecc74772230c4a06b4683",
+  "cli": "analysis-build/soundgeo-cli-reception-598691d.exe",
+  "cli_sha256": "fb9c7aa3c32556769642a3631329ccdb383216684d3fbb0bc69fc62fe943f2c9",
+  "rust_tests": {
+    "passed": 153,
+    "failed": 0,
+    "ignored": 0
+  },
+  "python_tests": 9,
+  "required_local_checks": [
+    {
+      "check": "fmt",
+      "exit_code": 0,
+      "elapsed_s": 0.4808550000016112,
+      "log": {
+        "file": "reception-gap-fmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "check": "clippy",
+      "exit_code": 0,
+      "elapsed_s": 89.03701759999967,
+      "log": {
+        "file": "reception-gap-clippy.log",
+        "sha256": "aceca4ad8c5856c6adbfdde5e585489352720350b4f6dde0d9bd7fca54380004"
+      }
+    },
+    {
+      "check": "tests",
+      "exit_code": 0,
+      "elapsed_s": 410.2619468999983,
+      "log": {
+        "file": "reception-gap-tests.log",
+        "sha256": "b57da2cd71da6ead88de5ffe7cd9ecb8a2463f18da702fec837cb56b8fc8cf43"
+      }
+    },
+    {
+      "check": "doc-tests",
+      "exit_code": 0,
+      "elapsed_s": 0.9962984000012511,
+      "log": {
+        "file": "reception-gap-doc-tests.log",
+        "sha256": "cdd396141bf92e4ddf5d9870793d6a14a74384944be5d56e9bf97838f273e85f"
+      }
+    },
+    {
+      "check": "build",
+      "exit_code": 0,
+      "elapsed_s": 0.49878999999782536,
+      "log": {
+        "file": "reception-gap-build.log",
+        "sha256": "b1bfdc52d1cea2d4e4c6812dd29fa654959a50500fdd854457dc805c093d389b"
+      }
+    },
+    {
+      "check": "python",
+      "exit_code": 0,
+      "elapsed_s": 0.12668380000104662,
+      "log": {
+        "file": "reception-gap-python.log",
+        "sha256": "38a3effb0a7670e3838b854b1d88eb84ea17c679b7644a209f810ecf02ce82c7"
+      }
+    }
+  ],
+  "ci": {
+    "run": 42541186372,
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42541186372",
+    "source_commit": "598691d5098fad3f52bcc7fbc9fa898e6f04b1fa",
+    "platforms": [
+      {
+        "platform": "windows-latest",
+        "rust_tests": [
+          153,
+          0,
+          0
+        ],
+        "python_tests": 9
+      },
+      {
+        "platform": "ubuntu-latest",
+        "rust_tests": [
+          153,
+          0,
+          0
+        ],
+        "python_tests": 9
+      }
+    ],
+    "all_required_steps_passed": true,
+    "log_sha256": "1e72cb6e57790f12f8a5d52659e6bc871fa86d9c57cb28e204a5afffedda2b54",
+    "jobs": [
+      {
+        "name": "check (windows-latest)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run dtolnay/rust-toolchain@stable",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run Swatinem/rust-cache@v2",
+            "conclusion": "success"
+          },
+          {
+            "name": "Linux dependencies",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Windows FFmpeg",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "check (ubuntu-latest)",
+        "steps": [
+          {
+            "name": "Set up job",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run dtolnay/rust-toolchain@stable",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run Swatinem/rust-cache@v2",
+            "conclusion": "success"
+          },
+          {
+            "name": "Linux dependencies",
+            "conclusion": "success"
+          },
+          {
+            "name": "Windows FFmpeg",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run actions/upload-artifact@v4",
+            "conclusion": "skipped"
+          },
+          {
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "conclusion": "success"
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "conclusion": "success"
+          },
+          {
+            "name": "Complete job",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ]
+  },
+  "changes": [
+    "Keep separate visits when an aircraft leaves the passage radius and returns.",
+    "Use slow and stationary segments to connect visits while retaining the existing minimum passage speed.",
+    "Keep the observed position marked as the first reliable position after a reception gap.",
+    "Split tracks at reception-gap markers, including markers with unusable altitude and duplicate source timestamps."
+  ],
+  "location_acceptance_rules_changed": false,
+  "upstream_trace_evidence": {
+    "upstream_commit": "f815584d9f03ea5f532f02476fbb072fa20251a2",
+    "files": [
+      {
+        "file": "README-json.md",
+        "sha256": "abb581d94e5c12e52d45cd8f9096a250ee99cb4f84926e3217f5003c8d242b30",
+        "url": "https://github.com/wiedehopf/readsb/blob/f815584d9f03ea5f532f02476fbb072fa20251a2/README-json.md"
+      },
+      {
+        "file": "track.c",
+        "sha256": "10e0d1d6a546c94561f4b62036edc8f3b937bc52d1f9177d338278f8a453a0ae",
+        "url": "https://github.com/wiedehopf/readsb/blob/f815584d9f03ea5f532f02476fbb072fa20251a2/track.c"
+      },
+      {
+        "file": "globe_index.c",
+        "sha256": "4edff3526a2712b6309d391208a0ad8104bd60ef5f3445fd9e9904c75f7f3e4b",
+        "url": "https://github.com/wiedehopf/readsb/blob/f815584d9f03ea5f532f02476fbb072fa20251a2/globe_index.c"
+      },
+      {
+        "file": "globe_index.h",
+        "sha256": "9bf20c44d1d5cd221f8dd6d5005cc5c7816a989b6a058fd1fc1bfe853a4cffad",
+        "url": "https://github.com/wiedehopf/readsb/blob/f815584d9f03ea5f532f02476fbb072fa20251a2/globe_index.h"
+      },
+      {
+        "file": "json_out.c",
+        "sha256": "273ac5b2f49d3138301e332632397fbca7e8376b88b81ee6efee1518349a2f58",
+        "url": "https://github.com/wiedehopf/readsb/blob/f815584d9f03ea5f532f02476fbb072fa20251a2/json_out.c"
+      }
+    ],
+    "evidence": [
+      {
+        "file": "track.c",
+        "lines": [
+          1239,
+          1244,
+          1256
+        ],
+        "finding": "The flag compares the current time with the previous reliable position time. Current decoded coordinates are then assigned before traceAdd."
+      },
+      {
+        "file": "track.c",
+        "lines": [
+          3527,
+          3535
+        ],
+        "finding": "The trace state receives the current timestamp, current reliable coordinates, and the gap flag."
+      },
+      {
+        "file": "json_out.c",
+        "lines": [
+          1471,
+          1472
+        ],
+        "finding": "The reception-gap flag is stored in bit zero of trace index six."
+      }
+    ],
+    "correction": "Keep the recorded post-gap position and split its preceding connection. A marker still splits a connection if the marker row has unusable altitude."
+  },
+  "returning_passage_audit": {
+    "plan": {
+      "not_acceptance": true,
+      "known_position_used": false,
+      "recording_date_supplied": false,
+      "recording_clock_supplied": false,
+      "sources": [
+        {
+          "path": "lake-nov6-heldout\\flight-cache\\decoded-tracks\\1979de30e7bf82da5b3830fac3abc82dbdef9a4a99b9194b3f94199f47a7d5f6.sgcache",
+          "sha256": "cd26e5f28fb20c0b39eba80e5830c570e4904735938a0b4ee166890699b6a1fd",
+          "payload_sha256": "3a95a94c1ee3f3faa69be4adbb8dcbb7fc67c2f7a263c5034d17b40086c1d891",
+          "points": 491647,
+          "start_utc": 1793664000.06,
+          "end_utc": 1793836799.9
+        },
+        {
+          "path": "lake-nov6-heldout\\flight-cache\\decoded-tracks\\649ea474842aa0f5d0832d11a025f2f036428e36a5fb29700ff1426677365923.sgcache",
+          "sha256": "e3d89dc9724ebe7127d5f1aba2b2d2fc15e7fe592046227ebb21189cbe7bdf00",
+          "payload_sha256": "dab3adf8c15c3cb506fb3cea0cf399c281eb8f9f832106f10086aac3256a13d1",
+          "points": 263039,
+          "start_utc": 1793923200.03,
+          "end_utc": 1794009599.63
+        },
+        {
+          "path": "lake-nov6-heldout\\flight-cache\\decoded-tracks\\a79bdab896c944cd1c4d4467000f71876a602d6b018e5562f6e3e9ad505364a5.sgcache",
+          "sha256": "02b6e91fdcbb730392e9a46bbfc8d6e40758622acb23ee110eaacd196a459a85",
+          "payload_sha256": "10d0bf3d10cef5927c5098e6493805fd4068a8855c4fae7390396b1f67a09c50",
+          "points": 178937,
+          "start_utc": 1793491200.01,
+          "end_utc": 1793577599.82
+        }
+      ],
+      "source_plan_sha256": "6c4bed191d25953a897965dfa642efdc231f7cb7ad5a3b79c255b912b32925cb",
+      "script_sha256": "1f1c2f8e3c1b2fe4aaee7026a9ee38e21365bbe2b2884f7591c69b814ddf05ae",
+      "numpy_version": "2.4.3",
+      "bounds": {
+        "south": 61.0,
+        "north": 61.36,
+        "west": -150.36,
+        "east": -149.62
+      },
+      "grid_degrees": 0.02,
+      "range_m": 500,
+      "ground_egm96_m": 27,
+      "purpose": "Compare one passage per imported track with separate visits within range. Prepared batches retain separate track IDs. Raw positions before optional smoothing are used. All saved flight dates are used. No audio or recording metadata is read.",
+      "prior_attempts": [
+        "lake-returning-passage-audit",
+        "lake-returning-passage-audit-v2"
+      ],
+      "prior_attempt_issues": [
+        "The combined CSV reuses track IDs between prepared batches. Its grouped tracks do not represent native imports; its counts are excluded.",
+        "The first correction split visits at slow motion. Slow and stationary positions now connect a visit but cannot produce a passage."
+      ],
+      "minimum_passage_speed_m_s": 25
+    },
+    "result_artifact": {
+      "file": "lake-returning-passage-audit-v3/results.json",
+      "sha256": "0743e2d88dd3e33344fefa7922a152a9e9f32356fc636c8538bd823b37fee928"
+    },
+    "not_acceptance": true,
+    "plan_sha256": "66e7ce2234bb66838a023064ea9810798926a8b698a9c8e43a4e600c47ebca4b",
+    "track_count": 5973,
+    "valid_segments": 927650,
+    "grid_points": 722,
+    "points_with_discarded_visits": 106
+  },
+  "failed_before_fixes": [
+    {
+      "file": "repeated-passages-before.log",
+      "sha256": "7d2a8ed3e93b6649d40c28376b77ef0d4f15dc89a5dc4ecee844df4621e57cce"
+    },
+    {
+      "file": "repeated-passages-slow-before.log",
+      "sha256": "25cd37967f5c3b9f22fb97c240b783bee2825a9214127ef14b9f18a1875f46cf"
+    },
+    {
+      "file": "reception-gap-before.log",
+      "sha256": "c302dc47b3eed512995269c98fdb5fc0589689c7e4094e534bd5eb194482bb6a"
+    }
+  ]
+}

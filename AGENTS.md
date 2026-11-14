@@ -7,6 +7,10 @@ edits, and camera movement. Fixed-camera recordings cover only part of this scop
 Document current model limits separately from the intended use. Keep unsupported
 cases and failed results visible. Do not require recordings made for the app.
 
+Run local builds and tests inside a virtual machine. Keep automated work headless
+and limit CPU, memory, and I/O use so the host remains usable. GUI testing needs
+a VM desktop; do not launch or automate the host desktop for testing.
+
 Use one Cargo target directory per checkout. Do not share `CARGO_TARGET_DIR`
 between worktrees. A shared directory previously reused test artifacts from
 an experimental branch during a main-branch check. That run was rejected.

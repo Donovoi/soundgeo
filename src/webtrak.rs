@@ -161,10 +161,10 @@ fn decode(site: Site, bytes: &[u8], handle: i64) -> Result<Chunk> {
 }
 
 fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
-    let mut file = tempfile::NamedTempFile::new_in(path.parent().context("Missing cache parent")?)?;
+    let (mut file, destination) = crate::atomic_file::prepare(path)?;
     file.write_all(bytes)?;
     file.as_file().sync_all()?;
-    file.persist(path).map_err(|e| e.error)?;
+    file.persist(destination).map_err(|e| e.error)?;
     Ok(())
 }
 fn limited_read(path: &Path, limit: usize) -> Result<Vec<u8>> {
@@ -255,7 +255,7 @@ fn ensure_day(
     let first = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() / 30;
     let handles: Vec<_> = (first..first + CHUNKS as i64).collect();
     let pool = rayon::ThreadPoolBuilder::new().num_threads(2).build()?;
-    let mut temporary = tempfile::NamedTempFile::new_in(&folder)?;
+    let (mut temporary, destination) = crate::atomic_file::prepare(&folder.join("flights.csv"))?;
     let mut rows = 0;
     let mut offline = 0;
     {
@@ -306,7 +306,7 @@ fn ensure_day(
             .into(),
     };
     let path = folder.join("flights.csv");
-    temporary.persist(&path).map_err(|e| e.error)?;
+    temporary.persist(destination).map_err(|e| e.error)?;
     atomic_write(
         &folder.join("provider-manifest.json"),
         &serde_json::to_vec_pretty(&manifest)?,

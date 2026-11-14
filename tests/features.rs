@@ -135,6 +135,13 @@ fn indexed_country_extent_search_recovers_unknown_time() {
     assert!(error < 200.);
     assert!((best.recording_start_unix - soundgeo::demo::EPOCH).abs() < 3.);
     job.max_hypotheses = 100;
+    // A simultaneous dense group cannot be divided below the minimum flight
+    // timestamp interval. This failure must finish before any curve matching.
+    for i in 0..16 {
+        let mut coincident = tracks[0].clone();
+        coincident.id = format!("coincident-{i}");
+        tracks.push(coincident);
+    }
     let progress = std::sync::Mutex::new(Vec::new());
     let missing_before = terrain.missing;
     let result = soundgeo::search::locate(
@@ -282,6 +289,138 @@ fn quiet_gap_constraint_uses_only_known_closer_propellers() {
 }
 
 #[test]
+fn shared_tiled_corridors_match_legacy_serial_candidates_and_counts() {
+    let (dir, mut job, events) = events();
+    job.search_mode = SearchMode::FlightCorridors;
+    job.search_threads = Some(2);
+    let root = dir.path().join("tiles");
+    std::fs::create_dir(&root).unwrap();
+    let bytes: Vec<_> = (0..1201 * 1201)
+        .flat_map(|i| {
+            let value = if i % 19 == 0 {
+                i16::MIN
+            } else {
+                (140 + (i % 11)) as i16
+            };
+            value.to_be_bytes()
+        })
+        .collect();
+    for name in ["N34W110.hgt", "N34W111.hgt", "N35W110.hgt", "N35W111.hgt"] {
+        std::fs::write(root.join(name), &bytes).unwrap();
+    }
+    job.terrain = Some(root.clone());
+    let tracks = soundgeo::demo::tracks();
+    // An unsupported tile entry far outside all queries forces the original
+    // serial loader without changing the actual sampled files or fallback.
+    let unsupported = root.join("N00E000.hgt");
+    std::fs::create_dir(&unsupported).unwrap();
+    let mut terrain = Terrain::new(Some(root.clone()), job.ground_m + 7.5);
+    let legacy = soundgeo::search::locate(
+        &job,
+        &events,
+        &tracks,
+        &mut terrain,
+        &Control::default(),
+        &|_, _| {},
+    )
+    .unwrap();
+    let expected_missing = terrain.missing;
+    assert!(!legacy.candidates.is_empty());
+    assert!(expected_missing > 0);
+    std::fs::remove_dir(unsupported).unwrap();
+    for workers in [1, 2] {
+        job.search_threads = Some(workers);
+        let mut terrain = Terrain::new(Some(root.clone()), job.ground_m + 7.5);
+        let messages = std::sync::Mutex::new(Vec::new());
+        let result = soundgeo::search::locate(
+            &job,
+            &events,
+            &tracks,
+            &mut terrain,
+            &Control::default(),
+            &|message, _| messages.lock().unwrap().push(message.to_owned()),
+        )
+        .unwrap();
+        let used = workers.min(std::thread::available_parallelism().map_or(1, |n| n.get()));
+        assert!(
+            messages
+                .lock()
+                .unwrap()
+                .contains(&format!("Flight-corridor workers: {used}"))
+        );
+        assert_eq!(result.hypotheses, legacy.hypotheses);
+        assert_eq!(
+            serde_json::to_vec(&result.candidates).unwrap(),
+            serde_json::to_vec(&legacy.candidates).unwrap()
+        );
+        assert_eq!(result.warnings, legacy.warnings);
+        assert_eq!(result.method, legacy.method);
+        assert_eq!(
+            result.coarse_grid_m.to_bits(),
+            legacy.coarse_grid_m.to_bits()
+        );
+        assert_eq!(
+            serde_json::to_vec(&result.partition).unwrap(),
+            serde_json::to_vec(&legacy.partition).unwrap()
+        );
+        assert_eq!(terrain.missing, expected_missing);
+    }
+    for stage in [
+        "Ranking complete Doppler curves",
+        "Refining location and shared clock",
+    ] {
+        let changed = std::sync::atomic::AtomicBool::new(false);
+        let mut terrain = Terrain::new(Some(root.clone()), job.ground_m + 7.5);
+        let result = soundgeo::search::locate(
+            &job,
+            &events,
+            &tracks,
+            &mut terrain,
+            &Control::default(),
+            &|message, _| {
+                if message.starts_with(stage)
+                    && !changed.swap(true, std::sync::atomic::Ordering::Relaxed)
+                {
+                    use std::io::Write;
+                    std::fs::OpenOptions::new()
+                        .write(true)
+                        .open(root.join("N35W110.hgt"))
+                        .unwrap()
+                        .write_all(&300_i16.to_be_bytes())
+                        .unwrap();
+                }
+            },
+        );
+        assert!(
+            changed.load(std::sync::atomic::Ordering::Relaxed),
+            "{stage} not reached"
+        );
+        let error = result
+            .err()
+            .expect("changed terrain must not return a location");
+        assert!(error.to_string().contains("Terrain"), "{error:#}");
+        std::fs::write(root.join("N35W110.hgt"), &bytes).unwrap();
+    }
+    let control = Control::default();
+    let mut terrain = Terrain::new(Some(root), job.ground_m + 7.5);
+    assert!(
+        soundgeo::search::locate(
+            &job,
+            &events,
+            &tracks,
+            &mut terrain,
+            &control,
+            &|message, _| {
+                if message.starts_with("Ranking complete Doppler curves") {
+                    control.stop();
+                }
+            }
+        )
+        .is_err()
+    );
+}
+
+#[test]
 fn parallel_corridors_match_serial_fallback_terrain() {
     let (dir, mut job, events) = events();
     job.search_mode = SearchMode::FlightCorridors;
@@ -302,6 +441,7 @@ fn parallel_corridors_match_serial_fallback_terrain() {
     // An empty tile folder exercises the serial terrain-cache path with
     // exactly the same fallback heights and search inputs.
     job.terrain = Some(dir.path().join("missing-tiles"));
+    job.search_threads = Some(8);
     job.max_hypotheses = parallel.hypotheses;
     let mut terrain = Terrain::new(job.terrain.clone(), supplied_height);
     let serial = soundgeo::search::locate(
@@ -315,16 +455,47 @@ fn parallel_corridors_match_serial_fallback_terrain() {
     .unwrap();
     assert_eq!(parallel.hypotheses, serial.hypotheses);
     assert!(!parallel.candidates.is_empty());
+    let expected_candidates = serde_json::to_value(&parallel.candidates).unwrap();
     assert_eq!(
-        serde_json::to_value(parallel.candidates).unwrap(),
+        expected_candidates,
         serde_json::to_value(serial.candidates).unwrap()
     );
-    // An exact budget succeeds; one fewer proposal fails before matching,
-    // including on the serial, disk-backed terrain path.
+    for workers in [1, 8] {
+        job.search_threads = Some(workers);
+        job.terrain = None;
+        let mut worker_terrain = Terrain::new(None, supplied_height);
+        let messages = std::sync::Mutex::new(Vec::new());
+        let result = soundgeo::search::locate(
+            &job,
+            &events,
+            &tracks,
+            &mut worker_terrain,
+            &Control::default(),
+            &|message, _| messages.lock().unwrap().push(message.to_owned()),
+        )
+        .unwrap();
+        let used = workers.min(std::thread::available_parallelism().map_or(1, |n| n.get()));
+        assert!(
+            messages
+                .lock()
+                .unwrap()
+                .contains(&format!("Flight-corridor workers: {used}"))
+        );
+        assert_eq!(result.hypotheses, parallel.hypotheses);
+        assert_eq!(
+            serde_json::to_value(result.candidates).unwrap(),
+            expected_candidates,
+            "worker limit {workers} changed the search"
+        );
+    }
+    job.terrain = Some(dir.path().join("missing-tiles"));
+    // One fewer proposal now triggers a complete automatic partition, including
+    // on the serial terrain path. Both flyovers must remain available to a fit
+    // even when their anchor proposals belong to different timestamp batches.
     job.max_hypotheses -= 1;
-    let missing_before = terrain.missing;
+    let job_before = serde_json::to_value(&job).unwrap();
     let messages = std::sync::Mutex::new(Vec::new());
-    let error = soundgeo::search::locate(
+    let partitioned = soundgeo::search::locate(
         &job,
         &events,
         &tracks,
@@ -332,17 +503,35 @@ fn parallel_corridors_match_serial_fallback_terrain() {
         &Control::default(),
         &|message, _| messages.lock().unwrap().push(message.to_owned()),
     )
-    .err()
-    .unwrap()
-    .to_string();
-    assert!(error.contains("before curve matching"));
-    assert_eq!(terrain.missing, missing_before);
+    .unwrap();
+    let partition = partitioned.partition.as_ref().unwrap();
+    assert!(partition.complete && partition.batches.len() >= 2);
     assert!(
-        !messages
+        partition
+            .batches
+            .iter()
+            .all(|b| b.hypotheses <= job.max_hypotheses)
+    );
+    assert_eq!(partitioned.hypotheses, parallel.hypotheses);
+    assert_eq!(partitioned.candidates[0].matches.len(), events.len());
+    let best = &partitioned.candidates[0];
+    assert!(
+        Point {
+            lat: best.latitude,
+            lon: best.longitude,
+            alt: best.ground_m
+        }
+        .distance(soundgeo::demo::TRUTH)
+            < 250.
+    );
+    assert!(job.start_utc.is_none());
+    assert_eq!(serde_json::to_value(&job).unwrap(), job_before);
+    assert!(
+        messages
             .into_inner()
             .unwrap()
             .iter()
-            .any(|s| s.starts_with("Indexed flight corridors:"))
+            .any(|s| s.contains("Indexed flight corridors:"))
     );
 }
 
@@ -627,4 +816,28 @@ fn clock_configuration_limits_and_older_reports_remain_supported() {
         "relative_error_percent": 0.5, "matches": []});
     let candidate: soundgeo::search::Candidate = serde_json::from_value(old).unwrap();
     assert_eq!(candidate.recording_clock_rate, 1.);
+}
+
+#[test]
+fn worker_limits_validate_and_preserve_older_job_json() {
+    let dir = tempfile::tempdir().unwrap();
+    let mut job = Job {
+        media: dir.path().join("audio.wav"),
+        tracks: dir.path().join("flights.csv"),
+        ..Job::default()
+    };
+    std::fs::write(&job.media, []).unwrap();
+    std::fs::write(&job.tracks, []).unwrap();
+    job.search_threads = Some(0);
+    assert!(job.validate().unwrap_err().to_string().contains("workers"));
+    for valid in [None, Some(1), Some(4), Some(8), Some(usize::MAX)] {
+        job.search_threads = valid;
+        job.validate().unwrap();
+        let saved = serde_json::to_value(&job).unwrap();
+        assert_eq!(saved.get("search_threads").is_some(), valid.is_some());
+        let loaded: Job = serde_json::from_value(saved).unwrap();
+        assert_eq!(loaded.search_threads, valid);
+    }
+    let old: Job = serde_json::from_str("{}").unwrap();
+    assert_eq!(old.search_threads, None);
 }

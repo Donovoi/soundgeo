@@ -1,0 +1,40 @@
+{
+  "schema": 1,
+  "case_id": "heathrow-fixed-hour-reconstruction-305bd32-v1",
+  "created_utc": "2026-11-14T12:47:27Z",
+  "source_url": "https://www.youtube.com/watch?v=3i-UaF6biQo",
+  "title": "LIVE: London Heathrow Airport",
+  "publisher": "BIG JET TV",
+  "source_interval_seconds": [
+    1200,
+    4800
+  ],
+  "source_streams": {
+    "video.f134.mp4": {
+      "sha256": "107b47b90e76cfb1aa8e21d304ace821608134b1deb8d97940e322ab69da7ffa",
+      "bytes": 199542865
+    },
+    "video.f140.m4a": {
+      "sha256": "d5e23a5fd386566434b61e025b413e332813d1bb0d3e27918b487016f1dea77e",
+      "bytes": 179723833
+    }
+  },
+  "media_sha256": "332374ffe17ff057b1ccc9f9ebf4aa2262e809c0fcbd761b0cc46323cbb28dcb",
+  "media_bytes": 120315925,
+  "historical_media_sha256": "7f3a58192fccd8a1e78a50a23b4869cc3ddba8476443cfd04ff0512910ef984f",
+  "matches_historical_media_bytes": false,
+  "decoded_native_pcm_s16le_sha256": "3bcb8bb9da47a3a40d5fa820e395e3a21aaa25bdef676b52bc8da4749cce0c2b",
+  "decoded_audio_duration_seconds": 3600.021768707483,
+  "audio_sample_rate": 44100,
+  "audio_channels": 2,
+  "audio_reencoded": false,
+  "full_av_decode_passed": true,
+  "decoder_version": "ffmpeg version 8.0.1-3ubuntu2 Copyright (c) 2000-2025 the FFmpeg developers",
+  "decoder_sha256": "bdf6aabffdba7411edff8d36c389d695257fcdf823d196020176e117612862f6",
+  "acquisition_method": "Full original format 134 and 140 downloads followed by the preselected local stream-copy cut.",
+  "preserved_attempts": [
+    "heathrow-capture.log: shell argument error before capture",
+    "heathrow-capture-v2.log: direct range transfer stopped for low throughput; partial media retained"
+  ],
+  "scope": "Reconstructed source interval. Historical raw media and decoded hash were not available for content equivalence."
+}

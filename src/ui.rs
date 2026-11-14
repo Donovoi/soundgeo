@@ -257,16 +257,18 @@ impl App {
                 egui::ComboBox::from_id_salt("flight_provider").selected_text(match request.provider {
                     ArchiveProvider::AdsbLol => "Worldwide: ADSB.lol",
                     ArchiveProvider::AdsbExchangeSample => "Free evaluation sample: first of each month",
+                    ArchiveProvider::AdsbExchangeSampleHires => "Free evaluation sample: high resolution",
                     ArchiveProvider::WebtrakChicago => "Chicago: public airport replay",
                     ArchiveProvider::WebtrakLax => "LAX: public airport replay",
                 }).show_ui(ui,|ui|{
                     ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbLol,"Worldwide: ADSB.lol");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbExchangeSample,"Free evaluation sample: first of each month");
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbExchangeSampleHires,"Free evaluation sample: high resolution");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakChicago,"Chicago: public airport replay");
                     ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakLax,"LAX: public airport replay");
                 });
                 ui.label(RichText::new("Optional date range. Blank dates find the provider's available days online. Offline mode searches prepared dates.").small().color(MUTED));
-                if request.provider == ArchiveProvider::AdsbExchangeSample {
+                if request.provider.sample_resolution().is_some() {
                     ui.label(RichText::new("Use the first day of a month and set a search area below. This free sample is for testing and evaluation. It can miss flights between five-minute discovery snapshots.").small().color(MUTED));
                     ui.hyperlink_to("Free sample coverage and terms", "https://www.adsbexchange.com/data-products/sample-data/");
                 }
@@ -281,11 +283,15 @@ impl App {
             file_field(ui,&mut self.job.tracks,"Choose flight data…",&["csv","json","gz","aa","tar"]);
             if ui.small_button("Or choose an archive folder").clicked()&& let Some(p)=rfd::FileDialog::new().pick_folder(){self.job.tracks=p;}
             }
-            if self.job.archive.is_some() && ui.add_enabled(!self.job.offline, egui::Button::new("Prepare data for offline use")).clicked() {
+            let prepare_data = self.job.archive.is_some() && ui.add_enabled(!self.job.offline, egui::Button::new("Prepare data for offline use")).clicked();
+            let refresh_gaps = self.job.archive.as_ref().is_some_and(|request| request.provider.sample_resolution().is_some())
+                && ui.add_enabled(!self.job.offline, egui::Button::new("Retry unavailable source files")).clicked();
+            if prepare_data || refresh_gaps {
                 let mut job = self.job.clone();
                 job.bounds = self.use_bounds.then_some(self.bounds);
-                self.status = "Preparing offline data".into();
+                self.status = if refresh_gaps { "Retrying unavailable source files" } else { "Preparing offline data" }.into();
                 self.worker(ctx, move |tx, control| {
+                    let control = if refresh_gaps { control.with_source_gap_refresh() } else { control };
                     let result = soundgeo::prepare_data(&job, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
                     let _ = tx.send(match result { Ok(data) => Message::Prepared(data.flight_sources.len()), Err(e) => Message::Error(format!("{e:#}")) });
                 });
@@ -355,7 +361,12 @@ impl App {
                     for (label,value) in [("Low frequency (Hz)",&mut self.job.min_hz),("High frequency (Hz)",&mut self.job.max_hz),("Min contrast (dB)",&mut self.job.min_snr_db),("Temperature (°C)",&mut self.job.temperature_c),("Grid target (m)",&mut self.job.grid_m)]{ui.label(label);ui.add(egui::DragValue::new(value).speed(1.));ui.end_row();}
                     ui.label("Media clock drift limit (ppm)");ui.add(egui::DragValue::new(&mut self.job.max_clock_drift_ppm).range(0. ..=5000.));ui.end_row();
                     ui.label("Grid point budget");ui.add(egui::DragValue::new(&mut self.job.max_grid_points).range(100..=50000));ui.end_row();
-                    ui.label("Indexed hypothesis limit");ui.add(egui::DragValue::new(&mut self.job.max_hypotheses).range(100..=100_000_000));ui.end_row();
+                    ui.label("Hypotheses per batch");ui.add(egui::DragValue::new(&mut self.job.max_hypotheses).range(100..=100_000_000));ui.end_row();
+                    ui.label("Flight-corridor workers");ui.horizontal(|ui|{
+                        let mut automatic=self.job.search_threads.is_none();
+                        if ui.checkbox(&mut automatic,"Automatic").changed(){self.job.search_threads=(!automatic).then_some(4);}
+                        if let Some(workers)=&mut self.job.search_threads{ui.add(egui::DragValue::new(workers).range(1..=std::thread::available_parallelism().map_or(1,|n|n.get())));}
+                    }).response.on_hover_text("Automatic uses up to 4 workers. A higher limit can use more CPU capacity. Searches with terrain tiles use one worker.");ui.end_row();
                 });
                 } else {
                     egui::Grid::new("timing-options").num_columns(2).show(ui,|ui| {

@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "case_id": "heathrow-fixed-hour-reconstruction-305bd32-v1",
+  "prepared_before_location_search": true,
+  "reference_status": "conditional inferred filming site; microphone position not surveyed",
+  "site": "Hilton Garden Inn London Heathrow Airport, Eastern Perimeter Road, Hatton Cross",
+  "reference_point": {"latitude": 51.4683672, "longitude": -0.4189246},
+  "mapped_building_bounds": {"south": 51.4680120, "north": 51.4687284, "west": -0.4195015, "east": -0.4183851},
+  "reference_allowance_m": 200,
+  "target_error_m": 1000,
+  "sources": [
+    {"url": "https://www.youtube.com/watch?v=3i-UaF6biQo", "evidence": "The fixed interval shows the Hilton Garden Inn London Heathrow Airport sponsor name, rooftop filming surface, an east-end perspective along runway 09R, and the airport maintenance buildings. Nine fixed sample frames are retained. This site inference uses video and geographic evidence, never the solver output."},
+    {"url": "https://bigjet.tv/corporate/", "evidence": "The publisher documents broadcasts from its Heathrow Hilton Garden Inn partner's roof."},
+    {"url": "https://www.hilton.com/en/hotels/lhrepgi-hilton-garden-inn-london-heathrow-airport/hotel-location/", "evidence": "The hotel identifies its address as Eastern Perimeter Road, Hatton Cross. It is distinct from Hilton's Terminals 2 and 3 property."},
+    {"url": "https://www.openstreetmap.org/way/187395726", "evidence": "The mapped hotel footprint supplies the evaluation center and bounding box. Nominatim's response is retained separately."}
+  ],
+  "assumptions": [
+    "The recorded aircraft audio comes from a microphone at or near this filming site.",
+    "The microphone remains within the stated 200 m allowance around the mapped center.",
+    "The interval has no unobserved remote audio substitution; successful decoding and sampled frames cannot prove this."
+  ],
+  "evaluation_rule": "Only a fully completed native candidates_found result whose top candidate distance plus the declared reference allowance is at most 1000 m can pass conditionally. Preserve every retained competitor and native ambiguity. An uncertain or contradicted site identity prevents an accepted location claim.",
+  "solver_receives_this_file": false,
+  "height_override_supplied_to_solver": false,
+  "clock_or_visual_clues_supplied_to_solver": false,
+  "full_search_controls": "No shuffled Doppler screen is claimed unless all 19 production-pipeline controls are completed separately. This evaluation alone does not establish a calibrated false-alarm rate."
+}

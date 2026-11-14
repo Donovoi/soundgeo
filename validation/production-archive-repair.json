@@ -1,0 +1,224 @@
+{
+  "scope": "Preferred-release updates and repair of incomplete multipart flight archives. These tests check data preparation and offline reuse. They do not establish a location.",
+  "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.09-planes-readsb-prod-0",
+  "source_commit": "c21b314abf15217cb5629c9400000eaa7e3a27cb",
+  "ci_head_commit": "ff200fa59df68a06a41f29dcd8234445269fc533",
+  "ci_head_only_changes_workflow": true,
+  "cli_sha256": "c964d5f64fb30ba5aabdb357c1eef0d24dd7fb2d168dc77587486d8c9ef9ca52",
+  "local_checks": {
+    "complete": true,
+    "rust_tests": 214,
+    "python_tests": 10,
+    "failed": 0,
+    "ignored": 0,
+    "steps": [
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.6364361999731045,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 34.88718369998969,
+        "log_sha256": "97aa5fdc7b7f5fc35157b07735a38ca5e0b40478251f8f56bc70959c6faa84c4"
+      },
+      {
+        "name": "tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 2490.243897700013,
+        "log_sha256": "d9c53f55f252c1bae5f573c1eb3d88dc7a698cdcb395108917becf83625ad5fe"
+      },
+      {
+        "name": "doc-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--doc"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 3.7169484999903943,
+        "log_sha256": "2f926fa3c81dd5dca854bc043b6aa30bacbc0d5997bdc730d8594759788090f0"
+      },
+      {
+        "name": "build",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--bins"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1.449503600015305,
+        "log_sha256": "76a8e41312e7fd6ca145ea9d8c7684aee2f444252a70058c286da63de7f06285"
+      },
+      {
+        "name": "python",
+        "command": [
+          "python",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "validation",
+          "-p",
+          "test_run_timing.py"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.699193300009938,
+        "log_sha256": "314bc8aa8e628be7195335011842e4e034887dec710d272539be969a25c39044"
+      },
+      {
+        "name": "control-example",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--example",
+          "doppler_controls",
+          "--example",
+          "export_reference"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 89.20156620000489,
+        "log_sha256": "ecdbfaf9edcff4ce818d76eeb37dae4688a18331a1780b940ad22bf9f256b07c"
+      }
+    ],
+    "receipt_sha256": "0a67b3ca87be101f46bc1bacc1d76621f1961464bbb27b0354f294aab268750c"
+  },
+  "ci": {
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42770523346",
+    "conclusion": "success",
+    "operating_systems": [
+      "Windows",
+      "Ubuntu"
+    ],
+    "rust_tests_per_os": 214,
+    "python_tests_per_os": 10,
+    "receipt_sha256": "e919143ee70a6f89508655d9d0d44ef43a6385b850f680504b4f2e6d9356cc72"
+  },
+  "earlier_ci_attempt": {
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42767590065",
+    "initial_result": "Ubuntu package installation timed out before Rust checks. The retry passed.",
+    "workflow_fix": "Update the runner mirror list as well as direct package source files. The next run used the public Ubuntu mirror and passed."
+  },
+  "warm_staging_upgrade": {
+    "source_commit": "568c7f33033c79768561ba16a34f190627b35017",
+    "cli_sha256": "823348cc521f2e657c0cc26a85a7350f46cf41c7b35d0522b43aad33ae7ce42b",
+    "complete": true,
+    "downloaded_missing_part_bytes": 1723313664,
+    "online": {
+      "exit_code": 0,
+      "elapsed_s": 411.538618999999,
+      "log_sha256": "7e3963ec981d973a806d3be932f7a06c306da2d8f617d12114315107aac76cc7"
+    },
+    "offline": {
+      "exit_code": 0,
+      "elapsed_s": 36.09393540001474,
+      "log_sha256": "4c2e7542b91c750d264cae159b51615a40544860f4c608ebda7d854a82431f9f"
+    },
+    "prepared_dates": [
+      "2026-11-07",
+      "2026-11-08",
+      "2026-11-09"
+    ],
+    "publisher_hashes_verified": true,
+    "old_files_retained": true,
+    "offline_dates_supplied": false,
+    "offline_proxy_connections": 0,
+    "result_sha256": "497c311ee5c74cb5d9cb717b61ce4155bdc105671f5b279660e6e500b58c928e"
+  },
+  "incomplete_production_fixture": {
+    "basis": "Constructed saved manifest containing only the first real, publisher-verified archive part. This reproduces a partial-publication condition; it is not a preserved historical API response.",
+    "previous_build_returned_ready_for_incomplete_archive": true,
+    "initial_diagnostic_sha256": "4377c9898abe1f13260a91f245a330b76b977c76557b738051d8fcf7fe4fd518"
+  },
+  "repair_and_offline_replay": {
+    "complete": true,
+    "location_acceptance": false,
+    "source_commit": "c21b314abf15217cb5629c9400000eaa7e3a27cb",
+    "cli_sha256": "c964d5f64fb30ba5aabdb357c1eef0d24dd7fb2d168dc77587486d8c9ef9ca52",
+    "offline_incomplete": {
+      "exit_code": 1,
+      "expected_exit_code": 1,
+      "elapsed_s": 5.239086100016721,
+      "log_sha256": "a9901a7abfc22339b2d04b40b78b007f6a8d2c0b9a3aa0488312056170fb97d5"
+    },
+    "online_repair": {
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_s": 183.54198730000644,
+      "log_sha256": "c9ea07dcd06fe1f4efca9ca33cfbaaba678aa2c1ab10190c5bd30e1bf373b353"
+    },
+    "offline_complete": {
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "elapsed_s": 5.824912400014,
+      "log_sha256": "e084edd54d66515febd227add47d1874bef740ae0bcdca6116de917759d360c2"
+    },
+    "initial_false_ready_fixed": true,
+    "missing_part_downloaded": true,
+    "downloaded_bytes": 1723313664,
+    "original_part_reused_without_download": true,
+    "published_part_digests_verified": true,
+    "source_fixture_unchanged": true,
+    "old_cloned_parts_retained": true,
+    "offline_cache_unchanged": true,
+    "offline_date_arguments_supplied": false,
+    "offline_proxy_connections": 0
+  },
+  "independent_audit": {
+    "complete": true,
+    "scope": "Completed native data preparation repair. Rehash original and copied inputs, all prepared cache files, and both publisher archive parts. Check terminal native statuses, commands, qualification and offline proxy records. No location acceptance.",
+    "source_commit": "c21b314abf15217cb5629c9400000eaa7e3a27cb",
+    "current_head": "ff200fa59df68a06a41f29dcd8234445269fc533",
+    "current_head_only_changes_ci_workflow": true,
+    "checked_application_source_files": 66,
+    "rust_tests_per_os": 214,
+    "python_tests_per_os": 10,
+    "cli_sha256": "c964d5f64fb30ba5aabdb357c1eef0d24dd7fb2d168dc77587486d8c9ef9ca52",
+    "incomplete_offline_exit_code": 1,
+    "repair_online_exit_code": 0,
+    "repaired_offline_exit_code": 0,
+    "downloaded_missing_part_bytes": 1723313664,
+    "verified_existing_part_bytes": 2000000000,
+    "original_fixture_unchanged": true,
+    "old_copied_files_retained": true,
+    "offline_cache_unchanged": true,
+    "no_offline_date_arguments": true,
+    "offline_proxy_connections": 0,
+    "plan_sha256": "066392d77c69b4cb5454a671b0df4c0a8b580021b78ab90400eb2d38e1e5e93f",
+    "result_sha256": "709c6bf84d3cbb55ba5a34861c4ec74339d5dc0628c264e37f1f37f7579eafb9",
+    "verifier_sha256": "837e71216570e69226087188860c32ffe81309f53e347346472280fdf6c824a1"
+  },
+  "lake_hood_reliability_verified": false
+}

@@ -51,6 +51,9 @@ The [validation record](validation/README.md) contains test results, sources, an
 Put FFmpeg on `PATH`, beside the application, or select its path in the advanced settings.
 A new daily flight archive can require several GB of storage.
 The program checks downloaded files and uses valid files again.
+A split archive must be complete before the app marks it ready.
+When online, it can upgrade a saved ADSB.lol staging archive to a production
+archive. It keeps the previous files until the replacement is verified.
 With blank dates, online analysis discovers the provider's available days and
 downloads missing files as it searches. Offline analysis searches prepared days.
 
@@ -230,6 +233,15 @@ The [sample page](https://www.adsbexchange.com/data-products/sample-data/)
 sets out the dates and terms of use. Source gaps are listed in
 `sample-manifest.json` and in the report warning.
 The app checks cached file hashes and keeps damaged cache bytes before repair.
+Repeat the download command to resume preparation. Verified completed days are
+reused. Add `--refresh-gaps` to retry source files listed as unavailable.
+In the desktop app, use **Retry unavailable source files** for this action.
+
+For the sample's high-resolution flight traces, use
+`--provider adsb-exchange-sample-hires` in the download or analysis command.
+In the desktop app, select **Free evaluation sample: high resolution**.
+Both options use the same discovery snapshots. Each keeps its own flight traces.
+Prepared high-resolution data can be used with `--offline` and blank dates.
 
 To search more than one possible date, add `--date-to`:
 
@@ -307,18 +319,28 @@ Set `start_utc` to `null` when the recording start time is unknown.
 For Doppler searches, set `bounds` to `null` to search the area covered by the imported flight data.
 Flight passage timing requires a search area.
 
-Before it compares sound curves, the flight-corridor search checks its hypothesis budget.
-If the search needs more hypotheses than the limit, it stops without a partial result.
-The check uses the same proposed locations as the search.
-To retry with a larger limit, use `--max-hypotheses`:
+The flight-corridor search divides large jobs into batches automatically.
+It checks each batch before it compares sound curves. Matching keeps access
+to all flight tracks across batch boundaries.
+Use `--max-hypotheses` to set the budget for each batch:
 
 ```powershell
 soundgeo-cli.exe analyze --config "job.json" --max-hypotheses 50000000 --output "report-larger-search.json"
 ```
 
 The limit can be between 100 and 100,000,000.
-This option sets the search budget for that run. In a date search, the budget
-applies to each batch. The report records the limit used.
+The report records the limit and each automatic division. Total work across
+dates and proposal batches can exceed the limit for one batch.
+
+Use `--search-threads` to set the maximum CPU workers for flight-corridor matching:
+
+```powershell
+soundgeo-cli.exe analyze --config "job.json" --search-threads 8 --output "report.json"
+```
+
+The default is up to four workers. The program caps the worker count at the
+available CPU capacity. The progress log shows the count used. In the desktop
+app, set **Flight-corridor workers** under **Advanced audio & search**.
 
 Paths in a job file are relative to that file.
 Paths supplied with `--input`, `--tracks`, `--cache`, and `--terrain-cache` are relative to the current directory.
@@ -381,6 +403,16 @@ Use WGS84 coordinates. Use geometric altitude when it is available.
 Use consistent altitude units and reference levels.
 
 The program reports missing dates and damaged files. It can use a complete cache without an internet connection.
+
+For offline archive searches covering at least two prepared dates, add
+`--date-checkpoints checkpoints` to the
+`analyze` command. Repeat the same command after an interruption to reuse completed
+date batches. Keep the checkpoint folder outside the flight and terrain folders.
+The SoundGeo executable, recording, settings, dates, reference files and terrain
+must stay unchanged. Audio is decoded again on each run; its extracted observations
+must also match before results are reused. Use a new checkpoint folder after
+changing these inputs. The program checks every planned date batch before returning
+a location report.
 
 The ADSB.lol archive uses the [ODbL 1.0 licence](https://opendatacommons.org/licenses/odbl/1-0/).
 Other providers have separate terms. The downloader saves a source notice.
