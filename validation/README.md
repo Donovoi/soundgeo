@@ -8,6 +8,14 @@ New results must state which target they use.
 
 ## Current checks
 
+A [fresh VM qualification](restored-vm-qualification.json) of clean revision
+`305bd32` passed all required release checks, 237 Rust tests and 10 Python
+tests. A separate artifact check matched test names to the source and
+verified all source files, logs and frozen executables. Builds and tests
+ran headlessly in WSL2 with limits of two CPU cores and 8 GiB RAM.
+This verifies the restored development environment; location accuracy
+is evaluated separately.
+
 The [JSON numeric-fidelity fix](json-numeric-fidelity.json) prevents one-ULP
 changes when saved observations and modeled curves are read back. Two original
 Lake Hood reports were restored exactly without excluded fields or a numeric
