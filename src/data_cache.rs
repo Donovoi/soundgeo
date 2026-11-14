@@ -11,7 +11,7 @@ use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
     fs::File,
-    io::{Read, Write},
+    io::{BufWriter, Read, Write},
     path::{Path, PathBuf},
 };
 
@@ -213,8 +213,11 @@ impl PreparedCache {
         let parent = self.path.parent().unwrap();
         std::fs::create_dir_all(parent)?;
         let (mut temp, destination) = crate::atomic_file::prepare(&self.path)?;
-        serde_json::to_writer(&mut temp, &stored)?;
-        temp.flush()?;
+        {
+            let mut writer = BufWriter::with_capacity(256 * 1024, &mut temp);
+            serde_json::to_writer(&mut writer, &stored)?;
+            writer.flush()?;
+        }
         control.check()?;
         if self.path.exists() {
             let nonce = std::time::SystemTime::now()
