@@ -1,0 +1,242 @@
+{
+  "schema": 1,
+  "recorded_utc": "2026-11-15T10:34:13.685779+00:00",
+  "source_commit": "a1884ae82da3a343c08f85849b68fc4ab09aa752",
+  "scope": "Software qualification of buffered date and proposal checkpoint readers. No new location result is claimed.",
+  "change": {
+    "production_checkpoint_read_sites": 4,
+    "reader": "std::io::BufReader",
+    "checkpoint_schemas_changed": false,
+    "input_binding_checks_changed": false,
+    "numeric_payload_decoding_changed": false,
+    "matching_settings_or_ranking_changed": false
+  },
+  "baseline_observation": {
+    "source_commit": "dbc12f84356761e5a97dc5656a6b727edcfb0ea3",
+    "checkpoint_bytes": 5992422,
+    "started_utc": "2026-11-15T09:47:59.624837+00:00",
+    "finished_utc": "2026-11-15T09:48:09.635830+00:00",
+    "elapsed_seconds": 10.010985800000071,
+    "read_calls": 48648,
+    "bytes_returned_by_read_calls": 48648,
+    "mean_bytes_per_read_call": 1.0,
+    "filesystem_scope": "Windows-mounted filesystem accessed from WSL2",
+    "model_runs_by_observer": 0,
+    "observation_sha256": "e0ef326b310f437901269f1e2ef245c7c98df677663647fbc8d6cd48381d1226",
+    "controlled_before_after_speedup_measured": false
+  },
+  "existing_regressions": [
+    "proposal_payload_preserves_float_bits_counts_and_rejects_corruption",
+    "proposal_checkpoints_reject_input_changes_before_publish_and_reuse",
+    "proposal_manifest_binds_duration_settings_and_offline_scope",
+    "interrupted_proposal_search_resumes_before_a_date_finishes_with_exact_report_parity"
+  ],
+  "regression_scope": "Existing tests cover exact interrupted/uninterrupted report parity including competing locations, corruption, changed inputs and manifest bindings.",
+  "local_vm": {
+    "kernel": "6.18.58.1-microsoft-standard-WSL2",
+    "cgroup_limits": {
+      "cpu.max": "200000 100000",
+      "memory.max": "8589934592",
+      "memory.swap.max": "1073741824"
+    },
+    "nice": 10,
+    "network_interfaces": [
+      "lo"
+    ],
+    "io_scheduler_priority": "idle",
+    "isolated_cargo_target_directory": true,
+    "tools": {
+      "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11) (built from a source tarball)",
+      "cargo": "cargo 1.93.1 (083ac5135 2025-12-15) (built from a source tarball)",
+      "ffmpeg": "ffmpeg version 8.0.1-3ubuntu2 Copyright (c) 2000-2025 the FFmpeg developers",
+      "python3": "Python 3.14.4"
+    },
+    "checks": [
+      {
+        "name": "format",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.4441916740001943,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "python",
+        "command": [
+          "python3",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "validation",
+          "-p",
+          "test_run_timing.py"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.1432994570000119,
+        "log_sha256": "afbb7efe423a420586f631daab3bc06091f2415943576a7a4532da14f3ec5842"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 172.17037824299996,
+        "log_sha256": "fd446cc3ff8ea346db232e4b4c9420da3c07dfe2b3f82201d73c93aece6358bb"
+      },
+      {
+        "name": "rust-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1496.004827757,
+        "log_sha256": "2af37125e7a3abaa80b71d0fdc1deb77ad82ad021eb14975401ed49bd231cb9e"
+      },
+      {
+        "name": "doctests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--doc"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 1.2048085739997987,
+        "log_sha256": "fac50bbb10562e791c68b47bb04a662f1dd69ae1bf3f31e1db1afcf6d8a165cd"
+      },
+      {
+        "name": "binaries",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--bins"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 0.28471001999969303,
+        "log_sha256": "f18e8aa44b81e7d9d1663536017be739eb80ede7041400fe06bf4e1c755d3d59"
+      },
+      {
+        "name": "helpers",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--example",
+          "inspect_audio",
+          "--example",
+          "doppler_controls"
+        ],
+        "exit_code": 0,
+        "elapsed_seconds": 87.44583370999953,
+        "log_sha256": "aed2a0d0e7ffb1d7fdea442a7ce0bc198d4a1f60b81814bd418cfb03b95b46b8"
+      }
+    ],
+    "audit": {
+      "schema": 1,
+      "source_commit": "a1884ae82da3a343c08f85849b68fc4ab09aa752",
+      "source_file_count": 274,
+      "source_manifest_sha256": "7227dfd3617f1191da8cea7cd562f7af3e8e5b254438b0b02fa602a838b56f0f",
+      "rust_tests_passed": 241,
+      "python_tests_passed": 10,
+      "test_names_match_source": true,
+      "all_check_logs_and_frozen_binaries_match": true,
+      "clean_source_matches_before_and_after": true,
+      "passed": true
+    },
+    "frozen_binaries": {
+      "soundgeo": {
+        "name": "soundgeo",
+        "sha256": "ec2e772e8fc51ebc32557cd279b9f46cfd76ae4825b56220f89c5210810e96a2",
+        "bytes": 30099456
+      },
+      "soundgeo-cli": {
+        "name": "soundgeo-cli",
+        "sha256": "10a1248b44305646e2692b80e0227c37aa36d45eed09e9993087c1235a65e4c3",
+        "bytes": 30099456
+      },
+      "examples/inspect_audio": {
+        "name": "inspect_audio",
+        "sha256": "ae6d7716e21abd23dc23bb696c2926cf7d342a1c278b21d9f856e87049617d07",
+        "bytes": 1799056
+      },
+      "examples/doppler_controls": {
+        "name": "doppler_controls",
+        "sha256": "d65e6f2316e896acff2ecb2f1376e5fc27febc8c88750d1971cabd95f9f4cf91",
+        "bytes": 16492672
+      }
+    },
+    "started_utc": "2026-11-15T10:04:13.137649+00:00",
+    "finished_utc": "2026-11-15T10:33:33.717369+00:00"
+  },
+  "hosted_vms": {
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/43702160623",
+    "tested_merge_commit": "6e3c31aa4ed85613a298389ef3d6dbf97cfd5f2e",
+    "source_tree": "2fe68b360ceb8bb55aa824bdf7c55b0bc096f99c",
+    "tested_tree_matches_source_tree": true,
+    "required_steps": [
+      "Run cargo fmt --all -- --check",
+      "Run python -m unittest discover -s validation -p test_run_timing.py",
+      "Run cargo clippy --release --all-targets --locked -- -D warnings",
+      "Run cargo test --release --locked --all-targets",
+      "Run cargo test --release --locked --doc",
+      "Run cargo build --release --locked --bins"
+    ],
+    "platforms": {
+      "ubuntu": {
+        "job_id": 132775431480,
+        "rust_passed": 241,
+        "python_passed": 10,
+        "all_required_checks_passed": true,
+        "test_names_match_source": true,
+        "log_sha256": "5f01bfbde55dac01ff62076154407e7286a017801351f154350efb5ab34a4a32"
+      },
+      "windows": {
+        "job_id": 132775431709,
+        "rust_passed": 241,
+        "python_passed": 10,
+        "all_required_checks_passed": true,
+        "test_names_match_source": true,
+        "log_sha256": "a0c71a4f97140e26379cb5038277d9391f89fb816dd45d8cdc71e4bfe2a6d088"
+      }
+    }
+  },
+  "windows_artifact": {
+    "artifact_id": 14156484564,
+    "archive_sha256": "747eb0835955344b0815df993c103f305471c4daaa2be8fd7c4137d787d5e4a5",
+    "soundgeo_sha256": "bbafc998da0ab05330b06b0ad317bbb82d10d2f6df03fe4d252de010675a471d",
+    "cli_sha256": "c3c84f7140d9f010f9952aff83fda2469a478e896d3811fe34bd946b88b37a27"
+  },
+  "evidence_sha256": {
+    "local_checks": "6fb13b9ab5a9c8776469750c9140251d49dc437208e9c7b671bcc90b398dd2a6",
+    "local_audit": "10104c8893fd95aebe86785142e8eae98559d2987a47e3e759bd59e9d4aa6154",
+    "source_manifest": "e4fa722b01b096063f53487edad2df49f8316a500df30c3020f9b0a46f0e1db3",
+    "hosted_vm_audit": "0779f592297e1e38c19331fc35752de380618ad11833e54f0772a63ff10c29a4"
+  },
+  "heathrow_validation_executable_changed": false,
+  "heathrow_frozen_source_commit": "dbc12f84356761e5a97dc5656a6b727edcfb0ea3",
+  "heathrow_frozen_cli_sha256": "4f7e976df0920f55fecebba4427b56ae92bf4bec007a44a7d6d3ad164b784d34",
+  "original_benchmark_changed": false,
+  "new_location_result_claimed": false
+}

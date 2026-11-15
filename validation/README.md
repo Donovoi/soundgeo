@@ -8,6 +8,15 @@ New results must state which target they use.
 
 ## Current checks
 
+The [buffered checkpoint readers](buffered-checkpoint-reads.json) load date
+and proposal checkpoint JSON through a file buffer. Revision `a1884ae`
+passed all required checks in the local Linux VM and hosted Ubuntu and
+Windows VMs, with 241 Rust tests and 10 Python tests per platform. Existing
+tests preserved exact recovered reports and rejected corruption and changed
+inputs. A baseline VM observation recorded 48,648 reads for 48,648 bytes in
+10.01 seconds on a Windows-mounted filesystem. A controlled speed comparison
+remains unmeasured. The ongoing Heathrow run keeps its frozen `dbc12f8` build.
+
 The [proposal checkpoint revision](proposal-checkpoint-qualification.json)
 saves finished flight-proposal batches within unfinished dates. Recovery
 preserved the complete synthetic report, including competing locations.
