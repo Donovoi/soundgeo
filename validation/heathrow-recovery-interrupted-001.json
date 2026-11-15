@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "case_id": "heathrow-fixed-hour-recovery-dbc12f8-v1",
+  "attempt": "run-001",
+  "outcome": "interrupted_vm_shutdown",
+  "source_commit": "dbc12f84356761e5a97dc5656a6b727edcfb0ea3",
+  "cli_sha256": "4f7e976df0920f55fecebba4427b56ae92bf4bec007a44a7d6d3ad164b784d34",
+  "started_utc": "2026-11-15T04:13:08Z",
+  "service_stopped_utc": "2026-11-15T08:48:04Z",
+  "service_process_exit_status": 120,
+  "native_exit_code": null,
+  "last_native_progress": "54% Dates 2026-11-01 to 2026-11-01 (1/2): Flight proposal batch 3/7: Indexed flight corridors: anchor 7/8, track 3265/5467, 12087188 hypotheses",
+  "report_present": false,
+  "completed_date_batches": 0,
+  "saved_proposal_batches": 2,
+  "checkpoint_envelopes_verified": true,
+  "checkpoint_files_sha256": {
+    "manifest.json": "734fc70bc0159f32513df84bf1b5802e1c8175f8bbd6155abbf3b55502f0f82d",
+    "proposals-4e3134b4f88295aeaab34675691f11c8bd07ce5ee0bb6c0887b19981a0c453f1/manifest.json": "6c73a86ba716444e2680facb07894e3985afe86d5e196d96efd795252f070bde",
+    "proposals-4e3134b4f88295aeaab34675691f11c8bd07ce5ee0bb6c0887b19981a0c453f1/proposal-0000.json": "cddd08c61fa89f62d11de456bbb89299e624f036eeb7d6f59d50c4673c0c3a59",
+    "proposals-4e3134b4f88295aeaab34675691f11c8bd07ce5ee0bb6c0887b19981a0c453f1/proposal-0001.json": "f524942d8c9743e8c7ea21cdcdd4abef06df1050de45afdec5ec1fdddceeb263"
+  },
+  "inputs_unchanged": true,
+  "input_file_count": 46,
+  "changed_inputs": [],
+  "host_restart_evidence": {
+    "last_boot_utc": "2026-11-15T09:10:07.5000000Z",
+    "planned_upgrade_restart_events_utc": [
+      "2026-11-15T09:09:35.5061956Z"
+    ],
+    "scope": "The host restart was recorded after the VM shutdown; these records do not identify who requested the VM shutdown."
+  },
+  "postprocessing_completed": false,
+  "accuracy_evaluation_completed": false,
+  "derived_cache_files": {
+    "1d8cf1e830f35372ff808f04fa1d19c50a5bf33e04b59a2d8c963afe55ae2bbf.sgcache": {
+      "sha256": "ab0f3b97535a55c25427fec6b3fb59c55940ba0b6c969c4afd7f4050b7e67e43",
+      "bytes": 69496907
+    }
+  },
+  "model_runs_by_auditor": 0,
+  "checkpoint_reuse_policy": "Reuse only completed batches after the native binding checks; repeat the unfinished batch.",
+  "native_reuse_confirmed": false,
+  "original_benchmark_changed": false,
+  "artifact_files_sha256": {
+    "checkpoint-envelope-audit.json": "f244ce496de2652331ef7703547c706f0fc085a01774dd07458726cd658473e4",
+    "checkpoints-before.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+    "derived-cache-storage.json": "f8d8df26b309bcf4d60a815e9e7cadfe725b781dd21543df74950206b2ce2ea4",
+    "failure.json": "9c50b5c07286f0d71d4061439032fc5cb2b0ce72b076637df0412c9583b8b6d9",
+    "host-restart-evidence.json": "7e3ab2e1d0a82b2471f0562d4482da938d7aee94d53586440365fcebeda548db",
+    "input-manifest.json": "1456764b6d8266858b7a4f7b32ccd09e6aa63fb7ca5ac71cd88adea7929a015a",
+    "interruption-audit.json": "809381976a73991eb551001ef9c76531badaffc4c29b609dbbfdc51c46d50667",
+    "interruption-service-journal.log": "f022deff68647f5dfaab863384ecdb554a808218d23e4b1a3120f5b540661318",
+    "interruption-shutdown-journal.log": "f62c98a39650f6fcbfe596fd7aceebe15c95e98024f366c73bbaeef5640c8c29",
+    "native.log": "eef0d03533fd3d2a27152153bffffd82934d3515ef02425fce70d98fdb9101cb",
+    "packet-audit.json": "e50c52cea7eb3e7be3f54521a513681f072ca1e17c468d3966354b163d8fae99",
+    "packet-audit.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "postprocess-evidence/failure.json": "215aa340c7e52321edc1eec2cd63b1ae2053fb55de610541f1f2d717aeba2919",
+    "postprocess-evidence/status.json": "da4a1b145e390ab4f4b223b9098150185537f59175f4edff4b351afb5cafe5ca",
+    "preservation-preflight-v1/failure.json": "3b3acf3565e90ec70ae6f5670f7dad11e3d2e30055517cd294e9441fa5a20196",
+    "preservation-preflight-v1/stderr.log": "69a4699383e371a9d7575aa7b69bf7f4946a2f736bb9a9cb74eb69d2551271ac",
+    "run.json": "15da5f7f8a775729b22fe2534a9cb3c46380ce54ea33f490dbef78bcd19473e6",
+    "vm-startup.json": "a6236acf2b6d93aceb5161965b45485a58bb93e9d3d882f1b1c2c11081a68f3c"
+  },
+  "local_evidence_directory": "SoundGeo-validation/heathrow-recovery-interrupted-001"
+}

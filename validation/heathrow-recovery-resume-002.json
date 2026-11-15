@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "case_id": "heathrow-fixed-hour-recovery-dbc12f8-v1",
+  "attempt": "run-002",
+  "observed_utc": "2026-11-15T09:55:52.459180+00:00",
+  "source_commit": "dbc12f84356761e5a97dc5656a6b727edcfb0ea3",
+  "cli_sha256": "4f7e976df0920f55fecebba4427b56ae92bf4bec007a44a7d6d3ad164b784d34",
+  "job_sha256": "72b0dde30d2b1236da23fa99a1fd957716954aaf249533ff961f9f93e4bbef42",
+  "native_started_utc": "2026-11-15T09:29:53Z",
+  "fixed_plan": "heathrow-recovery-plan-dbc12f8.json",
+  "preserved_previous_attempt": "heathrow-recovery-interrupted-001.json",
+  "input_file_count": 46,
+  "input_manifest_matches_previous_attempt": true,
+  "input_manifest_sha256": "1456764b6d8266858b7a4f7b32ccd09e6aa63fb7ca5ac71cd88adea7929a015a",
+  "previous_input_manifest_sha256": "1456764b6d8266858b7a4f7b32ccd09e6aa63fb7ca5ac71cd88adea7929a015a",
+  "checkpoint_files_before_sha256": {
+    "manifest.json": "734fc70bc0159f32513df84bf1b5802e1c8175f8bbd6155abbf3b55502f0f82d",
+    "proposals-4e3134b4f88295aeaab34675691f11c8bd07ce5ee0bb6c0887b19981a0c453f1/manifest.json": "6c73a86ba716444e2680facb07894e3985afe86d5e196d96efd795252f070bde",
+    "proposals-4e3134b4f88295aeaab34675691f11c8bd07ce5ee0bb6c0887b19981a0c453f1/proposal-0000.json": "cddd08c61fa89f62d11de456bbb89299e624f036eeb7d6f59d50c4673c0c3a59",
+    "proposals-4e3134b4f88295aeaab34675691f11c8bd07ce5ee0bb6c0887b19981a0c453f1/proposal-0001.json": "f524942d8c9743e8c7ea21cdcdd4abef06df1050de45afdec5ec1fdddceeb263"
+  },
+  "native_completed_proposal_reuse_messages": 2,
+  "native_reuse_evidence": [
+    "51% Dates 2026-11-01 to 2026-11-01 (1/2): Flight proposal batch 1/7: Reusing completed flight proposal batch",
+    "53% Dates 2026-11-01 to 2026-11-01 (1/2): Flight proposal batch 2/7: Reusing completed flight proposal batch"
+  ],
+  "latest_progress_at_observation": "53% Dates 2026-11-01 to 2026-11-01 (1/2): Flight proposal batch 3/7: Indexed flight corridors: anchor 1/8, track 65/5467, 35578 hypotheses",
+  "native_search_complete": false,
+  "accuracy_evaluation_complete": false,
+  "recording_time_supplied": false,
+  "camera_coordinates_supplied": false,
+  "execution": {
+    "environment": "Headless WSL2 VM",
+    "kernel": "6.18.58.1-microsoft-standard-WSL2",
+    "limits": {
+      "cpu.max": "200000 100000",
+      "memory.max": "8589934592",
+      "memory.swap.max": "1073741824",
+      "io.weight": null,
+      "io_scheduler_priority": "idle"
+    },
+    "nice": 10,
+    "network_interfaces": [
+      "lo"
+    ]
+  },
+  "model_runs_by_observer": 0,
+  "scope": "The native executable reused two completed proposal batches. The unfinished third batch is repeated; full date coverage and location accuracy remain unverified."
+}

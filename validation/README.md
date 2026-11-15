@@ -17,6 +17,14 @@ per platform. Test names match the source. The [fixed Heathrow recovery
 plan](heathrow-recovery-plan-dbc12f8.json) keeps the prior recording,
 job bytes, reference dates and independent evaluation rule.
 
+A [later VM shutdown](heathrow-recovery-interrupted-001.json) interrupted
+the first recovery attempt during proposal batch 3 of 7. Both completed
+proposal checkpoints survived, and all 46 fixed input hashes still matched.
+The [second attempt](heathrow-recovery-resume-002.json) reused both saved
+batches with the same frozen executable and input paths, then resumed the
+unfinished third batch. The full search and location evaluation remain
+incomplete; this verifies recovery of saved work.
+
 The [buffered cache writer](buffered-cache-writes.json) groups decoded-flight
 JSON writes into 256 KiB blocks and flushes before atomic publication.
 Revision `c1b2403` passed all required Windows and Ubuntu checks, with
