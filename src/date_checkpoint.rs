@@ -6,7 +6,7 @@ use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::File,
-    io::{BufWriter, Read, Write},
+    io::{BufReader, BufWriter, Read, Write},
     path::{Path, PathBuf},
 };
 
@@ -277,8 +277,12 @@ impl Checkpoints {
         if root.exists() {
             ensure!(root.is_dir(), "Date checkpoint path must be a folder");
             if manifest_path.exists() {
-                let manifest: Manifest = serde_json::from_reader(File::open(&manifest_path)?)
-                    .context("Invalid date checkpoint manifest; preserve it and use a new checkpoint folder")?;
+                let manifest: Manifest = serde_json::from_reader(BufReader::new(File::open(
+                    &manifest_path,
+                )?))
+                .context(
+                    "Invalid date checkpoint manifest; preserve it and use a new checkpoint folder",
+                )?;
                 ensure!(
                     manifest.schema == SCHEMA && manifest.key == key,
                     "Date checkpoint executable, plan or inputs changed; preserve this folder and use a new checkpoint folder"
@@ -366,7 +370,7 @@ impl Checkpoints {
         if !path.exists() {
             return Ok(None);
         }
-        let stored: Stored = serde_json::from_reader(File::open(path)?).context(
+        let stored: Stored = serde_json::from_reader(BufReader::new(File::open(path)?)).context(
             "Invalid date batch checkpoint; preserve it and use a new checkpoint folder",
         )?;
         ensure!(

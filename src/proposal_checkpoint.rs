@@ -6,6 +6,7 @@ use anyhow::{Context, Result, ensure};
 use serde::{Deserialize, Serialize};
 use std::{
     fs::File,
+    io::BufReader,
     path::{Path, PathBuf},
 };
 
@@ -97,8 +98,9 @@ impl Checkpoints {
         if root.exists() {
             ensure!(root.is_dir(), "Proposal checkpoint path must be a folder");
             if manifest_path.exists() {
-                let saved: Manifest = serde_json::from_reader(File::open(&manifest_path)?)
-                    .context("Invalid proposal checkpoint manifest; preserve this folder")?;
+                let saved: Manifest =
+                    serde_json::from_reader(BufReader::new(File::open(&manifest_path)?))
+                        .context("Invalid proposal checkpoint manifest; preserve this folder")?;
                 ensure!(
                     saved.schema == SCHEMA
                         && saved.key == key
@@ -185,7 +187,7 @@ impl Checkpoints {
             return Ok(None);
         }
         self.verify(control)?;
-        let stored: Stored = serde_json::from_reader(File::open(path)?)
+        let stored: Stored = serde_json::from_reader(BufReader::new(File::open(path)?))
             .context("Invalid proposal checkpoint; preserve this folder")?;
         let plan_hash = date_checkpoint::digest(date_checkpoint::encode_exact(plan)?.as_bytes());
         ensure!(
