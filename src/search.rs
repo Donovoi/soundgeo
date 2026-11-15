@@ -78,6 +78,7 @@ impl Candidate {
         (self.recording_clock_rate - 1.).abs() > 1e-12 && self.matches.len() < 4
     }
 }
+#[derive(Serialize, Deserialize)]
 pub struct SearchResult {
     pub candidates: Vec<Candidate>,
     pub warnings: Vec<String>,
@@ -856,10 +857,34 @@ pub fn locate(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<SearchResult> {
+    locate_with_checkpoints(job, events, tracks, terrain, control, progress, None)
+}
+
+pub(crate) fn locate_with_checkpoints(
+    job: &Job,
+    events: &[Event],
+    tracks: &[Track],
+    terrain: &mut Terrain,
+    control: &Control,
+    progress: &Progress<'_>,
+    checkpoints: Option<&mut crate::proposal_checkpoint::Checkpoints>,
+) -> Result<SearchResult> {
     // Corridor snapshots can be released before serial refinement, but their
     // input fingerprint must survive every proposal batch and final callback.
     terrain.with_search_scope(control, |terrain| {
-        locate_inner(job, events, tracks, terrain, control, progress)
+        let result = locate_inner(
+            job,
+            events,
+            tracks,
+            terrain,
+            control,
+            progress,
+            checkpoints.as_deref(),
+        );
+        if let Some(store) = checkpoints {
+            store.verify(control)?;
+        }
+        result
     })
 }
 
@@ -870,6 +895,7 @@ fn locate_inner(
     terrain: &mut Terrain,
     control: &Control,
     progress: &Progress<'_>,
+    checkpoints: Option<&crate::proposal_checkpoint::Checkpoints>,
 ) -> Result<SearchResult> {
     match locate_once(job, events, tracks, terrain, control, progress, None) {
         Err(error)
@@ -910,15 +936,43 @@ fn locate_inner(
         };
         // Only anchor generation is partitioned. Every fit still sees all
         // tracks and the original clock settings, including across boundaries.
-        let result = locate_once(
-            job,
-            events,
-            tracks,
-            terrain,
-            control,
-            &update,
-            Some(batch.window()),
-        )?;
+        let cached = checkpoints
+            .map(|store| store.load(index, &partition, control))
+            .transpose()?
+            .flatten();
+        let result = if let Some(completed) = cached {
+            terrain.missing = terrain
+                .missing
+                .checked_add(completed.missing_terrain_queries)
+                .ok_or_else(|| anyhow::anyhow!("Terrain missing-query count overflow"))?;
+            update("Reusing completed flight proposal batch", 0.99);
+            completed.result
+        } else {
+            let missing_before = terrain.missing;
+            let result = locate_once(
+                job,
+                events,
+                tracks,
+                terrain,
+                control,
+                &update,
+                Some(batch.window()),
+            )?;
+            if let Some(store) = checkpoints {
+                let completed = crate::proposal_checkpoint::Completed {
+                    result,
+                    missing_terrain_queries: terrain
+                        .missing
+                        .checked_sub(missing_before)
+                        .ok_or_else(|| anyhow::anyhow!("Terrain missing-query count decreased"))?,
+                };
+                store.save(index, &partition, &completed, control)?;
+                update("Saved completed flight proposal batch", 0.99);
+                completed.result
+            } else {
+                result
+            }
+        };
         anyhow::ensure!(
             result.hypotheses == batch.hypotheses,
             "Proposal partition count changed after planning; no partial location is reported"

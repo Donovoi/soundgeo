@@ -1,12 +1,12 @@
 //! Optional recovery of complete offline date batches. Partial searches are never reused.
 use crate::{Control, Job, Report, timing};
 use anyhow::{Context, Result, ensure};
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Serialize, de::DeserializeOwned};
 use sha2::{Digest, Sha256};
 use std::{
     collections::{BTreeMap, BTreeSet},
     fs::File,
-    io::{Read, Write},
+    io::{BufWriter, Read, Write},
     path::{Path, PathBuf},
 };
 
@@ -96,12 +96,20 @@ impl ExactValue {
 }
 
 fn encode_report(report: &Report) -> Result<String> {
+    encode_exact(report)
+}
+
+pub(crate) fn encode_exact(value: &impl Serialize) -> Result<String> {
     Ok(serde_json::to_string(&ExactValue::from_value(
-        serde_json::to_value(report)?,
+        serde_json::to_value(value)?,
     )?)?)
 }
 
 fn decode_report(payload: &str) -> Result<Report> {
+    decode_exact(payload)
+}
+
+pub(crate) fn decode_exact<T: DeserializeOwned>(payload: &str) -> Result<T> {
     let encoded: ExactValue = serde_json::from_str(payload)?;
     // Deserializing from Value transfers f64 directly, without a decimal parser.
     Ok(serde_json::from_value(encoded.into_value()?)?)
@@ -157,7 +165,7 @@ fn hash_file(path: &Path, control: &Control) -> Result<String> {
     Ok(format!("{:x}", hash.finalize()))
 }
 
-fn digest(bytes: &[u8]) -> String {
+pub(crate) fn digest(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
 }
 
@@ -211,10 +219,13 @@ pub(crate) fn reference_roots(sources: &[PathBuf]) -> Result<Vec<PathBuf>> {
     Ok(roots.into_iter().collect())
 }
 
-fn write_new(path: &Path, value: &impl Serialize) -> Result<()> {
+pub(crate) fn write_new(path: &Path, value: &impl Serialize) -> Result<()> {
     let (mut temporary, destination) = crate::atomic_file::prepare(path)?;
-    serde_json::to_writer(temporary.as_file_mut(), value)?;
-    temporary.as_file_mut().flush()?;
+    {
+        let mut writer = BufWriter::with_capacity(256 * 1024, temporary.as_file_mut());
+        serde_json::to_writer(&mut writer, value)?;
+        writer.flush()?;
+    }
     temporary.as_file().sync_all()?;
     temporary.persist_noclobber(destination).with_context(|| {
         format!(

@@ -106,7 +106,7 @@ enum Commands {
         /// Maximum CPU workers for flight-corridor matching (default: up to 4).
         #[arg(long)]
         search_threads: Option<std::num::NonZeroUsize>,
-        /// Reuse complete offline archive date batches from this checkpoint folder.
+        /// Reuse complete offline archive date and flight proposal batches.
         #[arg(long)]
         date_checkpoints: Option<PathBuf>,
         /// Sound matching method; passage timing needs bounds and at least eight minutes.

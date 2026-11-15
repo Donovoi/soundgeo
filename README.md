@@ -407,7 +407,10 @@ The program reports missing dates and damaged files. It can use a complete cache
 For offline archive searches covering at least two prepared dates, add
 `--date-checkpoints checkpoints` to the
 `analyze` command. Repeat the same command after an interruption to reuse completed
-date batches. Keep the checkpoint folder outside the flight and terrain folders.
+date batches and fully refined flight-proposal batches within unfinished dates.
+The proposal batch running at interruption is repeated. The final report still
+requires every planned proposal batch and date. Keep the checkpoint folder
+outside the flight and terrain folders.
 The SoundGeo executable, recording, settings, dates, reference files and terrain
 must stay unchanged. Audio is decoded again on each run; its extracted observations
 must also match before results are reused. Use a new checkpoint folder after

@@ -352,6 +352,70 @@ fn interrupted_date_search_resumes_complete_batches_with_exact_report_parity() {
 }
 
 #[test]
+fn interrupted_proposal_search_resumes_before_a_date_finishes_with_exact_report_parity() {
+    use std::sync::atomic::{AtomicUsize, Ordering};
+    let dir = tempfile::tempdir().unwrap();
+    let mut job = checkpoint_job(dir.path());
+    job.search_mode = soundgeo::search::SearchMode::FlightCorridors;
+    let probe = soundgeo::analyze(&job, &Control::default(), &|_, _| {}).unwrap();
+    assert!(probe.doppler_partitions.is_empty());
+    job.max_hypotheses = probe.hypotheses / 6;
+    assert!(job.max_hypotheses >= 100);
+    let uninterrupted = soundgeo::analyze(&job, &Control::default(), &|_, _| {}).unwrap();
+    assert!(
+        uninterrupted
+            .doppler_partitions
+            .iter()
+            .all(|p| p.complete && p.batches.len() > 1)
+    );
+    let checkpoint = dir.path().join("proposal-recovery");
+    let control = Control::default().with_date_checkpoints(checkpoint.clone());
+    let error = soundgeo::analyze(&job, &control, &|message, _| {
+        if message.ends_with("Saved completed flight proposal batch") {
+            control.stop();
+        }
+    })
+    .unwrap_err();
+    assert!(error.to_string().contains("Cancelled"), "{error:#}");
+    assert!(!checkpoint.join("batch-0000.json").exists());
+    let saved: Vec<_> = walkdir::WalkDir::new(&checkpoint)
+        .into_iter()
+        .map(|entry| entry.unwrap())
+        .filter(|entry| {
+            entry.file_type().is_file()
+                && entry.file_name().to_string_lossy().starts_with("proposal-")
+        })
+        .map(|entry| entry.into_path())
+        .collect();
+    assert_eq!(
+        saved.len(),
+        1,
+        "Only a fully matched and refined proposal batch may survive cancellation"
+    );
+    let original = std::fs::read(&saved[0]).unwrap();
+    let reused = AtomicUsize::new(0);
+    let resumed = soundgeo::analyze(
+        &job,
+        &Control::default().with_date_checkpoints(checkpoint.clone()),
+        &|message, _| {
+            if message.ends_with("Reusing completed flight proposal batch") {
+                reused.fetch_add(1, Ordering::Relaxed);
+            }
+        },
+    )
+    .unwrap();
+    assert_eq!(reused.load(Ordering::Relaxed), 1);
+    assert_eq!(std::fs::read(&saved[0]).unwrap(), original);
+    assert_eq!(resumed.status, "ambiguous");
+    assert!(resumed.date_search.as_ref().unwrap().complete);
+    assert_eq!(
+        serde_json::to_vec(&without_creation_time(resumed)).unwrap(),
+        serde_json::to_vec(&without_creation_time(uninterrupted)).unwrap(),
+        "Recovery must preserve all candidate float values, competitors, warnings, partitions and date coverage"
+    );
+}
+
+#[test]
 fn date_checkpoints_reject_changed_reference_metadata_and_corrupt_payloads() {
     let dir = tempfile::tempdir().unwrap();
     let mut job = checkpoint_job(dir.path());
@@ -377,7 +441,10 @@ fn date_checkpoints_reject_changed_reference_metadata_and_corrupt_payloads() {
     )
     .unwrap_err();
     assert!(
-        error.to_string().contains("Shared inputs changed"),
+        error.to_string().contains("Shared inputs changed")
+            || error
+                .to_string()
+                .contains("Proposal checkpoint inputs changed"),
         "{error:#}"
     );
     assert!(!checkpoint.join("batch-0000.json").exists());

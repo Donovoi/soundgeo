@@ -13,6 +13,7 @@ pub mod geo;
 pub mod index;
 pub mod model;
 mod network;
+mod proposal_checkpoint;
 pub mod sample_archive;
 pub mod search;
 pub mod terrain_archive;
@@ -217,7 +218,7 @@ pub struct Control {
     pub offline: bool,
     /// Retry source files previously recorded as unavailable in a verified cache.
     pub refresh_source_gaps: bool,
-    /// Optional folder for complete offline archive date-batch checkpoints.
+    /// Optional folder for complete offline date and flight-proposal batches.
     pub date_checkpoints: Option<PathBuf>,
 }
 impl Control {
@@ -476,6 +477,21 @@ pub(crate) fn analyze_sources(
     let job = &prepared;
     report.job = job.clone();
     report.reference_sources = sources.to_vec();
+    let mut proposal_checkpoints = control
+        .date_checkpoints
+        .as_ref()
+        .filter(|_| timing_peaks.is_none())
+        .map(|path| {
+            proposal_checkpoint::Checkpoints::open(
+                path,
+                job,
+                &report.events,
+                duration_s,
+                sources,
+                control,
+            )
+        })
+        .transpose()?;
     progress("Reading historical flight paths", 0.36);
     let dataset = match data::load_for_job_sources(job, sources, duration_s, control) {
         Ok(data) => data,
@@ -541,13 +557,14 @@ pub(crate) fn analyze_sources(
         return Ok(report);
     }
     progress("Matching flyovers with a shared recording time", 0.42);
-    let result = search::locate(
+    let result = search::locate_with_checkpoints(
         job,
         &report.events,
         &dataset.tracks,
         &mut terrain,
         control,
         progress,
+        proposal_checkpoints.as_mut(),
     )?;
     report.search_grid_m = result.coarse_grid_m;
     report.search_method = result.method;
