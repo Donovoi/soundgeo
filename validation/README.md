@@ -27,7 +27,10 @@ The [Heathrow reference evidence](heathrow-reconstruction-reference-evidence.jso
 records nine fixed sample-frame hashes and the mapped hotel footprint.
 Re-extraction matched all nine PNGs; the evaluation plan still matches its
 original input pin. Microphone co-location and the 200 m allowance remain
-assumptions. The full three-date native search is still running.
+assumptions. The [first reconstructed search](heathrow-reconstruction-interrupted.json)
+was interrupted by a VM shutdown after five proposal batches. It saved no
+complete date checkpoint or final location report. All 44 original inputs
+still match their pinned hashes; the derived-flight cache is preserved.
 
 The [JSON numeric-fidelity fix](json-numeric-fidelity.json) prevents one-ULP
 changes when saved observations and modeled curves are read back. Two original
