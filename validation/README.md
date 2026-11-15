@@ -8,6 +8,15 @@ New results must state which target they use.
 
 ## Current checks
 
+The [proposal checkpoint revision](proposal-checkpoint-qualification.json)
+saves finished flight-proposal batches within unfinished dates. Recovery
+preserved the complete synthetic report, including competing locations.
+Revision `dbc12f8` passed all required checks in the local Linux VM and
+hosted Ubuntu and Windows VMs, with 241 Rust tests and 10 Python tests
+per platform. Test names match the source. The [fixed Heathrow recovery
+plan](heathrow-recovery-plan-dbc12f8.json) keeps the prior recording,
+job bytes, reference dates and independent evaluation rule.
+
 The [buffered cache writer](buffered-cache-writes.json) groups decoded-flight
 JSON writes into 256 KiB blocks and flushes before atomic publication.
 Revision `c1b2403` passed all required Windows and Ubuntu checks, with
