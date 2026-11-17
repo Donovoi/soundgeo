@@ -95,8 +95,19 @@ An additional fixed hour from Heathrow produced no timing sound peaks and
 returned insufficient evidence before loading reference tracks or searching
 dates. Its prepared three-date grid and shuffled controls were not executed.
 The [failure record](../validation/heathrow-fixed-hour-timing.json) preserves the
-unchanged inputs and terminal audit. The separate Doppler attempt was stopped
+unchanged inputs and terminal audit. The historical Doppler attempt was stopped
 before completing its first date batch; it provides no completed location result.
+
+A [reconstructed Heathrow Doppler hour](../validation/heathrow-recovery-dbc12f8-result.json)
+completed all three prepared dates and 25 proposal batches with frozen `dbc12f8`.
+It remained ambiguous, retaining ten candidates. The top candidate matched
+21 of 24 sounds and was 89.80 m from the mapped reference, or 289.80 m with
+the declared 200 m allowance. The other candidates were 250.22 to 1,040.42 m
+from the reference. Ambiguity prevents acceptance under the fixed rule.
+The filming-site reference assumes microphone co-location and movement within
+the allowance. All 46 fixed inputs and the complete saved results passed VM
+audits. The reconstructed media differs from the historical clip. No 19-control
+Doppler screen was run, and this result adds no accepted recording or site.
 
 Optional video text tests matched an airport name within 31.06 m of the camera
 reference in two 360p Lake Hood clips. The reports also contained a broad

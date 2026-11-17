@@ -8,6 +8,24 @@ New results must state which target they use.
 
 ## Current checks
 
+The [completed Heathrow recovery](heathrow-recovery-dbc12f8-result.json)
+remained ambiguous (native exit 4). The frozen `dbc12f8` search completed
+all three prepared dates, both date windows and all 25 proposal batches,
+covering 286,618,583 hypotheses. It received the original broad region,
+with no recording clock, camera coordinates or video text.
+The top candidate matched 21 of 24 sounds and was 89.80 m from the mapped
+reference, or 289.80 m with the declared 200 m microphone-location allowance.
+The other nine candidates were 250.22 to 1,040.42 m from the reference and
+matched 10 to 20 sounds. Every candidate, native warning and evaluated error
+is retained in the record. Ambiguity prevents acceptance under the fixed rule;
+this diagnostic proximity adds no successful site. Microphone co-location and
+bounded movement remain assumptions, and no 19-control Doppler screen was run.
+All 46 fixed input hashes matched after the search. Separate VM audits verified
+date and proposal coverage, exact checkpoint payloads, all ten location errors,
+and 93 copied evidence files, including five preserved failed attempts.
+The reconstructed clip differs from the historical clip. The original
+27-recording benchmark and historical Heathrow failures remain unchanged.
+
 The [buffered checkpoint readers](buffered-checkpoint-reads.json) load date
 and proposal checkpoint JSON through a file buffer. Revision `a1884ae`
 passed all required checks in the local Linux VM and hosted Ubuntu and
@@ -15,7 +33,7 @@ Windows VMs, with 241 Rust tests and 10 Python tests per platform. Existing
 tests preserved exact recovered reports and rejected corruption and changed
 inputs. A baseline VM observation recorded 48,648 reads for 48,648 bytes in
 10.01 seconds on a Windows-mounted filesystem. A controlled speed comparison
-remains unmeasured. The ongoing Heathrow run keeps its frozen `dbc12f8` build.
+remains unmeasured. The completed Heathrow recovery used its frozen `dbc12f8` build.
 
 The [proposal checkpoint revision](proposal-checkpoint-qualification.json)
 saves finished flight-proposal batches within unfinished dates. Recovery
@@ -31,8 +49,8 @@ the first recovery attempt during proposal batch 3 of 7. Both completed
 proposal checkpoints survived, and all 46 fixed input hashes still matched.
 The [second attempt](heathrow-recovery-resume-002.json) reused both saved
 batches with the same frozen executable and input paths, then resumed the
-unfinished third batch. The full search and location evaluation remain
-incomplete; this verifies recovery of saved work.
+unfinished third batch. It subsequently completed the full search and location
+evaluation recorded above; both reused checkpoints remained unchanged.
 
 The [buffered cache writer](buffered-cache-writes.json) groups decoded-flight
 JSON writes into 256 KiB blocks and flushes before atomic publication.
@@ -139,7 +157,7 @@ returned insufficient evidence with zero timing sound peaks. It stopped before
 loading flight tracks, searching dates or running shuffled controls. Its fixed
 clip, broad area, default timing settings and prepared reference inputs were
 preserved. An independent terminal audit passed 123 checks and rehashed all
-35 material inputs. No location was returned. The separate Doppler attempt was
+35 material inputs. No location was returned. The historical Doppler attempt was
 stopped before its first date checkpoint and has no completed location result.
 Its partial logs remain preserved. Neither method changes the original
 27-recording benchmark below.
