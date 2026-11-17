@@ -115,7 +115,14 @@ fn control_identity_replays_overlapping_dates_partitions_and_competing_clocks() 
             .iter()
             .all(|p| p.complete && p.batches.len() > 1)
     );
-    assert_eq!(baseline.status, "ambiguous");
+    assert_eq!(baseline.status, "candidates_found");
+    assert!(
+        baseline
+            .doppler_assessment
+            .as_ref()
+            .unwrap()
+            .clock_ambiguous
+    );
     for offset in [0., 86400., 172800.] {
         assert!(
             baseline
@@ -324,9 +331,10 @@ fn interrupted_date_search_resumes_complete_batches_with_exact_report_parity() {
         first
     );
     assert_eq!(
-        resumed.status, "ambiguous",
-        "The other day's competing clock must survive recovery"
+        resumed.status, "candidates_found",
+        "Nearby clock alternatives must not invalidate the 1 km location"
     );
+    assert!(resumed.doppler_assessment.as_ref().unwrap().clock_ambiguous);
     let coverage = resumed.date_search.as_ref().unwrap();
     assert!(coverage.complete);
     assert_eq!(coverage.completed_batches, 2);
@@ -406,7 +414,8 @@ fn interrupted_proposal_search_resumes_before_a_date_finishes_with_exact_report_
     .unwrap();
     assert_eq!(reused.load(Ordering::Relaxed), 1);
     assert_eq!(std::fs::read(&saved[0]).unwrap(), original);
-    assert_eq!(resumed.status, "ambiguous");
+    assert_eq!(resumed.status, "candidates_found");
+    assert!(resumed.doppler_assessment.as_ref().unwrap().clock_ambiguous);
     assert!(resumed.date_search.as_ref().unwrap().complete);
     assert_eq!(
         serde_json::to_vec(&without_creation_time(resumed)).unwrap(),
@@ -683,7 +692,7 @@ fn offline_date_batches_recover_a_recording_across_midnight() {
 }
 
 #[test]
-fn different_matching_dates_remain_ambiguous() {
+fn different_matching_dates_preserve_clock_uncertainty_at_one_location() {
     let dir = tempfile::tempdir().unwrap();
     demo::create(dir.path()).unwrap();
     cache_day(
@@ -699,12 +708,13 @@ fn different_matching_dates_remain_ambiguous() {
     let result = analyze(dir.path(), &["--require-unambiguous"]);
     assert_eq!(
         result.status.code(),
-        Some(4),
+        Some(0),
         "{}",
         String::from_utf8_lossy(&result.stderr)
     );
     let report: Report = serde_json::from_slice(&result.stdout).unwrap();
-    assert_eq!(report.status, "ambiguous");
+    assert_eq!(report.status, "candidates_found");
+    assert!(report.doppler_assessment.as_ref().unwrap().clock_ambiguous);
     assert!(
         report
             .candidates
@@ -737,7 +747,7 @@ fn unknown_date_cli_partitions_large_search_and_preserves_competing_clocks() {
     let full = analyze(dir.path(), &["--require-unambiguous"]);
     assert_eq!(
         full.status.code(),
-        Some(4),
+        Some(0),
         "{}",
         String::from_utf8_lossy(&full.stderr)
     );
@@ -750,12 +760,13 @@ fn unknown_date_cli_partitions_large_search_and_preserves_competing_clocks() {
     let divided = analyze(dir.path(), &["--require-unambiguous"]);
     assert_eq!(
         divided.status.code(),
-        Some(4),
+        Some(0),
         "{}",
         String::from_utf8_lossy(&divided.stderr)
     );
     let report: Report = serde_json::from_slice(&divided.stdout).unwrap();
-    assert_eq!(report.status, "ambiguous");
+    assert_eq!(report.status, "candidates_found");
+    assert!(report.doppler_assessment.as_ref().unwrap().clock_ambiguous);
     assert!(report.job.start_utc.is_none() && report.job.offline);
     let archive = report.job.archive.as_ref().unwrap();
     assert!(archive.date_from.is_empty() && archive.date_to.is_none());

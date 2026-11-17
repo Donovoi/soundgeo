@@ -4,7 +4,7 @@ use serde_json::json;
 use soundgeo::{Control, Report, search::diagnostic};
 use std::{
     fs::File,
-    io::{BufReader, BufWriter},
+    io::{BufReader, BufWriter, Write},
     path::PathBuf,
 };
 
@@ -27,8 +27,16 @@ fn main() -> Result<()> {
         "Sources must be recorded in the original report"
     );
     eprintln!("Loading {} recorded reference sources", sources.len());
+    let mut reference_job = report.job.clone();
+    if reference_job.type_catalog.is_none() {
+        reference_job.type_catalog = sources
+            .iter()
+            .filter_map(|p| p.parent())
+            .map(|p| p.join("aircraft-types.json"))
+            .find(|p| p.is_file());
+    }
     let dataset = soundgeo::data::load_for_job_sources(
-        &report.job,
+        &reference_job,
         &sources,
         report.duration_s,
         &Control {
@@ -105,7 +113,7 @@ fn main() -> Result<()> {
     }
     let result = json!({
         "scope":"Conditional diagnostics at the saved app-inferred point and clock; no new broad-area search or independent location acceptance.",
-        "source_report":input, "selected_reference_sources":sources, "track_count":dataset.tracks.len(),
+        "source_report":input, "selected_reference_sources":sources, "selected_type_catalog":reference_job.type_catalog, "track_count":dataset.tracks.len(),
         "reference_warnings":dataset.warnings, "candidate":candidate,
         "reproduced_matches":candidate.matches.len(), "maximum_original_rmse_difference_hz":maximum_rmse_difference,
         "assessment":soundgeo::doppler_assessment::assess(&report), "unmatched_events":events,
@@ -115,6 +123,8 @@ fn main() -> Result<()> {
         .write(true)
         .create_new(true)
         .open(output)?;
-    serde_json::to_writer_pretty(BufWriter::new(file), &result)?;
+    let mut writer = BufWriter::new(file);
+    serde_json::to_writer_pretty(&mut writer, &result)?;
+    writer.flush()?;
     Ok(())
 }

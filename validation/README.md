@@ -8,6 +8,19 @@ New results must state which target they use.
 
 ## Current checks
 
+The [1 km policy and Heathrow pair diagnosis](heathrow-one-km-diagnostic.json)
+separates location uncertainty from nearby clock alternatives and permits a
+two-thirds sound consensus. Competitors with at least 90% of the leading curve
+support must be within 1 km; summaries survive display pruning and date/proposal
+merges. The thresholds remain experimental. The original report lacks summaries
+of discarded fits, so it cannot become a fresh accepted location by reassessment.
+Conditional diagnostics reproduced all 21 matches exactly, then checked all
+eight variants of the remaining three sounds against 5,467 flight tracks.
+Their best errors were 2.91%, 3.30% and 2.12%, above the unchanged 1.5% limit.
+The record includes coverage, curvature, joint error, flight reuse and final-point
+coarse checks. All reference input hashes remained unchanged. Required VM checks
+and their source revision are recorded on [PR #6](https://github.com/Donovoi/soundgeo/pull/6).
+
 The [completed Heathrow recovery](heathrow-recovery-dbc12f8-result.json)
 remained ambiguous (native exit 4). The frozen `dbc12f8` search completed
 all three prepared dates, both date windows and all 25 proposal batches,

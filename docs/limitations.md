@@ -109,6 +109,17 @@ the allowance. All 46 fixed inputs and the complete saved results passed VM
 audits. The reconstructed media differs from the historical clip. No 19-control
 Doppler screen was run, and this result adds no accepted recording or site.
 
+A [conditional diagnosis](../validation/heathrow-one-km-diagnostic.json) reproduced
+all 21 Heathrow matches exactly and checked every retained variant of the three
+unmatched sounds against 5,467 flight tracks at the inferred point and clock.
+Sounds 11, 14 and 21 had best relative errors of 2.91%, 3.30% and 2.12%, above
+the unchanged 1.5% pair limit. The best associations had full reference coverage
+and did not reuse a matched flight. Sounds 11 and 14 also failed the requirement
+to halve squared error relative to linear drift. Sound 21 passed that check,
+but adding its best variant would raise joint error to 1.0206%, above 1%.
+No variant passed the individual fit checks. The mismatch's physical cause
+remains unresolved. This diagnostic does not change the historical result.
+
 Optional video text tests matched an airport name within 31.06 m of the camera
 reference in two 360p Lake Hood clips. The reports also contained a broad
 metro-area clue. Seven low-resolution files returned no place matches. This
