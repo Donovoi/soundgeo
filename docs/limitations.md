@@ -109,6 +109,17 @@ the allowance. All 46 fixed inputs and the complete saved results passed VM
 audits. The reconstructed media differs from the historical clip. No 19-control
 Doppler screen was run, and this result adds no accepted recording or site.
 
+A [conditional diagnosis](../validation/heathrow-one-km-diagnostic.json) reproduced
+all 21 Heathrow matches exactly and checked every retained variant of the three
+unmatched sounds against 5,467 flight tracks at the inferred point and clock.
+Sounds 11, 14 and 21 had best relative errors of 2.91%, 3.30% and 2.12%, above
+the unchanged 1.5% pair limit. The best associations had full reference coverage
+and did not reuse a matched flight. Sounds 11 and 14 also failed the requirement
+to halve squared error relative to linear drift. Sound 21 passed that check,
+but adding its best variant would raise joint error to 1.0206%, above 1%.
+No variant passed the individual fit checks. The mismatch's physical cause
+remains unresolved. This diagnostic does not change the historical result.
+
 Optional video text tests matched an airport name within 31.06 m of the camera
 reference in two 360p Lake Hood clips. The reports also contained a broad
 metro-area clue. Seven low-resolution files returned no place matches. This
@@ -258,7 +269,30 @@ by `1 - (model RMSE / linear RMSE)^2`, bounded between zero and one. Contributio
 are added across sounds. Match count and residual error break ties; quiet-gap
 conflicts retain their residual penalty. Missing or invalid baseline measurements
 contribute zero. This score still needs full-search testing on further recordings
-and shuffled controls. The existing ambiguity checks remain in effect.
+and shuffled controls.
+
+The experimental `doppler-location-1km-v1` screen permits unmatched sounds when
+at least two-thirds of detections match. Recordings with three or more detections
+need at least three matched sounds; fitting clock drift needs four. The existing
+two-sound unit-rate case is retained. A fit more than 1,000 m from the leading
+point blocks acceptance if it has at least 90% of the leader's curve support.
+Nearby clock alternatives remain visible through `clock_ambiguous`, independently
+of the location decision. The radius is measured from the reported point.
+The consensus and support thresholds are heuristics that need new field and
+negative-control testing; they do not estimate the probability of a 1 km error.
+
+Competitor summaries survive the ten-candidate display limit, spatial
+deduplication, and proposal/date merges. Older reports lack these summaries and
+remain ambiguous when reassessed. Their saved candidates can support a separate
+post-hoc diagnostic. The original Heathrow result and fixed acceptance plan
+remain unchanged.
+
+`diagnose_unmatched` reuses the production pair fitter at a report's inferred
+point and clock. It checks every retained observation variant against selected
+recorded reference tracks, reproduces the existing matches, and reports coverage,
+curvature, residual, joint-error and flight-reuse checks. Final-point coarse
+features cannot reconstruct an earlier proposal's pruning. These diagnostics
+do not identify the physical sound source or establish a new location result.
 
 The timing region encloses competitive search points, and `enclosing_radius_m`
 describes that region. Calibrated probabilities and location error bounds remain

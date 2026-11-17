@@ -1,0 +1,580 @@
+{
+  "scope": "Post-hoc screening and conditional pair diagnostics at the original app-inferred location and clock. No new broad-area search or accepted recording/site.",
+  "source_url": "https://www.youtube.com/watch?v=3i-UaF6biQo",
+  "source_window_seconds": [
+    1200,
+    4800
+  ],
+  "sound_numbers_are_one_based": true,
+  "diagnostic_source_commit": "97f8f9e012f599bd566df1ad73e713977563f23a",
+  "diagnostic_executable_sha256": "da75da139d0b40d58dd0583fe49b6d1f4881a1356997f43e71aadd83dec4de72",
+  "original_search_source_commit": "dbc12f84356761e5a97dc5656a6b727edcfb0ea3",
+  "original_report_sha256": "2909ae279d32792ed6912cce606e4ce02ca14a11a77023798e6aefdd4b8b6ed3",
+  "diagnostic_sha256": "00dbad8f35a73a95b11d9e65ac29001b495c7f79f67093c097fc55df9b1d8ef9",
+  "references": {
+    "provider": "ADSB.lol",
+    "source": "https://github.com/adsblol/globe_history_2026/releases/tag/v2026.11.01-planes-readsb-prod-0",
+    "date": "2026-11-01",
+    "aircraft_filter": "all",
+    "track_count": 5467,
+    "selection": "Original November 1 search-window source: all inferred arrival times are midday on that date; no ground-truth clock supplied.",
+    "input_hashes": {
+      "DATA-LICENSE.txt": {
+        "sha256": "922f67e81c82163f0d713c522568822ab97fb541e21083bfa73aec83434dae5e",
+        "bytes": 234
+      },
+      "aircraft-types.json": {
+        "sha256": "cdfd0205f9925302b1a6cd6c266f5409cfd387a2eda2a3a9e51fb86bc2801514",
+        "bytes": 110811
+      },
+      "aircraft-types.source.txt": {
+        "sha256": "6c849cc10d02f45eb9b76b7aa2123b7f402543141b637484f73986c2e846f064",
+        "bytes": 282
+      },
+      "archive-complete.json": {
+        "sha256": "51c9d1d2f3260352c8f9e3d08a1fc9abd3c244537a5a6d19a0141e7a58cc7c4b",
+        "bytes": 106
+      },
+      "archive-manifest.json": {
+        "sha256": "172ffd901d66b3aefdab42e1875a6cb650aaf545be55e92376ef7a6d904455d3",
+        "bytes": 8551
+      },
+      "v2026.11.01-planes-readsb-prod-0.tar.aa": {
+        "sha256": "62813665a44851df60676e2449435001cf1acbb5768b0f7fe756fc8145ae9aa3",
+        "bytes": 2000000000
+      },
+      "v2026.11.01-planes-readsb-prod-0.tar.aa.sha256": {
+        "sha256": "44ea6c8abf2144711c4ec0269f33fc11ddcec322fc3ec4fcbfff2a09d0a29174",
+        "bytes": 64
+      },
+      "v2026.11.01-planes-readsb-prod-0.tar.ab": {
+        "sha256": "e083915f63d0f42fedb3af7ea1ab61b970d76265c1663af09ae8c4cf28e19179",
+        "bytes": 1118588416
+      },
+      "v2026.11.01-planes-readsb-prod-0.tar.ab.sha256": {
+        "sha256": "27cac78a03c4f98375691dedf36a507ec2031cd77954654d42cc5f3a70e2f90c",
+        "bytes": 64
+      }
+    },
+    "inputs_unchanged": true
+  },
+  "vm_execution": {
+    "kernel": "6.18.58.1-microsoft-standard-WSL2",
+    "limits": {
+      "cpu.max": "200000 100000",
+      "memory.max": "8589934592",
+      "memory.swap.max": "1073741824"
+    },
+    "nice": 10,
+    "io_priority": "idle",
+    "private_network": true
+  },
+  "recording_clock_supplied": false,
+  "ground_truth_point_supplied": false,
+  "reproduced_existing_matches": 21,
+  "maximum_existing_rmse_difference_hz": 0.0,
+  "pair_thresholds": {
+    "minimum_coverage": 0.9,
+    "minimum_linear_sse_reduction": 0.5,
+    "maximum_relative_rmse_percent": 1.5,
+    "maximum_joint_error_percent": 1.0
+  },
+  "unmatched_events": [
+    {
+      "sound_number": 11,
+      "event_index": 10,
+      "start_s": 1970.114,
+      "end_s": 1989.989,
+      "zero_coverage_pairs": 16061,
+      "pairs_with_coverage": 340,
+      "rejection_reason_counts": {
+        "insufficient_improvement_over_linear_drift": 329,
+        "relative_rmse_above_1_5_percent": 329,
+        "joint_error_above_1_percent": 329,
+        "flight_already_assigned": 15,
+        "reference_coverage_below_90_percent": 11
+      },
+      "variants": [
+        {
+          "variant": 0,
+          "pairs_with_coverage": 116,
+          "coverage_ge_90_percent": 109,
+          "best_relative_error_pair": {
+            "aggregate_error_with_existing_percent": 1.1055272970234653,
+            "aircraft": "4009db/1",
+            "already_assigned_to": [],
+            "coarse_feature_error_at_final_point": 4.613503577866715,
+            "coarse_gates_pass_at_final_point": true,
+            "coverage": 1.0,
+            "event_index": 10,
+            "event_variant": 0,
+            "fit": {
+              "aircraft": "4009db/1",
+              "coverage": 1.0,
+              "event_index": 10,
+              "event_variant": 0,
+              "fitted_tone_hz": 1694.75062377093,
+              "linear_baseline_rmse_hz": 58.75661891140951,
+              "modeled_hz": [],
+              "rmse_hz": 49.266520375806714
+            },
+            "rejection_reasons": [
+              "insufficient_improvement_over_linear_drift",
+              "relative_rmse_above_1_5_percent",
+              "joint_error_above_1_percent"
+            ]
+          }
+        },
+        {
+          "variant": 1,
+          "pairs_with_coverage": 112,
+          "coverage_ge_90_percent": 110,
+          "best_relative_error_pair": {
+            "aggregate_error_with_existing_percent": 1.2886501841100986,
+            "aircraft": "407179/2",
+            "already_assigned_to": [],
+            "coarse_feature_error_at_final_point": 116.81228976254468,
+            "coarse_gates_pass_at_final_point": false,
+            "coverage": 1.0,
+            "event_index": 10,
+            "event_variant": 1,
+            "fit": {
+              "aircraft": "407179/2",
+              "coverage": 1.0,
+              "event_index": 10,
+              "event_variant": 1,
+              "fitted_tone_hz": 2800.798540009658,
+              "linear_baseline_rmse_hz": 68.27050038865531,
+              "modeled_hz": [],
+              "rmse_hz": 119.14467059775733
+            },
+            "rejection_reasons": [
+              "insufficient_improvement_over_linear_drift",
+              "relative_rmse_above_1_5_percent",
+              "joint_error_above_1_percent"
+            ]
+          }
+        },
+        {
+          "variant": 2,
+          "pairs_with_coverage": 112,
+          "coverage_ge_90_percent": 110,
+          "best_relative_error_pair": {
+            "aggregate_error_with_existing_percent": 1.5557814454970202,
+            "aircraft": "407179/2",
+            "already_assigned_to": [],
+            "coarse_feature_error_at_final_point": 101.7171371867905,
+            "coarse_gates_pass_at_final_point": false,
+            "coverage": 1.0,
+            "event_index": 10,
+            "event_variant": 2,
+            "fit": {
+              "aircraft": "407179/2",
+              "coverage": 1.0,
+              "event_index": 10,
+              "event_variant": 2,
+              "fitted_tone_hz": 4272.761231728305,
+              "linear_baseline_rmse_hz": 157.41727807282493,
+              "modeled_hz": [],
+              "rmse_hz": 252.1020617046956
+            },
+            "rejection_reasons": [
+              "insufficient_improvement_over_linear_drift",
+              "relative_rmse_above_1_5_percent",
+              "joint_error_above_1_percent"
+            ]
+          }
+        }
+      ],
+      "passing_pairs": 0,
+      "individually_usable_pairs": 0,
+      "best_pair": {
+        "aggregate_error_with_existing_percent": 1.1055272970234653,
+        "aircraft": "4009db/1",
+        "already_assigned_to": [],
+        "coarse_feature_error_at_final_point": 4.613503577866715,
+        "coarse_gates_pass_at_final_point": true,
+        "coverage": 1.0,
+        "event_index": 10,
+        "event_variant": 0,
+        "fit": {
+          "aircraft": "4009db/1",
+          "coverage": 1.0,
+          "event_index": 10,
+          "event_variant": 0,
+          "fitted_tone_hz": 1694.75062377093,
+          "linear_baseline_rmse_hz": 58.75661891140951,
+          "modeled_hz": [],
+          "rmse_hz": 49.266520375806714
+        },
+        "rejection_reasons": [
+          "insufficient_improvement_over_linear_drift",
+          "relative_rmse_above_1_5_percent",
+          "joint_error_above_1_percent"
+        ]
+      },
+      "best_relative_rmse_percent": 2.907007065510648,
+      "best_linear_sse_reduction_fraction": 0.2969435678419139
+    },
+    {
+      "sound_number": 14,
+      "event_index": 13,
+      "start_s": 2200.114,
+      "end_s": 2219.564,
+      "zero_coverage_pairs": 5353,
+      "pairs_with_coverage": 114,
+      "rejection_reason_counts": {
+        "insufficient_improvement_over_linear_drift": 106,
+        "relative_rmse_above_1_5_percent": 106,
+        "joint_error_above_1_percent": 106,
+        "flight_already_assigned": 6,
+        "reference_coverage_below_90_percent": 8
+      },
+      "variants": [
+        {
+          "variant": 0,
+          "pairs_with_coverage": 114,
+          "coverage_ge_90_percent": 106,
+          "best_relative_error_pair": {
+            "aggregate_error_with_existing_percent": 1.154810522307761,
+            "aircraft": "405a48/2",
+            "already_assigned_to": [],
+            "coarse_feature_error_at_final_point": 0.24318584084389752,
+            "coarse_gates_pass_at_final_point": true,
+            "coverage": 1.0,
+            "event_index": 13,
+            "event_variant": 0,
+            "fit": {
+              "aircraft": "405a48/2",
+              "coverage": 1.0,
+              "event_index": 13,
+              "event_variant": 0,
+              "fitted_tone_hz": 1670.252717517364,
+              "linear_baseline_rmse_hz": 64.78027226744076,
+              "modeled_hz": [],
+              "rmse_hz": 55.14722827479172
+            },
+            "rejection_reasons": [
+              "insufficient_improvement_over_linear_drift",
+              "relative_rmse_above_1_5_percent",
+              "joint_error_above_1_percent"
+            ]
+          }
+        }
+      ],
+      "passing_pairs": 0,
+      "individually_usable_pairs": 0,
+      "best_pair": {
+        "aggregate_error_with_existing_percent": 1.154810522307761,
+        "aircraft": "405a48/2",
+        "already_assigned_to": [],
+        "coarse_feature_error_at_final_point": 0.24318584084389752,
+        "coarse_gates_pass_at_final_point": true,
+        "coverage": 1.0,
+        "event_index": 13,
+        "event_variant": 0,
+        "fit": {
+          "aircraft": "405a48/2",
+          "coverage": 1.0,
+          "event_index": 13,
+          "event_variant": 0,
+          "fitted_tone_hz": 1670.252717517364,
+          "linear_baseline_rmse_hz": 64.78027226744076,
+          "modeled_hz": [],
+          "rmse_hz": 55.14722827479172
+        },
+        "rejection_reasons": [
+          "insufficient_improvement_over_linear_drift",
+          "relative_rmse_above_1_5_percent",
+          "joint_error_above_1_percent"
+        ]
+      },
+      "best_relative_rmse_percent": 3.3017295943551375,
+      "best_linear_sse_reduction_fraction": 0.2752940266447532
+    },
+    {
+      "sound_number": 21,
+      "event_index": 20,
+      "start_s": 3080.114,
+      "end_s": 3099.989,
+      "zero_coverage_pairs": 21509,
+      "pairs_with_coverage": 359,
+      "rejection_reason_counts": {
+        "relative_rmse_above_1_5_percent": 354,
+        "joint_error_above_1_percent": 354,
+        "insufficient_improvement_over_linear_drift": 352,
+        "flight_already_assigned": 24,
+        "reference_coverage_below_90_percent": 5
+      },
+      "variants": [
+        {
+          "variant": 0,
+          "pairs_with_coverage": 90,
+          "coverage_ge_90_percent": 88,
+          "best_relative_error_pair": {
+            "aggregate_error_with_existing_percent": 1.3385304837363134,
+            "aircraft": "400685/1",
+            "already_assigned_to": [],
+            "coarse_feature_error_at_final_point": 0.105285987138179,
+            "coarse_gates_pass_at_final_point": true,
+            "coverage": 1.0,
+            "event_index": 20,
+            "event_variant": 0,
+            "fit": {
+              "aircraft": "400685/1",
+              "coverage": 1.0,
+              "event_index": 20,
+              "event_variant": 0,
+              "fitted_tone_hz": 784.8314421111662,
+              "linear_baseline_rmse_hz": 58.062040425884746,
+              "modeled_hz": [],
+              "rmse_hz": 35.9475947216894
+            },
+            "rejection_reasons": [
+              "relative_rmse_above_1_5_percent",
+              "joint_error_above_1_percent"
+            ]
+          }
+        },
+        {
+          "variant": 1,
+          "pairs_with_coverage": 89,
+          "coverage_ge_90_percent": 88,
+          "best_relative_error_pair": {
+            "aggregate_error_with_existing_percent": 1.0206389222666248,
+            "aircraft": "400685/1",
+            "already_assigned_to": [],
+            "coarse_feature_error_at_final_point": 0.5862368456465648,
+            "coarse_gates_pass_at_final_point": true,
+            "coverage": 1.0,
+            "event_index": 20,
+            "event_variant": 1,
+            "fit": {
+              "aircraft": "400685/1",
+              "coverage": 1.0,
+              "event_index": 20,
+              "event_variant": 1,
+              "fitted_tone_hz": 810.0704975350251,
+              "linear_baseline_rmse_hz": 62.29273553251448,
+              "modeled_hz": [],
+              "rmse_hz": 17.145923509615514
+            },
+            "rejection_reasons": [
+              "relative_rmse_above_1_5_percent",
+              "joint_error_above_1_percent"
+            ]
+          }
+        },
+        {
+          "variant": 2,
+          "pairs_with_coverage": 90,
+          "coverage_ge_90_percent": 89,
+          "best_relative_error_pair": {
+            "aggregate_error_with_existing_percent": 1.196466408013535,
+            "aircraft": "400685/1",
+            "already_assigned_to": [],
+            "coarse_feature_error_at_final_point": 1.0063007296433342,
+            "coarse_gates_pass_at_final_point": true,
+            "coverage": 1.0,
+            "event_index": 20,
+            "event_variant": 2,
+            "fit": {
+              "aircraft": "400685/1",
+              "coverage": 1.0,
+              "event_index": 20,
+              "event_variant": 2,
+              "fitted_tone_hz": 1533.2319780725093,
+              "linear_baseline_rmse_hz": 62.82555843868058,
+              "modeled_hz": [],
+              "rmse_hz": 55.400824667078055
+            },
+            "rejection_reasons": [
+              "insufficient_improvement_over_linear_drift",
+              "relative_rmse_above_1_5_percent",
+              "joint_error_above_1_percent"
+            ]
+          }
+        },
+        {
+          "variant": 3,
+          "pairs_with_coverage": 90,
+          "coverage_ge_90_percent": 89,
+          "best_relative_error_pair": {
+            "aggregate_error_with_existing_percent": 1.2660041675199363,
+            "aircraft": "400685/1",
+            "already_assigned_to": [],
+            "coarse_feature_error_at_final_point": 1.3535048656755684,
+            "coarse_gates_pass_at_final_point": true,
+            "coverage": 1.0,
+            "event_index": 20,
+            "event_variant": 3,
+            "fit": {
+              "aircraft": "400685/1",
+              "coverage": 1.0,
+              "event_index": 20,
+              "event_variant": 3,
+              "fitted_tone_hz": 774.6173667779415,
+              "linear_baseline_rmse_hz": 34.52051185704399,
+              "modeled_hz": [],
+              "rmse_hz": 31.771931003326163
+            },
+            "rejection_reasons": [
+              "insufficient_improvement_over_linear_drift",
+              "relative_rmse_above_1_5_percent",
+              "joint_error_above_1_percent"
+            ]
+          }
+        }
+      ],
+      "passing_pairs": 0,
+      "individually_usable_pairs": 0,
+      "best_pair": {
+        "aggregate_error_with_existing_percent": 1.0206389222666248,
+        "aircraft": "400685/1",
+        "already_assigned_to": [],
+        "coarse_feature_error_at_final_point": 0.5862368456465648,
+        "coarse_gates_pass_at_final_point": true,
+        "coverage": 1.0,
+        "event_index": 20,
+        "event_variant": 1,
+        "fit": {
+          "aircraft": "400685/1",
+          "coverage": 1.0,
+          "event_index": 20,
+          "event_variant": 1,
+          "fitted_tone_hz": 810.0704975350251,
+          "linear_baseline_rmse_hz": 62.29273553251448,
+          "modeled_hz": [],
+          "rmse_hz": 17.145923509615514
+        },
+        "rejection_reasons": [
+          "relative_rmse_above_1_5_percent",
+          "joint_error_above_1_percent"
+        ]
+      },
+      "best_relative_rmse_percent": 2.116596464355767,
+      "best_linear_sse_reduction_fraction": 0.9242387802848611
+    }
+  ],
+  "retained_candidate_comparison": [
+    {
+      "rank": 1,
+      "matches": 21,
+      "curve_support": 17.967407951459577,
+      "fraction_of_best_support": 1.0,
+      "distance_from_best_m": 0.0,
+      "competitive_at_90_percent": true,
+      "competitive_beyond_1km": false
+    },
+    {
+      "rank": 2,
+      "matches": 20,
+      "curve_support": 16.8722595269386,
+      "fraction_of_best_support": 0.9390480570441985,
+      "distance_from_best_m": 304.9218897321841,
+      "competitive_at_90_percent": true,
+      "competitive_beyond_1km": false
+    },
+    {
+      "rank": 3,
+      "matches": 16,
+      "curve_support": 13.564593902258217,
+      "fraction_of_best_support": 0.7549555249652079,
+      "distance_from_best_m": 704.2148343234553,
+      "competitive_at_90_percent": false,
+      "competitive_beyond_1km": false
+    },
+    {
+      "rank": 4,
+      "matches": 14,
+      "curve_support": 12.009765491047391,
+      "fraction_of_best_support": 0.6684194806225113,
+      "distance_from_best_m": 662.8932896846485,
+      "competitive_at_90_percent": false,
+      "competitive_beyond_1km": false
+    },
+    {
+      "rank": 5,
+      "matches": 14,
+      "curve_support": 11.948306803250441,
+      "fraction_of_best_support": 0.6649989155658829,
+      "distance_from_best_m": 552.6013898040118,
+      "competitive_at_90_percent": false,
+      "competitive_beyond_1km": false
+    },
+    {
+      "rank": 6,
+      "matches": 13,
+      "curve_support": 11.246499156233572,
+      "fraction_of_best_support": 0.6259388770276108,
+      "distance_from_best_m": 443.98405804439767,
+      "competitive_at_90_percent": false,
+      "competitive_beyond_1km": false
+    },
+    {
+      "rank": 7,
+      "matches": 13,
+      "curve_support": 10.422339737252855,
+      "fraction_of_best_support": 0.5800691877987998,
+      "distance_from_best_m": 1046.1187511406235,
+      "competitive_at_90_percent": false,
+      "competitive_beyond_1km": false
+    },
+    {
+      "rank": 8,
+      "matches": 12,
+      "curve_support": 9.683837095312695,
+      "fraction_of_best_support": 0.5389668404855266,
+      "distance_from_best_m": 524.8948853666101,
+      "competitive_at_90_percent": false,
+      "competitive_beyond_1km": false
+    },
+    {
+      "rank": 9,
+      "matches": 11,
+      "curve_support": 9.30502527337017,
+      "fraction_of_best_support": 0.5178835644244544,
+      "distance_from_best_m": 661.960290203337,
+      "competitive_at_90_percent": false,
+      "competitive_beyond_1km": false
+    },
+    {
+      "rank": 10,
+      "matches": 10,
+      "curve_support": 8.241392608271118,
+      "fraction_of_best_support": 0.45868567299946184,
+      "distance_from_best_m": 770.1386596345262,
+      "competitive_at_90_percent": false,
+      "competitive_beyond_1km": false
+    }
+  ],
+  "new_screen_on_original_report": {
+    "best_curve_support": 17.96740795145958,
+    "clock_ambiguous": false,
+    "competitive_support_fraction": 0.9,
+    "competitor_evidence_complete": false,
+    "distant_competitors": [],
+    "location_radius_m": 1000.0,
+    "matched_events": 21,
+    "passes": false,
+    "policy": "doppler-location-1km-v1",
+    "reasons": [
+      "incomplete_competitor_evidence"
+    ],
+    "required_matches": 16,
+    "unmatched_event_indices": [
+      10,
+      13,
+      20
+    ]
+  },
+  "historical_field_result": "ambiguous; original acceptance and fixed plan unchanged",
+  "limitations": [
+    "Original report lacks competitors discarded before its ten-candidate limit; full new-policy acceptance needs fresh search evidence.",
+    "Complete pair enumeration here is conditional on the inferred point and clock, using the matching original reference date.",
+    "Final-point coarse checks do not reconstruct the historical proposal path.",
+    "The mismatch does not determine whether source pitch, sound propagation, trajectory error, edits, or tracing caused it.",
+    "No new 19-control Doppler screen was run; the 1 km policy thresholds remain uncalibrated."
+  ],
+  "application_qualification": "See the required VM checks and completion record on https://github.com/Donovoi/soundgeo/pull/6"
+}

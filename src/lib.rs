@@ -8,6 +8,7 @@ pub mod data;
 mod date_checkpoint;
 mod date_search;
 pub mod demo;
+pub mod doppler_assessment;
 pub mod doppler_controls;
 pub mod geo;
 pub mod index;
@@ -271,6 +272,10 @@ pub struct Report {
     pub track_count: usize,
     pub events: Vec<audio::Event>,
     pub candidates: Vec<search::Candidate>,
+    #[serde(default)]
+    pub doppler_competition: doppler_assessment::Competition,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub doppler_assessment: Option<doppler_assessment::Assessment>,
     pub warnings: Vec<String>,
     pub search_grid_m: f64,
     #[serde(default)]
@@ -373,7 +378,7 @@ pub(crate) fn analyze_observations(
 ) -> Result<Report> {
     let mut report = Report { version: env!("CARGO_PKG_VERSION").into(), status: "insufficient_evidence".into(),
         media: job.media.clone(), job: job.clone(), duration_s, track_count: 0, events,
-        candidates: vec![], warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
+        candidates: vec![], doppler_competition: doppler_assessment::Competition::from_candidates(&[]), doppler_assessment: None, warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
         search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![],timing:None,date_search:None,doppler_partitions:vec![] };
     if let Some(peaks) = &timing_peaks
         && (peaks.len() < 6 || duration_s < 480.)
@@ -570,6 +575,7 @@ pub(crate) fn analyze_sources(
     report.search_method = result.method;
     report.hypotheses = result.hypotheses;
     report.candidates = result.candidates;
+    report.doppler_competition = result.competition;
     report.warnings.extend(result.warnings);
     report.doppler_partitions.extend(result.partition);
     set_doppler_status(&mut report);
@@ -582,21 +588,18 @@ pub(crate) fn analyze_sources(
 }
 
 pub(crate) fn set_doppler_status(report: &mut Report) {
-    if !report.candidates.is_empty() {
-        let provisional_clock = report.candidates[0].clock_fit_is_provisional();
-        if provisional_clock {
-            report.warnings.push("The fitted recording clock rate has only the minimum three supporting sounds. The location and time remain provisional; more independent evidence is required.".into());
-        }
-        let ambiguous = report.events.len() < 2
-            || provisional_clock
-            || report.candidates[0].matches.len() < report.events.len()
-            || search::has_competing_fit(&report.candidates);
-        report.status = if !ambiguous {
+    report.doppler_assessment = doppler_assessment::assess(report);
+    report
+        .warnings
+        .retain(|w| !w.starts_with("Doppler location screen:"));
+    if let Some(assessment) = &report.doppler_assessment {
+        report.status = if assessment.passes {
             "candidates_found"
         } else {
             "ambiguous"
         }
         .into();
+        report.warnings.push(format!("Doppler location screen: {} of {} sounds support the leading fit; {} required. Clock alternatives remain: {}. The 1 km screen compares curve support across retained search evidence. Reasons: {}. This experimental screen is not a calibrated accuracy guarantee.", assessment.matched_events, report.events.len(), assessment.required_matches, assessment.clock_ambiguous, if assessment.reasons.is_empty() { "none".into() } else { assessment.reasons.join(", ") }));
     }
 }
 

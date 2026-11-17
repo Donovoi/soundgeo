@@ -546,6 +546,8 @@ mod tests {
             track_count: 0,
             events: vec![],
             candidates: vec![],
+            doppler_competition: crate::doppler_assessment::Competition::from_candidates(&[]),
+            doppler_assessment: None,
             warnings: vec![],
             search_grid_m: job.grid_m,
             search_method: String::new(),

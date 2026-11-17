@@ -110,6 +110,9 @@ pub(crate) fn run(
         }
         combined.warnings.extend(warnings);
         combined.candidates.extend(result.candidates);
+        combined
+            .doppler_competition
+            .merge(result.doppler_competition);
         rank_doppler(&mut combined);
         if let Some(assessment) = result.timing {
             merge_timing(&mut combined.timing, assessment)?;
