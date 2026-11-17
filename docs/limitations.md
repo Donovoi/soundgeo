@@ -258,7 +258,30 @@ by `1 - (model RMSE / linear RMSE)^2`, bounded between zero and one. Contributio
 are added across sounds. Match count and residual error break ties; quiet-gap
 conflicts retain their residual penalty. Missing or invalid baseline measurements
 contribute zero. This score still needs full-search testing on further recordings
-and shuffled controls. The existing ambiguity checks remain in effect.
+and shuffled controls.
+
+The experimental `doppler-location-1km-v1` screen permits unmatched sounds when
+at least two-thirds of detections match. Recordings with three or more detections
+need at least three matched sounds; fitting clock drift needs four. The existing
+two-sound unit-rate case is retained. A fit more than 1,000 m from the leading
+point blocks acceptance if it has at least 90% of the leader's curve support.
+Nearby clock alternatives remain visible through `clock_ambiguous`, independently
+of the location decision. The radius is measured from the reported point.
+The consensus and support thresholds are heuristics that need new field and
+negative-control testing; they do not estimate the probability of a 1 km error.
+
+Competitor summaries survive the ten-candidate display limit, spatial
+deduplication, and proposal/date merges. Older reports lack these summaries and
+remain ambiguous when reassessed. Their saved candidates can support a separate
+post-hoc diagnostic. The original Heathrow result and fixed acceptance plan
+remain unchanged.
+
+`diagnose_unmatched` reuses the production pair fitter at a report's inferred
+point and clock. It checks every retained observation variant against selected
+recorded reference tracks, reproduces the existing matches, and reports coverage,
+curvature, residual, joint-error and flight-reuse checks. Final-point coarse
+features cannot reconstruct an earlier proposal's pruning. These diagnostics
+do not identify the physical sound source or establish a new location result.
 
 The timing region encloses competitive search points, and `enclosing_radius_m`
 describes that region. Calibrated probabilities and location error bounds remain

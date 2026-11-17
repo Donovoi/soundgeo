@@ -37,6 +37,8 @@ fn saved_report_preserves_ieee_observations_and_modeled_curves() {
         duration_s: 900.,
         track_count: 1,
         events: vec![event],
+        doppler_competition: Default::default(),
+        doppler_assessment: None,
         candidates: vec![Candidate {
             latitude: 45.,
             longitude: -90.,

@@ -281,6 +281,7 @@ mod tests {
         Completed {
             missing_terrain_queries: 17,
             result: SearchResult {
+                competition: crate::doppler_assessment::Competition::from_candidates(&[]),
                 candidates: vec![Candidate {
                     latitude: -0.0,
                     longitude: 0.9228645712621525,

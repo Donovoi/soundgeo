@@ -9,6 +9,9 @@ use rayon::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::sync::Arc;
 
+#[path = "search_diagnostic.rs"]
+pub mod diagnostic;
+
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
 pub enum SearchMode {
@@ -81,6 +84,8 @@ impl Candidate {
 #[derive(Serialize, Deserialize)]
 pub struct SearchResult {
     pub candidates: Vec<Candidate>,
+    #[serde(default)]
+    pub competition: crate::doppler_assessment::Competition,
     pub warnings: Vec<String>,
     pub coarse_grid_m: f64,
     pub hypotheses: usize,
@@ -165,15 +170,6 @@ pub(crate) fn candidate_order(a: &Candidate, b: &Candidate) -> std::cmp::Orderin
     .then_with(|| a.latitude.total_cmp(&b.latitude))
     .then_with(|| a.longitude.total_cmp(&b.longitude))
     .then_with(|| a.recording_clock_rate.total_cmp(&b.recording_clock_rate))
-}
-
-pub(crate) fn has_competing_fit(candidates: &[Candidate]) -> bool {
-    candidates.first().is_some_and(|first| {
-        candidates
-            .iter()
-            .skip(1)
-            .any(|other| other.relative_error_percent < first.relative_error_percent * 1.5 + 0.05)
-    })
 }
 
 pub(crate) fn rank_candidates(mut candidates: Vec<Candidate>, last_event: f64) -> Vec<Candidate> {
@@ -910,6 +906,7 @@ fn locate_inner(
         crate::index::partition_proposals(job, events, tracks, bounds, terrain, control, progress)?;
     let mut candidates = vec![];
     let mut warnings = std::collections::BTreeSet::new();
+    let mut competition = crate::doppler_assessment::Competition::from_candidates(&[]);
     let mut hypotheses = 0usize;
     let active_count = partition
         .batches
@@ -981,6 +978,7 @@ fn locate_inner(
             .checked_add(result.hypotheses)
             .ok_or_else(|| anyhow::anyhow!("Total proposal count overflow"))?;
         candidates.extend(result.candidates);
+        competition.merge(result.competition);
         warnings.extend(result.warnings);
     }
     let last_event = events.iter().map(|e| e.cpa_s).fold(0., f64::max);
@@ -990,16 +988,11 @@ fn locate_inner(
             !warning.starts_with("No candidate passed the joint curve-fit threshold")
         });
     }
-    if has_competing_fit(&candidates) {
-        warnings.insert(
-            "Several distinct locations or times fit similarly well. The result is ambiguous."
-                .into(),
-        );
-    }
     warnings.insert(format!("Completed all {} flight-timestamp proposal batches, including {} empty batches. Each batch fits the {} hypothesis budget. All flight tracks remained available for matching and refinement. Recording clock settings were unchanged.",
         partition.batches.len(), partition.batches.len() - active_count, job.max_hypotheses));
     Ok(SearchResult {
         candidates,
+        competition,
         warnings: warnings.into_iter().collect(),
         coarse_grid_m: job.grid_m,
         hypotheses,
@@ -1259,6 +1252,7 @@ fn locate_once(
             });
         }
     }
+    let competition = crate::doppler_assessment::Competition::from_candidates(&candidates);
     let distinct = rank_candidates(candidates, last_event);
     let mut warnings = vec![];
     if events.iter().any(|e| e.activity_span_s.is_some()) {
@@ -1277,19 +1271,14 @@ fn locate_once(
         warnings.push("No candidate passed the joint curve-fit threshold in the supplied flight data and search region. This does not prove the location is absent.".into());
     }
     if distinct.iter().any(|c| c.matches.len() < events.len()) {
-        warnings.push("Some candidates leave detections unmatched. Only explicitly indexed matches support a candidate; the other sounds may be unrelated or lack reference data. Partial consensus remains ambiguous.".into());
+        warnings.push("Some candidates leave detections unmatched. Only explicitly indexed matches support a candidate; the other sounds may be unrelated or lack reference data. The location screen requires a two-thirds consensus and checks competing locations.".into());
     }
     if incomplete_references > 0 {
         warnings.push(format!("{incomplete_references} of {count} final refinement points lacked enough independent events with at least 90% reference-position coverage. A downloaded archive can still have receiver-coverage gaps; a denser reference source may be needed."));
     }
-    if has_competing_fit(&distinct) {
-        warnings.push(
-            "Several distinct locations or times fit similarly well. The result is ambiguous."
-                .into(),
-        );
-    }
     Ok(SearchResult {
         candidates: distinct,
+        competition,
         warnings,
         coarse_grid_m: spacing,
         hypotheses,
@@ -1372,6 +1361,17 @@ fn fit_observation(
     event_index: usize,
     event_variant: usize,
 ) -> Option<Match> {
+    fit_observation_details(seed, event, track, c, event_index, event_variant).1
+}
+
+fn fit_observation_details(
+    seed: &Seed,
+    event: &Event,
+    track: &Track,
+    c: f64,
+    event_index: usize,
+    event_variant: usize,
+) -> (f64, Option<Match>) {
     let observer = seed.point.ecef();
     // Full ridges revisit each flight segment many times. Preparing its arrival
     // geometry saves those repeated calculations. Keep short observations on
@@ -1399,9 +1399,9 @@ fn fit_observation(
             predicted.push(f64::NAN);
         }
     }
-    let coverage = used.len() as f64 / event.ridge.len() as f64;
+    let coverage = used.len() as f64 / event.ridge.len().max(1) as f64;
     if coverage < 0.9 || ff == 0. {
-        return None;
+        return (coverage, None);
     }
     let base = yf / ff;
     let mut sum = 0.;
@@ -1418,16 +1418,19 @@ fn fit_observation(
     let rmse = (sum / used.len() as f64).sqrt();
     let linear_rmse =
         crate::audio::linear_baseline_rmse(used_times.into_iter().zip(used.iter().copied()));
-    Some(Match {
-        event_index: Some(event_index),
-        event_variant,
-        aircraft: track.id.clone(),
-        rmse_hz: rmse,
-        fitted_tone_hz: base,
+    (
         coverage,
-        linear_baseline_rmse_hz: Some(linear_rmse),
-        modeled_hz: predicted,
-    })
+        Some(Match {
+            event_index: Some(event_index),
+            event_variant,
+            aircraft: track.id.clone(),
+            rmse_hz: rmse,
+            fitted_tone_hz: base,
+            coverage,
+            linear_baseline_rmse_hz: Some(linear_rmse),
+            modeled_hz: predicted,
+        }),
+    )
 }
 
 fn has_curvature(m: &Match) -> bool {
@@ -1657,8 +1660,11 @@ mod tests {
         .unwrap();
         let mut distant_second = candidate.clone();
         distant_second.relative_error_percent = 0.9;
+        distant_second.latitude = 0.02;
+        distant_second.matches.truncate(2);
         let mut competitor = candidate.clone();
         competitor.relative_error_percent = 0.6;
+        competitor.latitude = 0.03;
         let mut report: crate::Report = serde_json::from_value(serde_json::json!({
             "version": "test", "status": "insufficient_evidence", "media": "test.wav",
             "job": Job::default(), "duration_s": 1000., "track_count": 4,
@@ -1666,10 +1672,13 @@ mod tests {
             "search_grid_m": 100., "created_utc": "1970-01-01T00:00:00Z"
         }))
         .unwrap();
+        report.doppler_competition =
+            crate::doppler_assessment::Competition::from_candidates(&report.candidates);
         crate::set_doppler_status(&mut report);
         assert_eq!(report.status, "candidates_found");
         report.candidates.push(competitor);
-        assert!(has_competing_fit(&report.candidates));
+        report.doppler_competition =
+            crate::doppler_assessment::Competition::from_candidates(&report.candidates);
         crate::set_doppler_status(&mut report);
         assert_eq!(report.status, "ambiguous");
     }
@@ -1813,6 +1822,48 @@ mod tests {
             coarse_profiled: false,
             corroboration: None,
         }
+    }
+
+    #[test]
+    fn pair_diagnostic_separates_coverage_curvature_and_reused_flights() {
+        let (events, tracks) = corroboration_fixture();
+        let c = Job::default().sound_speed();
+        let mut candidate: Candidate = serde_json::from_value(serde_json::json!({
+            "latitude":demo::TRUTH.lat,"longitude":demo::TRUTH.lon,"ground_m":demo::TRUTH.alt,
+            "recording_start_utc":"fixture","recording_start_unix":demo::EPOCH,
+            "relative_error_percent":0.,"matches":[]
+        }))
+        .unwrap();
+        let good = diagnostic::pair(&candidate, &events[3], &tracks[3], c, 3, 0);
+        assert!(good.rejection_reasons.is_empty());
+        assert_eq!(good.coverage, 1.);
+        let mut missing = tracks[3].clone();
+        for sample in &mut missing.samples {
+            sample.time += 86400.;
+        }
+        let gap = diagnostic::pair(&candidate, &events[3], &missing, c, 3, 0);
+        assert!(gap.fit.is_none());
+        assert_eq!(gap.coverage, 0.);
+        assert_eq!(
+            gap.rejection_reasons,
+            ["reference_coverage_below_90_percent"]
+        );
+        let mut straight = events[3].clone();
+        for point in &mut straight.ridge {
+            point.hz = 5000. - point.time_s;
+        }
+        let drift = diagnostic::pair(&candidate, &straight, &tracks[3], c, 3, 0);
+        assert!(
+            drift
+                .rejection_reasons
+                .contains(&"insufficient_improvement_over_linear_drift".into())
+        );
+        let mut reused = good.fit.unwrap();
+        reused.event_index = Some(0);
+        candidate.matches.push(reused);
+        let assigned = diagnostic::pair(&candidate, &events[3], &tracks[3], c, 3, 0);
+        assert_eq!(assigned.already_assigned_to, [0]);
+        assert_eq!(assigned.rejection_reasons, ["flight_already_assigned"]);
     }
 
     #[test]

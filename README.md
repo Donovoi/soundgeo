@@ -376,6 +376,11 @@ This option checks the report status.
 | `4` | A result remained ambiguous, and `--require-unambiguous` was set. |
 
 The `--require-unambiguous` option also returns code `3` when there is no candidate.
+
+For Doppler analysis, the location screen uses the current 1 km target and
+allows a two-thirds sound consensus. Competitive recording times can remain
+uncertain even when the location screen passes; see `doppler_assessment` in
+the JSON report and the [screening limits](docs/limitations.md#search-and-result-interpretation).
 The program writes the report before it returns code `3` or `4`.
 The `--require-match` option checks for candidates.
 Check the report status and supporting evidence in automation.
