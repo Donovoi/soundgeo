@@ -1,0 +1,46 @@
+{
+  "scope": "Regression and required software checks for reusing correct cached archive attribution. This establishes no location result.",
+  "source_base_commit": "2747aec343a6a52893e576de39a78205c9ba2f8b",
+  "source_snapshot_built_before_commit": true,
+  "change": "Daily archive preparation leaves DATA-LICENSE.txt unchanged when its bytes already match the required attribution. Missing or stale text is still written, and a failed update reports its path.",
+  "trigger": {
+    "source_commit": "4f8764c557339bc02da8b6464b3c6bfce1564d80",
+    "native_exit_code": 1,
+    "native_elapsed_s": 50.05085456700181,
+    "completed_date_windows": 0,
+    "diagnosis": "The archive reader unconditionally rewrote an already correct read-only attribution file after verifying archive parts. Source order, saved log and file permissions identify the failing operation; no syscall trace was captured.",
+    "existing_attribution_bytes": 234,
+    "existing_attribution_sha256": "922f67e81c82163f0d713c522568822ab97fb541e21083bfa73aec83434dae5e",
+    "cause_evidence_sha256": "d3f5936a200b4f642d8e10bf66a519e19e73f404ab1b67ce8091683406c09104"
+  },
+  "frozen_baseline_retry": "The failed attempt remains preserved. A separate retry uses the same frozen executable and scientific settings after owner-write was added to exactly three attribution files. The permission repair preserved their bytes, owners, groups and modification times; the old executable can still rewrite the identical text during its separate retry.",
+  "regression_test": "cached_attribution_is_created_repaired_and_reused_readonly_offline",
+  "test_scope": [
+    "Calls the real download_day path with networking disabled and verified fixture archives.",
+    "Creates missing attribution and repairs stale text.",
+    "Reuses correct read-only attribution without changing its bytes, timestamp or permissions."
+  ],
+  "qualification": {
+    "platform": "native Linux",
+    "rust_tests_passed": 226,
+    "rust_tests_failed": 0,
+    "rust_tests_ignored": 0,
+    "python_tests_passed": 10,
+    "all_required_checks_passed": true,
+    "focused_regression_passed": true,
+    "compiled_source_files_matched": 67,
+    "checks_sha256": "54bcd216362f92aa51b21dfa73434619bcf7d2dbce171d5fc811644d53acedbc",
+    "source_manifest_sha256": "6f5e5928e6419bb231ec4fc78e69d57177a3584cbd6fbf2475e74284798ce466",
+    "immutable_build_receipt_sha256": "6283f31fab8e28e5d30613458cb7ead47dde0a2df172d6d7f14a975f8e2e548e",
+    "binary_sha256": {
+      "soundgeo": "8c19bddfb9519cc26a39969b5b22671b51f8c00035ed9fe33ef596f7b3d19cee",
+      "soundgeo-cli": "bb4cab3bff162639f3cdf2edf0ba84f2e649fa5970d440197d194ae616eb6a8f"
+    },
+    "independent_audit_sha256": "182d815e21996c8802ac08c45cb64360b21a2548ddd9cca4d3679bdd2945f16d"
+  },
+  "limits": [
+    "Archive preparation still needs write access for other cache operations. This fix specifically avoids rewriting identical attribution.",
+    "The real-data permission retry retains its own frozen executable and has separate accuracy evidence.",
+    "Existing 250 m and 1 km benchmark outcomes remain unchanged."
+  ]
+}

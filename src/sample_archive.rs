@@ -18,12 +18,40 @@ use std::{
 
 const HOST: &str = "6ff2cd7dae70306649e2c1e1500e2e0a.r2.cloudflarestorage.com";
 const BUCKET: &str = "adsbx-sample-data";
-// Public demonstration values, not a user's account credentials.
+// Provider-published sample credentials.
 const ACCESS: &str = "7b8d31d9d2f2d73ffb2208614db599fa";
 const SECRET: &str = "8bd955340e355418a5204e52a055005b6ca761f896abe0cccdd741638e790a76";
 const MAX_COMPRESSED: usize = 20_000_000;
 const MAX_JSON: u64 = 128_000_000;
 const SNAPSHOT_INTERVAL_S: f64 = 300.;
+const TRACE_DAY_S: f64 = 86400.;
+
+#[path = "sample_recovery.rs"]
+mod recovery;
+
+#[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum TraceResolution {
+    #[default]
+    Standard,
+    High,
+}
+
+impl TraceResolution {
+    pub(crate) fn object_prefix(self) -> &'static str {
+        match self {
+            Self::Standard => "traces",
+            Self::High => "hires-traces",
+        }
+    }
+
+    pub(crate) fn cache_prefix(self) -> &'static str {
+        match self {
+            Self::Standard => "adsbx-sample",
+            Self::High => "adsbx-hires-sample",
+        }
+    }
+}
 
 fn hash(bytes: &[u8]) -> String {
     format!("{:x}", Sha256::digest(bytes))
@@ -123,13 +151,14 @@ fn snapshot(value: &Value, expected: f64, bounds: Bounds) -> Result<BTreeSet<Str
         ) else {
             continue;
         };
-        if bounds.contains(crate::geo::Point { lat, lon, alt: 0. }) {
+        let point = crate::geo::Point { lat, lon, alt: 0. };
+        if point.valid() && bounds.contains_flight(point) {
             result.insert(id);
         }
     }
     Ok(result)
 }
-fn trace(value: &Value, expected: f64, id: &str) -> Result<usize> {
+fn trace(value: &Value, expected: f64, id: &str) -> Result<(usize, usize)> {
     ensure!(
         value["icao"]
             .as_str()
@@ -143,33 +172,40 @@ fn trace(value: &Value, expected: f64, id: &str) -> Result<usize> {
         .as_f64()
         .context("Sample trace lacks its date")?;
     ensure!(
-        (expected - 86400. ..expected + 86400.).contains(&timestamp),
+        (expected - TRACE_DAY_S..expected + TRACE_DAY_S).contains(&timestamp),
         "Sample trace has the wrong date"
     );
     let positions = value["trace"]
         .as_array()
         .context("Sample trace lacks positions")?;
-    // Older traces can retain positions from the preceding day. Preserve the
-    // source and its time base; analysis filters to the selected archive dates.
+    // A source trace can continue a flight across either midnight boundary.
+    // Preserve adjacent-day positions; analysis filters to the selected dates.
     ensure!(
         positions
             .iter()
             .all(|row| row[0].as_f64().is_some_and(|offset| {
-                (expected - 86400. ..expected + 86400.).contains(&(timestamp + offset))
+                (expected - TRACE_DAY_S..expected + 2. * TRACE_DAY_S)
+                    .contains(&(timestamp + offset))
             })),
-        "Sample trace has an invalid observation time or a position outside the requested and preceding UTC days"
+        "Sample trace has an invalid observation time or a position outside the requested and adjacent UTC days"
     );
     ensure!(
         (positions.is_empty() && timestamp >= expected)
-            || positions
-                .iter()
-                .any(|row| timestamp + row[0].as_f64().unwrap() >= expected),
+            || positions.iter().any(|row| {
+                (expected..expected + TRACE_DAY_S).contains(&(timestamp + row[0].as_f64().unwrap()))
+            }),
         "Sample trace has no positions on the requested UTC day"
     );
-    Ok(positions
-        .iter()
-        .filter(|row| timestamp + row[0].as_f64().unwrap() < expected)
-        .count())
+    Ok((
+        positions
+            .iter()
+            .filter(|row| timestamp + row[0].as_f64().unwrap() < expected)
+            .count(),
+        positions
+            .iter()
+            .filter(|row| timestamp + row[0].as_f64().unwrap() >= expected + TRACE_DAY_S)
+            .count(),
+    ))
 }
 
 pub(crate) struct Client {
@@ -323,12 +359,25 @@ struct SnapshotClockOffset {
 struct TraceCarryover {
     file: String,
     preceding_day_positions: usize,
+    #[serde(default)]
+    following_day_positions: usize,
+}
+#[derive(Default, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+enum DiscoveryArea {
+    #[default]
+    ObserverBounds,
+    NearbyFlightsV1,
 }
 #[derive(Serialize, Deserialize)]
 struct Manifest {
     schema: u32,
+    #[serde(default)]
+    resolution: TraceResolution,
     date: String,
     bounds: Bounds,
+    #[serde(default)]
+    discovery_area: DiscoveryArea,
     source: String,
     snapshots: Vec<Object>,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
@@ -342,6 +391,8 @@ struct Manifest {
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     trace_carryover: Vec<TraceCarryover>,
     missing_aircraft: Vec<String>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    snapshot_recoveries: Vec<recovery::Recovered>,
 }
 
 fn snapshot_name(minute: usize) -> String {
@@ -362,7 +413,7 @@ fn snapshot_choices(index: usize) -> Vec<usize> {
 
 fn snapshot_plan_valid(manifest: &Manifest, names: &[String]) -> bool {
     let missing: BTreeSet<_> = manifest.missing_snapshot_slots.iter().collect();
-    if ![1, 2, 3].contains(&manifest.schema)
+    if ![1, 2, 3, 4, 5].contains(&manifest.schema)
         || manifest.snapshots.is_empty()
         || (manifest.schema < 3 && !missing.is_empty())
         || missing.len() != manifest.missing_snapshot_slots.len()
@@ -437,7 +488,7 @@ fn cached_aircraft_set_valid(manifest: &Manifest, allow_missing: bool) -> bool {
         && traced.is_disjoint(&missing)
         && traced.union(&missing).cloned().collect::<BTreeSet<_>>() == aircraft
         && manifest.trace_carryover.iter().all(|carryover| {
-            carryover.preceding_day_positions > 0
+            (carryover.preceding_day_positions > 0 || carryover.following_day_positions > 0)
                 && manifest.traces.iter().any(|o| o.file == carryover.file)
         })
 }
@@ -456,12 +507,45 @@ fn valid_object(path: &Path, object: &Object, control: &Control) -> bool {
 fn atomic_write(path: &Path, bytes: &[u8]) -> Result<()> {
     let parent = path.parent().context("Cache file has no parent")?;
     std::fs::create_dir_all(parent)?;
-    let mut temporary = tempfile::NamedTempFile::new_in(parent)?;
+    let (mut temporary, destination) = crate::atomic_file::prepare(path)?;
     temporary.write_all(bytes)?;
     temporary.as_file().sync_all()?;
-    temporary.persist(path)?;
+    temporary.persist(destination)?;
     Ok(())
 }
+
+fn reuse_legacy_trace(
+    legacy: &Path,
+    destination: &Path,
+    record: &Object,
+    start: f64,
+    id: &str,
+    control: &Control,
+) -> Result<()> {
+    // Publish only into the new discovery generation. An interrupted upgrade
+    // must not add unlisted files to the old, still usable offline cache.
+    let source = legacy.join("traces").join(&record.file);
+    if destination.exists() || !valid_object(&source, record, control) {
+        return Ok(());
+    }
+    let bytes = std::fs::read(&source)?;
+    if hash(&bytes) != record.sha256 {
+        return Ok(());
+    }
+    let Ok(value) = parse(&bytes) else {
+        return Ok(());
+    };
+    if trace(&value, start, id).is_err() {
+        return Ok(());
+    }
+    control.check()?;
+    atomic_write(destination, &bytes)?;
+    atomic_write(
+        &destination.with_file_name(format!("receipt-{}.json", record.file)),
+        &serde_json::to_vec(record)?,
+    )
+}
+
 async fn object<F: Fn(&Value) -> Result<()>>(
     client: &Client,
     key: &str,
@@ -488,10 +572,15 @@ async fn object<F: Fn(&Value) -> Result<()>>(
         return Ok(Some((stamp, value)));
     }
     let Some(bytes) = client.get(key, control).await? else {
+        ensure!(
+            !path.exists(),
+            "Cached sample object failed verification and its source returned HTTP 404: {}. Existing bytes were preserved.",
+            path.display()
+        );
         return Ok(None);
     };
     let value = parse(&bytes).with_context(|| format!("Invalid free sample object {key}"))?;
-    check(&value)?;
+    check(&value).with_context(|| format!("Invalid free sample object {key}"))?;
     if path.exists() {
         let mut old = std::fs::File::open(path)?;
         let mut digest = Sha256::new();
@@ -516,7 +605,7 @@ async fn object<F: Fn(&Value) -> Result<()>>(
             let backup = rejected.join(name);
             if !backup.exists() {
                 let mut input = std::fs::File::open(path)?;
-                let mut temporary = tempfile::NamedTempFile::new_in(rejected)?;
+                let (mut temporary, destination) = crate::atomic_file::prepare(&backup)?;
                 loop {
                     control.check()?;
                     let count = input.read(&mut buffer)?;
@@ -526,7 +615,7 @@ async fn object<F: Fn(&Value) -> Result<()>>(
                     temporary.write_all(&buffer[..count])?;
                 }
                 temporary.as_file().sync_all()?;
-                temporary.persist(backup)?;
+                temporary.persist(destination)?;
             }
         }
     }
@@ -552,12 +641,31 @@ pub fn download_day(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<PathBuf> {
+    download_day_with_resolution(
+        date,
+        cache,
+        bounds,
+        TraceResolution::Standard,
+        control,
+        progress,
+    )
+}
+
+pub fn download_day_with_resolution(
+    date: &str,
+    cache: &Path,
+    bounds: Option<Bounds>,
+    resolution: TraceResolution,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<PathBuf> {
     control.check()?;
     let bounds = validate(date, bounds)?;
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()?;
     runtime.block_on(download(
+        resolution,
         &Client::new()?,
         date,
         cache,
@@ -567,6 +675,7 @@ pub fn download_day(
     ))
 }
 async fn download(
+    resolution: TraceResolution,
     client: &Client,
     date: &str,
     cache: &Path,
@@ -574,8 +683,34 @@ async fn download(
     control: &Control,
     progress: &Progress<'_>,
 ) -> Result<PathBuf> {
+    ensure!(
+        !control.offline || !control.refresh_source_gaps,
+        "Source gaps cannot be refreshed in offline mode"
+    );
     let tag = hash(&serde_json::to_vec(&bounds)?);
-    let root = cache.join(format!("adsbx-sample-{date}-{}", &tag[..16]));
+    let legacy = cache.join(format!(
+        "{}-{date}-{}",
+        resolution.cache_prefix(),
+        &tag[..16]
+    ));
+    let tag = hash(&serde_json::to_vec(&(
+        bounds,
+        DiscoveryArea::NearbyFlightsV1,
+    ))?);
+    let current = cache.join(format!(
+        "{}-{date}-{}",
+        resolution.cache_prefix(),
+        &tag[..16]
+    ));
+    let legacy_offline = control.offline
+        && !current.join("sample-manifest.json").exists()
+        && legacy.join("sample-manifest.json").is_file();
+    let root = if legacy_offline { &legacy } else { &current };
+    let discovery_area = if legacy_offline {
+        DiscoveryArea::ObserverBounds
+    } else {
+        DiscoveryArea::NearbyFlightsV1
+    };
     let shared = cache.join(format!("adsbx-sample-{date}-snapshots"));
     let traces = root.join("traces");
     let manifest_path = root.join("sample-manifest.json");
@@ -583,11 +718,14 @@ async fn download(
     let start = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() as f64;
     let names: Vec<_> = (0..288).map(|i| snapshot_name(i * 5)).collect();
     if let Ok(bytes) = std::fs::read(&manifest_path)
-        && let Ok(manifest) = serde_json::from_slice::<Manifest>(&bytes)
+        && let Ok(mut manifest) = serde_json::from_slice::<Manifest>(&bytes)
         && manifest.date == date
+        && manifest.resolution == resolution
+        && manifest.discovery_area == discovery_area
         && serde_json::to_vec(&manifest.bounds)? == serde_json::to_vec(&bounds)?
         && snapshot_plan_valid(&manifest, &names)
-        && cached_aircraft_set_valid(&manifest, control.offline)
+        && cached_aircraft_set_valid(&manifest, !control.refresh_source_gaps)
+        && recovery::cache_valid(&manifest, &traces, &shared, control)
         && manifest
             .snapshots
             .iter()
@@ -607,14 +745,43 @@ async fn download(
         })
     {
         control.check()?;
+        recovery::upgrade_legacy(
+            client,
+            &mut manifest,
+            &bytes,
+            start,
+            root,
+            control,
+            progress,
+        )
+        .await?;
         progress("Using verified full-day free sample cache", 1.);
         return Ok(traces);
     }
+    ensure!(
+        !legacy_offline,
+        "Offline mode: the older free sample cache failed verification; prepare it online before using it offline"
+    );
+    // Reuse verified old objects and recorded 404s while preparing the wider
+    // area. Keep the original manifest and files intact, including on failure.
+    let prior = std::fs::read(legacy.join("sample-manifest.json"))
+        .ok()
+        .and_then(|bytes| serde_json::from_slice::<Manifest>(&bytes).ok())
+        .filter(|m| {
+            m.date == date
+                && m.resolution == resolution
+                && m.discovery_area == DiscoveryArea::ObserverBounds
+                && serde_json::to_vec(&m.bounds).ok() == serde_json::to_vec(&bounds).ok()
+                && snapshot_plan_valid(m, &names)
+                && cached_aircraft_set_valid(m, true)
+        });
     let prefix = date.replace('-', "/");
     let mut manifest = Manifest {
-        schema: 3,
+        schema: 5,
+        resolution,
         date: date.into(),
         bounds,
+        discovery_area: DiscoveryArea::NearbyFlightsV1,
         source: "https://www.adsbexchange.com/data-products/sample-data/".into(),
         snapshots: vec![],
         missing_snapshot_slots: vec![],
@@ -624,8 +791,10 @@ async fn download(
         traces: vec![],
         trace_carryover: vec![],
         missing_aircraft: vec![],
+        snapshot_recoveries: vec![],
     };
     let mut ids = BTreeSet::new();
+    let mut recovery_plan = recovery::Plan::new();
     for (index, name) in names.iter().enumerate() {
         control.check()?;
         let mut selected = None;
@@ -659,6 +828,7 @@ async fn download(
             continue;
         };
         ids.extend(snapshot(&value, expected, bounds)?);
+        recovery::discover(&mut recovery_plan, &value, start, bounds);
         ensure!(
             ids.len() <= 10000,
             "More than 10,000 aircraft were found; narrow the sample search area"
@@ -696,8 +866,20 @@ async fn download(
     for (index, id) in ids.iter().enumerate() {
         control.check()?;
         let file = format!("trace_full_{id}.json.gz");
+        if let Some(prior) = &prior {
+            if let Some(record) = prior.traces.iter().find(|record| record.file == file) {
+                reuse_legacy_trace(&legacy, &traces.join(&file), record, start, id, control)?;
+            } else if !control.refresh_source_gaps
+                && prior.missing_aircraft.contains(id)
+                && !traces.join(&file).exists()
+            {
+                manifest.missing_aircraft.push(id.clone());
+                continue;
+            }
+        }
         let key = format!(
-            "traces/{prefix}/{}/trace_full_{id}.json",
+            "{}/{prefix}/{}/trace_full_{id}.json",
+            resolution.object_prefix(),
             &id[id.len() - 2..]
         );
         if let Some((record, value)) = object(
@@ -710,11 +892,12 @@ async fn download(
         )
         .await?
         {
-            let preceding_day_positions = trace(&value, start, id)?;
-            if preceding_day_positions > 0 {
+            let (preceding_day_positions, following_day_positions) = trace(&value, start, id)?;
+            if preceding_day_positions > 0 || following_day_positions > 0 {
                 manifest.trace_carryover.push(TraceCarryover {
                     file: record.file.clone(),
                     preceding_day_positions,
+                    following_day_positions,
                 });
             }
             manifest.traces.push(record);
@@ -728,12 +911,22 @@ async fn download(
                 ids.len(),
                 manifest.missing_aircraft.len()
             ),
-            0.7 + 0.3 * (index + 1) as f32 / ids.len().max(1) as f32,
+            0.7 + 0.2 * (index + 1) as f32 / ids.len().max(1) as f32,
         );
     }
+    recovery::recover(
+        client,
+        &mut manifest,
+        recovery_plan,
+        start,
+        root,
+        control,
+        progress,
+    )
+    .await?;
     control.check()?;
     atomic_write(&manifest_path, &serde_json::to_vec_pretty(&manifest)?)?;
-    atomic_write(&root.join("SOURCE.txt"), b"ADS-B Exchange free first-of-month testing/evaluation sample. https://www.adsbexchange.com/data-products/sample-data/ . All 288 discovery slots were checked. A missing snapshot can use an available neighboring minute from the same day. Actual source files, replacement mappings, and slots unavailable at the scheduled and checked neighboring filenames are recorded in sample-manifest.json. Full-day traces were downloaded for regional identities. Flights entirely between discovery snapshots can be absent. Missing traces are listed in the manifest. Reference data is not bundled or redistributed by SoundGeo.\n")?;
+    atomic_write(&root.join("SOURCE.txt"), b"ADS-B Exchange free first-of-month testing/evaluation sample. https://www.adsbexchange.com/data-products/sample-data/ . All 288 discovery slots were checked. A missing snapshot can use an available neighboring minute from the same day. Actual source files, replacement mappings, and slots unavailable at the scheduled and checked neighboring filenames are recorded in sample-manifest.json. Full-day traces were downloaded for identities in the nearby flight area used by the flight reader. Missing traces with an airborne discovery position are recovered from five-second snapshots within five minutes of that position. Derived traces, original snapshot objects, attempted slots and source gaps are recorded separately. Flights entirely between discovery snapshots can be absent. Missing full-day traces remain listed in the manifest. Reference data is not bundled or redistributed by SoundGeo.\n")?;
     progress(
         "Free sample download complete; coverage limits are in the manifest",
         1.,
@@ -784,19 +977,53 @@ pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
     let carryover = if manifest.trace_carryover.is_empty() {
         String::new()
     } else {
-        let positions: usize = manifest
+        let preceding: usize = manifest
             .trace_carryover
             .iter()
             .map(|v| v.preceding_day_positions)
             .sum();
+        let following: usize = manifest
+            .trace_carryover
+            .iter()
+            .map(|v| v.following_day_positions)
+            .sum();
+        let mut spans = Vec::new();
+        if preceding > 0 {
+            spans.push(format!("{preceding} positions from the preceding UTC day"));
+        }
+        if following > 0 {
+            spans.push(format!("{following} positions from the following UTC day"));
+        }
         format!(
-            " {} trace files also contain {positions} positions from the preceding UTC day. Original files are preserved; analysis uses positions within the selected archive dates.",
-            manifest.trace_carryover.len()
+            " {} trace files also contain {}. Original files are preserved; analysis uses positions within the selected archive dates.",
+            manifest.trace_carryover.len(),
+            spans.join(" and ")
         )
+    };
+    let recovered = manifest
+        .snapshot_recoveries
+        .iter()
+        .filter(|record| record.trace.is_some())
+        .count();
+    let recovery = if manifest.snapshot_recoveries.is_empty() {
+        String::new()
+    } else {
+        format!(
+            " Snapshot recovery produced {recovered} short traces for {} missing full-day traces. Each recovery covers up to five minutes before and after recorded airborne discovery positions. Source snapshots, attempted windows and gaps are retained in the manifest.",
+            manifest.snapshot_recoveries.len()
+        )
+    };
+    let discovery = match manifest.discovery_area {
+        DiscoveryArea::ObserverBounds => {
+            " This older cache selected aircraft only inside the observer bounds. Online preparation can add nearby flights."
+        }
+        DiscoveryArea::NearbyFlightsV1 => {
+            " Discovery includes the nearby flight area used by the flight reader."
+        }
     };
     Ok((
         format!(
-            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery inspected {} snapshots across 288 five-minute slots in the search area.{}{}{}{} Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
+            "ADS-B Exchange free evaluation sample for {}: {} full-day traces, {} unavailable. Discovery inspected {} snapshots across 288 five-minute slots in the search area.{}{}{}{}{}{} Flights between discovery snapshots and flights outside receiver coverage can be absent. The sample is available only on the first day of each month.",
             manifest.date,
             manifest.traces.len(),
             manifest.missing_aircraft.len(),
@@ -804,9 +1031,11 @@ pub(crate) fn coverage(path: &Path) -> Result<(String, bool)> {
             replacements,
             gaps,
             offsets,
-            carryover
+            carryover,
+            recovery,
+            discovery
         ),
-        manifest.traces.is_empty(),
+        manifest.traces.is_empty() && recovered == 0,
     ))
 }
 
@@ -841,6 +1070,24 @@ mod tests {
         gzip.write_all(&serde_json::to_vec(&value).unwrap())
             .unwrap();
         gzip.finish().unwrap()
+    }
+    #[test]
+    fn atomic_cache_writes_create_and_replace_files_beyond_windows_path_limit() {
+        let directory = tempfile::tempdir().unwrap();
+        let mut parent = directory.path().to_path_buf();
+        for _ in 0..16 {
+            parent.push("reference-cache");
+        }
+        let path = parent.join(format!("sample-manifest-{}.json", "a".repeat(64)));
+        assert!(path.as_os_str().len() > 260);
+        atomic_write(&path, b"original manifest").unwrap();
+        assert_eq!(std::fs::read(&path).unwrap(), b"original manifest");
+        atomic_write(&path, b"replacement manifest with recovery").unwrap();
+        assert_eq!(
+            std::fs::read(&path).unwrap(),
+            b"replacement manifest with recovery"
+        );
+        assert_eq!(std::fs::read_dir(parent).unwrap().count(), 1);
     }
     struct Server {
         endpoint: String,
@@ -952,19 +1199,36 @@ mod tests {
         };
         (200, compressed(value), 0)
     }
+    async fn download(
+        client: &Client,
+        date: &str,
+        cache: &Path,
+        bounds: Bounds,
+        control: &Control,
+        progress: &Progress<'_>,
+    ) -> Result<PathBuf> {
+        super::download(
+            TraceResolution::Standard,
+            client,
+            date,
+            cache,
+            bounds,
+            control,
+            progress,
+        )
+        .await
+    }
+
     fn run(client: &Client, cache: &Path) -> Result<PathBuf> {
+        run_controlled(client, cache, &Control::default())
+    }
+
+    fn run_controlled(client: &Client, cache: &Path, control: &Control) -> Result<PathBuf> {
         tokio::runtime::Builder::new_current_thread()
             .enable_all()
             .build()
             .unwrap()
-            .block_on(download(
-                client,
-                DAY,
-                cache,
-                bounds(),
-                &Control::default(),
-                &|_, _| {},
-            ))
+            .block_on(download(client, DAY, cache, bounds(), control, &|_, _| {}))
     }
 
     #[test]
@@ -1060,6 +1324,303 @@ mod tests {
         );
     }
     #[test]
+    fn discovery_includes_nearby_flights_at_high_latitudes() {
+        let bounds = Bounds {
+            south: 60.,
+            north: 61.,
+            west: 20.,
+            east: 21.,
+        };
+        let value = json!({"now":start(),"aircraft":[
+            {"hex":"aaaaaa","lat":61.3,"lon":20.5},
+            {"hex":"bbbbbb","lat":60.5,"lon":22.1},
+            {"hex":"cccccc","lat":61.7,"lon":20.5},
+            {"hex":"dddddd","lat":60.5,"lon":23.},
+            {"hex":"eeeeee","lat":60.5,"lon":181.}
+        ]});
+        assert_eq!(
+            snapshot(&value, start(), bounds).unwrap(),
+            BTreeSet::from(["aaaaaa".into(), "bbbbbb".into()])
+        );
+    }
+
+    #[test]
+    fn wider_discovery_preserves_legacy_cache_on_cancel_and_reuses_it_offline() {
+        let directory = tempfile::tempdir().unwrap();
+        let unavailable = Arc::new(AtomicBool::new(false));
+        let refused = unavailable.clone();
+        let server = Server::new(move |key| {
+            if key.ends_with("trace_full_~abc123.json")
+                || (refused.load(Ordering::Relaxed) && key.ends_with("trace_full_fedcba.json"))
+            {
+                return (404, vec![], 0);
+            }
+            let (status, bytes, delay) = fixture(key);
+            let mut value = parse(&bytes).unwrap();
+            if key.contains("/readsb-hist/") {
+                value["aircraft"]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(json!({"hex":"fedcba","lat":11.3,"lon":20.5}));
+            } else if key.ends_with("trace_full_fedcba.json") {
+                for row in value["trace"].as_array_mut().unwrap() {
+                    row[1] = json!(11.3);
+                }
+            }
+            (status, compressed(value), delay)
+        });
+        let client = server.client();
+        let initial = run(&client, directory.path()).unwrap();
+        assert_eq!(server.calls.load(Ordering::Relaxed), 291);
+        let current_root = initial.parent().unwrap().to_path_buf();
+        let tag = hash(&serde_json::to_vec(&bounds()).unwrap());
+        let legacy = directory
+            .path()
+            .join(format!("adsbx-sample-{DAY}-{}", &tag[..16]));
+        std::fs::rename(&current_root, &legacy).unwrap();
+        let legacy_manifest = legacy.join("sample-manifest.json");
+        let mut manifest: Manifest =
+            serde_json::from_slice(&std::fs::read(&legacy_manifest).unwrap()).unwrap();
+        manifest.discovery_area = DiscoveryArea::ObserverBounds;
+        manifest.aircraft.retain(|id| id != "fedcba");
+        manifest
+            .traces
+            .retain(|object| object.file != "trace_full_fedcba.json.gz");
+        // Reproduce a legacy cache whose world snapshots contained an aircraft
+        // outside the observer bounds, so its daily trace was never requested.
+        for file in [
+            "trace_full_fedcba.json.gz",
+            "receipt-trace_full_fedcba.json.gz.json",
+        ] {
+            std::fs::remove_file(legacy.join("traces").join(file)).unwrap();
+        }
+        let mut value = serde_json::to_value(&manifest).unwrap();
+        value.as_object_mut().unwrap().remove("discovery_area");
+        std::fs::write(&legacy_manifest, serde_json::to_vec(&value).unwrap()).unwrap();
+        let inventory = || {
+            walkdir::WalkDir::new(&legacy)
+                .into_iter()
+                .map(|entry| entry.unwrap())
+                .filter(|entry| entry.file_type().is_file())
+                .map(|entry| {
+                    (
+                        entry.path().strip_prefix(&legacy).unwrap().to_owned(),
+                        hash(&std::fs::read(entry.path()).unwrap()),
+                    )
+                })
+                .collect::<std::collections::BTreeMap<_, _>>()
+        };
+        let original = inventory();
+        let offline = Control::default().with_offline(true);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            legacy.join("traces")
+        );
+        assert!(
+            coverage_warning(&legacy.join("traces"))
+                .unwrap()
+                .contains("older cache")
+        );
+        let control = Control::default();
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let error = runtime
+            .block_on(download(
+                &client,
+                DAY,
+                directory.path(),
+                bounds(),
+                &control,
+                &|message, _| {
+                    if message.starts_with("Full-day free traces: 1/") {
+                        control.stop();
+                    }
+                },
+            ))
+            .unwrap_err();
+        assert!(format!("{error:#}").contains("Cancelled"));
+        assert!(!current_root.join("sample-manifest.json").exists());
+        assert!(
+            current_root
+                .join("traces/trace_full_abcdef.json.gz")
+                .is_file()
+        );
+        assert_eq!(inventory(), original);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            legacy.join("traces")
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 291);
+
+        let wider = run(&client, directory.path()).unwrap();
+        assert_eq!(wider, current_root.join("traces"));
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+        assert_eq!(inventory(), original);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            wider
+        );
+        let upgraded: Manifest = serde_json::from_slice(
+            &std::fs::read(current_root.join("sample-manifest.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(upgraded.missing_aircraft, ["~abc123"]);
+        let job = crate::Job {
+            tracks: wider.clone(),
+            bounds: Some(bounds()),
+            ..Default::default()
+        };
+        let dataset = crate::data::load_for_job(&job, 3600., &offline).unwrap();
+        assert!(
+            dataset
+                .tracks
+                .iter()
+                .any(|track| track.id.starts_with("fedcba"))
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+        let refresh = Control {
+            refresh_source_gaps: true,
+            ..Default::default()
+        };
+        assert_eq!(
+            run_controlled(&client, directory.path(), &refresh).unwrap(),
+            wider
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 293);
+        // A damaged completed generation must fail verification, even when a
+        // usable older generation still exists beside it.
+        std::fs::write(wider.join("trace_full_fedcba.json.gz"), b"damaged").unwrap();
+        assert!(run_controlled(&client, directory.path(), &offline).is_err());
+        assert_eq!(server.calls.load(Ordering::Relaxed), 293);
+        unavailable.store(true, Ordering::Relaxed);
+        let saved_manifest = std::fs::read(current_root.join("sample-manifest.json")).unwrap();
+        let error = run(&client, directory.path()).unwrap_err();
+        assert!(
+            format!("{error:#}").contains("failed verification and its source returned HTTP 404")
+        );
+        assert_eq!(
+            std::fs::read(current_root.join("sample-manifest.json")).unwrap(),
+            saved_manifest
+        );
+        assert_eq!(
+            std::fs::read(wider.join("trace_full_fedcba.json.gz")).unwrap(),
+            b"damaged"
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 294);
+        assert_eq!(inventory(), original);
+    }
+    #[test]
+    fn high_resolution_download_keeps_separate_traces_and_reuses_discovery_offline() {
+        let dir = tempfile::tempdir().unwrap();
+        let server = Server::new(|key| {
+            let (status, bytes, delay) = fixture(key);
+            if key.contains("/hires-traces/") {
+                let mut value = parse(&bytes).unwrap();
+                value["trace"] = json!(
+                    (0..61)
+                        .map(|i| json!([
+                            10. + i as f64 * 0.5,
+                            10.4,
+                            20.4 + i as f64 / 6000.,
+                            1000,
+                            100,
+                            90,
+                            0
+                        ]))
+                        .collect::<Vec<_>>()
+                );
+                return (status, compressed(value), delay);
+            }
+            (status, bytes, delay)
+        });
+        let client = server.client();
+        let standard = run(&client, dir.path()).unwrap();
+        let original = std::fs::read(standard.join("trace_full_abcdef.json.gz")).unwrap();
+        assert_eq!(server.calls.load(Ordering::Relaxed), 290);
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let high = runtime
+            .block_on(super::download(
+                TraceResolution::High,
+                &client,
+                DAY,
+                dir.path(),
+                bounds(),
+                &Control::default(),
+                &|_, _| {},
+            ))
+            .unwrap();
+        assert_ne!(standard, high);
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+        assert_eq!(
+            std::fs::read(standard.join("trace_full_abcdef.json.gz")).unwrap(),
+            original
+        );
+        let dense = std::fs::read(high.join("trace_full_abcdef.json.gz")).unwrap();
+        assert_eq!(
+            parse(&dense).unwrap()["trace"].as_array().unwrap().len(),
+            61
+        );
+        assert_ne!(dense, original);
+        let manifest: Manifest = serde_json::from_slice(
+            &std::fs::read(high.parent().unwrap().join("sample-manifest.json")).unwrap(),
+        )
+        .unwrap();
+        assert_eq!(manifest.resolution, TraceResolution::High);
+        let offline = Control::default().with_offline(true);
+        let request = crate::archive::ArchiveRequest {
+            date_from: String::new(),
+            date_to: None,
+            cache: dir.path().into(),
+            provider: crate::archive::ArchiveProvider::AdsbExchangeSampleHires,
+        };
+        assert_eq!(request.dates().unwrap(), [DAY]);
+        assert_eq!(
+            request
+                .ensure_for_bounds(Some(bounds()), &offline, &|_, _| {})
+                .unwrap(),
+            std::slice::from_ref(&high)
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+
+        // A missing high-resolution object must not use the standard trace.
+        std::fs::remove_file(high.join("trace_full_abcdef.json.gz")).unwrap();
+        assert!(
+            request
+                .ensure_for_bounds(Some(bounds()), &offline, &|_, _| {})
+                .is_err()
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 292);
+        assert_eq!(
+            runtime
+                .block_on(super::download(
+                    TraceResolution::High,
+                    &client,
+                    DAY,
+                    dir.path(),
+                    bounds(),
+                    &Control::default(),
+                    &|_, _| {},
+                ))
+                .unwrap(),
+            high
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), 293);
+        assert_eq!(
+            std::fs::read(high.join("trace_full_abcdef.json.gz")).unwrap(),
+            dense
+        );
+        assert_eq!(
+            std::fs::read(standard.join("trace_full_abcdef.json.gz")).unwrap(),
+            original
+        );
+    }
+
+    #[test]
     fn full_day_download_preserves_non_icao_ids_and_reuses_offline_cache() {
         let dir = tempfile::tempdir().unwrap();
         let server = Server::new(fixture);
@@ -1137,6 +1698,120 @@ mod tests {
         manifest.snapshot_clock_offsets[0].file = "missing.json.gz".into();
         assert!(!snapshot_plan_valid(&manifest, &names));
     }
+    #[test]
+    fn adjacent_day_carryover_requires_current_day_positions_and_stays_bounded() {
+        let value = json!({"icao":"abcdef","timestamp":start()+2.608,
+            "trace":[[0.], [86397.4]]});
+        assert_eq!(trace(&value, start(), "abcdef").unwrap(), (0, 1));
+        for rows in [
+            json!([[86397.4]]),
+            json!([[0.], [172798.4]]),
+            json!([[0.], [null]]),
+        ] {
+            let mut invalid = value.clone();
+            invalid["trace"] = rows;
+            assert!(trace(&invalid, start(), "abcdef").is_err());
+        }
+        let legacy: TraceCarryover = serde_json::from_value(json!({
+            "file":"trace_full_abcdef.json.gz", "preceding_day_positions":10
+        }))
+        .unwrap();
+        assert_eq!(legacy.following_day_positions, 0);
+    }
+
+    #[test]
+    fn fractional_midnight_position_is_preserved_and_filtered_for_analysis() {
+        check_following_day_position(86400.008);
+    }
+
+    #[test]
+    fn next_day_flight_continuation_is_preserved_and_filtered_for_analysis() {
+        check_following_day_position(86930.384);
+    }
+
+    fn check_following_day_position(offset: f64) {
+        let dir = tempfile::tempdir().unwrap();
+        let with_boundary = move |key: &str| {
+            let (status, bytes, delay) = fixture(key);
+            if !key.contains("/traces/") {
+                return (status, bytes, delay);
+            }
+            let mut value = parse(&bytes).unwrap();
+            let mut last = value["trace"].as_array().unwrap().last().unwrap().clone();
+            last[0] = json!(offset);
+            value["trace"].as_array_mut().unwrap().push(last);
+            (status, compressed(value), delay)
+        };
+        let expected = with_boundary("/traces/2024/03/01/ef/trace_full_abcdef.json").1;
+        let server = Server::new(with_boundary);
+        let client = server.client();
+        let path = run(&client, dir.path()).unwrap();
+        let bytes = std::fs::read(path.join("trace_full_abcdef.json.gz")).unwrap();
+        assert_eq!(bytes, expected);
+        let value = parse(&bytes).unwrap();
+        assert_eq!(value["trace"][10][0], json!(offset));
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let manifest_bytes = std::fs::read(&manifest_path).unwrap();
+        let manifest: Value = serde_json::from_slice(&manifest_bytes).unwrap();
+        let carryover = manifest["trace_carryover"].as_array().unwrap();
+        assert_eq!(carryover.len(), 2);
+        assert!(
+            carryover.iter().all(|v| {
+                v["preceding_day_positions"] == 0 && v["following_day_positions"] == 1
+            })
+        );
+        assert!(
+            coverage_warning(&path)
+                .unwrap()
+                .contains("2 positions from the following UTC day")
+        );
+        let job = crate::Job {
+            tracks: path.clone(),
+            archive: Some(crate::archive::ArchiveRequest {
+                date_from: DAY.into(),
+                date_to: None,
+                cache: dir.path().to_owned(),
+                provider: crate::archive::ArchiveProvider::AdsbExchangeSample,
+            }),
+            ..crate::Job::default()
+        };
+        let offline = Control {
+            offline: true,
+            ..Control::default()
+        };
+        for _ in 0..2 {
+            let selected = crate::data::load_for_job(&job, 60., &offline).unwrap();
+            assert_eq!(selected.tracks.len(), 2);
+            assert!(selected.tracks.iter().all(|track| {
+                track.samples.len() == 10
+                    && track
+                        .samples
+                        .iter()
+                        .all(|p| p.time >= start() && p.time < start() + 86400.)
+            }));
+        }
+        let replay = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(download(
+                &client,
+                DAY,
+                dir.path(),
+                bounds(),
+                &offline,
+                &|_, _| {},
+            ))
+            .unwrap();
+        assert_eq!(replay, path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), 290);
+        assert_eq!(std::fs::read(manifest_path).unwrap(), manifest_bytes);
+        assert_eq!(
+            std::fs::read(path.join("trace_full_abcdef.json.gz")).unwrap(),
+            expected
+        );
+    }
+
     #[test]
     fn leading_previous_day_positions_are_preserved_and_filtered_for_analysis() {
         let dir = tempfile::tempdir().unwrap();
@@ -1300,7 +1975,7 @@ mod tests {
         let record = &mut manifest.traces[0];
         let trace_path = path.join(&record.file);
         let mut value = parse(&std::fs::read(&trace_path).unwrap()).unwrap();
-        value["trace"][0][0] = json!(86400.);
+        value["trace"][0][0] = json!(172800.);
         let bytes = compressed(value);
         record.bytes = bytes.len();
         record.sha256 = hash(&bytes);
@@ -1348,7 +2023,7 @@ mod tests {
         let manifest_path = path.parent().unwrap().join("sample-manifest.json");
         let mut manifest: Manifest =
             serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
-        assert_eq!(manifest.schema, 3);
+        assert_eq!(manifest.schema, 5);
         assert_eq!(manifest.snapshots.len(), 288);
         assert_eq!(manifest.snapshots[1].file, "000400Z.json.gz");
         assert_eq!(
@@ -1394,7 +2069,7 @@ mod tests {
     }
 
     #[test]
-    fn snapshot_source_gaps_replay_offline_and_are_retried_online() {
+    fn snapshot_source_gaps_replay_offline_and_refresh_on_request() {
         let missing = Arc::new(AtomicBool::new(true));
         let source_missing = missing.clone();
         let server = Server::new(move |key| {
@@ -1459,12 +2134,75 @@ mod tests {
         assert!(!snapshot_plan_valid(&manifest, &names));
         missing.store(false, Ordering::Relaxed);
         assert_eq!(run(&client, dir.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), bytes);
+        assert_eq!(
+            run_controlled(
+                &client,
+                dir.path(),
+                &Control::default().with_source_gap_refresh()
+            )
+            .unwrap(),
+            path
+        );
         assert_eq!(server.calls.load(Ordering::Relaxed), calls + 1);
         let repaired: Manifest =
             serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
         assert!(repaired.missing_snapshot_slots.is_empty());
         assert_eq!(repaired.snapshots.len(), 288);
     }
+    #[test]
+    fn completed_missing_trace_cache_resumes_online_and_refreshes_on_request() {
+        let available = Arc::new(AtomicBool::new(false));
+        let state = available.clone();
+        let server = Server::new(move |key| {
+            if key.contains("trace_full_~abc123") && !state.load(Ordering::Relaxed) {
+                (404, vec![], 0)
+            } else {
+                fixture(key)
+            }
+        });
+        let directory = tempfile::tempdir().unwrap();
+        let client = server.client();
+        let path = run(&client, directory.path()).unwrap();
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let original_manifest = std::fs::read(&manifest_path).unwrap();
+        let calls = server.calls.load(Ordering::Relaxed);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), original_manifest);
+
+        let downloaded = path.join("trace_full_abcdef.json.gz");
+        let original_trace = std::fs::read(&downloaded).unwrap();
+        std::fs::remove_file(&downloaded).unwrap();
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(std::fs::read(&downloaded).unwrap(), original_trace);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 2);
+
+        available.store(true, Ordering::Relaxed);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 2);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), original_manifest);
+        let refresh = Control::default().with_source_gap_refresh();
+        let offline = refresh.with_offline(true);
+        let error = run_controlled(&client, directory.path(), &offline).unwrap_err();
+        assert!(
+            error
+                .to_string()
+                .contains("cannot be refreshed in offline mode")
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 2);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &refresh).unwrap(),
+            path
+        );
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 3);
+        let updated: Manifest =
+            serde_json::from_slice(&std::fs::read(manifest_path).unwrap()).unwrap();
+        assert!(updated.missing_aircraft.is_empty());
+        assert_eq!(updated.traces.len(), 2);
+    }
+
     #[test]
     fn missing_traces_are_recorded_and_empty_snapshot_days_are_rejected() {
         let dir = tempfile::tempdir().unwrap();
@@ -1526,6 +2264,322 @@ mod tests {
                 .contains("No discovery snapshots are available")
         );
         assert_eq!(absent.calls.load(Ordering::Relaxed), 863);
+    }
+
+    fn recovery_fixture(key: &str, full_available: bool) -> (u16, Vec<u8>, u64) {
+        if key.contains("trace_full_~abc123") && !full_available {
+            return (404, vec![], 0);
+        }
+        if !key.contains("/readsb-hist/") {
+            return fixture(key);
+        }
+        let name = key.rsplit('/').next().unwrap();
+        let second = name[..2].parse::<u32>().unwrap() * 3600
+            + name[2..4].parse::<u32>().unwrap() * 60
+            + name[4..6].parse::<u32>().unwrap();
+        if second == 1195 {
+            return (404, vec![], 0);
+        }
+        let mut aircraft = vec![json!({"hex":"abcdef","lat":10.4,"lon":20.4})];
+        if (1100..=1300).contains(&second) && !(1205..=1230).contains(&second) {
+            aircraft.push(json!({"hex":"~abc123","lat":10.5,
+                "lon":20.5 + f64::from(second - 1100) * 0.0001,
+                "alt_baro":900,"alt_geom":1000,"seen_pos":1.,"type":"tisb_trackfile"}));
+        }
+        (
+            200,
+            compressed(json!({"now": start() + f64::from(second) - 1., "aircraft":aircraft})),
+            0,
+        )
+    }
+
+    fn restore_legacy_manifest(path: &Path) -> Vec<u8> {
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let mut manifest: Manifest =
+            serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
+        manifest.schema = 4;
+        manifest.snapshot_recoveries.clear();
+        let derived = path.join("snapshot-recovery");
+        if derived.exists() {
+            std::fs::remove_dir_all(derived).unwrap();
+        }
+        let bytes = serde_json::to_vec(&manifest).unwrap();
+        std::fs::write(manifest_path, &bytes).unwrap();
+        bytes
+    }
+
+    #[test]
+    fn legacy_missing_ground_records_upgrade_once_without_rechecking_source_gaps() {
+        let server = Server::new(|key| {
+            if key.contains("trace_full_~abc123") {
+                (404, vec![], 0)
+            } else {
+                fixture(key)
+            }
+        });
+        let directory = tempfile::tempdir().unwrap();
+        let client = server.client();
+        let path = run(&client, directory.path()).unwrap();
+        let legacy = restore_legacy_manifest(&path);
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let calls = server.calls.load(Ordering::Relaxed);
+        let offline = Control::default().with_offline(true);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            path
+        );
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), legacy);
+        assert!(!path.parent().unwrap().join("rejected").exists());
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        let upgraded_bytes = std::fs::read(&manifest_path).unwrap();
+        let upgraded: Manifest = serde_json::from_slice(&upgraded_bytes).unwrap();
+        assert_eq!(upgraded.schema, 5);
+        assert_eq!(upgraded.missing_aircraft, ["~abc123"]);
+        assert!(upgraded.snapshot_recoveries.is_empty());
+        let backup = path
+            .parent()
+            .unwrap()
+            .join("rejected")
+            .join(format!("sample-manifest-{}.json", hash(&legacy)));
+        assert_eq!(std::fs::read(backup).unwrap(), legacy);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), upgraded_bytes);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+    }
+
+    #[test]
+    fn legacy_missing_airborne_trace_uses_saved_recovery_sources_and_replays_offline() {
+        let daily_calls = Arc::new(AtomicUsize::new(0));
+        let counter = daily_calls.clone();
+        let server = Server::new(move |key| {
+            if key.contains("trace_full_~abc123") {
+                counter.fetch_add(1, Ordering::Relaxed);
+            }
+            recovery_fixture(key, false)
+        });
+        let directory = tempfile::tempdir().unwrap();
+        let client = server.client();
+        let path = run(&client, directory.path()).unwrap();
+        let trace = path.join("snapshot-recovery/trace_full_~abc123.json.gz");
+        let original_trace = std::fs::read(&trace).unwrap();
+        let legacy = restore_legacy_manifest(&path);
+        let calls = server.calls.load(Ordering::Relaxed);
+        assert_eq!(daily_calls.load(Ordering::Relaxed), 1);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        // The fixture has one unavailable recovery snapshot. The original
+        // legacy manifest did not record it; every available source is reused.
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 1);
+        assert_eq!(daily_calls.load(Ordering::Relaxed), 1);
+        assert_eq!(std::fs::read(&trace).unwrap(), original_trace);
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let upgraded_bytes = std::fs::read(&manifest_path).unwrap();
+        let upgraded: Manifest = serde_json::from_slice(&upgraded_bytes).unwrap();
+        assert_eq!(upgraded.schema, 5);
+        assert_eq!(upgraded.snapshot_recoveries.len(), 1);
+        assert_eq!(upgraded.snapshot_recoveries[0].missing_slots, [1195]);
+        assert_eq!(upgraded.missing_aircraft, ["~abc123"]);
+        let backup = path
+            .parent()
+            .unwrap()
+            .join("rejected")
+            .join(format!("sample-manifest-{}.json", hash(&legacy)));
+        assert_eq!(std::fs::read(backup).unwrap(), legacy);
+        let offline = Control::default().with_offline(true);
+        assert_eq!(
+            run_controlled(&client, directory.path(), &offline).unwrap(),
+            path
+        );
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), upgraded_bytes);
+        assert_eq!(std::fs::read(&trace).unwrap(), original_trace);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls + 1);
+    }
+
+    #[test]
+    fn legacy_recovery_refusal_preserves_manifest_and_can_resume() {
+        let forbidden = Arc::new(AtomicBool::new(false));
+        let state = forbidden.clone();
+        let daily_calls = Arc::new(AtomicUsize::new(0));
+        let counter = daily_calls.clone();
+        let server = Server::new(move |key| {
+            if key.contains("trace_full_~abc123") {
+                counter.fetch_add(1, Ordering::Relaxed);
+            }
+            if key.ends_with("001455Z.json.gz") && state.load(Ordering::Relaxed) {
+                return (403, vec![], 0);
+            }
+            recovery_fixture(key, false)
+        });
+        let directory = tempfile::tempdir().unwrap();
+        let client = server.client();
+        let path = run(&client, directory.path()).unwrap();
+        let trace = path.join("snapshot-recovery/trace_full_~abc123.json.gz");
+        let original_trace = std::fs::read(&trace).unwrap();
+        let legacy = restore_legacy_manifest(&path);
+        let snapshot = directory
+            .path()
+            .join(format!("adsbx-sample-{DAY}-snapshots/001455Z.json.gz"));
+        std::fs::remove_file(&snapshot).unwrap();
+        forbidden.store(true, Ordering::Relaxed);
+        let error = run(&client, directory.path()).unwrap_err();
+        assert!(format!("{error:#}").contains("403"));
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), legacy);
+        assert!(!trace.exists());
+        assert_eq!(daily_calls.load(Ordering::Relaxed), 1);
+        forbidden.store(false, Ordering::Relaxed);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(std::fs::read(&trace).unwrap(), original_trace);
+        assert_eq!(daily_calls.load(Ordering::Relaxed), 1);
+        let upgraded: Manifest =
+            serde_json::from_slice(&std::fs::read(manifest_path).unwrap()).unwrap();
+        assert_eq!(upgraded.schema, 5);
+        assert_eq!(upgraded.snapshot_recoveries.len(), 1);
+        assert!(snapshot.is_file());
+    }
+
+    #[test]
+    fn missing_airborne_trace_recovers_offline_with_source_and_cache_checks() {
+        let directory = tempfile::tempdir().unwrap();
+        let available = Arc::new(AtomicBool::new(false));
+        let state = available.clone();
+        let server = Server::new(move |key| recovery_fixture(key, state.load(Ordering::Relaxed)));
+        let client = server.client();
+        let path = run(&client, directory.path()).unwrap();
+        let manifest_path = path.parent().unwrap().join("sample-manifest.json");
+        let original_manifest = std::fs::read(&manifest_path).unwrap();
+        let manifest: Manifest = serde_json::from_slice(&original_manifest).unwrap();
+        assert_eq!(manifest.missing_aircraft, ["~abc123"]);
+        assert_eq!(manifest.snapshot_recoveries.len(), 1);
+        let recovered = &manifest.snapshot_recoveries[0];
+        assert_eq!(recovered.missing_slots, [1195]);
+        assert_eq!(
+            recovered.snapshots.len() + recovered.missing_slots.len(),
+            recovered.slots.len()
+        );
+        assert!(
+            coverage_warning(&path)
+                .unwrap()
+                .contains("Snapshot recovery produced 1 short traces")
+        );
+        let derived_path = path
+            .join("snapshot-recovery")
+            .join(&recovered.trace.as_ref().unwrap().file);
+        let original_trace = std::fs::read(&derived_path).unwrap();
+        let data =
+            crate::data::load(&derived_path, &Control::default().with_offline(true)).unwrap();
+        assert_eq!(data.tracks.len(), 2);
+        assert!(
+            data.tracks
+                .iter()
+                .all(|track| track.samples.iter().all(|sample| sample.point.alt == 304.8))
+        );
+        assert!(data.tracks[0].samples.last().unwrap().time < start() + 1200.);
+        assert!(data.tracks[1].samples.first().unwrap().time > start() + 1230.);
+        let calls = server.calls.load(Ordering::Relaxed);
+        let runtime = tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap();
+        let offline = Control::default().with_offline(true);
+        let reuse = || {
+            runtime.block_on(download(
+                &client,
+                DAY,
+                directory.path(),
+                bounds(),
+                &offline,
+                &|_, _| {},
+            ))
+        };
+        assert_eq!(reuse().unwrap(), path);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), original_manifest);
+        assert_eq!(std::fs::read(&derived_path).unwrap(), original_trace);
+        let snapshot = directory
+            .path()
+            .join(format!("adsbx-sample-{DAY}-snapshots"))
+            .join(&recovered.snapshots[0].file);
+        let source_bytes = std::fs::read(&snapshot).unwrap();
+        std::fs::write(&snapshot, b"damaged source").unwrap();
+        assert!(reuse().is_err());
+        std::fs::write(&snapshot, source_bytes).unwrap();
+        std::fs::write(&derived_path, b"damaged derived trace").unwrap();
+        assert!(reuse().is_err());
+        std::fs::write(&derived_path, &original_trace).unwrap();
+        let extra = derived_path.with_file_name("trace_full_c0ffee.json.gz");
+        std::fs::write(&extra, &original_trace).unwrap();
+        assert!(reuse().is_err());
+        std::fs::remove_file(extra).unwrap();
+        assert_eq!(reuse().unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        available.store(true, Ordering::Relaxed);
+        assert_eq!(run(&client, directory.path()).unwrap(), path);
+        assert_eq!(server.calls.load(Ordering::Relaxed), calls);
+        assert_eq!(std::fs::read(&manifest_path).unwrap(), original_manifest);
+        assert_eq!(
+            run_controlled(
+                &client,
+                directory.path(),
+                &Control::default().with_source_gap_refresh()
+            )
+            .unwrap(),
+            path
+        );
+        let upgraded: Manifest =
+            serde_json::from_slice(&std::fs::read(&manifest_path).unwrap()).unwrap();
+        assert!(upgraded.missing_aircraft.is_empty());
+        assert!(upgraded.snapshot_recoveries.is_empty());
+        assert!(!path.join("snapshot-recovery").exists());
+        let preserved: Vec<_> = walkdir::WalkDir::new(path.parent().unwrap().join("rejected"))
+            .into_iter()
+            .filter_map(|entry| entry.ok())
+            .filter(|entry| entry.file_name() == "trace_full_~abc123.json.gz")
+            .collect();
+        assert_eq!(preserved.len(), 1);
+        assert_eq!(std::fs::read(preserved[0].path()).unwrap(), original_trace);
+    }
+
+    #[test]
+    fn recovery_refusal_and_cancellation_do_not_publish_a_complete_manifest() {
+        for refusal in [true, false] {
+            let directory = tempfile::tempdir().unwrap();
+            let server = Server::new(move |key| {
+                if refusal && key.ends_with("/001455Z.json.gz") {
+                    (403, vec![], 0)
+                } else {
+                    recovery_fixture(key, false)
+                }
+            });
+            let client = server.client();
+            let control = Control::default();
+            let progress = |message: &str, _: f32| {
+                if !refusal && message.starts_with("Free snapshot recovery:") {
+                    control.stop();
+                }
+            };
+            let runtime = tokio::runtime::Builder::new_current_thread()
+                .enable_all()
+                .build()
+                .unwrap();
+            let result = runtime.block_on(download(
+                &client,
+                DAY,
+                directory.path(),
+                bounds(),
+                &control,
+                &progress,
+            ));
+            assert!(result.is_err());
+            if !refusal {
+                assert!(format!("{:#}", result.unwrap_err()).contains("Cancelled"));
+            }
+            assert!(
+                !walkdir::WalkDir::new(directory.path())
+                    .into_iter()
+                    .filter_map(|entry| entry.ok())
+                    .any(|entry| entry.file_name() == "sample-manifest.json")
+            );
+        }
     }
     #[test]
     fn refused_public_access_does_not_retry_or_use_another_bucket() {

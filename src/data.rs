@@ -9,7 +9,7 @@ use flate2::read::GzDecoder;
 use serde::Deserialize;
 use serde_json::Value;
 use std::{
-    collections::BTreeMap,
+    collections::{BTreeMap, BTreeSet},
     fs::File,
     io::{BufReader, Read},
     path::{Path, PathBuf},
@@ -23,6 +23,12 @@ mod cache;
 pub struct Dataset {
     pub tracks: Vec<Track>,
     pub warnings: Vec<String>,
+}
+
+#[derive(Default)]
+struct RawTracks {
+    samples: BTreeMap<String, Vec<Sample>>,
+    reception_gaps: BTreeMap<String, BTreeSet<u64>>,
 }
 #[derive(Deserialize)]
 struct CsvRow {
@@ -83,14 +89,7 @@ impl Filter {
                     .archive_days
                     .iter()
                     .any(|&(a, b)| time >= a && time < b))
-            && self.bounds.is_none_or(|b| {
-                // Keep aircraft outside the observer's region: audible slant range can be large.
-                let lon_margin = 0.6 / p.lat.to_radians().cos().abs().max(0.05);
-                p.lat >= b.south - 0.6
-                    && p.lat <= b.north + 0.6
-                    && p.lon >= b.west - lon_margin
-                    && p.lon <= b.east + lon_margin
-            })
+            && self.bounds.is_none_or(|b| b.contains_flight(p))
     }
 }
 pub fn load_for_job(job: &Job, duration: f64, control: &Control) -> Result<Dataset> {
@@ -104,7 +103,7 @@ pub fn load_for_job_sources(
 ) -> Result<Dataset> {
     let filter = Filter {
         archive_days: if let Some(archive) = &job.archive
-            && archive.provider == crate::archive::ArchiveProvider::AdsbExchangeSample
+            && archive.provider.sample_resolution().is_some()
         {
             archive
                 .dates()?
@@ -192,9 +191,10 @@ fn source_paths(sources: &[PathBuf]) -> Vec<PathBuf> {
     paths
 }
 fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Result<Dataset> {
-    let mut raw: BTreeMap<String, Vec<Sample>> = BTreeMap::new();
+    let mut raw = RawTracks::default();
     let mut kinds = BTreeMap::new();
     let mut skipped = 0usize;
+    let mut unfinished = 0usize;
     let mut barometric = 0usize;
     let mut total = 0usize;
     let paths = source_paths(sources);
@@ -204,6 +204,10 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
     for path in paths {
         control.check()?;
         let name = path.file_name().unwrap_or_default().to_string_lossy();
+        if unfinished_trace(&name) {
+            unfinished += 1;
+            continue;
+        }
         if name.ends_with(".csv") {
             let mut reader = csv::Reader::from_path(&path)?;
             for (i, row) in reader.deserialize::<CsvRow>().enumerate() {
@@ -233,7 +237,8 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                 if !filter.accepts(point, time) {
                     continue;
                 }
-                raw.entry(row.aircraft)
+                raw.samples
+                    .entry(row.aircraft)
                     .or_default()
                     .push(Sample::new(time, point));
                 total += 1;
@@ -250,9 +255,13 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                 Box::new(BufReader::new(File::open(&path)?))
             };
             let mut archive = tar::Archive::new(reader);
-            for entry in archive.entries()? {
+            for entry in archive
+                .entries()
+                .with_context(|| format!("Could not read archive {}", path.display()))?
+            {
                 control.check()?;
-                let entry = entry?;
+                let entry = entry
+                    .with_context(|| format!("Could not read an entry in {}", path.display()))?;
                 let p = entry.path()?.into_owned();
                 if !entry.header().entry_type().is_file()
                     || !p
@@ -263,11 +272,21 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                 {
                     continue;
                 }
+                if unfinished_trace(&p.file_name().unwrap_or_default().to_string_lossy()) {
+                    unfinished += 1;
+                    continue;
+                }
                 if entry.size() > 32_000_000 {
                     skipped += 1;
                     continue;
                 }
-                let bytes = read_limited(GzDecoder::new(entry))?;
+                let bytes = read_limited(GzDecoder::new(entry)).with_context(|| {
+                    format!(
+                        "Could not decode trace {} in {}",
+                        p.display(),
+                        path.display()
+                    )
+                })?;
                 ingest_trace(
                     &bytes,
                     &mut raw,
@@ -276,14 +295,17 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                     &mut total,
                     filter,
                     &mut kinds,
-                )?;
+                )
+                .with_context(|| format!("Invalid trace {} in {}", p.display(), path.display()))?;
             }
         } else {
             let file = File::open(&path)?;
             let bytes = if name.ends_with(".gz") {
-                read_limited(GzDecoder::new(file))?
+                read_limited(GzDecoder::new(file))
+                    .with_context(|| format!("Could not decode trace {}", path.display()))?
             } else {
-                read_limited(file)?
+                read_limited(file)
+                    .with_context(|| format!("Could not read trace {}", path.display()))?
             };
             ingest_trace(
                 &bytes,
@@ -293,11 +315,12 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
                 &mut total,
                 filter,
                 &mut kinds,
-            )?;
+            )
+            .with_context(|| format!("Invalid trace {}", path.display()))?;
         }
     }
     let mut tracks = vec![];
-    for (id, mut samples) in raw {
+    for (id, mut samples) in raw.samples {
         let kind = kinds.get(&id).copied().unwrap_or_default();
         if !filter.aircraft.accepts(kind) {
             continue;
@@ -307,12 +330,21 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
         samples.dedup_by(|a, b| (a.time - b.time).abs() < 0.01);
         let mut segment = vec![];
         let mut index = 0;
+        let reception_gaps = raw.reception_gaps.get(&id);
         for s in samples {
             if let Some(prev) = segment.last() {
                 let prev: &Sample = prev;
                 let dt = s.time - prev.time;
                 let speed = (s.xyz - prev.xyz).norm() / dt;
-                if dt > 60. || speed > 280. {
+                // Deduplication can retain a source timestamp up to 0.01 seconds
+                // from a flagged copy. Preserve the boundary from either copy.
+                let reception_gap = reception_gaps.is_some_and(|times| {
+                    times
+                        .range((prev.time + 0.01).to_bits()..=(s.time + 0.01).to_bits())
+                        .next()
+                        .is_some()
+                });
+                if dt > 60. || speed > 280. || reception_gap {
                     if segment.len() >= filter.minimum_positions {
                         tracks.push(Track {
                             id: format!("{id}/{index}"),
@@ -338,6 +370,15 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
         return Err(EmptyFlightData(filter.minimum_positions).into());
     }
     let mut warnings = vec![];
+    if unfinished > 0 {
+        warnings.push(format!(
+            "Unfinished readsb trace files skipped: {unfinished} (.readsb_tmp)."
+        ));
+    }
+    let reception_gaps: usize = raw.reception_gaps.values().map(BTreeSet::len).sum();
+    if reception_gaps > 0 {
+        warnings.push(format!("Read {reception_gaps} reception-gap markers. Recorded positions after each gap are retained; interpolation does not cross the gap."));
+    }
     let short = tracks
         .iter()
         .filter(|track| track.samples.len() < 8)
@@ -362,6 +403,11 @@ fn load_filtered(sources: &[PathBuf], control: &Control, filter: &Filter) -> Res
     }
     Ok(Dataset { tracks, warnings })
 }
+fn unfinished_trace(name: &str) -> bool {
+    // readsb writes this temporary name and renames it after closing the output.
+    name.starts_with("trace_full_") && name.ends_with(".readsb_tmp")
+}
+
 fn read_limited(reader: impl Read) -> Result<Vec<u8>> {
     let mut data = vec![];
     reader.take(32_000_001).read_to_end(&mut data)?;
@@ -372,7 +418,7 @@ fn read_limited(reader: impl Read) -> Result<Vec<u8>> {
 }
 fn ingest_trace(
     bytes: &[u8],
-    raw: &mut BTreeMap<String, Vec<Sample>>,
+    raw: &mut RawTracks,
     skipped: &mut usize,
     barometric: &mut usize,
     total: &mut usize,
@@ -413,7 +459,24 @@ fn ingest_trace(
             *skipped += 1;
             continue;
         };
-        if row[3].as_str() == Some("ground") || row[6].as_u64().unwrap_or(0) & 1 != 0 {
+        let t = base + relative;
+        // readsb flag 1 marks a new reliable position following a reception gap.
+        // Its timestamp and coordinates are valid; the preceding connection is not.
+        let reception_gap = row[6].as_u64().unwrap_or(0) & 1 != 0;
+        let horizontal = Point { lat, lon, alt: 0. };
+        if reception_gap
+            && horizontal.valid()
+            && t.is_finite()
+            && (0. ..=4102444800.).contains(&t)
+            && filter.accepts(horizontal, t)
+        {
+            // Keep the boundary even if this row has no usable airborne altitude.
+            raw.reception_gaps
+                .entry(id.into())
+                .or_default()
+                .insert(t.to_bits());
+        }
+        if row[3].as_str() == Some("ground") {
             *skipped += 1;
             continue;
         }
@@ -428,7 +491,6 @@ fn ingest_trace(
             lon,
             alt: alt * 0.3048,
         };
-        let t = base + relative;
         if !p.valid() || !t.is_finite() || !(0. ..=4102444800.).contains(&t) {
             *skipped += 1;
             continue;
@@ -436,10 +498,11 @@ fn ingest_trace(
         if !filter.accepts(p, t) {
             continue;
         }
-        let samples = raw.entry(id.into()).or_default();
-        if samples
-            .last()
-            .is_some_and(|s| t >= s.time && t - s.time < 2.)
+        let samples = raw.samples.entry(id.into()).or_default();
+        if !reception_gap
+            && samples
+                .last()
+                .is_some_and(|s| t >= s.time && t - s.time < 2.)
         {
             continue;
         }
@@ -571,9 +634,9 @@ pub fn download_day(
     }
     let total: u64 = assets.iter().map(|v| v["size"].as_u64().unwrap_or(0)).sum();
     std::fs::create_dir_all(&dir)?;
-    let mut manifest_tmp = tempfile::NamedTempFile::new_in(&dir)?;
+    let (mut manifest_tmp, destination) = crate::atomic_file::prepare(&manifest)?;
     serde_json::to_writer_pretty(manifest_tmp.as_file_mut(), &release)?;
-    manifest_tmp.persist(&manifest)?;
+    manifest_tmp.persist(destination)?;
     let mut completed = 0u64;
     let mut first = None;
     for asset in assets {
@@ -609,7 +672,16 @@ pub fn download_day(
         completed += size;
     }
     let license = "Source: https://www.adsb.lol/docs/open-data/historical\nDaily archive: Open Database License 1.0 https://opendatacommons.org/licenses/odbl/1-0/\nKeep attribution and check share-alike requirements when redistributing derived databases.\n";
-    std::fs::write(dir.join("DATA-LICENSE.txt"), license)?;
+    let license_path = dir.join("DATA-LICENSE.txt");
+    // Reusing verified archives must not require rewriting unchanged attribution.
+    if !std::fs::read(&license_path).is_ok_and(|saved| saved == license.as_bytes()) {
+        std::fs::write(&license_path, license).with_context(|| {
+            format!(
+                "Could not update archive attribution {}",
+                license_path.display()
+            )
+        })?;
+    }
     std::fs::write(
         dir.join("archive-manifest.json"),
         serde_json::to_vec_pretty(&release)?,

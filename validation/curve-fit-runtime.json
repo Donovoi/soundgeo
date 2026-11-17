@@ -1,0 +1,201 @@
+{
+  "schema": 1,
+  "scope": "Performance diagnostics on saved Lake Hood inputs; location acceptance remains incomplete.",
+  "change": "Reuse prepared flight geometry when fitting full audio curves. Short ridges on long tracks keep direct evaluation.",
+  "original_source_commit": "83a5af587d7ecd6aeb3a11a653857fd0bc636bc0",
+  "timing_constraints": "Other searches were active. Measurements cover individual fit routines and a bounded search prefix. End-to-end speedup is unmeasured.",
+  "search_prefix": {
+    "completed_tracks": 217,
+    "elapsed_s": 180.0841141,
+    "hypotheses": 137934,
+    "known_position_supplied": false,
+    "maximum_hypotheses": 250000,
+    "maximum_seconds": 180,
+    "recording_clock_supplied": false,
+    "scope": "Instrumented prefix of the real offline corridor search; no location result",
+    "single_worker": true,
+    "stages": [
+      {
+        "calls": 137934,
+        "seconds": 0.095535,
+        "stage": "anchor_cpa"
+      },
+      {
+        "calls": 107428,
+        "seconds": 14.9200661,
+        "stage": "complete_seed"
+      },
+      {
+        "calls": 13,
+        "seconds": 164.8614581,
+        "stage": "prune_total"
+      },
+      {
+        "calls": 86512,
+        "seconds": 129.6115802,
+        "stage": "clock_profile"
+      },
+      {
+        "calls": 86512,
+        "seconds": 35.1481021,
+        "stage": "full_corroboration"
+      }
+    ],
+    "stop_reason": "Cancelled"
+  },
+  "search_prefix_receipt_sha256": "ab0ee1f0ebe0b7daa2a7cf12f9f88e879ed67def6cecb99e45bad15ee0df5154",
+  "comparisons": [
+    {
+      "cases": 978,
+      "exact_output_parity": true,
+      "known_area_report_used": true,
+      "other_searches_active": true,
+      "rounds": [
+        {
+          "old_s": 0.1423565,
+          "prepared_first": false,
+          "prepared_s": 0.0848431
+        },
+        {
+          "old_s": 0.1250042,
+          "prepared_first": true,
+          "prepared_s": 0.0924805
+        },
+        {
+          "old_s": 0.126091,
+          "prepared_first": false,
+          "prepared_s": 0.0980877
+        },
+        {
+          "old_s": 0.1570014,
+          "prepared_first": true,
+          "prepared_s": 0.1330813
+        },
+        {
+          "old_s": 0.1273946,
+          "prepared_first": false,
+          "prepared_s": 0.1132015
+        },
+        {
+          "old_s": 0.1216824,
+          "prepared_first": true,
+          "prepared_s": 0.0787106
+        },
+        {
+          "old_s": 0.1131979,
+          "prepared_first": false,
+          "prepared_s": 0.1348068
+        },
+        {
+          "old_s": 0.1273031,
+          "prepared_first": true,
+          "prepared_s": 0.089661
+        }
+      ],
+      "same_process_alternating_order": true,
+      "scope": "Full-curve fit diagnostic using previous computed proposals and fixed perturbations; no independent location acceptance or end-to-end speed claim",
+      "result_sha256": "9556d32d5617e1a2e7a0839a6c167e1bd16be6a0dfc2e7e0fde6f883978fb518",
+      "source_report_sha256": "c42e2b3d25fb173ce2098e41c3e5dd87b0a4bad8f905eb47f74875b25e415ed3",
+      "median_prepared_to_original_time_ratio": 0.7588655631393559
+    },
+    {
+      "cases": 864,
+      "exact_output_parity": true,
+      "known_area_report_used": true,
+      "other_searches_active": true,
+      "rounds": [
+        {
+          "old_s": 0.1044196,
+          "prepared_first": false,
+          "prepared_s": 0.0770353
+        },
+        {
+          "old_s": 0.1115842,
+          "prepared_first": true,
+          "prepared_s": 0.0732011
+        },
+        {
+          "old_s": 0.0874284,
+          "prepared_first": false,
+          "prepared_s": 0.0605712
+        },
+        {
+          "old_s": 0.0612663,
+          "prepared_first": true,
+          "prepared_s": 0.0680683
+        },
+        {
+          "old_s": 0.0886058,
+          "prepared_first": false,
+          "prepared_s": 0.0552048
+        },
+        {
+          "old_s": 0.1176361,
+          "prepared_first": true,
+          "prepared_s": 0.0803385
+        },
+        {
+          "old_s": 0.1163961,
+          "prepared_first": false,
+          "prepared_s": 0.0736693
+        },
+        {
+          "old_s": 0.0699704,
+          "prepared_first": true,
+          "prepared_s": 0.0647794
+        }
+      ],
+      "same_process_alternating_order": true,
+      "scope": "Full-curve fit diagnostic using previous computed proposals and fixed perturbations; no independent location acceptance or end-to-end speed claim",
+      "result_sha256": "6cf568d0f822826791e20134a346762266d66a3ff6775dd2230f8a1e3af77751",
+      "source_report_sha256": "72811f78bcdc134ce246d3cb78e953a6358ea1aa826224cd28d641e75aa22be3",
+      "median_prepared_to_original_time_ratio": 0.6878750337641661
+    }
+  ],
+  "comparison_executable_sha256": "5c09b499f5282a9ffc8d3134ee0729215b4f4e67f1b429fd2a569f1e59f60254",
+  "rejected_arrival_hint_cache": {
+    "kept": false,
+    "reason": "Slower in seven of eight alternating-order rounds. No production change retained.",
+    "comparison_sha256": "8e70b91d613816a024b65e4cb4682a58c9ae21780476b205cd607327be2e5a5c",
+    "restored_model_sha256": "1d880a6d2a9b6829d3e132a45dd09aa7083f561a4827c1ae29f2c7388242fb65"
+  },
+  "two_timeout_cases": {
+    "scope": "First two terminal cases only; three queued or active cases remain. No interrupted run counts as acceptance.",
+    "plan_sha256": "ad63d8ef932d4adb49f8fcc454488c444c10f1a24446feb12f432b9de683f29e",
+    "verified": [
+      {
+        "case": "lake-hood",
+        "elapsed_s": 21600.070645,
+        "job_sha256": "2d9605b0787a342b5c3a0a177b082625d4b9fe67472007428560a26e3f1e5610",
+        "log_sha256": "1acd73752e9605a6c0e6c880547f833658b34374a8d7cd40e39091a8b62799b2",
+        "report_present": false,
+        "accepted": false
+      },
+      {
+        "case": "lake-hood-nov4-a",
+        "elapsed_s": 21600.073677499997,
+        "job_sha256": "691307307be10ed0218788dac1cc4c1aca2239e4da2c3c2de5f2b4e873b0b654",
+        "log_sha256": "59b2f69b8d1f5f59318188a4356e8bdbf01e44e1c2b9148d28ac0fa2e8274e85",
+        "report_present": false,
+        "accepted": false
+      }
+    ]
+  },
+  "acceptance_thresholds_changed": false,
+  "qualification": {
+    "source_commit": "8e3092c1173ad577964efd5eccec8c691c659665",
+    "rust_tests_passed": 196,
+    "python_tests_passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "local_required_checks_passed": true,
+    "windows_and_ubuntu_ci_passed": true,
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42729743227",
+    "local_checks_sha256": "61b841ae99ff4d1e9982f3bad1401310167ac0dab77a46f6be4fda5a8a85e82e",
+    "ci_verification_sha256": "c2b3db9f6a610a8011e20061526d4fede4b7f13d6445c85342208f417f5112f7",
+    "ci_checkout_matches_source_tree": true,
+    "ci_artifact_digest_verified": true,
+    "ci_cli_sha256": "fdddd67487a14d4164633dd80055dff95341e3e495a03f13417f6fc3ef95c4c4",
+    "local_cli_sha256": "aba8bc819096a838589e4898d4e4c62b47ab27824a4ea3020d34c0b53089fa75"
+  }
+}

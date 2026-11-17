@@ -1,0 +1,259 @@
+{
+  "source_commit": "70735f567ae6f4398e90639a00df89a502eedd92",
+  "change": "Skip the extra-retention full-curve fit when the assigned-sound count cannot exceed the core fit. Exact fitting can only remove assignments.",
+  "acceptance_changed": false,
+  "equivalence_test": {
+    "name": "coarse_corroboration_bound_preserves_full_curve_results",
+    "combinations": 480,
+    "coverage": "Two observer positions, three clock rates, five event prefixes, and all 16 assignment masks.",
+    "comparison": "Exact equality with the original full-fit path; both qualifying and rejected results are present."
+  },
+  "local": {
+    "rust_tests_passed": 172,
+    "python_tests_passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "environment_overrides": {
+      "CARGO_BUILD_JOBS": "2",
+      "RUST_TEST_THREADS": "2"
+    },
+    "steps": [
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.5046903999973438,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 8.37914489999821,
+        "log_sha256": "cb7f432e31428f5e537bb0c652729283c21171cedf7116acc9237c49d454d39b"
+      },
+      {
+        "name": "tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1887.7917547999969,
+        "log_sha256": "6a91f7639d2bf4e510f0c9bebad89745dc1c5a8385566fad358415d89ceaf742"
+      },
+      {
+        "name": "doc-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--doc"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1.1379833000028157,
+        "log_sha256": "b4df552f610ce658025fab827e61a9c84f14925fb53006a6dc960d2d164a0123"
+      },
+      {
+        "name": "build",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--bins"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.5513753000050201,
+        "log_sha256": "dd5cbfd46cbc7d90e44f766619e1dd80f5375b42ec46bf848bf1736968f1969b"
+      },
+      {
+        "name": "python",
+        "command": [
+          "python",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "validation",
+          "-p",
+          "test_run_timing.py"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.24093970000103582,
+        "log_sha256": "4ee1a6fa049009212eac11462bf286487b514c866f63e7a5ea312369427bdf2c"
+      },
+      {
+        "name": "control-example",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--example",
+          "doppler_controls"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 76.95149120000133,
+        "log_sha256": "243ba391cfe5182f96cacfcf03370092ceb3beadce0944d3c08bd94cbc8a1ccd"
+      }
+    ],
+    "receipt_sha256": "0ff6458353e61d8fa02a0aba583f5a3d5cf6ead2ccd262479efb6a8ae02422f6"
+  },
+  "executables": {
+    "cli": {
+      "file": "soundgeo-cli-corroboration-bound-70735f5.exe",
+      "sha256": "25d8afcc0dce448eaa04e03cb49de7df61b64bf7714df8ef322b18273d4bd91a"
+    },
+    "desktop": {
+      "file": "soundgeo-corroboration-bound-70735f5.exe",
+      "sha256": "db9c6dbfec7b7da3784b070aea679f1024e5e3479cfada0f2663d426c555dcb6"
+    },
+    "control_tool": {
+      "file": "doppler-corroboration-bound-70735f5.exe",
+      "sha256": "d2d8389226000a8a783406a92ca8fb434b0d3c7820bf91f19d44016a8d78a82e"
+    }
+  },
+  "native_offline": {
+    "complete": true,
+    "reports_equal": true,
+    "runs": [
+      {
+        "name": "regional_grid-before",
+        "exit_code": 0,
+        "elapsed_s": 7.6469091000035405,
+        "report_sha256": "05acda68077e7d5c97679cf8710d06467936ed00431602f00e696cd5b530c37d",
+        "hypotheses": 957
+      },
+      {
+        "name": "regional_grid-after",
+        "exit_code": 0,
+        "elapsed_s": 6.646574300000793,
+        "report_sha256": "16450192ae3f3e5a2228b0ae91271fc56fbe72e027e6558ba63a15a85bffc76e",
+        "hypotheses": 957
+      },
+      {
+        "name": "flight_corridors-before",
+        "exit_code": 0,
+        "elapsed_s": 2.613185700000031,
+        "report_sha256": "924b14ca65f21eb3f60b7367a0bb6251c391e6a6016c12cacd1eeb9dcb1dee3a",
+        "hypotheses": 990
+      },
+      {
+        "name": "flight_corridors-after",
+        "exit_code": 0,
+        "elapsed_s": 2.6423997999954736,
+        "report_sha256": "a08c411b54334a3470c03333c91a9f16155f1a9194f0d35fab1b70870a27958f",
+        "hypotheses": 990
+      }
+    ],
+    "proxy_connections": 0,
+    "inputs_unchanged": true,
+    "real_recording_acceptance": false,
+    "scope": "The existing two-aircraft synthetic demo, using regional-grid and flight-corridor searches with no supplied clock.",
+    "comparison": "Full decoded reports match after removing creation time only.",
+    "timing_scope": "Elapsed times describe these runs on a shared host. They do not establish a real-recording speedup.",
+    "plan_sha256": "a3ee123ee178682cd98240286282b18f87465a3fa440e7f6311c007473f1ca03",
+    "result_sha256": "2d74c0b94c0243d23ae7c8059e9cbf1e612fdb50149c519d92eedbb71289ade7"
+  },
+  "ci": {
+    "head_commit": "70735f567ae6f4398e90639a00df89a502eedd92",
+    "qualified_source_commit": "70735f567ae6f4398e90639a00df89a502eedd92",
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42583692361",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "check (ubuntu-latest)",
+        "conclusion": "success",
+        "rust_tests_passed": 172,
+        "python_tests_passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "required_steps": [
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "check (windows-latest)",
+        "conclusion": "success",
+        "rust_tests_passed": 172,
+        "python_tests_passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "required_steps": [
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "log": {
+      "file": "corroboration-bound-checks/ci-terminal.log",
+      "sha256": "507652bf0bc17c6a39771c82a1c6dafa0922678ba867915596fffda4032f18d0"
+    }
+  },
+  "real_recording_acceptance": "Lake Hood remains unresolved. The ongoing real-recording comparisons use their original frozen builds."
+}

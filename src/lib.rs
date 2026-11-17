@@ -1,14 +1,19 @@
 pub mod aircraft;
 pub mod archive;
+mod archive_refresh;
+mod atomic_file;
 pub mod audio;
 pub mod availability;
 pub mod data;
+mod date_checkpoint;
 mod date_search;
 pub mod demo;
+pub mod doppler_controls;
 pub mod geo;
 pub mod index;
 pub mod model;
 mod network;
+mod proposal_checkpoint;
 pub mod sample_archive;
 pub mod search;
 pub mod terrain_archive;
@@ -67,6 +72,9 @@ pub struct Job {
     pub type_catalog: Option<PathBuf>,
     pub search_mode: search::SearchMode,
     pub max_hypotheses: usize,
+    /// Maximum corridor workers; absent keeps the existing four-worker limit.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub search_threads: Option<usize>,
     pub silence_mode: search::SilenceMode,
 }
 impl Default for Job {
@@ -100,6 +108,7 @@ impl Default for Job {
             type_catalog: None,
             search_mode: Default::default(),
             max_hypotheses: 5_000_000,
+            search_threads: None,
             silence_mode: Default::default(),
         }
     }
@@ -116,7 +125,7 @@ impl Job {
         }
         if let Some(request) = &self.archive {
             request.validate()?;
-            if request.provider == archive::ArchiveProvider::AdsbExchangeSample {
+            if request.provider.sample_resolution().is_some() {
                 sample_archive::validate_bounds(self.bounds)?;
                 if !request.date_from.trim().is_empty() {
                     for date in request.dates()? {
@@ -143,6 +152,9 @@ impl Job {
         }
         if !(100..=100_000_000).contains(&self.max_hypotheses) {
             bail!("Hypothesis budget must be 100–100,000,000");
+        }
+        if self.search_threads == Some(0) {
+            bail!("Flight-corridor workers must be at least 1.");
         }
         if let Some(path) = &self.type_catalog
             && !path.is_file()
@@ -204,6 +216,10 @@ impl Job {
 pub struct Control {
     pub cancel: Arc<AtomicBool>,
     pub offline: bool,
+    /// Retry source files previously recorded as unavailable in a verified cache.
+    pub refresh_source_gaps: bool,
+    /// Optional folder for complete offline date and flight-proposal batches.
+    pub date_checkpoints: Option<PathBuf>,
 }
 impl Control {
     pub fn require_network(&self, resource: &str) -> Result<()> {
@@ -217,8 +233,20 @@ impl Control {
     }
     pub fn with_offline(&self, offline: bool) -> Self {
         Self {
-            cancel: self.cancel.clone(),
             offline: self.offline || offline,
+            ..self.clone()
+        }
+    }
+    pub fn with_source_gap_refresh(&self) -> Self {
+        Self {
+            refresh_source_gaps: true,
+            ..self.clone()
+        }
+    }
+    pub fn with_date_checkpoints(&self, path: PathBuf) -> Self {
+        Self {
+            date_checkpoints: Some(path),
+            ..self.clone()
         }
     }
     pub fn check(&self) -> Result<()> {
@@ -258,6 +286,8 @@ pub struct Report {
     pub timing: Option<timing::Assessment>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub date_search: Option<date_search::Coverage>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub doppler_partitions: Vec<index::ProposalPartition>,
 }
 
 impl Report {
@@ -285,6 +315,25 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     let control = &control.with_offline(effective.offline);
     let job = &effective;
     job.validate()?;
+    let checkpoint_dates = if control.date_checkpoints.is_some() {
+        anyhow::ensure!(
+            control.offline && job.archive.is_some(),
+            "Date checkpoints require offline analysis with a prepared flight archive"
+        );
+        let dates = job
+            .archive
+            .as_ref()
+            .unwrap()
+            .resolve_dates(control, &|_, _| {})?
+            .0;
+        anyhow::ensure!(
+            dates.len() > 1,
+            "Date checkpoints require at least two prepared dates; single-date analysis keeps its existing behavior without checkpoints"
+        );
+        Some(dates)
+    } else {
+        None
+    };
     control.check()?;
     progress("Extracting audio locally", 0.02);
     let samples = audio::decode(job, control)?;
@@ -300,10 +349,32 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         }
     };
     drop(samples);
+    analyze_observations(
+        job,
+        duration_s,
+        events,
+        timing_peaks,
+        checkpoint_dates.map(|dates| (dates, None)),
+        control,
+        progress,
+    )
+}
+
+// Shared by normal analysis and diagnostic replays of already extracted observations.
+// Date batching, proposal limits, terrain, ranking and acceptance remain in this path.
+pub(crate) fn analyze_observations(
+    job: &Job,
+    duration_s: f64,
+    events: Vec<audio::Event>,
+    timing_peaks: Option<Vec<timing::Peak>>,
+    resolved_dates: Option<(Vec<String>, Option<availability::Catalog>)>,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<Report> {
     let mut report = Report { version: env!("CARGO_PKG_VERSION").into(), status: "insufficient_evidence".into(),
         media: job.media.clone(), job: job.clone(), duration_s, track_count: 0, events,
         candidates: vec![], warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
-        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![],timing:None,date_search:None };
+        search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![],timing:None,date_search:None,doppler_partitions:vec![] };
     if let Some(peaks) = &timing_peaks
         && (peaks.len() < 6 || duration_s < 480.)
     {
@@ -322,7 +393,10 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         report.warnings.push("Only one flyover and no known clock: time and location can be ambiguous, especially on straight flight paths.".into());
     }
     if let Some(request) = &job.archive {
-        let (dates, discovery) = request.resolve_dates(control, &|m, _| progress(m, 0.33))?;
+        let (dates, discovery) = match resolved_dates {
+            Some(resolved) => resolved,
+            None => request.resolve_dates(control, &|m, _| progress(m, 0.33))?,
+        };
         if dates.len() > 1 || discovery.is_some() {
             let mut result =
                 date_search::run(job, report, timing_peaks, &dates, control, progress)?;
@@ -374,7 +448,7 @@ pub(crate) fn analyze_sources(
     if job
         .archive
         .as_ref()
-        .is_some_and(|r| r.provider == archive::ArchiveProvider::AdsbExchangeSample)
+        .is_some_and(|r| r.provider.sample_resolution().is_some())
     {
         let mut no_traces = !sources.is_empty();
         for path in sources {
@@ -403,6 +477,21 @@ pub(crate) fn analyze_sources(
     let job = &prepared;
     report.job = job.clone();
     report.reference_sources = sources.to_vec();
+    let mut proposal_checkpoints = control
+        .date_checkpoints
+        .as_ref()
+        .filter(|_| timing_peaks.is_none())
+        .map(|path| {
+            proposal_checkpoint::Checkpoints::open(
+                path,
+                job,
+                &report.events,
+                duration_s,
+                sources,
+                control,
+            )
+        })
+        .transpose()?;
     progress("Reading historical flight paths", 0.36);
     let dataset = match data::load_for_job_sources(job, sources, duration_s, control) {
         Ok(data) => data,
@@ -468,19 +557,21 @@ pub(crate) fn analyze_sources(
         return Ok(report);
     }
     progress("Matching flyovers with a shared recording time", 0.42);
-    let result = search::locate(
+    let result = search::locate_with_checkpoints(
         job,
         &report.events,
         &dataset.tracks,
         &mut terrain,
         control,
         progress,
+        proposal_checkpoints.as_mut(),
     )?;
     report.search_grid_m = result.coarse_grid_m;
     report.search_method = result.method;
     report.hypotheses = result.hypotheses;
     report.candidates = result.candidates;
     report.warnings.extend(result.warnings);
+    report.doppler_partitions.extend(result.partition);
     set_doppler_status(&mut report);
     if terrain.missing > 0 {
         report.warnings.push(format!("Missing/void terrain used the configured fallback height of {} m ({:?}). Candidate heights are WGS84 ellipsoid heights.", job.ground_m, job.ground_datum));
@@ -499,9 +590,7 @@ pub(crate) fn set_doppler_status(report: &mut Report) {
         let ambiguous = report.events.len() < 2
             || provisional_clock
             || report.candidates[0].matches.len() < report.events.len()
-            || (report.candidates.len() > 1
-                && report.candidates[1].relative_error_percent
-                    < report.candidates[0].relative_error_percent * 1.5 + 0.05);
+            || search::has_competing_fit(&report.candidates);
         report.status = if !ambiguous {
             "candidates_found"
         } else {
@@ -539,7 +628,17 @@ pub fn prepare_data(job: &Job, control: &Control, progress: &Progress<'_>) -> Re
         .archive
         .as_ref()
         .context("Select a flight provider and cache folder")?;
-    if request.provider == archive::ArchiveProvider::AdsbExchangeSample {
+    if control.refresh_source_gaps {
+        anyhow::ensure!(
+            !control.offline,
+            "Source gaps cannot be refreshed in offline mode"
+        );
+        anyhow::ensure!(
+            request.provider.sample_resolution().is_some(),
+            "Source-gap refresh is available for the free sample providers"
+        );
+    }
+    if request.provider.sample_resolution().is_some() {
         sample_archive::validate_bounds(job.bounds)?;
     }
     let flight_sources =
@@ -593,8 +692,9 @@ pub fn save_report(report: &Report, path: &std::path::Path) -> Result<()> {
         .filter(|p| !p.as_os_str().is_empty())
         .unwrap_or_else(|| std::path::Path::new("."));
     std::fs::create_dir_all(parent)?;
-    let mut temp = tempfile::NamedTempFile::new_in(parent)?;
+    let (mut temp, destination) = atomic_file::prepare(path)?;
     serde_json::to_writer_pretty(temp.as_file_mut(), report)?;
-    temp.persist(path).context("Could not save the report")?;
+    temp.persist(destination)
+        .context("Could not save the report")?;
     Ok(())
 }

@@ -1,9 +1,12 @@
 """Benchmark guard tests; these fixtures are not real location validation."""
 import copy
+import json
 import math
 from pathlib import Path
+import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 import run_timing as runner
 
@@ -57,6 +60,49 @@ class BenchmarkGuards(unittest.TestCase):
         job = runner.make_job(self.case, Path('.'), unknown_date=True,
                               archive_override={'cache': 'prepared-cache', 'provider': 'adsb_lol'})
         self.assertEqual(job['archive']['cache'], 'prepared-cache')
+
+    def test_plan_records_date_arguments_from_jobs(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'fixture').mkdir()
+            media = root / self.case['paths']['media']
+            media.write_bytes(b'fixed benchmark fixture')
+            cli = root / 'cli'
+            cli.write_bytes(b'mocked executable')
+
+            def run_cli(command, **kwargs):
+                config = Path(command[command.index('--config') + 1])
+                report_path = Path(command[command.index('--output') + 1])
+                report = copy.deepcopy(self.report)
+                report.update(status='insufficient_evidence', job=json.loads(config.read_text(encoding='utf-8')))
+                report_path.write_text(json.dumps(report), encoding='utf-8')
+                return runner.subprocess.CompletedProcess(command, 3)
+
+            for mode, archive, imported, dated in [
+                ('import', None, True, False),
+                ('dated', {'cache': 'cache', 'provider': 'adsb_lol', 'date_from': '2026-11-01'}, False, True),
+                ('discovery', {'cache': 'cache', 'provider': 'adsb_lol', 'date_from': '', 'date_to': None}, False, False),
+            ]:
+                with self.subTest(mode=mode):
+                    case = copy.deepcopy(self.case)
+                    case['media_sha256'] = runner.digest(media)
+                    if archive:
+                        case['archive'] = archive
+                    if imported:
+                        case['paths']['tracks'] = 'reference.csv'
+                    manifest = root / f'{mode}.json'
+                    manifest.write_text(json.dumps({'target_error_m': 1000, 'cases': [case]}), encoding='utf-8')
+                    output = root / mode
+                    args = ['run_timing.py', '--cli', str(cli), '--data-root', str(root),
+                            '--manifest', str(manifest), '--output', str(output), '--offline']
+                    with patch.object(sys, 'argv', args), patch.object(runner.subprocess, 'run', side_effect=run_cli):
+                        self.assertEqual(runner.main(), 1)
+                    for name in ('plan.json', 'results.json'):
+                        result = json.loads((output / name).read_text(encoding='utf-8'))
+                        self.assertEqual(result['recording_date_supplied'], dated)
+                        self.assertEqual(result['date_argument_case_ids'], ['fixture'] if dated else [])
+                        self.assertEqual(result['imported_reference_case_ids'], ['fixture'] if imported else [])
+                    self.assertEqual(result['processing_errors'], 0)
 
     def test_unknown_date_and_offline_checks_also_apply_to_abstentions(self):
         self.report['status'] = 'insufficient_evidence'

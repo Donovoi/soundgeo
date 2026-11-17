@@ -1,0 +1,213 @@
+{
+  "scope": "Complete four-case offline proposal-retention comparison using fixed single-day reference CSVs. The provider-discovered multi-date benchmark remains separate.",
+  "plan": {
+    "scope": "Paired single-day Doppler source diagnostic over the original broad area. The multi-date timing benchmark remains separate.",
+    "source_commit": "e5eeb2b439f271b1160a509095cca25f87b49e56",
+    "cli_sha256": "5abdd660b58dd41a3a9cdf3ca424524f7c54a59cda02022048a51ee74f897ade",
+    "script_sha256": "e71a3c2e8994518d03ac927a4ed23a7ac1f6415636c6d42d49114c8ea7ba6af9",
+    "original_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+    "reference_exports": [
+      {
+        "variant": "traces",
+        "points": 156946,
+        "tracks": 1291,
+        "sha256": "4d790cb6dc00c6a7f82d3be33f5f2fab9bc304b14fa8be7c28a0ed5b3c0249a1",
+        "elapsed_s": 3.1078347000002395
+      },
+      {
+        "variant": "hires-traces",
+        "points": 432574,
+        "tracks": 1489,
+        "sha256": "bc1faa1b1b44dce1dfdb51bbc6a365c20ac1309e839b8b7c68901490bd9b6416",
+        "elapsed_s": 49.543430500001705
+      }
+    ],
+    "case_ids": [
+      "lake-hood-nov1",
+      "lake-hood-nov1-later"
+    ],
+    "case_selection": "Both existing Lake Hood recordings originally validated with the November 1 free sample.",
+    "reference_coverage": "Complete prepared November 1 standard or high-resolution sample",
+    "recording_date_argument_supplied": false,
+    "recording_clock_supplied": false,
+    "known_position_supplied_to_app": false,
+    "video_clues": false,
+    "offline": true,
+    "search_mode": "flight_corridors",
+    "max_hypotheses": 20000000,
+    "model_options": "Current frozen CLI defaults and original case settings; only method, search mode, reference variant, and hypothesis budget are specified above.",
+    "workers": 2,
+    "timeout_per_case_s": 7200,
+    "baseline": "lake-hires-doppler-corroboration",
+    "start_condition": "The preceding paired run must finish before any new analysis starts.",
+    "change": "Refinement retains a lower-error fit when it has the same number of supported sounds. All four input jobs are byte-identical to the preceding run.",
+    "target_error_m": 1000
+  },
+  "description_correction": {
+    "original_plan_sha256": "8196c9bd16103bfdc0896ca0bd1a1bd746e6eedd65beacdabd6c5d11606be54f",
+    "field": "change",
+    "corrected_text": "The beam replay adds a bounded set of proposals ranked by verified full-curve support. It retains the preceding equal-count refinement fix. All four input jobs are byte-identical to the preceding run.",
+    "reason": "The saved description repeated the preceding run change. Executable, input jobs, scope, and limits are unchanged."
+  },
+  "result": {
+    "complete": true,
+    "cases": 4,
+    "accepted": 0,
+    "wrong_accepted": 0,
+    "processing_errors": 1,
+    "proxy_connections": 0,
+    "reference_exports_unchanged": true
+  },
+  "cases": [
+    {
+      "case": "lake-hood-nov1",
+      "variant": "traces",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "41b15c6b28cc8d28a20b00ddc88ef85c7354f3a69fc3845c96665b246b469ffd",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "exit_code": 4,
+      "status": "ambiguous",
+      "events": 24,
+      "candidates": 10,
+      "hypotheses": 15277836,
+      "report_sha256": "377e8c24d4f00046642e4a4e907f3abebacfb3d2f8f19a01eff09e7a41b9a29e",
+      "top_candidate_error_m": 89.80709215517027,
+      "top_matches": 5,
+      "competitive_candidates": 8,
+      "maximum_competitor_distance_m": 11018.78061328963,
+      "elapsed_s": 4843.701825300006,
+      "log_sha256": "a8a65b27ddafd879661a035b9911fd4d632c67d7da6bf32282ff2d0bc52a362b"
+    },
+    {
+      "case": "lake-hood-nov1",
+      "variant": "hires-traces",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "2116f9fc436bb17df283c576681be723ac1ff5e905f5b2a9f9db0501cecbec70",
+      "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+      "processing_error": "search_timeout",
+      "elapsed_s": 7200.046706900001,
+      "log_sha256": "9de7bd7bf07b0a50cba5dd60de1f93ade545d40fcfcebdbaed06957e867bdbf9",
+      "time_limit_s": 7200
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "variant": "traces",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "890a1463c6b8d9871fb01c98659732cccbcb74e3aa314d783802e8a4704a497c",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "exit_code": 4,
+      "status": "ambiguous",
+      "events": 16,
+      "candidates": 10,
+      "hypotheses": 16721120,
+      "report_sha256": "6615972b3fb67d9eb160c64a00172de07237803ba2f20f6eef66afc738d29602",
+      "top_candidate_error_m": 106.50915535016873,
+      "top_matches": 5,
+      "competitive_candidates": 10,
+      "maximum_competitor_distance_m": 8694.286197977492,
+      "elapsed_s": 5966.526571300004,
+      "log_sha256": "5e720cb682bb773016776e88fe76305b0dc8d7d750c360c1ef349f60f52c3a2e"
+    },
+    {
+      "case": "lake-hood-nov1-later",
+      "variant": "hires-traces",
+      "accepted": false,
+      "screened": false,
+      "job_sha256": "576424c1328cf581d7c79522085adf4fbcdba2760347408b147bfe66274299c3",
+      "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+      "exit_code": 4,
+      "status": "ambiguous",
+      "events": 16,
+      "candidates": 10,
+      "hypotheses": 16731508,
+      "report_sha256": "2526772fa50be39b7e607ad1922ed269b720ec8ab18882c75b3076f3ab2d1ad5",
+      "top_candidate_error_m": 513.2693224166399,
+      "top_matches": 6,
+      "competitive_candidates": 10,
+      "maximum_competitor_distance_m": 18328.025089974977,
+      "elapsed_s": 6147.355030999999,
+      "log_sha256": "7dc25f96e011376f98de2e549ef3ca6285c2053c3728d81b66382189aff76092"
+    }
+  ],
+  "provenance": {
+    "original_plan_sha256": "8196c9bd16103bfdc0896ca0bd1a1bd746e6eedd65beacdabd6c5d11606be54f",
+    "original_results_sha256": "7c249fcbf1d7755a23c0eee94abb684f4f864b9cf8899d3e17b59cdaefa2dd68",
+    "completion_sha256": "cfd622730587779e158a74449642c1682a4f30e67d7d81f83e11da52d3054e3d"
+  },
+  "earlier_control_baseline_failure": {
+    "source_commit": "bc1c794655b605a79e2cd17b81c06385fbdaa25f",
+    "failure": "search_timeout",
+    "time_limit_s": 7200,
+    "elapsed_s": 7200.031455199998,
+    "baseline_report_produced": false,
+    "controls_completed": 0,
+    "proxy_connections": 0,
+    "inputs_unchanged": true,
+    "result_sha256": "2557fd853cafc83f5bddc4015154e89ec501f1b033371f60dd60b467ba6b15d5",
+    "exit_record_sha256": "98e6b0b397b498ecd3d9045e1044b498e52fd2ddd965ee6941e90adeb924011f",
+    "log_sha256": "69f2db10d6922882a5cb9fdf2ac877b9837c68db80e57de7e5be53f695c1f81f"
+  },
+  "location_acceptance": "Strict original CLI status and the separate 1 km evaluator are retained. Ambiguous coordinates do not pass.",
+  "independent_recheck": {
+    "complete": true,
+    "source_commit": "e5eeb2b439f271b1160a509095cca25f87b49e56",
+    "script_sha256": "851ac9d7d862df8096ab01fcebda3807da92fb85806566c8a95f33b960748a78",
+    "original_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+    "original_results_sha256": "7c249fcbf1d7755a23c0eee94abb684f4f864b9cf8899d3e17b59cdaefa2dd68",
+    "cases": [
+      {
+        "case": "lake-hood-nov1",
+        "variant": "traces",
+        "accepted": false,
+        "input_job_unchanged": true,
+        "media_unchanged": true,
+        "outcome": "ambiguous",
+        "position_error_m": 89.80709215517027,
+        "within_1km": true,
+        "supporting_activities": 5,
+        "report_sha256": "377e8c24d4f00046642e4a4e907f3abebacfb3d2f8f19a01eff09e7a41b9a29e"
+      },
+      {
+        "case": "lake-hood-nov1",
+        "variant": "hires-traces",
+        "accepted": false,
+        "input_job_unchanged": true,
+        "media_unchanged": true,
+        "outcome": "search_timeout"
+      },
+      {
+        "case": "lake-hood-nov1-later",
+        "variant": "traces",
+        "accepted": false,
+        "input_job_unchanged": true,
+        "media_unchanged": true,
+        "outcome": "ambiguous",
+        "position_error_m": 106.50915535016873,
+        "within_1km": true,
+        "supporting_activities": 5,
+        "report_sha256": "6615972b3fb67d9eb160c64a00172de07237803ba2f20f6eef66afc738d29602"
+      },
+      {
+        "case": "lake-hood-nov1-later",
+        "variant": "hires-traces",
+        "accepted": false,
+        "input_job_unchanged": true,
+        "media_unchanged": true,
+        "outcome": "ambiguous",
+        "position_error_m": 513.2693224166399,
+        "within_1km": true,
+        "supporting_activities": 6,
+        "report_sha256": "2526772fa50be39b7e607ad1922ed269b720ec8ab18882c75b3076f3ab2d1ad5"
+      }
+    ],
+    "completed_reports": 3,
+    "coordinates_within_1km": 3,
+    "accepted": 0,
+    "reference_files_unchanged": true,
+    "recorded_proxy_connections": 0,
+    "scope": "Original fixed single-day reference comparison. All failed and ambiguous outcomes remain failures."
+  }
+}

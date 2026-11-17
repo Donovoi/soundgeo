@@ -7,10 +7,19 @@ fn cached_day(root: &std::path::Path, date: &str) {
     std::fs::create_dir_all(&folder).unwrap();
     let tag = format!("v{}-planes-readsb-prod-0", date.replace('-', "."));
     let name = format!("{tag}.tar.aa");
-    let bytes = b"offline cache verification fixture";
-    std::fs::write(folder.join(&name), bytes).unwrap();
+    let body = b"offline cache verification fixture";
+    let mut archive = tar::Builder::new(Vec::new());
+    let mut header = tar::Header::new_gnu();
+    header.set_size(body.len() as u64);
+    header.set_mode(0o644);
+    header.set_cksum();
+    archive
+        .append_data(&mut header, "fixture.txt", &body[..])
+        .unwrap();
+    let bytes = archive.into_inner().unwrap();
+    std::fs::write(folder.join(&name), &bytes).unwrap();
     let manifest = json!({"tag_name":tag,"assets":[{"name":name,"size":bytes.len(),
-        "digest":format!("sha256:{:x}",Sha256::digest(bytes)),
+        "digest":format!("sha256:{:x}",Sha256::digest(&bytes)),
         "browser_download_url":"https://github.com/adsblol/globe_history_2024/releases/download/fixture/nonexistent"}]});
     std::fs::write(
         folder.join("archive-manifest.json"),
@@ -76,6 +85,45 @@ fn older_unsplit_archive_reuses_verified_cache_offline() {
 }
 
 #[test]
+fn cached_attribution_is_created_repaired_and_reused_readonly_offline() {
+    let dir = tempfile::tempdir().unwrap();
+    let date = "2024-03-01";
+    cached_day(dir.path(), date);
+    let control = Control::default().with_offline(true);
+    let progress = |_: &str, _: f32| {};
+    let ensure = || soundgeo::data::download_day(date, dir.path(), &control, &progress);
+    let license = dir.path().join(date).join("DATA-LICENSE.txt");
+
+    // A new or stale attribution still needs the current text.
+    let archive = ensure().unwrap();
+    let expected = std::fs::read(&license).unwrap();
+    assert!(String::from_utf8_lossy(&expected).contains("Open Database License 1.0"));
+    std::fs::write(&license, "outdated attribution").unwrap();
+    assert_eq!(ensure().unwrap(), archive);
+    assert_eq!(std::fs::read(&license).unwrap(), expected);
+
+    // A protected, correct attribution must retain both its bytes and timestamp.
+    let timestamp = std::time::SystemTime::UNIX_EPOCH + std::time::Duration::from_secs(1_000_000);
+    std::fs::OpenOptions::new()
+        .write(true)
+        .open(&license)
+        .unwrap()
+        .set_times(std::fs::FileTimes::new().set_modified(timestamp))
+        .unwrap();
+    let original_permissions = std::fs::metadata(&license).unwrap().permissions();
+    let mut readonly = original_permissions.clone();
+    readonly.set_readonly(true);
+    std::fs::set_permissions(&license, readonly).unwrap();
+    let result = ensure();
+    let after = std::fs::metadata(&license).unwrap();
+    std::fs::set_permissions(&license, original_permissions).unwrap();
+    assert_eq!(result.unwrap(), archive);
+    assert_eq!(std::fs::read(&license).unwrap(), expected);
+    assert_eq!(after.modified().unwrap(), timestamp);
+    assert!(after.permissions().readonly());
+}
+
+#[test]
 fn invalid_ranges_and_wrong_date_cache_are_rejected() {
     let dir = tempfile::tempdir().unwrap();
     let mut request = ArchiveRequest {
@@ -103,6 +151,39 @@ fn invalid_ranges_and_wrong_date_cache_are_rejected() {
     )
     .unwrap();
     assert!(request.ensure(&Control::default(), &|_, _| {}).is_err());
+}
+
+#[test]
+fn sample_cache_dates_keep_resolutions_separate_and_skip_unfinished_days() {
+    use soundgeo::archive::ArchiveProvider;
+    let dir = tempfile::tempdir().unwrap();
+    for (name, complete) in [
+        ("adsbx-sample-2024-02-01-area", true),
+        ("adsbx-hires-sample-2024-03-01-area", true),
+        ("adsbx-sample-2024-04-01-snapshots", false),
+        ("adsbx-hires-sample-2024-05-01-area", false),
+    ] {
+        let path = dir.path().join(name);
+        std::fs::create_dir(&path).unwrap();
+        if complete {
+            std::fs::write(path.join("sample-manifest.json"), b"{}").unwrap();
+        }
+    }
+    let mut request = ArchiveRequest {
+        date_from: String::new(),
+        date_to: None,
+        cache: dir.path().into(),
+        provider: ArchiveProvider::AdsbExchangeSample,
+    };
+    assert_eq!(request.dates().unwrap(), ["2024-02-01"]);
+    request.provider = ArchiveProvider::AdsbExchangeSampleHires;
+    assert_eq!(request.dates().unwrap(), ["2024-03-01"]);
+    request.date_from = "2024-01-15".into();
+    request.date_to = Some("2024-04-01".into());
+    assert_eq!(
+        request.dates().unwrap(),
+        ["2024-02-01", "2024-03-01", "2024-04-01"]
+    );
 }
 
 #[test]

@@ -1,0 +1,213 @@
+{
+  "scope": "Separate completed retries after fixed two-hour limits. Original failures and jobs remain preserved.",
+  "high_resolution": {
+    "plan": {
+      "scope": "Separate retry of the first high-resolution Lake Hood job that exceeded its original two-hour limit. Original broad bounds and fixed single-day CSV; no date or clock arguments. Expanded-date validation remains separate.",
+      "source_commit": "70735f567ae6f4398e90639a00df89a502eedd92",
+      "cli_sha256": "25d8afcc0dce448eaa04e03cb49de7df61b64bf7714df8ef322b18273d4bd91a",
+      "previous_timeout_sha256": "ed062c6846107026ea75c2f001abccb4a32fd7b40111e94687bd9d71f6bc5eef",
+      "previous_log_sha256": "9de7bd7bf07b0a50cba5dd60de1f93ade545d40fcfcebdbaed06957e867bdbf9",
+      "decoder": {
+        "file": "ffmpeg.exe",
+        "sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73"
+      },
+      "script_sha256": "fad625ee98f40cafb22653e9347ace10d85f3edb8a15d3bf7992f170b998b80b",
+      "original_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+      "reference_exports": [
+        {
+          "variant": "hires-traces",
+          "points": 432574,
+          "tracks": 1489,
+          "sha256": "bc1faa1b1b44dce1dfdb51bbc6a365c20ac1309e839b8b7c68901490bd9b6416",
+          "elapsed_s": 49.543430500001705
+        }
+      ],
+      "case_ids": [
+        "lake-hood-nov1"
+      ],
+      "case_selection": "The first high-resolution Lake Hood case reached its fixed 7200-second limit without producing a report.",
+      "reference_coverage": "Complete prepared November 1 standard or high-resolution sample",
+      "recording_date_argument_supplied": false,
+      "recording_clock_supplied": false,
+      "known_position_supplied_to_app": false,
+      "video_clues": false,
+      "offline": true,
+      "search_mode": "flight_corridors",
+      "max_hypotheses": 20000000,
+      "model_options": "Current frozen CLI defaults and original case settings; only method, search mode, reference variant, and hypothesis budget are specified above.",
+      "workers": 1,
+      "timeout_per_case_s": 14400,
+      "previous_attempt": "lake-hires-doppler-beam",
+      "start_condition": "The preceding paired run must finish before any new analysis starts.",
+      "change": "Use the qualified build and a separate four-hour limit. The input job is byte-identical to the timed-out attempt. The preceding four-case comparison must finish before this retry starts.",
+      "target_error_m": 1000
+    },
+    "result": {
+      "complete": true,
+      "cases": 1,
+      "accepted": 0,
+      "wrong_accepted": 0,
+      "processing_errors": 0,
+      "proxy_connections": 0,
+      "reference_exports_unchanged": true,
+      "media_unchanged": true,
+      "decoder_unchanged": true
+    },
+    "cases": [
+      {
+        "case": "lake-hood-nov1",
+        "variant": "hires-traces",
+        "accepted": false,
+        "screened": false,
+        "job_sha256": "2116f9fc436bb17df283c576681be723ac1ff5e905f5b2a9f9db0501cecbec70",
+        "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+        "exit_code": 4,
+        "status": "ambiguous",
+        "events": 24,
+        "candidates": 10,
+        "hypotheses": 15274007,
+        "report_sha256": "eac5b08b6000d80fe4725cd489ab4ba42000a7669c582cdc99c19a8ba5f160d5",
+        "top_candidate_error_m": 56.34390338288821,
+        "top_matches": 5,
+        "competitive_candidates": 4,
+        "maximum_competitor_distance_m": 11068.265270712522,
+        "elapsed_s": 9021.611146800002
+      }
+    ],
+    "independent_verification": {
+      "complete": true,
+      "source_commit": "70735f567ae6f4398e90639a00df89a502eedd92",
+      "accepted": false,
+      "status": "ambiguous",
+      "top_candidate_error_m": 56.34390338288821,
+      "hypotheses": 15274007,
+      "top_matches": 5,
+      "plan_sha256": "111a561ddfc95cc2fe0391692cbf2dbe151fd62398f4dfadde8a477f61cff0e3",
+      "results_sha256": "0b628d990c156567617f5a33199d6ffd4c5bd44cac495d342a723b087cee5dd8",
+      "report_sha256": "eac5b08b6000d80fe4725cd489ab4ba42000a7669c582cdc99c19a8ba5f160d5",
+      "job_sha256": "2116f9fc436bb17df283c576681be723ac1ff5e905f5b2a9f9db0501cecbec70",
+      "original_timed_out_job_unchanged": true,
+      "original_failed_log_unchanged": true,
+      "media_reference_and_decoder_hashes_verified": true,
+      "proxy_connections": 0,
+      "recording_clock_supplied": false,
+      "recording_date_argument_supplied": false,
+      "known_position_supplied_to_app": false,
+      "scope": "Original broad bounds and fixed single-day source. Expanded-date acceptance remains separate."
+    }
+  },
+  "first_control_baseline": {
+    "scope": "Completed first-clip baseline report equality; the surrounding control experiment continues.",
+    "complete": true,
+    "source_commit": "70735f567ae6f4398e90639a00df89a502eedd92",
+    "cli_sha256": "25d8afcc0dce448eaa04e03cb49de7df61b64bf7714df8ef322b18273d4bd91a",
+    "original_report_sha256": "377e8c24d4f00046642e4a4e907f3abebacfb3d2f8f19a01eff09e7a41b9a29e",
+    "baseline_report_sha256": "6947a73c00dd908f77ec0369e22804f5711c87ede170bceb306911e8973c513c",
+    "plan_sha256": "7486d5343af49039e82d0823fdf8221646770fb442e1b41896591576137c197f",
+    "exit_record": {
+      "exit_code": 4,
+      "elapsed_s": 7510.949379600002,
+      "log_sha256": "8f058b01f0ff8a512c1e0079e1629e9c753c9df23a49970ba98a8fe9d6a5fe67"
+    },
+    "reports_equal_except_created_utc": true,
+    "changed_top_level_fields": [],
+    "status": "ambiguous",
+    "accepted": false,
+    "top_candidate_error_m": 89.80709215517027,
+    "events": 24,
+    "hypotheses": 15277836,
+    "top_matches": 5,
+    "reference_file_unchanged": true,
+    "media_unchanged": true,
+    "recording_date_argument_supplied": false,
+    "recording_clock_supplied": false,
+    "reference_scope": "Original fixed single-day CSV; expanded-date acceptance remains separate.",
+    "network_observation": "The parent control experiment has not finalized its proxy observation.",
+    "timing_scope": "Shared-host elapsed time; no isolated speed comparison."
+  },
+  "location_acceptance": "Both reports remain ambiguous. Neither result passes acceptance.",
+  "evidence_commit_ci": {
+    "head_commit": "9cec17fe0cddc1b94932835d8e0939af345cd552",
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42615590134",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "check (ubuntu-latest)",
+        "conclusion": "success",
+        "rust_tests_passed": 173,
+        "python_tests_passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "required_steps": [
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "check (windows-latest)",
+        "conclusion": "success",
+        "rust_tests_passed": 173,
+        "python_tests_passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "required_steps": [
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "required_test_names": [
+      "worker_limits_validate_and_preserve_older_job_json",
+      "parallel_corridors_match_serial_fallback_terrain",
+      "headless_cli_help_and_errors_have_documented_exit_codes"
+    ],
+    "log": {
+      "file": "corridor-worker-evidence-ci-checks/ci-terminal.log",
+      "sha256": "bd57ef9c1f3229a4488a27b8e51add7c45583e853061193fc92499d09267950d"
+    }
+  }
+}

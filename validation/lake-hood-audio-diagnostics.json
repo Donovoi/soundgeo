@@ -1,0 +1,196 @@
+{
+  "scope": "Separate audio diagnostics for the fresh Lake Hood hour. Known-camera checks use the evaluator reference and clock. They do not count as blind location tests.",
+  "source_commit": "709d38f61199b687e61ecbda013774c686623992",
+  "location_acceptance": false,
+  "native_detector_export": {
+    "complete": true,
+    "location_acceptance": false,
+    "runs": [
+      {
+        "mode": "all-observations",
+        "exit_code": 0,
+        "elapsed_s": 69.26618460001191,
+        "log_sha256": "d9be14fb6d7127783613a8d6214f1165a62fe0f9776fae8a77acbace9fccb259"
+      },
+      {
+        "mode": "selected-observations",
+        "exit_code": 0,
+        "elapsed_s": 65.22574629998417,
+        "log_sha256": "eacedb4897976b24bfb10624b5a889711b04dd9a83ef08343d63648c9341a5c4"
+      }
+    ],
+    "default_detector_exactly_unchanged": true,
+    "selected_events": 24,
+    "all_grouped_observations": 31,
+    "excluded_by_event_limit": 7,
+    "selected_variants": 30,
+    "all_variants": 38,
+    "inputs_unchanged": true,
+    "all_events_sha256": "71a5bca14aa46c19b1c7e8a73a08256d7ab54622bf6df6ff80ddd0b98340beb1",
+    "selected_events_sha256": "6397c24d4f535593839b772a7c674b122cf1cb4581b0091fe7baee6d9a5ea963",
+    "proxy_connections": 0,
+    "plan_sha256": "7022d783ce3429181d922946298bd79f8146d340d53854a135da367f85f44b79"
+  },
+  "native_detector_audit": {
+    "complete": true,
+    "location_acceptance": false,
+    "auditor_sha256": "fcc3905d1ae1fc9bdec9879871885802654010e60f07dd9fddd88881ed70d952",
+    "plan_sha256": "7022d783ce3429181d922946298bd79f8146d340d53854a135da367f85f44b79",
+    "result_sha256": "706db404424e49a75faf060ba4ec48027d89e3300451d21dce078f3cd3937acf",
+    "selected_events": 24,
+    "all_events": 31,
+    "all_variants": 38,
+    "quality_order_recomputed": true,
+    "default_exactly_matches_original": true,
+    "qualified_inputs_and_binaries_unchanged": true,
+    "proxy_connections": 0,
+    "quality_scores": [
+      37.99441425805553,
+      35.34321665353008,
+      32.13836055434012,
+      31.96327757667267,
+      30.18604411473125,
+      26.80169518804736,
+      23.890384439312395,
+      23.607291987559954,
+      22.93131843345404,
+      21.442844604335534,
+      21.211611604741258,
+      20.816224178247584,
+      20.756465541777704,
+      19.439387614599866,
+      18.585080721953233,
+      17.280662746108703,
+      17.021372441558643,
+      15.767697279417511,
+      15.005989108478012,
+      14.147700725195063,
+      13.965508333042678,
+      13.959876561130693,
+      13.64339073429161,
+      13.633675933839044,
+      13.608657238264945,
+      13.58547209058855,
+      13.091629891228347,
+      12.797344719353756,
+      12.087240289032387,
+      10.969024673968242,
+      5.17899663275577
+    ]
+  },
+  "known_camera_curves": {
+    "complete": true,
+    "location_acceptance": false,
+    "inputs_unchanged": true,
+    "events": 31,
+    "reference_segments_overlapping_hour": 114,
+    "full_coverage_fits": 717,
+    "events_with_passing_individual_fit": 0,
+    "elapsed_s": 4.143873499997426,
+    "factor_checks": 1000,
+    "maximum_factor_difference": 4.440892098500626e-16,
+    "plan_sha256": "10df85fb876a5f02ad77f2d679460281442a43f5891117f406342609f4c18edc",
+    "fits_sha256": "cabbae295da9a19dd97e9f3211624872457a30304dbbcf73c81da0fd823968e9"
+  },
+  "known_camera_curves_audit": {
+    "complete": true,
+    "location_acceptance": false,
+    "original_selected_fits_exactly_preserved": 562,
+    "additional_fits": 155,
+    "additional_passing_fits": 0,
+    "plan_sha256": "10df85fb876a5f02ad77f2d679460281442a43f5891117f406342609f4c18edc",
+    "fits_sha256": "cabbae295da9a19dd97e9f3211624872457a30304dbbcf73c81da0fd823968e9"
+  },
+  "timing_peaks": {
+    "complete": true,
+    "location_acceptance": false,
+    "auditor_sha256": "fcc3905d1ae1fc9bdec9879871885802654010e60f07dd9fddd88881ed70d952",
+    "plan_sha256": "91e009799fac0c4b29da14e777be5645d11a905d65cc12a5fd1156202a73090e",
+    "result_sha256": "14cc7b9d5a3ae8cf2fd114c862bb033b746464bd020a26331a86d1cc9d58d44a",
+    "peaks": 31,
+    "qualified_inputs_and_binary_unchanged": true,
+    "only_job_change": "analysis_method=passage_timing",
+    "proxy_connections": 0
+  },
+  "known_camera_passages": {
+    "complete": true,
+    "location_acceptance": false,
+    "inputs_unchanged": true,
+    "plan_sha256": "fa3f8e22126ea3a7ed6184ed12658d3d41772a4885a49595956c346c76a7c46e",
+    "radii": [
+      {
+        "radius_m": 500,
+        "reference_passages": 0,
+        "aircraft": 0,
+        "peaks_with_nearby_passage": {
+          "1": 0,
+          "5": 0,
+          "10": 0
+        },
+        "passages_sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+      },
+      {
+        "radius_m": 1000,
+        "reference_passages": 0,
+        "aircraft": 0,
+        "peaks_with_nearby_passage": {
+          "1": 0,
+          "5": 0,
+          "10": 0
+        },
+        "passages_sha256": "a5338d955b09046ec0b16f3a9625b7955c763aae07dc722e474e6078745f932f"
+      },
+      {
+        "radius_m": 2000,
+        "reference_passages": 21,
+        "aircraft": 20,
+        "peaks_with_nearby_passage": {
+          "1": 0,
+          "5": 0,
+          "10": 3
+        },
+        "passages_sha256": "0e36514aeb5e73a008356db7bf70cb6dd94c39a11e4f9f08fd2be3f3fa8a74a0"
+      },
+      {
+        "radius_m": 3000,
+        "reference_passages": 30,
+        "aircraft": 29,
+        "peaks_with_nearby_passage": {
+          "1": 0,
+          "5": 1,
+          "10": 4
+        },
+        "passages_sha256": "5f13de47454496a0cc4e08cee757b623ac5d044cb722cf630ae5abf041eabc78"
+      },
+      {
+        "radius_m": 5000,
+        "reference_passages": 39,
+        "aircraft": 38,
+        "peaks_with_nearby_passage": {
+          "1": 0,
+          "5": 2,
+          "10": 4
+        },
+        "passages_sha256": "7bc25cba890353b99237fc82987d4dc0e0803b1ba4914dbcdbb2be66c206dec1"
+      }
+    ]
+  },
+  "source_frequency_drift": {
+    "complete": true,
+    "location_acceptance": false,
+    "full_coverage_fits_checked": 8744,
+    "original_true_clock_constant_rmse_maximum_difference": 0.0,
+    "true_clock_passing_events": 0,
+    "wrong_clocks_with_passing_events": 7,
+    "maximum_wrong_clock_passing_events": 2,
+    "plan_sha256": "d400f28c2d2a4dbc4f9c320be096c28a85755c38ba57faae1866d0f6cac75c22",
+    "result_sha256": "65ff087a7fa7601074e1bfc0a805c1ada3fc7ac336deb7cc21d68525a32174be",
+    "inputs_unchanged": true
+  },
+  "conclusions": [
+    "The default export exactly matches the original 24 observations.",
+    "The seven observations below the limit add 155 full-coverage fits. None passes at the known camera and clock.",
+    "The default 500 m timing range contains no recorded eligible passages at this camera during the hour. At 5 km, four sound peaks are within ten seconds of a predicted passage. Temporal proximity alone does not identify an aircraft sound.",
+    "Allowing linear source-frequency drift gives no passing event at the known clock. Seven of 19 fixed wrong clocks have one or two passing events. This experiment does not support adding the relaxed source model."
+  ]
+}

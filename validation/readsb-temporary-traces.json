@@ -1,0 +1,435 @@
+{
+  "scope": "Unfinished readsb trace handling, complete qualification, the preserved real archive replay, and two earlier successful offline location regressions. Lake Hood audio acceptance remains incomplete.",
+  "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+  "source_tree": "cd2424152b97eecd132120af4887e69846e5b1f0",
+  "change": "Skip and report exact trace_full_*.readsb_tmp files in loose and tar imports. Damaged completed traces still fail with source context. Matching and acceptance rules are unchanged.",
+  "source_failure": {
+    "record": "fresh-lake-recent-hour.json",
+    "archive_url": "https://github.com/adsblol/globe_history_2026/releases/download/v2026.11.09-planes-readsb-staging-0/v2026.11.09-planes-readsb-staging-0.tar",
+    "archive_sha256": "91b8e85fb96d16affea00d1a9afff9d73f9f8135cbc6073baefc847b84b91a11",
+    "original_failed_attempt_preserved": true,
+    "upstream_temporary_file_convention": "https://github.com/wiedehopf/readsb/blob/dev/json_out.c#L1898-L1963"
+  },
+  "local_checks": {
+    "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+    "environment_overrides": {
+      "CARGO_BUILD_JOBS": "2",
+      "RUST_TEST_THREADS": "2"
+    },
+    "steps": [
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1.5980962999747135,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 22.39899429999059,
+        "log_sha256": "ca5f285bcdc56407cf12ad8726efe57c12452cc02b7e260bed1b9dd0d3e78cc2"
+      },
+      {
+        "name": "tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1351.6646329000068,
+        "log_sha256": "39660bd92a9e6f2402ada608cf961099d808ef392bc4621a4295a11b8d6d261f"
+      },
+      {
+        "name": "doc-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--doc"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 2.8771132999972906,
+        "log_sha256": "2c320d35053c92975795527f05baa342a879cf07416e7a8b033095ea430b712c"
+      },
+      {
+        "name": "build",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--bins"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1.117527299997164,
+        "log_sha256": "59e081afa1b098618300ea88901bd025cac1110d913acf389f34ca85c4e3ed6f"
+      },
+      {
+        "name": "python",
+        "command": [
+          "python",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "validation",
+          "-p",
+          "test_run_timing.py"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.6005462000030093,
+        "log_sha256": "ee1c856702aa60cf6849d3f97fe307c063b0756769557d782aa4a150e1a327d8"
+      },
+      {
+        "name": "control-example",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--example",
+          "doppler_controls",
+          "--example",
+          "export_reference"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 83.26156650000485,
+        "log_sha256": "e2ab1d8c62532f22740da16c955589ce3f9c22ffe39efa5007b291f989a0f2c5"
+      }
+    ],
+    "complete": true,
+    "rust_tests_passed": 202,
+    "python_tests_passed": 10,
+    "failed": 0,
+    "ignored": 0
+  },
+  "ci_checks": {
+    "head_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+    "url": "https://github.com/Donovoi/soundgeo/actions/runs/42751843529",
+    "conclusion": "success",
+    "jobs": [
+      {
+        "name": "check (ubuntu-latest)",
+        "conclusion": "success",
+        "rust_tests_passed": 202,
+        "python_tests_passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "required_steps": [
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          }
+        ]
+      },
+      {
+        "name": "check (windows-latest)",
+        "conclusion": "success",
+        "rust_tests_passed": 202,
+        "python_tests_passed": 10,
+        "failed": 0,
+        "ignored": 0,
+        "required_steps": [
+          {
+            "name": "Run cargo fmt --all -- --check",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run python -m unittest discover -s validation -p test_run_timing.py",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo clippy --release --all-targets --locked -- -D warnings",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --all-targets",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo test --release --locked --doc",
+            "conclusion": "success"
+          },
+          {
+            "name": "Run cargo build --release --locked --bins",
+            "conclusion": "success"
+          }
+        ]
+      }
+    ],
+    "required_test_names": [
+      "archived_readsb_temporary_files_are_reported_without_loading_their_positions",
+      "loose_readsb_temporary_files_are_reported_and_preserved",
+      "damaged_completed_traces_still_fail_with_the_archive_and_member_names"
+    ],
+    "log": {
+      "file": "readsb-temporary-ci-checks/ci-terminal.log",
+      "sha256": "05c4974aec22e87c2b979c5681aa2f72c1f21407f30908e010a52b8bf59ffab8"
+    }
+  },
+  "frozen_binaries": {
+    "local": {
+      "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+      "source_tree": "cd2424152b97eecd132120af4887e69846e5b1f0",
+      "cli_sha256": "2f4b912203c29d3395e741f0e58e8891bb93ecdf3343e3d0cd6a06ee178d97ee",
+      "desktop_sha256": "f1fb352677d93b5e5b9ff92356472a9b2f17346f49f40c27e470a4991cb73885",
+      "control_tool_sha256": "abca4d81cae385a67f2d20c6651cee530e4d705880c1c3d438968565620a9d2e",
+      "export_reference_sha256": "0428caea35ef468c2859bba93e1baabad4f36b419d5c41057273d5fba5ce75ee",
+      "checks_sha256": "be7e2a8dd2fd874957d3f1b86f9314a337bc7bbeeb2cd34b394bbb9bbc90a3e7",
+      "source_hashes_unchanged": true
+    },
+    "windows_ci": {
+      "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+      "source_tree": "cd2424152b97eecd132120af4887e69846e5b1f0",
+      "ci_run": 42751843529,
+      "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42751843529",
+      "ci_artifact_id": 13734830565,
+      "archive_sha256": "ee11745b57522e407c8b8c4423fe9bc30df1660b862b2eaf39e10f57acc0c546",
+      "archive_digest_matches_provider": true,
+      "checkout_tree_matches_source": true,
+      "cli_sha256": "1908dd80b66337170464ac9978373126e0a9c63bdf0d21f01e90bbe66d80f3d8",
+      "desktop_sha256": "7bf6257f5e576edbcc5ac6fa4f6a3ffe35b94fa03608a968f98e13e6bee1c217"
+    },
+    "independent_qualification_verification_sha256": "b8ca033e9460e91dd0d0457ff87a8706894e91346aa55ef582a16ba47c2a6581"
+  },
+  "archive_replay": {
+    "complete": true,
+    "location_acceptance": false,
+    "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+    "exit_code": 0,
+    "elapsed_s": 216.28774080000585,
+    "segments": 717,
+    "points": 99042,
+    "unfinished_traces": 1,
+    "no_clock_filtering": true,
+    "no_decoded_cache_used": true,
+    "reference_sha256": "ae8b457d6c988406c9731f5672f3124c4b5d283409df841017139bc68618fb72",
+    "archive_unchanged": true,
+    "tool_unchanged": true,
+    "job_unchanged": true,
+    "proxy_connections": 0,
+    "log_sha256": "acc9e8143bf4405b87b2da75b2134f665d02e933d48091f154a9ec830da52a53"
+  },
+  "independent_archive_verification": {
+    "complete": true,
+    "scope": "Exact-source parser replay, output counts, segment timing boundaries, and every exported timestamp checked against its original aircraft trace. Smoothed coordinates are not independently recomputed here. No location acceptance.",
+    "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+    "archive_sha256": "91b8e85fb96d16affea00d1a9afff9d73f9f8135cbc6073baefc847b84b91a11",
+    "archive_members": 51954,
+    "source_aircraft_checked": 374,
+    "segments": 717,
+    "positions": 99042,
+    "all_exported_timestamps_match_source": true,
+    "maximum_timestamp_difference_s": 0.0,
+    "unfinished_traces": [
+      {
+        "name": "./traces/5f/trace_full_407e5f.json.readsb_tmp",
+        "bytes": 0
+      }
+    ],
+    "proxy_connections": 0,
+    "original_archive_unchanged": true,
+    "no_date_or_clock_filtering": true,
+    "no_decoded_cache_used": true,
+    "result_sha256": "2c23068ace64720c5c9568a9577e88480e33da3e65efed61e833700d209257d2",
+    "plan_sha256": "747fc0178ce25b5dffb01f16b0d73211c98894de4ab1607309ccad8d5782b8a8",
+    "reference_sha256": "ae8b457d6c988406c9731f5672f3124c4b5d283409df841017139bc68618fb72",
+    "verifier_sha256": "f59d47d281f3cfa9fd23d0d4d990d55702faa5548bf9c5ecad2a7046973f3383"
+  },
+  "offline_location_regressions": {
+    "complete": true,
+    "accepted": true,
+    "exit_code": 0,
+    "elapsed_s": 273.6495993999997,
+    "cases": [
+      {
+        "case": "maho-nov1-b",
+        "accepted": true,
+        "screened": true,
+        "job_sha256": "2bcf35f546d4a4b3fd44a2020ba41f2a4203219cdd330e3b1c9e37d88fd8f00b",
+        "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee",
+        "exit_code": 0,
+        "report_sha256": "36e629a949cb60ad6d446e2754850de48e9d5e3ef8a240268f5bd923ae7c7686",
+        "status": "candidates_found",
+        "sound_peaks": 117,
+        "track_count": 597,
+        "region": {
+          "latitude": 18.04328859060403,
+          "longitude": -63.121830985915494,
+          "enclosing_radius_m": 0.0,
+          "competitive_points": 1
+        },
+        "error_m": 549.649056637247,
+        "matched_flights": 16,
+        "score": 31.0335629455301,
+        "controls": 19,
+        "date_search": null,
+        "elapsed_s": 27.521357799996622
+      },
+      {
+        "case": "midway-arrivals",
+        "accepted": true,
+        "screened": true,
+        "job_sha256": "ba4ba6f24ad825e29b6eccda916736dc8ff98836fcee61cf9080c3b18a1d6b2d",
+        "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603",
+        "exit_code": 0,
+        "report_sha256": "7341287905b2da48e1b5a78ff5c8757cc88685eb456f554dc2e80ffe728a3b17",
+        "status": "candidates_found",
+        "sound_peaks": 27,
+        "track_count": 13476,
+        "region": {
+          "latitude": 41.778955223880594,
+          "longitude": -87.7436090225564,
+          "enclosing_radius_m": 958.5739426682562,
+          "competitive_points": 17
+        },
+        "error_m": 89.42959383692278,
+        "matched_flights": 15,
+        "score": 28.94719376656073,
+        "controls": 19,
+        "date_search": {
+          "dates": [
+            "2026-11-01",
+            "2026-11-03",
+            "2026-11-04"
+          ],
+          "completed_batches": 2,
+          "complete": true,
+          "track_count_includes_overlap": true
+        },
+        "elapsed_s": 245.13948939999682
+      }
+    ],
+    "source_files_unchanged": true,
+    "inputs_unchanged": true,
+    "new_decoded_cache_files": 2,
+    "proxy_connections": 0,
+    "independent_verification": {
+      "complete": true,
+      "scope": "Two preserved development clips, original broad regions and prepared-date sets. Lake Hood reliability remains unverified.",
+      "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+      "cli_sha256": "2f4b912203c29d3395e741f0e58e8891bb93ecdf3343e3d0cd6a06ee178d97ee",
+      "cases": [
+        {
+          "case": "maho-nov1-b",
+          "accepted": true,
+          "error_with_allowance_m": 549.649056637247,
+          "reference_allowance_m": 200,
+          "region_unchanged_from_preserved_success": true,
+          "region": {
+            "latitude": 18.04328859060403,
+            "longitude": -63.121830985915494,
+            "enclosing_radius_m": 0.0,
+            "competitive_points": 1
+          },
+          "prepared_dates": [
+            "2026-11-01"
+          ],
+          "date_coverage_complete": true,
+          "controls": 19,
+          "baseline_beats_all_controls": true,
+          "calibrated_location_probability": false,
+          "report_sha256": "36e629a949cb60ad6d446e2754850de48e9d5e3ef8a240268f5bd923ae7c7686",
+          "job_sha256": "2bcf35f546d4a4b3fd44a2020ba41f2a4203219cdd330e3b1c9e37d88fd8f00b",
+          "media_sha256": "ca1e01d1eb8fefb9872270ba8ef218bad60a5e5c75d998fc241ef401f57e6aee"
+        },
+        {
+          "case": "midway-arrivals",
+          "accepted": true,
+          "error_with_allowance_m": 89.42959383692278,
+          "reference_allowance_m": 0,
+          "region_unchanged_from_preserved_success": true,
+          "region": {
+            "latitude": 41.778955223880594,
+            "longitude": -87.7436090225564,
+            "enclosing_radius_m": 958.5739426682562,
+            "competitive_points": 17
+          },
+          "prepared_dates": [
+            "2026-11-01",
+            "2026-11-03",
+            "2026-11-04"
+          ],
+          "date_coverage_complete": true,
+          "controls": 19,
+          "baseline_beats_all_controls": true,
+          "calibrated_location_probability": false,
+          "report_sha256": "7341287905b2da48e1b5a78ff5c8757cc88685eb456f554dc2e80ffe728a3b17",
+          "job_sha256": "ba4ba6f24ad825e29b6eccda916736dc8ff98836fcee61cf9080c3b18a1d6b2d",
+          "media_sha256": "e16590ee4ce859e668b26706ac0e0e14e411285cb53362f16bc99a613faf1603"
+        }
+      ],
+      "original_cache_files_rehashed": 18111,
+      "inputs_unchanged": true,
+      "proxy_connections": 0,
+      "no_recording_dates_or_clocks_supplied": true,
+      "result_sha256": "1f02c92d4955f2b698e26c4d17ee2a36cd1dd8859f1a60b4f11bde8d90ea106e",
+      "plan_sha256": "47618a795ea76defda693310b76621143ebea2c44c670a1306750a03a079031e",
+      "verifier_sha256": "0f8731c5fc676b993dda5ac703fd488fda45e3ea968b61f82b8f7eeeb84deb8f"
+    },
+    "initial_audit_issue": "The first audit compared sparse input timing options directly with expanded report defaults. The corrected audit explicitly checks the native timing_sigma_s default of 1.0. Native runs and their inputs are unchanged."
+  },
+  "fresh_hour_audio_retry": {
+    "complete": true,
+    "scope": "Actual native launch and unchanged original v2 analysis inputs; final location and input/network checks remain pending.",
+    "source_commit": "5f6c4e1330fefebe34d3dfbb9a18a3627448f7a2",
+    "cli_sha256": "2f4b912203c29d3395e741f0e58e8891bb93ecdf3343e3d0cd6a06ee178d97ee",
+    "pid": 21344,
+    "started_unix": 1794284202.705716,
+    "original_analysis_job_unchanged": true,
+    "no_recording_date_clock_or_point_supplied": true,
+    "video_clues": false,
+    "offline": true,
+    "workers": 2,
+    "timeout_s": 21600,
+    "plan_sha256": "f16f87d0794998bb4c70172f95e40298cc1ee28e55039de9f0ed92c1ac545cff",
+    "job_sha256": "3085352cdfa0c992193b97b7f0e3a05d928a50ce66b626d62406ec052ee398b4",
+    "native_witness_sha256": "9f83f5b2af3af9a859916d3219b8a81dc04f136abdb1d6d58310f4ecd00f32bf",
+    "parser_result_sha256": "2c23068ace64720c5c9568a9577e88480e33da3e65efed61e833700d209257d2",
+    "parser_independent_verification_sha256": "75833257ba490e11c17174fe6837d6bf32770bfb441457bfa0708944313c0fa6",
+    "location_result_pending": true,
+    "accepted_location": false
+  },
+  "lake_hood_reliability_verified": false
+}

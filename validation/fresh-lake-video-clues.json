@@ -1,0 +1,130 @@
+{
+  "scope": "Optional offline video-text clues on a fresh one-hour interval from the existing public Lake Hood camera. Evaluated separately from audio geolocation and camera-position acceptance.",
+  "source_video_url": "https://www.youtube.com/watch?v=61pi8UjLOlo",
+  "media_sha256": "90cb2edebafb324422e8b99373f2b8a0fd1cd66381ce342d4bcfecb27807ef90",
+  "duration_s": 3600,
+  "build": {
+    "source_commit": "b6ce9230f4347bd78b14d6de5a06744c771b4154",
+    "source_tree": "8f3214398716eeb62fca237066ee5dc9ed3bd37e",
+    "ci_run": 42742485331,
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42742485331",
+    "ci_artifact_id": 13729824884,
+    "cli_sha256": "13fd18900489131ca1f89613431778841952ccb613a65851b9e12f973a451fda",
+    "all_required_checks_passed": true,
+    "rust_tests_passed": 199,
+    "python_tests_passed": 10
+  },
+  "inputs": {
+    "offline": true,
+    "video_clues_explicitly_enabled": true,
+    "frames": 3,
+    "supplied_recording_date_or_clock": false,
+    "supplied_bounds_or_position": false,
+    "gazetteer": "Prepared worldwide GeoNames database",
+    "gazetteer_sha256": "eb04452e23cd8baa93445fe375e1727da377be5fa20398e8b1642e43feb55879",
+    "gazetteer_source": {
+      "url": "https://download.geonames.org/export/dump/allCountries.zip",
+      "attribution": "GeoNames",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "archive_sha256": "f5cbfcf2d3981e37807de0e8e5cbb32278f44f9454fa64051da44789502e01fd",
+      "text_sha256": "eb04452e23cd8baa93445fe375e1727da377be5fa20398e8b1642e43feb55879"
+    },
+    "ffmpeg_sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73",
+    "ffprobe_sha256": "a6618e99bb58869ded3c6f37b53aa1a8d701c3591dbb7b5b317d47369c112be2",
+    "ocr_inventory_sha256": "d39dadc12ed7d9de65bfab79a2eb91ba813896e1c35a7189ad82ce69badad04b"
+  },
+  "result": {
+    "complete": true,
+    "audio_acceptance": false,
+    "exit_code": 0,
+    "elapsed_s": 93.0682519999973,
+    "status": "place_clues_found",
+    "places": [
+      {
+        "geoname_id": 5867101,
+        "name": "Lake Hood Seaplane Base",
+        "latitude": 61.17987,
+        "longitude": -149.97166,
+        "feature_code": "AIRS",
+        "country": "US",
+        "matched_name": "Lake Hood Seaplane Base",
+        "frame_indices": [
+          1,
+          4,
+          7
+        ],
+        "source_url": "https://www.geonames.org/5867101",
+        "reference_error_m": 31.055051082838865
+      },
+      {
+        "geoname_id": 12213327,
+        "name": "Anchorage, AK Metro Area",
+        "latitude": 62.22437,
+        "longitude": -149.55443,
+        "feature_code": "RGNE",
+        "country": "US",
+        "matched_name": "Anchorage  AK",
+        "frame_indices": [
+          1,
+          4,
+          7
+        ],
+        "source_url": "https://www.geonames.org/12213327",
+        "reference_error_m": 118235.54992912691
+      }
+    ],
+    "place_count": 2,
+    "evaluation_references": [
+      {
+        "latitude": 61.179633,
+        "longitude": -149.9719665,
+        "basis": "Public camera owner Google Maps pin: https://goo.gl/maps/cKpcc57ES22d2cwn6 (not a survey)"
+      }
+    ],
+    "reference_allowance_m": 0,
+    "named_place_within_1km": true,
+    "camera_location_acceptance": false,
+    "report_sha256": "914a7c4999a85161ce57bd2c323cf019375662f0653969df36387aebd15c98ee",
+    "inputs_unchanged": true,
+    "ocr_installation_unchanged": true,
+    "proxy_connections": 0,
+    "plan_sha256": "2879f8a66983b4558cc050ccb9b268c9b20e3429de86234b432350a9514bf5e6",
+    "log_sha256": "3e90bb4198aed94710029a7e305e96f6a185e1827a2c3d07c608f5f1e000566a"
+  },
+  "verification": {
+    "complete": true,
+    "source_frame_1800_visually_reviewed": true,
+    "source_frame_1800_sha256": "8cfaad5c70f17c9d31522d05f63539ed54dc73eb7bcb4805f0729d0e08e0e285",
+    "visible_banner": "Lake Hood Seaplane Base, Anchorage, AK",
+    "source_rows": [
+      {
+        "geoname_id": 5867101,
+        "row_sha256": "2e6856a09ff3495bfabd1c9c523cca3bd0d7b8b08773ab6fd7f5c024379b19fb",
+        "name": "Lake Hood Seaplane Base",
+        "latitude": 61.17987,
+        "longitude": -149.97166,
+        "feature_code": "AIRS",
+        "country": "US"
+      },
+      {
+        "geoname_id": 12213327,
+        "row_sha256": "dad09a608532c3d5aaca565000cc88e2894b4bb9c477fb312889b0f12b10b271",
+        "name": "Anchorage, AK Metro Area",
+        "latitude": 62.22437,
+        "longitude": -149.55443,
+        "feature_code": "RGNE",
+        "country": "US"
+      }
+    ],
+    "native_command_has_no_recording_clock_date_bounds_or_position_arguments": true
+  },
+  "evidence_sha256": {
+    "plan.json": "2879f8a66983b4558cc050ccb9b268c9b20e3429de86234b432350a9514bf5e6",
+    "command.json": "6a174ddd12b4025d101b967096f062b1ad2c40552e90f957a37c5e7113e619b0",
+    "result.json": "1a419a24bf3ab456ece7d8e8f6162ff3201da6e57896548207717c7891c904bc",
+    "report.json": "914a7c4999a85161ce57bd2c323cf019375662f0653969df36387aebd15c98ee",
+    "proxy-observation.json": "47e92d4561a3b772606eff9b0b381289896cb82bc39b191dd1980bf464ed9871",
+    "independent-verification.json": "238b93f086126269de10de8e6324c0e5fa63a03a6a0da96d3c5c17d1a34b0e1c"
+  },
+  "interpretation": "Visible text identifies Lake Hood Seaplane Base in all three sampled frames. Its GeoNames coordinate is 31.06 m from the camera reference. The report also retains an Anchorage metro-area clue 118.24 km away. These are named-place coordinates. Audio location acceptance and a camera-position confidence radius remain unverified."
+}

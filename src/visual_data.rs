@@ -72,8 +72,7 @@ fn extract(archive: &Path, entry_name: &str, output: &Path, control: &Control) -
         bail!("Unexpected GeoNames text size");
     }
     // Extract only the requested country file. ZIP paths never become output paths.
-    let mut temp =
-        tempfile::NamedTempFile::new_in(output.parent().context("Missing output folder")?)?;
+    let (mut temp, destination) = crate::atomic_file::prepare(output)?;
     let mut buffer = [0; 128 * 1024];
     let mut total = 0;
     loop {
@@ -91,7 +90,7 @@ fn extract(archive: &Path, entry_name: &str, output: &Path, control: &Control) -
     if total != entry.size() {
         bail!("GeoNames text is incomplete");
     }
-    temp.persist(output)?;
+    temp.persist(destination)?;
     Ok(())
 }
 
@@ -137,9 +136,9 @@ pub fn prepare(
         archive_sha256: hash_file(&archive, control)?,
         text_sha256: hash_file(&text, control)?,
     };
-    let mut temp = tempfile::NamedTempFile::new_in(folder)?;
+    let (mut temp, destination) = crate::atomic_file::prepare(&source_path(&text))?;
     serde_json::to_writer_pretty(&mut temp, &source)?;
-    temp.persist(source_path(&text))?;
+    temp.persist(destination)?;
     progress("GeoNames data ready for offline use", 1.);
     Ok(text)
 }

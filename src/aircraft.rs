@@ -105,9 +105,9 @@ pub fn download(path: &Path) -> Result<()> {
     Catalog::from_bytes(&bytes)?;
     let parent = path.parent().unwrap_or_else(|| Path::new("."));
     std::fs::create_dir_all(parent)?;
-    let mut temp = tempfile::NamedTempFile::new_in(parent)?;
+    let (mut temp, destination) = crate::atomic_file::prepare(path)?;
     std::io::Write::write_all(&mut temp, &bytes)?;
-    temp.persist(path)?;
+    temp.persist(destination)?;
     std::fs::write(
         path.with_extension("source.txt"),
         "Aircraft type descriptions: Mictronics/readsb-protobuf, webapp/src/db/types.json\nhttps://github.com/Mictronics/readsb-protobuf\nRetrieved separately for local use. License details: see the source repository's LICENSE file. Retain source attribution when redistributing this catalog.\n",

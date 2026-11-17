@@ -93,6 +93,31 @@ fn short_jet_tones_survive_loud_bass_and_are_not_counted_twice() {
 }
 
 #[test]
+fn fast_flyovers_survive_several_louder_stationary_tones() {
+    let passes = [(22., 77., 130., 1180.), (65., 86., 250., 1250.)];
+    let mut samples = signal(90, &passes);
+    for (index, sample) in samples.iter_mut().enumerate() {
+        let time = index as f64 / audio::SAMPLE_RATE as f64;
+        let stationary: f64 = [780., 980., 1180., 1400., 1650.]
+            .iter()
+            .map(|hz| 3. * (std::f64::consts::TAU * hz * time).sin())
+            .sum();
+        *sample += stationary as f32;
+    }
+    let events = audio::detect(&samples, &Job::default(), &Control::default(), &|_, _| {}).unwrap();
+    for (center, _, slant, _) in passes {
+        let received_cpa = center + slant / 340.39;
+        assert!(
+            events
+                .iter()
+                .any(|event| (event.cpa_s - received_cpa).abs() < 1.),
+            "The known moving source at {received_cpa} s must survive louder fixed tones; found CPAs: {:?}",
+            events.iter().map(|event| event.cpa_s).collect::<Vec<_>>()
+        );
+    }
+}
+
+#[test]
 fn longer_recording_retains_evidence_beyond_the_eight_search_anchors() {
     let passes: Vec<_> = (0..10)
         .map(|i| (22. + i as f64 * 40., 77., 130., 1180.))

@@ -1,4 +1,4 @@
-use crate::{Control, Job, Progress, Report, geo::Point, timing};
+use crate::{Control, Job, Progress, Report, timing};
 use anyhow::{Result, ensure};
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
@@ -14,7 +14,7 @@ pub struct Coverage {
     pub provider_discovery: Option<crate::availability::Catalog>,
 }
 
-fn batches(dates: &[String]) -> Result<Vec<(String, String)>> {
+pub(crate) fn batches(dates: &[String]) -> Result<Vec<(String, String)>> {
     let parsed: Vec<_> = dates
         .iter()
         .map(|s| NaiveDate::parse_from_str(s, "%Y-%m-%d"))
@@ -39,6 +39,15 @@ pub(crate) fn run(
     progress: &Progress<'_>,
 ) -> Result<Report> {
     let windows = batches(dates)?;
+    let mut checkpoints = control
+        .date_checkpoints
+        .as_ref()
+        .map(|path| {
+            crate::date_checkpoint::Checkpoints::open(
+                path, job, &template, &peaks, &windows, control,
+            )
+        })
+        .transpose()?;
     let mut combined = template.clone();
     for (index, (from, to)) in windows.iter().enumerate() {
         control.check()?;
@@ -59,10 +68,36 @@ pub(crate) fn run(
         let paths = archive.ensure_for_bounds(job.bounds, control, &|m, p| update(m, p * 0.34))?;
         let mut seed = template.clone();
         seed.job = batch.clone();
-        let result =
-            crate::analyze_sources(&batch, seed, peaks.clone(), &paths, true, control, &update)?;
+        let checkpoint_batch = checkpoints
+            .as_ref()
+            .map(|store| store.prepare_batch(&batch, &paths, control))
+            .transpose()?;
+        let cached = if let (Some(store), Some(inputs)) = (&checkpoints, &checkpoint_batch) {
+            store.load(index, inputs)?
+        } else {
+            None
+        };
+        let reused = cached.is_some();
+        let result = match cached {
+            Some(result) => {
+                update("Reusing completed date batch", 1.);
+                result
+            }
+            None => {
+                crate::analyze_sources(&batch, seed, peaks.clone(), &paths, true, control, &update)?
+            }
+        };
+        if let (Some(store), Some(inputs)) = (&mut checkpoints, checkpoint_batch) {
+            store.finish(index, inputs, &result, reused, control)?;
+            if !reused {
+                update("Saved completed date batch", 1.);
+            }
+        }
         combined.track_count += result.track_count;
         combined.hypotheses += result.hypotheses;
+        combined
+            .doppler_partitions
+            .extend(result.doppler_partitions);
         combined.search_grid_m = combined.search_grid_m.max(result.search_grid_m);
         if !result.search_method.is_empty() {
             combined.search_method = result.search_method;
@@ -80,6 +115,9 @@ pub(crate) fn run(
             merge_timing(&mut combined.timing, assessment)?;
         }
     }
+    if let Some(store) = checkpoints {
+        store.verify_complete_inputs(control)?;
+    }
     if combined.timing.is_none()
         && let Some(peaks) = peaks
     {
@@ -87,6 +125,9 @@ pub(crate) fn run(
     }
     if combined.search_method.is_empty() {
         combined.search_method = "date_batches".into();
+    }
+    if !combined.doppler_partitions.is_empty() {
+        combined.search_method = "indexed_flight_corridors_time_batches".into();
     }
     if let Some(assessment) = &mut combined.timing {
         timing::apply_screen(assessment);
@@ -123,40 +164,8 @@ pub(crate) fn run(
 }
 
 fn rank_doppler(report: &mut Report) {
-    report.candidates.sort_by(|a, b| {
-        b.matches.len().cmp(&a.matches.len()).then_with(|| {
-            (a.relative_error_percent + 0.25 * a.silence_conflicts.len() as f64)
-                .total_cmp(&(b.relative_error_percent + 0.25 * b.silence_conflicts.len() as f64))
-        })
-    });
-    let mut distinct: Vec<crate::search::Candidate> = Vec::new();
-    for candidate in report.candidates.drain(..) {
-        let point = Point {
-            lat: candidate.latitude,
-            lon: candidate.longitude,
-            alt: 0.,
-        };
-        if distinct.iter().any(|other| {
-            point.distance(Point {
-                lat: other.latitude,
-                lon: other.longitude,
-                alt: 0.,
-            }) < 250.
-                && (candidate.recording_start_unix - other.recording_start_unix).abs() < 10.
-                && (candidate.recording_start_unix - other.recording_start_unix
-                    + report.duration_s
-                        * (candidate.recording_clock_rate - other.recording_clock_rate))
-                    .abs()
-                    < 10.
-        }) {
-            continue;
-        }
-        distinct.push(candidate);
-        if distinct.len() == 10 {
-            break;
-        }
-    }
-    report.candidates = distinct;
+    report.candidates =
+        crate::search::rank_candidates(std::mem::take(&mut report.candidates), report.duration_s);
 }
 
 fn merge_timing(
@@ -227,6 +236,31 @@ fn merge_timing(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn date_merge_uses_curve_support_order() {
+        let fixture: serde_json::Value = serde_json::from_str(include_str!(
+            "../tests/fixtures/doppler-ranking-counterexample.json"
+        ))
+        .unwrap();
+        let mut candidates = fixture["control"].as_array().unwrap().clone();
+        candidates.extend(fixture["baseline"].as_array().unwrap().iter().cloned());
+        let mut report: Report = serde_json::from_value(serde_json::json!({
+            "version": "test", "status": "ambiguous", "media": "test.wav",
+            "job": Job::default(), "duration_s": 1000., "track_count": 4,
+            "events": [], "candidates": candidates, "warnings": [],
+            "search_grid_m": 100., "created_utc": "1970-01-01T00:00:00Z"
+        }))
+        .unwrap();
+        rank_doppler(&mut report);
+        assert!((report.candidates[0].curve_support() - 3.612180221766192).abs() < 1e-12);
+        assert!(
+            report
+                .candidates
+                .windows(2)
+                .all(|pair| { !crate::search::candidate_order(&pair[0], &pair[1]).is_gt() })
+        );
+    }
+
     fn assessment(score: f64, lon: f64, null: f64) -> timing::Assessment {
         let mut value = timing::Assessment::pending(vec![]);
         value.control_permutation_seeds = (0..19).collect();

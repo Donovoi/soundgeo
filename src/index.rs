@@ -10,8 +10,9 @@ use crate::{
         score_and_prune_seeds, within_time,
     },
 };
-use anyhow::{Result, bail};
+use anyhow::Result;
 use rayon::prelude::*;
+use serde::{Deserialize, Serialize};
 use std::{
     collections::{BTreeSet, HashMap},
     sync::{
@@ -182,6 +183,74 @@ impl FlightIndex {
     }
 }
 
+#[derive(Clone, Copy, Debug)]
+pub(crate) struct EmissionWindow {
+    pub start: f64,
+    pub end: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ProposalBatch {
+    /// Inclusive flight timestamp; this does not constrain the recording clock.
+    pub emission_from_unix: f64,
+    /// Exclusive flight timestamp.
+    pub emission_to_unix: f64,
+    pub hypotheses: usize,
+}
+
+impl ProposalBatch {
+    pub(crate) fn window(&self) -> EmissionWindow {
+        EmissionWindow {
+            start: self.emission_from_unix,
+            end: self.emission_to_unix,
+        }
+    }
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ProposalPartition {
+    pub complete: bool,
+    pub max_hypotheses_per_batch: usize,
+    pub batches: Vec<ProposalBatch>,
+}
+
+#[derive(Debug)]
+pub(crate) struct HypothesisBudgetExceeded {
+    pub limit: usize,
+    pub before_matching: bool,
+}
+
+impl std::fmt::Display for HypothesisBudgetExceeded {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "Indexed search exceeds the {} hypothesis budget; no partial location is reported.",
+            self.limit
+        )?;
+        if self.before_matching {
+            write!(f, " The budget check stopped before curve matching.")?;
+        }
+        Ok(())
+    }
+}
+
+impl std::error::Error for HypothesisBudgetExceeded {}
+
+fn corridor_pool(job: &Job, terrain: &Terrain) -> Result<Option<rayon::ThreadPool>> {
+    if !terrain.supports_parallel_queries() {
+        return Ok(None);
+    }
+    Ok(Some(
+        rayon::ThreadPoolBuilder::new()
+            .num_threads(
+                std::thread::available_parallelism()
+                    .map_or(1, |n| n.get().min(job.search_threads.unwrap_or(4).max(1))),
+            )
+            .build()?,
+    ))
+}
+
+#[allow(clippy::too_many_arguments)]
 pub(crate) fn corridor_seeds(
     job: &Job,
     events: &[Event],
@@ -190,22 +259,35 @@ pub(crate) fn corridor_seeds(
     terrain: &mut Terrain,
     control: &Control,
     progress: &Progress<'_>,
+    window: Option<EmissionWindow>,
+) -> Result<(Vec<Seed>, usize)> {
+    let prepared = terrain.parallel_view(control)?;
+    let prototype = prepared.unwrap_or_else(|| terrain.empty_cache_clone());
+    terrain.retain_source_guard(&prototype)?;
+    let result = corridor_seeds_inner(
+        job, events, tracks, bounds, terrain, &prototype, control, progress, window,
+    );
+    // Check even on budget errors: callers can recover those by partitioning.
+    prototype.verify_shared(control)?;
+    result
+}
+
+#[allow(clippy::too_many_arguments)]
+fn corridor_seeds_inner(
+    job: &Job,
+    events: &[Event],
+    tracks: &[Track],
+    bounds: Bounds,
+    terrain: &mut Terrain,
+    prototype: &Terrain,
+    control: &Control,
+    progress: &Progress<'_>,
+    window: Option<EmissionWindow>,
 ) -> Result<(Vec<Seed>, usize)> {
     let counter = AtomicUsize::new(0);
     let mut seeds = vec![];
     let anchors = crate::audio::anchor_indices(events);
-    // Keep disk-backed terrain queries serial so their tile cache stays shared.
-    // Without tiles, each worker can evaluate the bundled geoid independently.
-    let prototype = terrain.empty_cache_clone();
-    let pool = if !terrain.has_tiles() {
-        Some(
-            rayon::ThreadPoolBuilder::new()
-                .num_threads(std::thread::available_parallelism().map_or(1, |n| n.get().min(4)))
-                .build()?,
-        )
-    } else {
-        None
-    };
+    let pool = corridor_pool(job, prototype)?;
     // Count the same spatial proposals before expensive curve matching. A run
     // that cannot fit its budget must not spend hours collecting partial seeds.
     check_corridor_budget(
@@ -214,11 +296,19 @@ pub(crate) fn corridor_seeds(
         tracks,
         &anchors,
         bounds,
-        terrain,
+        prototype,
         pool.as_ref(),
         control,
         progress,
+        window,
     )?;
+    progress(
+        &format!(
+            "Flight-corridor workers: {}",
+            pool.as_ref().map_or(1, |p| p.current_num_threads())
+        ),
+        0.42,
+    );
     let index = FlightIndex::new(tracks, control)?;
     for (ordinal, &anchor) in anchors.iter().enumerate() {
         for (batch_no, batch) in tracks.chunks(32).enumerate() {
@@ -236,7 +326,7 @@ pub(crate) fn corridor_seeds(
                 0.42 + 0.30 * (ordinal * tracks.len() + first_id) as f32
                     / (anchors.len() * tracks.len()) as f32,
             );
-            let results: Vec<Result<Vec<Seed>>> = if let Some(pool) = &pool {
+            let results: Vec<Result<(Vec<Seed>, usize)>> = if let Some(pool) = &pool {
                 pool.install(|| {
                     batch
                         .par_iter()
@@ -244,7 +334,7 @@ pub(crate) fn corridor_seeds(
                         .map(|(offset, track)| {
                             let local_index = index.fork_queries();
                             let mut local_terrain = prototype.empty_cache_clone();
-                            track_seeds(
+                            let seeds = track_seeds(
                                 job,
                                 events,
                                 tracks,
@@ -256,7 +346,9 @@ pub(crate) fn corridor_seeds(
                                 &local_index,
                                 &counter,
                                 control,
-                            )
+                                window,
+                            )?;
+                            Ok((seeds, local_terrain.missing))
                         })
                         .collect()
                 })
@@ -265,7 +357,7 @@ pub(crate) fn corridor_seeds(
                     .iter()
                     .enumerate()
                     .map(|(offset, track)| {
-                        track_seeds(
+                        let seeds = track_seeds(
                             job,
                             events,
                             tracks,
@@ -277,13 +369,18 @@ pub(crate) fn corridor_seeds(
                             &index,
                             &counter,
                             control,
-                        )
+                            window,
+                        )?;
+                        // Serial sampling has already updated the caller.
+                        Ok((seeds, 0))
                     })
                     .collect()
             };
             // Merge in track order, making parallel and serial runs reproducible.
             for result in results {
-                for seed in result? {
+                let (track_seeds, missing) = result?;
+                terrain.missing += missing;
+                for seed in track_seeds {
                     seeds.push(seed);
                     if seeds.len() >= 8192 {
                         let mut prune = || {
@@ -300,9 +397,6 @@ pub(crate) fn corridor_seeds(
         }
     }
     let examined = counter.load(Ordering::Relaxed);
-    if pool.is_some() && examined > 0 {
-        terrain.missing += 1;
-    }
     Ok((seeds, examined))
 }
 
@@ -319,6 +413,7 @@ fn track_seeds(
     index: &FlightIndex,
     counter: &AtomicUsize,
     control: &Control,
+    window: Option<EmissionWindow>,
 ) -> Result<Vec<Seed>> {
     let c = job.sound_speed();
     let range_factor = feature_range_factor();
@@ -330,13 +425,15 @@ fn track_seeds(
         bounds,
         terrain,
         control,
+        window,
         |first, point, expected| {
             let examined = counter.fetch_add(1, Ordering::Relaxed) + 1;
             if examined > job.max_hypotheses {
-                bail!(
-                    "Indexed search exceeded the {} hypothesis budget; no partial location is reported. Narrow the region/date range, increase spacing, or raise the budget.",
-                    job.max_hypotheses
-                );
+                return Err(HypothesisBudgetExceeded {
+                    limit: job.max_hypotheses,
+                    before_matching: false,
+                }
+                .into());
             }
             if examined.is_multiple_of(256) {
                 control.check()?;
@@ -386,6 +483,7 @@ fn track_seeds(
 
 // Keep geometry in one place so the budget pass counts exactly what matching
 // will examine, including alternate ridges, time gates and terrain heights.
+#[allow(clippy::too_many_arguments)]
 fn for_each_corridor_point(
     job: &Job,
     event: &Event,
@@ -393,6 +491,7 @@ fn for_each_corridor_point(
     bounds: Bounds,
     terrain: &mut Terrain,
     control: &Control,
+    window: Option<EmissionWindow>,
     mut visit: impl FnMut(&Event, Point, f64) -> Result<()>,
 ) -> Result<()> {
     control.check()?;
@@ -421,14 +520,19 @@ fn for_each_corridor_point(
         .collect();
         slants.sort_by(f64::total_cmp);
         slants.dedup_by(|a, b| (*a - *b).abs() < 1.);
+        // Carry spacing along each continuous eligible path. Starting again at
+        // every fix makes dense recordings produce extra search hypotheses.
+        let mut next_distance = 0.;
         for pair in track.samples.windows(2) {
             control.check()?;
             let dt = pair[1].time - pair[0].time;
             if dt <= 0. || dt > 60. {
+                next_distance = 0.;
                 continue;
             }
             let speed = (pair[1].xyz - pair[0].xyz).norm() / dt;
             if speed < 25. || (speed / first.speed_mps).ln().abs() > 0.8 {
+                next_distance = 0.;
                 continue;
             }
             let latmid = (pair[0].point.lat + pair[1].point.lat) * 0.5;
@@ -437,11 +541,18 @@ fn for_each_corridor_point(
             let north = (pair[1].point.lat - pair[0].point.lat) * 111320.;
             let length = east.hypot(north);
             if length < 1. {
+                next_distance = 0.;
                 continue;
             }
-            let steps = (length / job.grid_m).ceil().max(1.) as usize;
-            for step in 0..steps {
-                let f = step as f64 / steps as f64;
+            while next_distance < length {
+                let f = next_distance / length;
+                next_distance += job.grid_m;
+                let emit = pair[0].time + dt * f;
+                // Advance path spacing before filtering so every original
+                // proposal belongs to exactly one half-open flight-time batch.
+                if window.is_some_and(|w| emit < w.start || emit >= w.end) {
+                    continue;
+                }
                 let a = pair[0].point;
                 let b = pair[1].point;
                 let plane = Point {
@@ -449,7 +560,6 @@ fn for_each_corridor_point(
                     lon: a.lon + (b.lon - a.lon) * f,
                     alt: a.alt + (b.alt - a.alt) * f,
                 };
-                let emit = pair[0].time + dt * f;
                 // No clip in the requested known-time window can hear this anchor.
                 if let Some(t) = job.start_utc
                     && (emit + first.slant_m / c - first.cpa_s - t).abs()
@@ -488,6 +598,7 @@ fn for_each_corridor_point(
                     }
                 }
             }
+            next_distance = (next_distance - length).max(0.);
         }
     }
     Ok(())
@@ -504,17 +615,40 @@ fn check_corridor_budget(
     pool: Option<&rayon::ThreadPool>,
     control: &Control,
     progress: &Progress<'_>,
-) -> Result<()> {
+    window: Option<EmissionWindow>,
+) -> Result<usize> {
+    let result = check_corridor_budget_inner(
+        job, events, tracks, anchors, bounds, terrain, pool, control, progress, window,
+    );
+    // Includes the last progress callback and the over-budget recovery path.
+    terrain.verify_shared(control)?;
+    result
+}
+
+#[allow(clippy::too_many_arguments)]
+fn check_corridor_budget_inner(
+    job: &Job,
+    events: &[Event],
+    tracks: &[Track],
+    anchors: &[usize],
+    bounds: Bounds,
+    terrain: &Terrain,
+    pool: Option<&rayon::ThreadPool>,
+    control: &Control,
+    progress: &Progress<'_>,
+    window: Option<EmissionWindow>,
+) -> Result<usize> {
     let counter = AtomicUsize::new(0);
     // Do not change the caller's missing-tile count or populate its cache.
     let mut budget_terrain = terrain.empty_cache_clone();
     let count = |_: &Event, _: Point, _: f64| -> Result<()> {
         let examined = counter.fetch_add(1, Ordering::Relaxed) + 1;
         if examined > job.max_hypotheses {
-            bail!(
-                "Indexed search needs more than the {} hypothesis budget; no partial location is reported. The budget check stopped before curve matching. Narrow the region/date range, increase spacing, or raise the budget.",
-                job.max_hypotheses
-            );
+            return Err(HypothesisBudgetExceeded {
+                limit: job.max_hypotheses,
+                before_matching: true,
+            }
+            .into());
         }
         if examined.is_multiple_of(256) {
             control.check()?;
@@ -546,6 +680,7 @@ fn check_corridor_budget(
                             bounds,
                             &mut local_terrain,
                             control,
+                            window,
                             count,
                         )
                     })
@@ -559,6 +694,7 @@ fn check_corridor_budget(
                         bounds,
                         &mut budget_terrain,
                         control,
+                        window,
                         count,
                     )?;
                 }
@@ -572,7 +708,89 @@ fn check_corridor_budget(
         ),
         0.42,
     );
-    Ok(())
+    Ok(counter.load(Ordering::Relaxed))
+}
+
+/// Plan the complete partition before any expensive matching starts. Every
+/// batch retains the complete reference set for associations and refinement.
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn partition_proposals(
+    job: &Job,
+    events: &[Event],
+    tracks: &[Track],
+    bounds: Bounds,
+    terrain: &Terrain,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<ProposalPartition> {
+    let mut start = f64::INFINITY;
+    let mut end = f64::NEG_INFINITY;
+    for sample in tracks.iter().flat_map(|t| &t.samples) {
+        start = start.min(sample.time);
+        end = end.max(sample.time);
+    }
+    end = end.next_up();
+    anyhow::ensure!(
+        start.is_finite() && end.is_finite() && start < end,
+        "Flight timestamps cannot define a finite proposal partition"
+    );
+    let prepared = terrain.parallel_view(control)?;
+    let terrain = prepared.as_ref().unwrap_or(terrain);
+    let pool = corridor_pool(job, terrain)?;
+    let anchors = crate::audio::anchor_indices(events);
+    let mut pending = vec![EmissionWindow { start, end }];
+    let mut batches = vec![];
+    while let Some(window) = pending.pop() {
+        control.check()?;
+        match check_corridor_budget(
+            job,
+            events,
+            tracks,
+            &anchors,
+            bounds,
+            terrain,
+            pool.as_ref(),
+            control,
+            progress,
+            Some(window),
+        ) {
+            Ok(hypotheses) => batches.push(ProposalBatch {
+                emission_from_unix: window.start,
+                emission_to_unix: window.end,
+                hypotheses,
+            }),
+            Err(error)
+                if error
+                    .downcast_ref::<HypothesisBudgetExceeded>()
+                    .is_some_and(|e| e.before_matching) =>
+            {
+                let middle = window.start + (window.end - window.start) * 0.5;
+                if window.end - window.start <= 1.
+                    || middle <= window.start
+                    || middle >= window.end
+                    || batches.len() + pending.len() + 2 > 4096
+                {
+                    return Err(error.context("Automatic proposal partitioning stopped before curve matching at its minimum interval or batch limit. Increase the hypothesis budget; no partial location is reported"));
+                }
+                // Stack order processes the full timeline from left to right.
+                pending.push(EmissionWindow {
+                    start: middle,
+                    end: window.end,
+                });
+                pending.push(EmissionWindow {
+                    start: window.start,
+                    end: middle,
+                });
+            }
+            Err(error) => return Err(error),
+        }
+    }
+    terrain.verify_shared(control)?;
+    Ok(ProposalPartition {
+        complete: true,
+        max_hypotheses_per_batch: job.max_hypotheses,
+        batches,
+    })
 }
 
 #[cfg(test)]
@@ -601,6 +819,452 @@ mod tests {
                 .map(|&(t, east, north, height)| Sample::new(EPOCH + t, point(east, north, height)))
                 .collect(),
         }
+    }
+
+    fn corridor_proposals(track: &Track) -> Vec<(Point, f64)> {
+        corridor_proposals_in_window(track, None)
+    }
+
+    fn corridor_proposals_in_window(
+        track: &Track,
+        window: Option<EmissionWindow>,
+    ) -> Vec<(Point, f64)> {
+        let job = Job {
+            grid_m: 200.,
+            ..Default::default()
+        };
+        let event = Event {
+            start_s: 0.,
+            end_s: 20.,
+            cpa_s: 10.,
+            base_hz: 100.,
+            speed_mps: 50.,
+            slant_m: 500.,
+            fit_rmse_hz: 0.,
+            contrast_db: 20.,
+            ridge: vec![],
+            activity_span_s: None,
+            alternatives: vec![],
+        };
+        let bounds = Bounds {
+            south: TRUTH.lat - 1.,
+            north: TRUTH.lat + 1.,
+            west: TRUTH.lon - 1.,
+            east: TRUTH.lon + 1.,
+        };
+        let mut result = vec![];
+        for_each_corridor_point(
+            &job,
+            &event,
+            track,
+            bounds,
+            &mut Terrain::new(None, TRUTH.alt),
+            &Control::default(),
+            window,
+            |_, point, arrival| {
+                result.push((point, arrival));
+                Ok(())
+            },
+        )
+        .unwrap();
+        result
+    }
+
+    fn corridor_centers(proposals: &[(Point, f64)]) -> BTreeSet<(i64, i64)> {
+        // The two sides of each constant-height corridor share the same plane point.
+        let (pairs, remainder) = proposals.as_chunks::<2>();
+        assert!(remainder.is_empty());
+        pairs
+            .iter()
+            .map(|pair| {
+                let lat = (pair[0].0.lat + pair[1].0.lat) * 0.5;
+                let lon = (pair[0].0.lon + pair[1].0.lon) * 0.5;
+                (
+                    ((lon - TRUTH.lon) * 111320. * TRUTH.lat.to_radians().cos()).round() as i64,
+                    ((lat - TRUTH.lat) * 111320.).round() as i64,
+                )
+            })
+            .collect()
+    }
+
+    fn tiled_fixture() -> (tempfile::TempDir, Job, Vec<Event>, Vec<Track>, Bounds) {
+        let dir = tempfile::tempdir().unwrap();
+        let bytes: Vec<_> = (0..1201 * 1201)
+            .flat_map(|i| (100 + (i % 23) as i16).to_be_bytes())
+            .collect();
+        std::fs::write(dir.path().join("N35W110.hgt"), bytes).unwrap();
+        let job = Job {
+            grid_m: 200.,
+            max_hypotheses: 100000,
+            search_threads: Some(2),
+            ..Default::default()
+        };
+        let events = vec![Event {
+            start_s: 0.,
+            end_s: 20.,
+            cpa_s: 10.,
+            base_hz: 100.,
+            speed_mps: 50.,
+            slant_m: 500.,
+            fit_rmse_hz: 0.,
+            contrast_db: 20.,
+            ridge: vec![],
+            activity_span_s: None,
+            alternatives: vec![],
+        }];
+        let tracks = vec![
+            track("first", &[(0., -2000., 0., 100.), (60., 3000., 0., 100.)]),
+            track(
+                "later",
+                &[(86400., 0., 0., 100.), (86460., 3000., 0., 100.)],
+            ),
+        ];
+        let bounds = Bounds {
+            south: TRUTH.lat - 1.,
+            north: TRUTH.lat + 1.,
+            west: TRUTH.lon - 1.,
+            east: TRUTH.lon + 1.,
+        };
+        (dir, job, events, tracks, bounds)
+    }
+
+    #[test]
+    fn tiled_budget_and_partitions_match_legacy_with_one_and_two_shared_workers() {
+        let (dir, mut job, events, tracks, bounds) = tiled_fixture();
+        let control = Control::default();
+        let legacy = Terrain::new(Some(dir.path().into()), TRUTH.alt);
+        let count = check_corridor_budget(
+            &job,
+            &events,
+            &tracks,
+            &[0],
+            bounds,
+            &legacy,
+            None,
+            &control,
+            &|_, _| {},
+            None,
+        )
+        .unwrap();
+        assert!(count > 100);
+        let shared = legacy.parallel_view(&control).unwrap().unwrap();
+        for workers in [1, 2] {
+            job.search_threads = Some(workers);
+            let pool = corridor_pool(&job, &shared).unwrap();
+            let actual = check_corridor_budget(
+                &job,
+                &events,
+                &tracks,
+                &[0],
+                bounds,
+                &shared,
+                pool.as_ref(),
+                &control,
+                &|_, _| {},
+                None,
+            )
+            .unwrap();
+            assert_eq!(actual, count);
+            assert_eq!(shared.missing, 0);
+        }
+        // The unsupported, never-sampled entry selects the legacy serial path.
+        let unsupported = dir.path().join("N00E000.hgt");
+        std::fs::create_dir(&unsupported).unwrap();
+        job.max_hypotheses = count / 2;
+        let expected = partition_proposals(
+            &job,
+            &events,
+            &tracks,
+            bounds,
+            &legacy,
+            &control,
+            &|_, _| {},
+        )
+        .unwrap();
+        std::fs::remove_dir(unsupported).unwrap();
+        let actual = partition_proposals(
+            &job,
+            &events,
+            &tracks,
+            bounds,
+            &legacy,
+            &control,
+            &|_, _| {},
+        )
+        .unwrap();
+        assert!(actual.complete && actual.batches.len() > 1);
+        assert_eq!(
+            serde_json::to_vec(&expected).unwrap(),
+            serde_json::to_vec(&actual).unwrap()
+        );
+        assert_eq!(legacy.missing, 0);
+    }
+
+    #[test]
+    fn tiled_search_rejects_progress_mutations_before_budget_recovery_or_success() {
+        for (over_budget, addition) in [(true, false), (false, true)] {
+            let (dir, mut job, events, tracks, bounds) = tiled_fixture();
+            if over_budget {
+                job.max_hypotheses = 1;
+            }
+            let changed = std::sync::atomic::AtomicBool::new(false);
+            let progress = |message: &str, _: f32| {
+                let stage = if over_budget {
+                    "Checking search budget:"
+                } else {
+                    "Search budget fits:"
+                };
+                if message.starts_with(stage) && !changed.swap(true, Ordering::Relaxed) {
+                    if addition {
+                        std::fs::write(dir.path().join("N35W111.hgt"), [0, 1]).unwrap();
+                    } else {
+                        use std::io::Write;
+                        std::fs::OpenOptions::new()
+                            .write(true)
+                            .open(dir.path().join("N35W110.hgt"))
+                            .unwrap()
+                            .write_all(&[0, 2])
+                            .unwrap();
+                    }
+                }
+            };
+            let terrain = Terrain::new(Some(dir.path().into()), TRUTH.alt);
+            let error = partition_proposals(
+                &job,
+                &events,
+                &tracks,
+                bounds,
+                &terrain,
+                &Control::default(),
+                &progress,
+            )
+            .unwrap_err();
+            assert!(changed.load(Ordering::Relaxed));
+            assert!(!error.is::<HypothesisBudgetExceeded>());
+            assert!(error.to_string().contains("Terrain"), "{error:#}");
+        }
+        let (dir, job, events, tracks, bounds) = tiled_fixture();
+        let control = Control::default();
+        let mut terrain = Terrain::new(Some(dir.path().into()), TRUTH.alt);
+        let error = corridor_seeds(
+            &job,
+            &events,
+            &tracks,
+            bounds,
+            &mut terrain,
+            &control,
+            &|message, _| {
+                if message.starts_with("Search budget fits:") {
+                    control.stop();
+                }
+            },
+            None,
+        )
+        .err()
+        .expect("cancelled search must fail");
+        assert!(!error.is::<HypothesisBudgetExceeded>());
+    }
+
+    #[test]
+    fn flight_time_partitions_preserve_every_proposal_at_boundaries_and_gaps() {
+        let flight = track(
+            "turn-and-gap",
+            &[
+                (0., 0., 0., 100.),
+                (3., 150., 0., 100.),
+                (7., 150., 200., 100.),
+                (202., 1000., 200., 100.),
+                (206., 1200., 200., 100.),
+                (210., 1400., 200., 100.),
+            ],
+        );
+        let whole = corridor_proposals(&flight);
+        let boundaries = [
+            EPOCH,
+            EPOCH + 4.,
+            EPOCH + 202.,
+            EPOCH + 206.,
+            (EPOCH + 210.).next_up(),
+        ];
+        let parts: Vec<_> = boundaries
+            .windows(2)
+            .flat_map(|b| {
+                corridor_proposals_in_window(
+                    &flight,
+                    Some(EmissionWindow {
+                        start: b[0],
+                        end: b[1],
+                    }),
+                )
+            })
+            .collect();
+        assert!(!whole.is_empty());
+        assert_eq!(whole.len(), parts.len());
+        for ((expected, expected_time), (actual, actual_time)) in whole.iter().zip(parts) {
+            assert_eq!(expected.lat.to_bits(), actual.lat.to_bits());
+            assert_eq!(expected.lon.to_bits(), actual.lon.to_bits());
+            assert_eq!(expected.alt.to_bits(), actual.alt.to_bits());
+            assert_eq!(expected_time.to_bits(), actual_time.to_bits());
+        }
+    }
+
+    #[test]
+    fn automatic_partition_plan_covers_all_proposals_with_bounded_batches() {
+        let tracks = vec![
+            track("first", &[(0., 0., 0., 100.), (60., 3000., 0., 100.)]),
+            track(
+                "later",
+                &[(86400., 0., 0., 100.), (86460., 3000., 0., 100.)],
+            ),
+        ];
+        let events = vec![Event {
+            start_s: 0.,
+            end_s: 20.,
+            cpa_s: 10.,
+            base_hz: 100.,
+            speed_mps: 50.,
+            slant_m: 500.,
+            fit_rmse_hz: 0.,
+            contrast_db: 20.,
+            ridge: vec![],
+            activity_span_s: None,
+            alternatives: vec![],
+        }];
+        let bounds = Bounds {
+            south: TRUTH.lat - 1.,
+            north: TRUTH.lat + 1.,
+            west: TRUTH.lon - 1.,
+            east: TRUTH.lon + 1.,
+        };
+        let mut job = Job {
+            grid_m: 200.,
+            max_hypotheses: 100000,
+            ..Default::default()
+        };
+        let terrain = Terrain::new(None, TRUTH.alt);
+        let control = Control::default();
+        let count = check_corridor_budget(
+            &job,
+            &events,
+            &tracks,
+            &[0],
+            bounds,
+            &terrain,
+            None,
+            &control,
+            &|_, _| {},
+            None,
+        )
+        .unwrap();
+        assert!(count > 200);
+        job.max_hypotheses = count / 2;
+        let before = serde_json::to_value(&job).unwrap();
+        let partition = partition_proposals(
+            &job,
+            &events,
+            &tracks,
+            bounds,
+            &terrain,
+            &control,
+            &|_, _| {},
+        )
+        .unwrap();
+        assert!(partition.complete && partition.batches.len() >= 2);
+        assert_eq!(
+            partition
+                .batches
+                .iter()
+                .map(|b| b.hypotheses)
+                .sum::<usize>(),
+            count
+        );
+        assert!(
+            partition
+                .batches
+                .iter()
+                .all(|b| b.hypotheses <= job.max_hypotheses)
+        );
+        assert_eq!(partition.batches[0].emission_from_unix, EPOCH);
+        assert_eq!(
+            partition.batches.last().unwrap().emission_to_unix,
+            (EPOCH + 86460.).next_up()
+        );
+        assert!(
+            partition
+                .batches
+                .windows(2)
+                .all(|b| b[0].emission_to_unix == b[1].emission_from_unix)
+        );
+        assert_eq!(serde_json::to_value(&job).unwrap(), before);
+        assert_eq!(terrain.missing, 0);
+        let cancelled = Control::default();
+        cancelled.stop();
+        let error = partition_proposals(
+            &job,
+            &events,
+            &tracks,
+            bounds,
+            &terrain,
+            &cancelled,
+            &|_, _| {},
+        )
+        .unwrap_err();
+        assert!(!error.is::<HypothesisBudgetExceeded>());
+    }
+
+    #[test]
+    fn corridor_spacing_is_independent_of_position_cadence() {
+        let sparse: Vec<_> = (0..=3)
+            .map(|i| (i as f64 * 6., i as f64 * 300., 0., 100.))
+            .collect();
+        let dense: Vec<_> = (0..=9)
+            .map(|i| (i as f64 * 2., i as f64 * 100., 0., 100.))
+            .collect();
+        let sparse = corridor_proposals(&track("sparse", &sparse));
+        let dense = corridor_proposals(&track("dense", &dense));
+        let expected = BTreeSet::from([(0, 0), (200, 0), (400, 0), (600, 0), (800, 0)]);
+        assert_eq!(corridor_centers(&sparse), expected);
+        assert_eq!(corridor_centers(&dense), expected);
+        assert_eq!(sparse.len(), dense.len());
+        for (a, b) in sparse.iter().zip(&dense) {
+            assert!(a.0.distance(b.0) < 1e-4);
+            assert!((a.1 - b.1).abs() < 1e-6);
+        }
+    }
+
+    #[test]
+    fn corridor_spacing_follows_turns_along_the_recorded_path() {
+        let proposals = corridor_proposals(&track(
+            "turn",
+            &[
+                (0., 0., 0., 100.),
+                (3., 150., 0., 100.),
+                (7., 150., 200., 100.),
+            ],
+        ));
+        assert_eq!(
+            corridor_centers(&proposals),
+            BTreeSet::from([(0, 0), (150, 50)])
+        );
+    }
+
+    #[test]
+    fn corridor_spacing_restarts_after_gaps_and_ineligible_motion() {
+        let proposals = corridor_proposals(&track(
+            "interrupted",
+            &[
+                (0., 0., 0., 100.),
+                (2., 100., 0., 100.),
+                (202., 1000., 0., 100.),
+                (204., 1100., 0., 100.),
+                (214., 1150., 0., 100.),
+                (216., 1250., 0., 100.),
+            ],
+        ));
+        assert_eq!(
+            corridor_centers(&proposals),
+            BTreeSet::from([(0, 0), (1000, 0), (1150, 0)])
+        );
     }
 
     #[test]

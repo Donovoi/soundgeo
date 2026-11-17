@@ -1,0 +1,622 @@
+{
+  "scope": "Retained candidates from the failed whole-activity control. This regression checks ranking only.",
+  "source_commit": "512c645cc56e42f893b374cc6eb1f9df7efaa367",
+  "baseline_sha256": "fba890e2da7b2c21cfd65c55b684bdd869cfd2789fbbb219686b1303d253b579",
+  "baseline": [
+    {
+      "latitude": 61.17903270405655,
+      "longitude": -149.97351485812968,
+      "ground_m": 35.07120042068732,
+      "recording_start_utc": "2026-11-01T21:29:59.598+00:00",
+      "recording_start_unix": 1793568599.5982764,
+      "recording_clock_rate": 0.9987695312499999,
+      "relative_error_percent": 0.8097829683341314,
+      "matches": [
+        {
+          "event_index": 2,
+          "event_variant": 1,
+          "aircraft": "a0e69b/9/0",
+          "rmse_hz": 0.8914309503611801,
+          "fitted_tone_hz": 180.97543707114195,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 3.3879264238393447,
+          "modeled_hz": []
+        },
+        {
+          "event_index": 7,
+          "event_variant": 1,
+          "aircraft": "a6ad7d/2/0",
+          "rmse_hz": 1.9253337301040245,
+          "fitted_tone_hz": 254.00166754530306,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 3.4477300515317166,
+          "modeled_hz": []
+        },
+        {
+          "event_index": 8,
+          "event_variant": 3,
+          "aircraft": "a682b3/0/0",
+          "rmse_hz": 1.5767317871452609,
+          "fitted_tone_hz": 161.75959035350567,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 2.4677838107614036,
+          "modeled_hz": []
+        },
+        {
+          "event_index": 9,
+          "event_variant": 1,
+          "aircraft": "aa9447/0/0",
+          "rmse_hz": 1.1446840193519656,
+          "fitted_tone_hz": 95.64259041271994,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 2.7109817178548887,
+          "modeled_hz": []
+        },
+        {
+          "event_index": 15,
+          "event_variant": 3,
+          "aircraft": "a04088/0/0",
+          "rmse_hz": 0.4019649210716454,
+          "fitted_tone_hz": 142.99049073167998,
+          "coverage": 1.0,
+          "linear_baseline_rmse_hz": 0.6200794268200176,
+          "modeled_hz": []
+        }
+      ],
+      "silence_conflicts": []
+    }
+  ],
+  "control_sha256": "1cbbdc6597eb88b92bd7f1ee946a559f47ec8ccb8c7cb6896a7e833e8a240764",
+  "control": [
+    {
+      "ground_m": 35.64019064316097,
+      "latitude": 61.21270644221272,
+      "longitude": -149.82831162901465,
+      "matches": [
+        {
+          "aircraft": "a1cad2/2/0",
+          "coverage": 1.0,
+          "event_index": 0,
+          "event_variant": 0,
+          "fitted_tone_hz": 121.22878608415458,
+          "linear_baseline_rmse_hz": 0.5367677992768279,
+          "modeled_hz": [],
+          "rmse_hz": 0.26831032389815007
+        },
+        {
+          "aircraft": "a682b3/0/0",
+          "coverage": 0.9193548387096774,
+          "event_index": 3,
+          "event_variant": 2,
+          "fitted_tone_hz": 183.18028308535798,
+          "linear_baseline_rmse_hz": 1.8974346764442942,
+          "modeled_hz": [],
+          "rmse_hz": 1.192351938541831
+        },
+        {
+          "aircraft": "aa9447/0/0",
+          "coverage": 1.0,
+          "event_index": 5,
+          "event_variant": 3,
+          "fitted_tone_hz": 145.43888574533926,
+          "linear_baseline_rmse_hz": 0.6200794268200758,
+          "modeled_hz": [],
+          "rmse_hz": 0.41457503022741843
+        },
+        {
+          "aircraft": "a1cad2/4/0",
+          "coverage": 1.0,
+          "event_index": 8,
+          "event_variant": 0,
+          "fitted_tone_hz": 240.42735512173704,
+          "linear_baseline_rmse_hz": 1.2179550538889945,
+          "modeled_hz": [],
+          "rmse_hz": 0.8539655753228254
+        },
+        {
+          "aircraft": "adb96d/14/0",
+          "coverage": 1.0,
+          "event_index": 13,
+          "event_variant": 1,
+          "fitted_tone_hz": 253.08431207633438,
+          "linear_baseline_rmse_hz": 3.447730051531711,
+          "modeled_hz": [],
+          "rmse_hz": 2.415019574399373
+        }
+      ],
+      "recording_clock_rate": 0.9967968749999999,
+      "recording_start_unix": 1793570103.3891544,
+      "recording_start_utc": "2026-11-01T21:55:03.389+00:00",
+      "relative_error_percent": 0.5651828369915601,
+      "silence_conflicts": []
+    },
+    {
+      "ground_m": 34.37275885566602,
+      "latitude": 61.19715542168979,
+      "longitude": -150.15799798251467,
+      "matches": [
+        {
+          "aircraft": "a12750/0/0",
+          "coverage": 1.0,
+          "event_index": 0,
+          "event_variant": 1,
+          "fitted_tone_hz": 157.46168385307118,
+          "linear_baseline_rmse_hz": 3.3879264238393825,
+          "modeled_hz": [],
+          "rmse_hz": 1.4605256409931455
+        },
+        {
+          "aircraft": "a0b75b/1/0",
+          "coverage": 1.0,
+          "event_index": 4,
+          "event_variant": 1,
+          "fitted_tone_hz": 331.2951727670163,
+          "linear_baseline_rmse_hz": 4.496529741033189,
+          "modeled_hz": [],
+          "rmse_hz": 2.296443141551545
+        },
+        {
+          "aircraft": "780a29/0/0",
+          "coverage": 1.0,
+          "event_index": 5,
+          "event_variant": 3,
+          "fitted_tone_hz": 147.2809678338884,
+          "linear_baseline_rmse_hz": 0.6200794268200758,
+          "modeled_hz": [],
+          "rmse_hz": 0.43643407017864316
+        },
+        {
+          "aircraft": "a526e6/0/0",
+          "coverage": 1.0,
+          "event_index": 8,
+          "event_variant": 0,
+          "fitted_tone_hz": 267.18838280289333,
+          "linear_baseline_rmse_hz": 1.2179550538889945,
+          "modeled_hz": [],
+          "rmse_hz": 0.8403883381480466
+        },
+        {
+          "aircraft": "a7fbb3/0/0",
+          "coverage": 1.0,
+          "event_index": 14,
+          "event_variant": 0,
+          "fitted_tone_hz": 308.30643414196624,
+          "linear_baseline_rmse_hz": 3.6323359257776113,
+          "modeled_hz": [],
+          "rmse_hz": 2.5016203870833214
+        }
+      ],
+      "recording_clock_rate": 0.9998828125,
+      "recording_start_unix": 1793501734.4632945,
+      "recording_start_utc": "2026-11-01T02:55:34.463+00:00",
+      "relative_error_percent": 0.661202585403355,
+      "silence_conflicts": []
+    },
+    {
+      "ground_m": 35.026454431767014,
+      "latitude": 61.18084806533606,
+      "longitude": -149.98366244110187,
+      "matches": [
+        {
+          "aircraft": "a880b0/1/0",
+          "coverage": 1.0,
+          "event_index": 3,
+          "event_variant": 1,
+          "fitted_tone_hz": 219.04676580980222,
+          "linear_baseline_rmse_hz": 2.0363699235133566,
+          "modeled_hz": [],
+          "rmse_hz": 1.3579249734501966
+        },
+        {
+          "aircraft": "a17aae/2/0",
+          "coverage": 1.0,
+          "event_index": 8,
+          "event_variant": 0,
+          "fitted_tone_hz": 238.05888442445155,
+          "linear_baseline_rmse_hz": 1.2179550538889945,
+          "modeled_hz": [],
+          "rmse_hz": 0.7515166868131449
+        },
+        {
+          "aircraft": "a6ad7d/2/0",
+          "coverage": 1.0,
+          "event_index": 13,
+          "event_variant": 1,
+          "fitted_tone_hz": 251.96086613546126,
+          "linear_baseline_rmse_hz": 3.447730051531711,
+          "modeled_hz": [],
+          "rmse_hz": 2.04421212443906
+        },
+        {
+          "aircraft": "a682b3/0/0",
+          "coverage": 1.0,
+          "event_index": 14,
+          "event_variant": 3,
+          "fitted_tone_hz": 160.51662984393965,
+          "linear_baseline_rmse_hz": 2.4677838107613232,
+          "modeled_hz": [],
+          "rmse_hz": 1.695925726674325
+        },
+        {
+          "aircraft": "aa9447/0/0",
+          "coverage": 1.0,
+          "event_index": 15,
+          "event_variant": 1,
+          "fitted_tone_hz": 98.5453095728177,
+          "linear_baseline_rmse_hz": 2.7109817178548754,
+          "modeled_hz": [],
+          "rmse_hz": 1.2751428527960318
+        }
+      ],
+      "recording_clock_rate": 0.99830078125,
+      "recording_start_unix": 1793567503.8221254,
+      "recording_start_utc": "2026-11-01T21:11:43.822+00:00",
+      "relative_error_percent": 0.8868861575523915,
+      "silence_conflicts": []
+    },
+    {
+      "ground_m": 35.01022661319706,
+      "latitude": 61.310234296155166,
+      "longitude": -150.02572621074577,
+      "matches": [
+        {
+          "aircraft": "a88950/0/0",
+          "coverage": 1.0,
+          "event_index": 0,
+          "event_variant": 0,
+          "fitted_tone_hz": 123.56879348573054,
+          "linear_baseline_rmse_hz": 0.5367677992768279,
+          "modeled_hz": [],
+          "rmse_hz": 0.2785816038827011
+        },
+        {
+          "aircraft": "a23295/0/0",
+          "coverage": 1.0,
+          "event_index": 2,
+          "event_variant": 0,
+          "fitted_tone_hz": 177.16186129056663,
+          "linear_baseline_rmse_hz": 8.060296522422819,
+          "modeled_hz": [],
+          "rmse_hz": 0.835409474561614
+        },
+        {
+          "aircraft": "~26ce8d/0/0",
+          "coverage": 1.0,
+          "event_index": 8,
+          "event_variant": 0,
+          "fitted_tone_hz": 263.39830938342664,
+          "linear_baseline_rmse_hz": 1.2179550538889945,
+          "modeled_hz": [],
+          "rmse_hz": 0.852526816038183
+        },
+        {
+          "aircraft": "a68ff0/4/0",
+          "coverage": 1.0,
+          "event_index": 14,
+          "event_variant": 0,
+          "fitted_tone_hz": 331.8637411725821,
+          "linear_baseline_rmse_hz": 3.6323359257776113,
+          "modeled_hz": [],
+          "rmse_hz": 2.5302496377459462
+        }
+      ],
+      "recording_clock_rate": 0.9958203125,
+      "recording_start_unix": 1793574021.7438364,
+      "recording_start_utc": "2026-11-01T23:00:21.744+00:00",
+      "relative_error_percent": 0.4897077768850075,
+      "silence_conflicts": []
+    },
+    {
+      "ground_m": 34.84241288355786,
+      "latitude": 61.1188169635503,
+      "longitude": -150.04821853205587,
+      "matches": [
+        {
+          "aircraft": "ac34a0/0/0",
+          "coverage": 1.0,
+          "event_index": 0,
+          "event_variant": 0,
+          "fitted_tone_hz": 150.2977382269627,
+          "linear_baseline_rmse_hz": 0.5367677992768279,
+          "modeled_hz": [],
+          "rmse_hz": 0.3324605433713513
+        },
+        {
+          "aircraft": "a84e68/0/0",
+          "coverage": 1.0,
+          "event_index": 4,
+          "event_variant": 1,
+          "fitted_tone_hz": 335.5204365843473,
+          "linear_baseline_rmse_hz": 4.496529741033189,
+          "modeled_hz": [],
+          "rmse_hz": 3.14773793282651
+        },
+        {
+          "aircraft": "a81f7b/0/0",
+          "coverage": 1.0,
+          "event_index": 5,
+          "event_variant": 3,
+          "fitted_tone_hz": 135.9532689676502,
+          "linear_baseline_rmse_hz": 0.6200794268200758,
+          "modeled_hz": [],
+          "rmse_hz": 0.43066735691943975
+        },
+        {
+          "aircraft": "a8d652/4/0",
+          "coverage": 1.0,
+          "event_index": 8,
+          "event_variant": 0,
+          "fitted_tone_hz": 271.7018820981856,
+          "linear_baseline_rmse_hz": 1.2179550538889945,
+          "modeled_hz": [],
+          "rmse_hz": 0.6631911556834039
+        }
+      ],
+      "recording_clock_rate": 0.9962109375,
+      "recording_start_unix": 1793503810.1794095,
+      "recording_start_utc": "2026-11-01T03:30:10.179+00:00",
+      "relative_error_percent": 0.5217784381466118,
+      "silence_conflicts": []
+    },
+    {
+      "ground_m": 34.33771004875956,
+      "latitude": 61.19982620721216,
+      "longitude": -150.16731357901784,
+      "matches": [
+        {
+          "aircraft": "a12750/0/0",
+          "coverage": 1.0,
+          "event_index": 0,
+          "event_variant": 1,
+          "fitted_tone_hz": 158.1138559888998,
+          "linear_baseline_rmse_hz": 3.3879264238393825,
+          "modeled_hz": [],
+          "rmse_hz": 1.1914810901148274
+        },
+        {
+          "aircraft": "a0b75b/1/0",
+          "coverage": 1.0,
+          "event_index": 4,
+          "event_variant": 1,
+          "fitted_tone_hz": 334.3632387272924,
+          "linear_baseline_rmse_hz": 4.496529741033189,
+          "modeled_hz": [],
+          "rmse_hz": 2.08817085467215
+        },
+        {
+          "aircraft": "780a29/0/0",
+          "coverage": 1.0,
+          "event_index": 5,
+          "event_variant": 3,
+          "fitted_tone_hz": 146.67404502814938,
+          "linear_baseline_rmse_hz": 0.6200794268200758,
+          "modeled_hz": [],
+          "rmse_hz": 0.41805708033514216
+        },
+        {
+          "aircraft": "a526e6/0/0",
+          "coverage": 1.0,
+          "event_index": 8,
+          "event_variant": 0,
+          "fitted_tone_hz": 265.4632346330064,
+          "linear_baseline_rmse_hz": 1.2179550538889945,
+          "modeled_hz": [],
+          "rmse_hz": 0.722073917593235
+        }
+      ],
+      "recording_clock_rate": 1.0003515624999997,
+      "recording_start_unix": 1793501728.8418608,
+      "recording_start_utc": "2026-11-01T02:55:28.842+00:00",
+      "relative_error_percent": 0.5275187766199377,
+      "silence_conflicts": []
+    },
+    {
+      "ground_m": 34.536990087506915,
+      "latitude": 61.185831277257606,
+      "longitude": -150.11464436553842,
+      "matches": [
+        {
+          "aircraft": "a6ad7d/2/0",
+          "coverage": 1.0,
+          "event_index": 0,
+          "event_variant": 0,
+          "fitted_tone_hz": 111.52124907277272,
+          "linear_baseline_rmse_hz": 0.5367677992768279,
+          "modeled_hz": [],
+          "rmse_hz": 0.3682738603988043
+        },
+        {
+          "aircraft": "a8d652/13/0",
+          "coverage": 1.0,
+          "event_index": 4,
+          "event_variant": 0,
+          "fitted_tone_hz": 151.27460077346032,
+          "linear_baseline_rmse_hz": 2.244233793535276,
+          "modeled_hz": [],
+          "rmse_hz": 1.5850825544727745
+        },
+        {
+          "aircraft": "a4d040/1/0",
+          "coverage": 1.0,
+          "event_index": 5,
+          "event_variant": 3,
+          "fitted_tone_hz": 147.32064184865075,
+          "linear_baseline_rmse_hz": 0.6200794268200758,
+          "modeled_hz": [],
+          "rmse_hz": 0.4223474173287581
+        },
+        {
+          "aircraft": "a9f67d/0/0",
+          "coverage": 1.0,
+          "event_index": 14,
+          "event_variant": 2,
+          "fitted_tone_hz": 272.8632603991505,
+          "linear_baseline_rmse_hz": 2.1216246362799365,
+          "modeled_hz": [],
+          "rmse_hz": 1.2073394430465971
+        }
+      ],
+      "recording_clock_rate": 0.9993750000000001,
+      "recording_start_unix": 1793570546.8574169,
+      "recording_start_utc": "2026-11-01T22:02:26.857+00:00",
+      "relative_error_percent": 0.6092909355383571,
+      "silence_conflicts": []
+    },
+    {
+      "ground_m": 34.65189813548074,
+      "latitude": 61.21536858399927,
+      "longitude": -150.0756956378948,
+      "matches": [
+        {
+          "aircraft": "780232/0/0",
+          "coverage": 1.0,
+          "event_index": 0,
+          "event_variant": 2,
+          "fitted_tone_hz": 224.49982234734316,
+          "linear_baseline_rmse_hz": 2.053903098889482,
+          "modeled_hz": [],
+          "rmse_hz": 1.435932948965407
+        },
+        {
+          "aircraft": "780aa8/0/0",
+          "coverage": 1.0,
+          "event_index": 4,
+          "event_variant": 1,
+          "fitted_tone_hz": 318.0271787498127,
+          "linear_baseline_rmse_hz": 4.496529741033189,
+          "modeled_hz": [],
+          "rmse_hz": 2.7947211666932774
+        },
+        {
+          "aircraft": "a8320e/1/0",
+          "coverage": 1.0,
+          "event_index": 8,
+          "event_variant": 0,
+          "fitted_tone_hz": 307.8077480044988,
+          "linear_baseline_rmse_hz": 1.2179550538889945,
+          "modeled_hz": [],
+          "rmse_hz": 0.8484072712356717
+        },
+        {
+          "aircraft": "a9fa34/0/0",
+          "coverage": 1.0,
+          "event_index": 14,
+          "event_variant": 2,
+          "fitted_tone_hz": 248.21936696325108,
+          "linear_baseline_rmse_hz": 2.1216246362799365,
+          "modeled_hz": [],
+          "rmse_hz": 1.2565081783932317
+        }
+      ],
+      "recording_clock_rate": 1.005,
+      "recording_start_unix": 1793518257.3069117,
+      "recording_start_utc": "2026-11-01T07:30:57.307+00:00",
+      "relative_error_percent": 0.615133789662712,
+      "silence_conflicts": []
+    },
+    {
+      "ground_m": 35.03870405510102,
+      "latitude": 61.2630512182586,
+      "longitude": -149.97306504851196,
+      "matches": [
+        {
+          "aircraft": "a23295/0/0",
+          "coverage": 1.0,
+          "event_index": 0,
+          "event_variant": 0,
+          "fitted_tone_hz": 121.32787136950071,
+          "linear_baseline_rmse_hz": 0.5367677992768279,
+          "modeled_hz": [],
+          "rmse_hz": 0.3299638088430871
+        },
+        {
+          "aircraft": "a55c09/0/0",
+          "coverage": 1.0,
+          "event_index": 5,
+          "event_variant": 2,
+          "fitted_tone_hz": 110.79870086409271,
+          "linear_baseline_rmse_hz": 3.0767993409002865,
+          "modeled_hz": [],
+          "rmse_hz": 1.2074763023340669
+        },
+        {
+          "aircraft": "a62d90/16/0",
+          "coverage": 1.0,
+          "event_index": 7,
+          "event_variant": 1,
+          "fitted_tone_hz": 137.30396970114188,
+          "linear_baseline_rmse_hz": 1.5710853156432256,
+          "modeled_hz": [],
+          "rmse_hz": 1.1064166431878752
+        },
+        {
+          "aircraft": "a2de28/5/0",
+          "coverage": 1.0,
+          "event_index": 8,
+          "event_variant": 0,
+          "fitted_tone_hz": 270.89409671173536,
+          "linear_baseline_rmse_hz": 1.2179550538889945,
+          "modeled_hz": [],
+          "rmse_hz": 0.8152251443401123
+        }
+      ],
+      "recording_clock_rate": 1.005,
+      "recording_start_unix": 1793574148.9869785,
+      "recording_start_utc": "2026-11-01T23:02:28.987+00:00",
+      "relative_error_percent": 0.7073742969376928,
+      "silence_conflicts": []
+    },
+    {
+      "ground_m": 34.87441227552032,
+      "latitude": 61.291546033140804,
+      "longitude": -150.0461337343226,
+      "matches": [
+        {
+          "aircraft": "a8633f/0/0",
+          "coverage": 1.0,
+          "event_index": 0,
+          "event_variant": 0,
+          "fitted_tone_hz": 123.60544748773121,
+          "linear_baseline_rmse_hz": 0.5367677992768279,
+          "modeled_hz": [],
+          "rmse_hz": 0.327387602341705
+        },
+        {
+          "aircraft": "~574fe9/1/0",
+          "coverage": 1.0,
+          "event_index": 5,
+          "event_variant": 3,
+          "fitted_tone_hz": 143.89319989661385,
+          "linear_baseline_rmse_hz": 0.6200794268200758,
+          "modeled_hz": [],
+          "rmse_hz": 0.4363382741240296
+        },
+        {
+          "aircraft": "a23295/0/0",
+          "coverage": 1.0,
+          "event_index": 14,
+          "event_variant": 2,
+          "fitted_tone_hz": 250.3664936856353,
+          "linear_baseline_rmse_hz": 2.1216246362799365,
+          "modeled_hz": [],
+          "rmse_hz": 1.2724007303941658
+        },
+        {
+          "aircraft": "a6a25c/6/0",
+          "coverage": 1.0,
+          "event_index": 15,
+          "event_variant": 0,
+          "fitted_tone_hz": 218.95750672205264,
+          "linear_baseline_rmse_hz": 5.48475994675943,
+          "modeled_hz": [],
+          "rmse_hz": 2.9949284351589553
+        }
+      ],
+      "recording_clock_rate": 1.0012109375,
+      "recording_start_unix": 1793571029.5239046,
+      "recording_start_utc": "2026-11-01T22:10:29.524+00:00",
+      "relative_error_percent": 0.7568521433195086,
+      "silence_conflicts": []
+    }
+  ]
+}

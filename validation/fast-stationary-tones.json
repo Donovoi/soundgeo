@@ -1,0 +1,263 @@
+{
+  "schema": 1,
+  "source_commit": "82fc48cbcc00e1207086f6277b26a4b3f246e37e",
+  "scope": "Fast-band detection with persistent tones. Offline detector replays and separate known-camera diagnostics. Full location replays remain pending.",
+  "location_acceptance": false,
+  "regression": {
+    "scope": "Focused regression test of fast-band stationary tones; complete project qualification remains separate.",
+    "baseline_application_commit": "709d38f61199b687e61ecbda013774c686623992",
+    "fixed_commit": "82fc48cbcc00e1207086f6277b26a4b3f246e37e",
+    "before": {
+      "exit_code": 101,
+      "regression_failed": true,
+      "first_true_received_cpa_s": 22.38191486236376,
+      "detected_cpas_s": [
+        12.095546034063467
+      ],
+      "log_sha256": "824b8c9a88b49eab7170ec16c908b0a0d8c36c1da63b8912260f6e88470c7af5"
+    },
+    "after": {
+      "exit_code": 0,
+      "rust_tests_passed": 7,
+      "failed": 0,
+      "ignored": 0,
+      "log_sha256": "05f5d4e907887265a50e541d8d344b55568bc629274b195cc931f06a21485022"
+    },
+    "regression_test": "fast_flyovers_survive_several_louder_stationary_tones",
+    "synthesis": "Independent emission-time bisection for two flyovers, plus five stronger fixed-frequency tones.",
+    "location_acceptance": false
+  },
+  "qualification": {
+    "rust_tests_passed": 215,
+    "python_tests_passed": 10,
+    "failed": 0,
+    "ignored": 0,
+    "checks_sha256": "f6b244d606ec10bf082ce312ea52a10d8ad02b6c96153a58a186abd0c37cff4a",
+    "steps": [
+      {
+        "name": "fmt",
+        "command": [
+          "cargo",
+          "fmt",
+          "--all",
+          "--",
+          "--check"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1.2822465999925043,
+        "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "name": "clippy",
+        "command": [
+          "cargo",
+          "clippy",
+          "--release",
+          "--all-targets",
+          "--locked",
+          "--",
+          "-D",
+          "warnings"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 17.109009000007063,
+        "log_sha256": "59dcfac2b7db889a627072b4f908cbb4cd9d1a4c95722414438286a5613733f8"
+      },
+      {
+        "name": "tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--all-targets"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1092.1148316999897,
+        "log_sha256": "856c8db5227d8a109bfbcf705065cddcf8c253b23f33c9aa494f0cff63930e7e"
+      },
+      {
+        "name": "doc-tests",
+        "command": [
+          "cargo",
+          "test",
+          "--release",
+          "--locked",
+          "--doc"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 2.82589549999102,
+        "log_sha256": "1ebe36dd7c4ff0264925b03063d5780d42c0432e0f1f57a2f3f19777122da05f"
+      },
+      {
+        "name": "build",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--bins"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 1.2039311999978963,
+        "log_sha256": "c61e908e180e4817b58c5e733e354dfc65bc810b6424a52682146d86bbd2047b"
+      },
+      {
+        "name": "python",
+        "command": [
+          "python",
+          "-m",
+          "unittest",
+          "discover",
+          "-s",
+          "validation",
+          "-p",
+          "test_run_timing.py"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 0.3874270000087563,
+        "log_sha256": "d6cb6726aebb71c7c0c9fed2e1c89db9bd49898c0d9be2dc4df1ecea558256fd"
+      },
+      {
+        "name": "control-example",
+        "command": [
+          "cargo",
+          "build",
+          "--release",
+          "--locked",
+          "--example",
+          "doppler_controls",
+          "--example",
+          "export_reference",
+          "--example",
+          "inspect_audio"
+        ],
+        "exit_code": 0,
+        "elapsed_s": 91.12204360001488,
+        "log_sha256": "971ff40a8e153764583817f5af5183be30231c4baf6211de20390b297d27ec19"
+      }
+    ],
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42785607130",
+    "ci_conclusion": "success",
+    "ci_verification_sha256": "4e614cc047d6f87a6ce96390b61f269a111551dce616fb66c3b472554d38349d",
+    "platforms": [
+      "Windows",
+      "Ubuntu"
+    ],
+    "local_executables": {
+      "cli_sha256": "f5a80d173751145dd2e452b118d7cd082371894a7616afb702ef93ddcbb1af9b",
+      "desktop_sha256": "596af21afd6fd4e05002ffad1cfeca9037ef18809ab48e57f48bcd13096567b2",
+      "inspect_audio_sha256": "817cfb9e8a6b3f27d27ba58673ff47539aae210c7abfc2b3820836441d7b2708"
+    },
+    "downloaded_windows_ci_executables": {
+      "cli_sha256": "fad31b08fe532326f878831a6bbd1ab05469cae4b6a712017164d8f2093b33c9",
+      "desktop_sha256": "4dc3f21cb15f03be3bbd38b21d868bf63e3c952bbeaee74c5d12026804650a0a"
+    },
+    "ci_archive_digest_matches_provider": true,
+    "ci_source_tree_matches_revision": true
+  },
+  "offline_detector_replays": {
+    "cases": [
+      {
+        "id": "lake-hood-nov1",
+        "media_sha256": "40d0df5c6eb53b9c573d945ab5790b12bc893d5d52bdcd3878dacad234524414",
+        "previous_selected_observations": 24,
+        "selected_observations": 18,
+        "all_grouped_observations": 18,
+        "all_variants": 39,
+        "previous_matched_ridges_preserved_exactly": 5,
+        "all_observations_sha256": "63687dd50316ec97de46085d7cb6e47061e66c8ef5eaaf8581913485aa5b4691",
+        "selected_observations_sha256": "019845d117691e0d01af737de113c089577bc65a29a6ea230458905a6c09e416",
+        "known_camera_diagnostic": {
+          "full_coverage_fits": 876,
+          "events_with_passing_fit": 5,
+          "passing_individual_fits": 10,
+          "passing_aircraft": 3,
+          "factor_bisection_checks": 1000,
+          "maximum_factor_difference": 6.661338147750939e-16,
+          "fits_sha256": "ab63a8f092f05186778f32515cc4fb37279d6bdf4bb1f6b34cffacfe2e4697f3"
+        },
+        "location_acceptance": false
+      },
+      {
+        "id": "lake-hood-nov1-later",
+        "media_sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff",
+        "previous_selected_observations": 16,
+        "selected_observations": 14,
+        "all_grouped_observations": 14,
+        "all_variants": 34,
+        "previous_matched_ridges_preserved_exactly": 5,
+        "all_observations_sha256": "22e971c552e2718546c0ba32ec17b0005edff08a16acd7dc56511b01445ce5ab",
+        "selected_observations_sha256": "42ba3aeb903ce7f29a56bbbdc40524a8ed04784a37531a903ec13e8277b08158",
+        "known_camera_diagnostic": {
+          "full_coverage_fits": 812,
+          "events_with_passing_fit": 4,
+          "passing_individual_fits": 6,
+          "passing_aircraft": 4,
+          "factor_bisection_checks": 1000,
+          "maximum_factor_difference": 4.440892098500626e-16,
+          "fits_sha256": "865108a38e396532b48e52e9356d5a7e87010d402563cf684d8106ab1eb74949"
+        },
+        "location_acceptance": false
+      },
+      {
+        "id": "lake-hood-nov9-public-hour",
+        "media_sha256": "90cb2edebafb324422e8b99373f2b8a0fd1cd66381ce342d4bcfecb27807ef90",
+        "previous_selected_observations": 24,
+        "selected_observations": 10,
+        "all_grouped_observations": 10,
+        "all_variants": 15,
+        "previous_matched_ridges_preserved_exactly": 0,
+        "all_observations_sha256": "177b52740563dba80570947192dd5b76a4de98b6467f0ec5f2d7571e83d5e0fc",
+        "selected_observations_sha256": "7a764411838bd470416a07a09fd1d651005b67d084a9711d2890f21eff6f8c94",
+        "known_camera_diagnostic": {
+          "full_coverage_fits": 261,
+          "events_with_passing_fit": 0,
+          "passing_individual_fits": 0,
+          "passing_aircraft": 0,
+          "factor_bisection_checks": 1000,
+          "maximum_factor_difference": 4.440892098500626e-16,
+          "fits_sha256": "4532dcffad7ec4a317a766e63547376e2c2c741c52fe552bf57e8d16e1ed4f44"
+        },
+        "location_acceptance": false
+      }
+    ],
+    "native_exports": 6,
+    "native_exits_all_zero": true,
+    "recording_dates_or_times_supplied": false,
+    "camera_position_supplied": false,
+    "video_clues_used": false,
+    "proxy_connections": 0,
+    "input_and_binary_hashes_unchanged": true,
+    "result_sha256": "65719e580e1f6ac8f24a3ea0737cd1ce45364c55956ee9259e1c335fe77a99f6",
+    "independent_verification_sha256": "c9de25e80b88e190535d4eaa8eaa15726b5706bd82f8ee9abcbb1aaf235420d0"
+  },
+  "fresh_hour_temperature_diagnostic": {
+    "scope": "Known-camera and known-clock diagnostic. Uniform modeled temperatures; audio observations stay fixed. No detector rerun or wind model.",
+    "temperatures_c": [
+      -30,
+      -25,
+      -20,
+      -15,
+      -10,
+      -5,
+      0,
+      5,
+      10,
+      15,
+      20,
+      25,
+      30,
+      35
+    ],
+    "full_coverage_fits": 3679,
+    "passing_fits": 0,
+    "factor_bisection_checks": 14000,
+    "maximum_factor_difference": 4.440892098500626e-16,
+    "default_temperature_fits_exactly_reproduced": true,
+    "result_sha256": "22f3ac0d4e39c5d544610fe166b0f75202890c5171f410e271fe56b508766e30",
+    "plan_sha256": "b5e102939c0662dbf5f3e6e1a2bcd597c21b1d332bec12a41a2f139b945c3e3f",
+    "location_acceptance": false
+  },
+  "limits": "A smaller detection count does not identify each removed sound. The first two replays preserve five previously matched ridges each. The fresh hour still has zero passing individual fits at the known point and clock. These diagnostics establish no new location result."
+}

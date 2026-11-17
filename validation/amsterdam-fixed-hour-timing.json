@@ -1,0 +1,1372 @@
+{
+  "schema": 1,
+  "case_id": "amsterdam-polderbaan-prospective-fixed-hour-v1",
+  "created_utc": "2026-11-11T01:48:16.431855+00:00",
+  "root_scientific_review_pending": false,
+  "classification": "conditional_within_1km_by_frozen_region_center_rule; independent_audit_passed_with_preserved_lifecycle_correction; awaiting_root_review_before_counting_new_site",
+  "source": {
+    "url": "https://www.youtube.com/watch?v=fBb1dzRteNo",
+    "publisher": "Tip of the Wing",
+    "title": "LIVE; Amsterdam Schiphol Airport #110 - 4/11/2026 (ENG/NL)",
+    "fixed_source_interval_seconds": [
+      1200,
+      4800
+    ],
+    "interval_selected_before_audio_detector_or_flight_count_inspection": true,
+    "interval_changed": false,
+    "capture_retries": 0,
+    "media": {
+      "path": "artifacts/prospective-airport-source-v1/capture-v1/video.mkv",
+      "bytes": 121347721,
+      "sha256": "57e48287a5d9eef031fe400799add635b72151fa00cc9c5880b20f420c737808"
+    },
+    "original_audio_stream_copied_without_reencoding": true,
+    "formats": "134 video +140 AAC audio",
+    "container_duration_s": 3603.034,
+    "first_video_pts_s": 0.0,
+    "first_audio_pts_s": 2.95,
+    "decoded_audio_duration_s": 3600.02175,
+    "solver_timebase": "decoded audio samples begin at0; container preroll and overlay clocks were not supplied",
+    "source_date_and_overlay_clocks_evaluator_only": true,
+    "camera_motion": "Pan/zoom and two local viewpoints; documented tripod repositioning and chair/glove changes. This is not a perfectly stationary controlled source.",
+    "source_continuity_evidence": "Full AVdecode and timestamp audit; nine prospectively bounded sampled frames across the fixed hour; no sampled distant relocation, not continuous physical microphone tracking."
+  },
+  "product": {
+    "commit": "4f8764c557339bc02da8b6464b3c6bfce1564d80",
+    "cli": {
+      "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/frozen-cli/soundgeo-cli",
+      "bytes": 29865496,
+      "sha256": "be3be6e40b04d14a0bd8bd1d0bf8cf9edfc625b2a75e9d46751105e5a5784cf9"
+    },
+    "build_qualification": "Dirty qualified snapshot bound to66compiledfiles at4f8764c;221Rust and10Python checks passed. This is not claimed to be a cleancommitbuild.",
+    "decoder": {
+      "path": "/usr/bin/ffmpeg",
+      "bytes": 342488,
+      "sha256": "ed16af623947494a72e284b6eb8ff225f2da22b38b5d5069c2fd4b4ba3384e41"
+    },
+    "analysis_method": "passage_timing",
+    "prospective_method_selection": true,
+    "centroid_or_new_detector_used": false
+  },
+  "supplied_application_job": {
+    "analysis_method": "passage_timing",
+    "media": "artifacts/prospective-airport-source-v1/capture-v1/video.mkv",
+    "offline": true,
+    "tracks": "",
+    "archive": {
+      "date_from": "",
+      "date_to": null,
+      "cache": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache",
+      "provider": "adsb_lol"
+    },
+    "terrain": "artifacts/prospective-airport-source-v1/input-preparation-v1/inputs/terrain",
+    "download_terrain": false,
+    "start_utc": null,
+    "bounds": {
+      "south": 52.1,
+      "north": 52.6,
+      "west": 4.3,
+      "east": 5.2
+    },
+    "ffmpeg": "/usr/bin/ffmpeg",
+    "search_mode": "flight_corridors",
+    "search_threads": 2,
+    "max_hypotheses": 20000000
+  },
+  "no_truth_supplied": {
+    "start_utc": null,
+    "archive_date_from": "",
+    "archive_date_to": null,
+    "known_point": false,
+    "known_rooftop_or_microphone_height": false,
+    "overlay_or_caption_date_time": false,
+    "terrain_policy": "ordinary product default terrain/height; generic two whole-region HGTtiles",
+    "clock_rate_policy": "unchanged production fixed media-clock-rate model"
+  },
+  "evaluator": {
+    "independent_ground_truth_is_conditional": true,
+    "reference_point": {
+      "latitude": 52.34235107142857,
+      "longitude": 4.706645
+    },
+    "union_envelope_vertices": [
+      {
+        "latitude": 52.3437,
+        "longitude": 4.70563
+      },
+      {
+        "latitude": 52.3437,
+        "longitude": 4.70766
+      },
+      {
+        "latitude": 52.34100214285714,
+        "longitude": 4.70766
+      },
+      {
+        "latitude": 52.34100214285714,
+        "longitude": 4.70563
+      }
+    ],
+    "furthest_vertex_distance_m": 165.08450438859094,
+    "unsurveyed_mapping_setup_margin_m": 50,
+    "approved_rounded_total_allowance_m": 220,
+    "approval_status": "conditional_for_future_validation_only",
+    "scoring_rule": "geodesic distance(returned timing.region center,referencepoint)+220m<=1000m, together with every native/full-date/control gate",
+    "microphone_assumptions": [
+      "Ambient microphone and worn headset are co-located with the independently mapped Polderbaan spectator/setup union, plus the explicitly assumed margin.",
+      "Both camera setups and any physical headset/microphone movement stay within the conservative union plus allowance.",
+      "Publisher ASR, fixed views and map support the local setup, but microphone wiring/positions were not surveyed and ASR was not confirmed by listening.",
+      "Remote or mixed audio, donation inserts, gain changes and off-camera headset movement are not independently excluded."
+    ],
+    "exact_gps_claim": false,
+    "unconditional_1km_accuracy_claim": false,
+    "model_radius_is_not_truth_error_bound": true
+  },
+  "execution": {
+    "service": "soundgeo-amsterdam-timing-baseline-v1.service",
+    "invocation_id": "b16aba808d4e41aa956462d9c91c96a7",
+    "observed_runner_pid": 199744,
+    "observed_native_pid": 199777,
+    "native_started_utc": "2026-11-11T01:26:47.908312+00:00",
+    "native_completed_utc": "2026-11-11T01:43:49.415320+00:00",
+    "wrapper_finished_utc": "2026-11-11T01:43:57.251896+00:00",
+    "native_elapsed_s": 937.4698768329981,
+    "native_exit_code": 0,
+    "limits": {
+      "cpu_quota_percent": 200,
+      "memory_max_bytes": 8589934592,
+      "runtime_max_seconds": 21900,
+      "kill_mode": "control-group",
+      "timeout_stop_seconds": 15
+    },
+    "observed_user_group": "vm-user:vm-user",
+    "observed_startup_cpu_max": "200000 100000",
+    "observed_startup_memory_max_bytes": 8589934592,
+    "journal_resource_summary": [
+      {
+        "__REALTIME_TIMESTAMP": "1794361437329858",
+        "INVOCATION_ID": "b16aba808d4e41aa956462d9c91c96a7",
+        "_PID": "1",
+        "UNIT": "soundgeo-amsterdam-timing-baseline-v1.service",
+        "MESSAGE": "soundgeo-amsterdam-timing-baseline-v1.service: Consumed 17min 20.870s CPU time, 8.0G memory peak, 9.3M memory swap peak.",
+        "CODE_FILE": "src/core/unit.c",
+        "_SYSTEMD_UNIT": "init.scope"
+      }
+    ],
+    "proxy_connections": 0,
+    "proxy_observation_is_not_system_wide_packet_capture": true,
+    "native_process_group_reaped": true,
+    "retries": 0,
+    "external_control_runs": 0,
+    "auditor_waiters": 1,
+    "all_waiters_and_case_native_processes_finished": true
+  },
+  "native_science": {
+    "status": "candidates_found",
+    "timing_screen": "timing_candidate",
+    "duration_s": 3600.02175,
+    "timing_peak_count": 110,
+    "doppler_event_count": 0,
+    "track_count_including_date_overlap": 12552,
+    "hypotheses": 434641,
+    "retained_timing_candidate_count": 256,
+    "minimum_matches": 6,
+    "top_candidate_matches_within3s": 25,
+    "top_log_likelihood_ratio": 31.794653218195407,
+    "maximum_control_score": 12.57236526311163,
+    "score_margin_above_max_control": 19.22228795508378,
+    "required_controls": 19,
+    "merged_control_permutation_seeds": [
+      202611090,
+      202611091,
+      202611092,
+      202611093,
+      202611094,
+      202611095,
+      202611096,
+      202611097,
+      202611098,
+      202611099,
+      202611100,
+      202611101,
+      202611102,
+      202611103,
+      202611104,
+      202611105,
+      202611106,
+      202611107,
+      202611108
+    ],
+    "merged_control_maximum_scores": [
+      11.72128328906852,
+      11.764326276714602,
+      12.223634583113954,
+      10.926359322380538,
+      10.653370846331134,
+      11.072204978367791,
+      12.02568543995193,
+      10.220747021681625,
+      11.3084755507405,
+      11.028262670761764,
+      10.508113340441549,
+      10.242242445587262,
+      10.63070948841407,
+      12.212498020947274,
+      11.611794981328229,
+      11.842807722141202,
+      12.57236526311163,
+      11.455041601438646,
+      11.456013429579448
+    ],
+    "merged_control_identities": 19,
+    "actual_completed_per_window_control_searches": 38,
+    "control_likelihood_evaluations": 412900,
+    "default_timing_options": {
+      "grid_m": 300.0,
+      "maximum_grid_points": 50000,
+      "maximum_passage_distance_m": 500.0,
+      "timing_sigma_s": 1.0,
+      "retained_candidates": 256
+    },
+    "grid_points_per_search": 38335,
+    "complete_dates": {
+      "dates": [
+        "2026-11-01",
+        "2026-11-03",
+        "2026-11-04"
+      ],
+      "completed_batches": 2,
+      "complete": true,
+      "track_count_includes_overlap": true
+    },
+    "completed_windows": [
+      {
+        "index": 0,
+        "checkpoint": {
+          "path": "artifacts/prospective-airport-source-v1/passage-timing-baseline-attempt-1/checkpoints/batch-0000.json",
+          "bytes": 730664,
+          "sha256": "d73a39f73ca833d7d420ca38ac7e35c239189801fe194f6104430956b68ab1c5"
+        },
+        "window": [
+          "2026-11-01",
+          "2026-11-01"
+        ],
+        "status": "insufficient_evidence",
+        "timing_screen": "insufficient_evidence",
+        "timing_peak_count": 110,
+        "track_count": 3951,
+        "grid_points": 38335,
+        "eligible_points": 1466,
+        "search_likelihood_evaluations": 7319,
+        "control_likelihood_evaluations": 138498,
+        "control_permutation_seeds": [
+          202611090,
+          202611091,
+          202611092,
+          202611093,
+          202611094,
+          202611095,
+          202611096,
+          202611097,
+          202611098,
+          202611099,
+          202611100,
+          202611101,
+          202611102,
+          202611103,
+          202611104,
+          202611105,
+          202611106,
+          202611107,
+          202611108
+        ],
+        "control_maximum_scores": [
+          10.886972537047534,
+          10.450419292422968,
+          9.547742686932509,
+          10.052182500819121,
+          9.326644714702574,
+          9.621418022410927,
+          12.02568543995193,
+          8.912345964125935,
+          10.267132223273025,
+          10.341392964447156,
+          9.094831845737161,
+          10.242242445587262,
+          10.026009825224074,
+          12.212498020947274,
+          10.08033416933067,
+          9.002547014490414,
+          11.727600202974855,
+          11.455041601438646,
+          11.112759078384766
+        ],
+        "control_searches_completed": 19,
+        "control_scores_merged_as": "maximum per corresponding seed across both complete date windows",
+        "native_region": null
+      },
+      {
+        "index": 1,
+        "checkpoint": {
+          "path": "artifacts/prospective-airport-source-v1/passage-timing-baseline-attempt-1/checkpoints/batch-0001.json",
+          "bytes": 1115246,
+          "sha256": "6d7cd5a160489ad34a26e3b965668a62410c925ed00b9661c639771268dfaba3"
+        },
+        "window": [
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "status": "candidates_found",
+        "timing_screen": "timing_candidate",
+        "timing_peak_count": 110,
+        "track_count": 8601,
+        "grid_points": 38335,
+        "eligible_points": 4504,
+        "search_likelihood_evaluations": 14422,
+        "control_likelihood_evaluations": 274402,
+        "control_permutation_seeds": [
+          202611090,
+          202611091,
+          202611092,
+          202611093,
+          202611094,
+          202611095,
+          202611096,
+          202611097,
+          202611098,
+          202611099,
+          202611100,
+          202611101,
+          202611102,
+          202611103,
+          202611104,
+          202611105,
+          202611106,
+          202611107,
+          202611108
+        ],
+        "control_maximum_scores": [
+          11.72128328906852,
+          11.764326276714602,
+          12.223634583113954,
+          10.926359322380538,
+          10.653370846331134,
+          11.072204978367791,
+          11.136885614432225,
+          10.220747021681625,
+          11.3084755507405,
+          11.028262670761764,
+          10.508113340441549,
+          10.23540413260103,
+          10.63070948841407,
+          10.566419888951291,
+          11.611794981328229,
+          11.842807722141202,
+          12.57236526311163,
+          11.127665360113134,
+          11.456013429579448
+        ],
+        "control_searches_completed": 19,
+        "control_scores_merged_as": "maximum per corresponding seed across both complete date windows",
+        "native_region": {
+          "competitive_points": 18,
+          "enclosing_radius_m": 805.9972579148529,
+          "latitude": 52.34327956989247,
+          "longitude": 4.7102941176470665
+        }
+      }
+    ],
+    "control_merge_verified": "Each of19final control scores equals maximum for that same seed across both complete window checkpoints.",
+    "native_explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 fit within 1 km of the reported region center. This is a model screen, not a verified accuracy radius.",
+    "native_warnings": [
+      "246 flight segments have unknown aircraft type. Load the type catalog or use propeller-only mode to exclude unclassified aircraft.",
+      "24720 positions use pressure altitude; weather-dependent height error affects location estimates.",
+      "471 flight segments have unknown aircraft type. Load the type catalog or use propeller-only mode to exclude unclassified aircraft.",
+      "85681 positions use pressure altitude; weather-dependent height error affects location estimates.",
+      "Experimental: candidate rankings are not calibrated location probabilities or a verified fix.",
+      "Flight positions use a centered 10-second local linear fit to reduce quantization noise. Track endpoints, gaps and timestamps are preserved; curved/accelerating motion may still incur model error.",
+      "Passage timing includes 1262 short flight segments with 3 to 7 recorded positions. Positions are not added and gaps are not extended.",
+      "Passage timing includes 411 short flight segments with 3 to 7 recorded positions. Positions are not added and gaps are not extended.",
+      "Passage timing uses nearby aircraft, a fixed media clock rate and a timing width of 1 seconds. Speech, missing flights, changing sound power and nonstationary noise can invalidate this model. See the limitations document for result interpretation.",
+      "Read 12582 reception-gap markers. Recorded positions after each gap are retained; interpolation does not cross the gap.",
+      "Read 36050 reception-gap markers. Recorded positions after each gap are retained; interpolation does not cross the gap.",
+      "Skipped 10959540 malformed, ground, or missing-altitude trace records.",
+      "Skipped 24716201 malformed, ground, or missing-altitude trace records.",
+      "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 fit within 1 km of the reported region center. This is a model screen, not a verified accuracy radius.",
+      "Date search completed all overlapping daily batches. Track counts include overlap. Results were compared across all searched batches."
+    ]
+  },
+  "accuracy": {
+    "scored_location": "returned timing.region center",
+    "returned_region": {
+      "latitude": 52.34327956989247,
+      "longitude": 4.7102941176470665,
+      "enclosing_radius_m": 805.9972579148529,
+      "competitive_points": 18
+    },
+    "region_center_distance_to_reference_m": 268.53615149128467,
+    "conditional_error_interval_m": [
+      48.53615149128467,
+      488.53615149128467
+    ],
+    "target_m": 1000,
+    "conditional_center_pass": true,
+    "model_enclosing_radius_m": 805.9972579148529,
+    "competitive_location_spread_m": 1080.2412858575124,
+    "score_gap_beyond_1km": 1.519202307283713,
+    "historical_250m_classification": {
+      "point_distance_m": 268.53615149128467,
+      "error_interval_m": [
+        48.53615149128467,
+        488.53615149128467
+      ],
+      "classification": "boundary_indeterminate"
+    },
+    "all_frozen_acceptance_gates": {
+      "native_strict_success": true,
+      "timing_candidate_screen": true,
+      "full_dates": true,
+      "full_default_grid": true,
+      "all19_controls_complete": true,
+      "all19_controls_beaten": true,
+      "at_least6_matches": true,
+      "valid_model_region": true,
+      "conditional_region_center_within1km": true
+    },
+    "top_10_alternatives_diagnostic_only": [
+      {
+        "rank": 1,
+        "latitude": 52.34462365591398,
+        "longitude": 4.714705882352941,
+        "offset_utc_unix": 1793793058.8475974,
+        "offset_utc_iso": "2026-11-04T11:50:58.847597+00:00",
+        "log_likelihood_ratio": 31.794653218195407,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 603.087274204027,
+        "conditional_error_interval_m": [
+          383.08727420402704,
+          823.087274204027
+        ],
+        "diagnostic_only_not_scored_location": true
+      },
+      {
+        "rank": 2,
+        "latitude": 52.34731182795699,
+        "longitude": 4.714705882352941,
+        "offset_utc_unix": 1793793062.4519558,
+        "offset_utc_iso": "2026-11-04T11:51:02.451956+00:00",
+        "log_likelihood_ratio": 31.554068217605455,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 777.2477854657393,
+        "conditional_error_interval_m": [
+          557.2477854657393,
+          997.2477854657393
+        ],
+        "diagnostic_only_not_scored_location": true
+      },
+      {
+        "rank": 3,
+        "latitude": 52.34193548387097,
+        "longitude": 4.714705882352941,
+        "offset_utc_unix": 1793793055.1314962,
+        "offset_utc_iso": "2026-11-04T11:50:55.131496+00:00",
+        "log_likelihood_ratio": 31.266594224625386,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 549.5548898935879,
+        "conditional_error_interval_m": [
+          329.55488989358787,
+          769.5548898935879
+        ],
+        "diagnostic_only_not_scored_location": true
+      },
+      {
+        "rank": 4,
+        "latitude": 52.34462365591398,
+        "longitude": 4.7102941176470585,
+        "offset_utc_unix": 1793793057.9539871,
+        "offset_utc_iso": "2026-11-04T11:50:57.953987+00:00",
+        "log_likelihood_ratio": 31.19948353039547,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 353.98838402445244,
+        "conditional_error_interval_m": [
+          133.98838402445244,
+          573.9883840244524
+        ],
+        "diagnostic_only_not_scored_location": true
+      },
+      {
+        "rank": 5,
+        "latitude": 52.34462365591398,
+        "longitude": 4.705882352941177,
+        "offset_utc_unix": 1793793058.5419211,
+        "offset_utc_iso": "2026-11-04T11:50:58.541921+00:00",
+        "log_likelihood_ratio": 31.15056704540664,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 257.9563563421959,
+        "conditional_error_interval_m": [
+          37.956356342195875,
+          477.9563563421959
+        ],
+        "diagnostic_only_not_scored_location": true
+      },
+      {
+        "rank": 6,
+        "latitude": 52.34193548387097,
+        "longitude": 4.7102941176470585,
+        "offset_utc_unix": 1793793054.041927,
+        "offset_utc_iso": "2026-11-04T11:50:54.041927+00:00",
+        "log_likelihood_ratio": 31.082387245174353,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 252.16977907505682,
+        "conditional_error_interval_m": [
+          32.16977907505682,
+          472.1697790750568
+        ],
+        "diagnostic_only_not_scored_location": true
+      },
+      {
+        "rank": 7,
+        "latitude": 52.34731182795699,
+        "longitude": 4.7102941176470585,
+        "offset_utc_unix": 1793793061.5827632,
+        "offset_utc_iso": "2026-11-04T11:51:01.582763+00:00",
+        "log_likelihood_ratio": 31.078116443073007,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 604.7496435081753,
+        "conditional_error_interval_m": [
+          384.74964350817527,
+          824.7496435081753
+        ],
+        "diagnostic_only_not_scored_location": true
+      },
+      {
+        "rank": 8,
+        "latitude": 52.34731182795699,
+        "longitude": 4.705882352941177,
+        "offset_utc_unix": 1793793062.2316308,
+        "offset_utc_iso": "2026-11-04T11:51:02.231631+00:00",
+        "log_likelihood_ratio": 31.07066798285575,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 554.0391774824462,
+        "conditional_error_interval_m": [
+          334.03917748244623,
+          774.0391774824462
+        ],
+        "diagnostic_only_not_scored_location": true
+      },
+      {
+        "rank": 9,
+        "latitude": 52.33924731182796,
+        "longitude": 4.714705882352941,
+        "offset_utc_unix": 1793793050.8686934,
+        "offset_utc_iso": "2026-11-04T11:50:50.868693+00:00",
+        "log_likelihood_ratio": 31.063078910490557,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 647.3044647675048,
+        "conditional_error_interval_m": [
+          427.3044647675048,
+          867.3044647675048
+        ],
+        "diagnostic_only_not_scored_location": true
+      },
+      {
+        "rank": 10,
+        "latitude": 52.34193548387097,
+        "longitude": 4.705882352941177,
+        "offset_utc_unix": 1793793054.5920343,
+        "offset_utc_iso": "2026-11-04T11:50:54.592034+00:00",
+        "log_likelihood_ratio": 30.999526965993883,
+        "pairs": 25,
+        "pairs_residual_le3s": 25,
+        "distance_to_evaluator_reference_m": 69.42427679885365,
+        "conditional_error_interval_m": [
+          0,
+          289.42427679885367
+        ],
+        "diagnostic_only_not_scored_location": true
+      }
+    ],
+    "all_256_alternatives_retained_in_bound_native_report": true,
+    "scope_limit": "A conditionally correct region center on this recording is not calibrated coverage of the whole model region or general reliability across arbitrary sources."
+  },
+  "integrity": {
+    "all_35_solver_inputs_unchanged": true,
+    "all_70_metadata_pins_unchanged": true,
+    "runner_input_checks_before_after": [
+      true,
+      true
+    ],
+    "independent_terminal_full_hashes": [
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-01/DATA-LICENSE.txt",
+        "bytes": 234,
+        "sha256": "922f67e81c82163f0d713c522568822ab97fb541e21083bfa73aec83434dae5e",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-01/aircraft-types.json",
+        "bytes": 110811,
+        "sha256": "cdfd0205f9925302b1a6cd6c266f5409cfd387a2eda2a3a9e51fb86bc2801514",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-01/aircraft-types.source.txt",
+        "bytes": 282,
+        "sha256": "6c849cc10d02f45eb9b76b7aa2123b7f402543141b637484f73986c2e846f064",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-01/archive-complete.json",
+        "bytes": 106,
+        "sha256": "48b7eec5270f91b1b026c5c4ea106a722344b208f4ce330137d13719d013e8fd",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-01/archive-manifest.json",
+        "bytes": 8551,
+        "sha256": "a31101e802e66a61c0b58cef7b38abdacdeb8c9e2b2d022ab8f5f25a0b4f48c3",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-01/v2026.11.01-planes-readsb-prod-0.tar.aa",
+        "bytes": 2000000000,
+        "sha256": "62813665a44851df60676e2449435001cf1acbb5768b0f7fe756fc8145ae9aa3",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-01/v2026.11.01-planes-readsb-prod-0.tar.aa.sha256",
+        "bytes": 64,
+        "sha256": "44ea6c8abf2144711c4ec0269f33fc11ddcec322fc3ec4fcbfff2a09d0a29174",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-01/v2026.11.01-planes-readsb-prod-0.tar.ab",
+        "bytes": 1118588416,
+        "sha256": "e083915f63d0f42fedb3af7ea1ab61b970d76265c1663af09ae8c4cf28e19179",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-01/v2026.11.01-planes-readsb-prod-0.tar.ab.sha256",
+        "bytes": 64,
+        "sha256": "27cac78a03c4f98375691dedf36a507ec2031cd77954654d42cc5f3a70e2f90c",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-03/DATA-LICENSE.txt",
+        "bytes": 234,
+        "sha256": "922f67e81c82163f0d713c522568822ab97fb541e21083bfa73aec83434dae5e",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-03/aircraft-types.json",
+        "bytes": 110811,
+        "sha256": "cdfd0205f9925302b1a6cd6c266f5409cfd387a2eda2a3a9e51fb86bc2801514",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-03/aircraft-types.source.txt",
+        "bytes": 282,
+        "sha256": "6c849cc10d02f45eb9b76b7aa2123b7f402543141b637484f73986c2e846f064",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-03/archive-complete.json",
+        "bytes": 106,
+        "sha256": "bdb92bae6aad8062d0806b7c339d0a16943f8a483dd9fecf4b8d96ea70b28d70",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-03/archive-manifest.json",
+        "bytes": 8549,
+        "sha256": "887286a0989e67f8694edb04eb550648d80815d43122843b592a646ba5d39bf6",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-03/v2026.11.03-planes-readsb-prod-0.tar.aa",
+        "bytes": 2000000000,
+        "sha256": "5b23af3bb86442df1527a0ff49119fca20b09a29c3b99992118d9a0f469dceec",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-03/v2026.11.03-planes-readsb-prod-0.tar.aa.sha256",
+        "bytes": 64,
+        "sha256": "7533949bb5b8652096209b896c3053d53a8e86368c25c699e38989065b44e7a4",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-03/v2026.11.03-planes-readsb-prod-0.tar.ab",
+        "bytes": 1531563008,
+        "sha256": "703b0a2e620a37751d6ab8454359d0ce9bd0534aaa0342b81749f99dfa045152",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-03/v2026.11.03-planes-readsb-prod-0.tar.ab.sha256",
+        "bytes": 64,
+        "sha256": "941370dabba25fd3a2d9a8edcd0781cf4fee80ffb9133eb2356cecf55d68372c",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-04/DATA-LICENSE.txt",
+        "bytes": 234,
+        "sha256": "922f67e81c82163f0d713c522568822ab97fb541e21083bfa73aec83434dae5e",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-04/aircraft-types.json",
+        "bytes": 110811,
+        "sha256": "cdfd0205f9925302b1a6cd6c266f5409cfd387a2eda2a3a9e51fb86bc2801514",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-04/aircraft-types.source.txt",
+        "bytes": 282,
+        "sha256": "6c849cc10d02f45eb9b76b7aa2123b7f402543141b637484f73986c2e846f064",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-04/archive-complete.json",
+        "bytes": 106,
+        "sha256": "60ce15cc639b44f79bbb722c388a10a1265a528ed2f5a0a22a63f05b49141027",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-04/archive-manifest.json",
+        "bytes": 8549,
+        "sha256": "20384da7ac3f73cdf6c0adbaeef0b29fc99057e3d8fa4667c96dac773caab72a",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-04/v2026.11.04-planes-readsb-prod-0.tar.aa",
+        "bytes": 2000000000,
+        "sha256": "e1e2d5875b79548737e28e7d92ff38023608ca98c8021ffb1cb77adac1aec823",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-04/v2026.11.04-planes-readsb-prod-0.tar.aa.sha256",
+        "bytes": 64,
+        "sha256": "d1ddf5dec9fb485ec89cdf7ec35c92264b398b03c253846c7695f9f7f67be9ef",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-04/v2026.11.04-planes-readsb-prod-0.tar.ab",
+        "bytes": 1618676224,
+        "sha256": "03aad9dd521014848ddf94e5380d83e665b03fc2dcae5bbe7db87a2291f13b6d",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/2026-11-04/v2026.11.04-planes-readsb-prod-0.tar.ab.sha256",
+        "bytes": 64,
+        "sha256": "d6c591901e7bdc205a731ecea36714d33647bc5e46f9b6a2ea518253bdf29ed9",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/inputs/terrain/N52E004.hgt",
+        "bytes": 25934402,
+        "sha256": "50792e544cbd8b87350726f8f66fa32a8ea26287bd536c926b0c57f434673460",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/inputs/terrain/N52E004.terrain.json",
+        "bytes": 367,
+        "sha256": "7d97ca45ea11be7dd597fa928e56fe488000e197715fb012b2e8ccda17b29aed",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/inputs/terrain/N52E005.hgt",
+        "bytes": 25934402,
+        "sha256": "147585c803bca447d42fa56ed5ce5d66773ffdd5df74c8c4ded532e0e986f65d",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/inputs/terrain/N52E005.terrain.json",
+        "bytes": 367,
+        "sha256": "e05cf2de611b6fd9427aad5c39fd5a6454c2559ec24a315fd936041056f6c2e4",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/inputs/terrain/TERRAIN-ATTRIBUTION.txt",
+        "bytes": 1424,
+        "sha256": "a7eb0e7db670b4eda7ba1ae29a7993e0f9578ad6c3a34cad12930ae22e453bcf",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-v1/video.mkv",
+        "bytes": 121347721,
+        "sha256": "57e48287a5d9eef031fe400799add635b72151fa00cc9c5880b20f420c737808",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "artifacts/heathrow-third-site-v1/input-preparation-v1/frozen-cli/soundgeo-cli",
+        "bytes": 29865496,
+        "sha256": "be3be6e40b04d14a0bd8bd1d0bf8cf9edfc625b2a75e9d46751105e5a5784cf9",
+        "unchanged_during_read": true,
+        "matched": true
+      },
+      {
+        "path": "/usr/bin/ffmpeg",
+        "bytes": 342488,
+        "sha256": "ed16af623947494a72e284b6eb8ff225f2da22b38b5d5069c2fd4b4ba3384e41",
+        "unchanged_during_read": true,
+        "matched": true
+      }
+    ],
+    "root_bound_metadata": [
+      {
+        "path": "artifacts/checkpoint-freeze-4f8764c/build-receipt.json",
+        "sha256": "2648e9cadf7043f2ee0a20ce146059919d3b945b72511a3c9ac3a45f14937fc5"
+      },
+      {
+        "path": "artifacts/checkpoint-freeze-4f8764c/checks.json",
+        "sha256": "ca479fb1df0d1a71da301ee957a44b3f0029e74d673ba0e16875f7e038c46c63"
+      },
+      {
+        "path": "artifacts/checkpoint-freeze-4f8764c/committed-source-binding.json",
+        "sha256": "0f5c4812ec8ae35b1b0eb72fc18574954609b3620a2a558d3f66aec0f68a8292"
+      },
+      {
+        "path": "artifacts/checkpoint-freeze-4f8764c/parent-independent-audit.json",
+        "sha256": "9922b78cb1562a6a59fe7aa6a8123767fbb0f82ffd01349c15ae319526610299"
+      },
+      {
+        "path": "artifacts/checkpoint-freeze-4f8764c/source-manifest.json",
+        "sha256": "e3898d53afe6e7de7be0c698412eb9169cfc4bea31b6d0d46ac8da7822c8594d"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/decoded-audio-duration.json",
+        "sha256": "a81d0ef31af484cddebe4f3e9c5a9730f6756814d881caf3162bc490270d9700"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames/source-1200.jpg",
+        "sha256": "42359c51361d87e3c3cdfb33344bd3d0a6e5fd4ac8fb68a9bc0036e1fc0e048b"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames/source-1800.jpg",
+        "sha256": "99340109072619b0ac7b64f560345a32d65cb59eeaddc674c1570cfa0edeb03c"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames/source-2400.jpg",
+        "sha256": "d7b61aeaf61838cc8bb2a06cd136e200ca148acf9fffda65fc7aef80a26677cc"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames/source-3000.jpg",
+        "sha256": "261f8e202be00339a1549ee709feebdb19d3b775466dd7a7b2437939012034aa"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames/source-3318.jpg",
+        "sha256": "65d65b9ec615571746821448d1a1d59adddbefb605206f7354da6722721f7a27"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames/source-3600.jpg",
+        "sha256": "ca81d16cebb6aaa7aa402059adf52b7d16c79c278bc80e3e5a7d651b9d3205e8"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames/source-3737.jpg",
+        "sha256": "1dec413cbab2a064a5eef765599ba3262cbf10ce3ff6af78089493f3fb7e2ae3"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames/source-4200.jpg",
+        "sha256": "40ae370224ab74933e2d12a1b9199fd31a99ae8191a425a0bce960e374250bf4"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames/source-4799.jpg",
+        "sha256": "e2bc64c2e6566147708e73e1a5685a07e7e2a66d34b5f52bc622ddd26cd9023e"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/frames.json",
+        "sha256": "9e3b5e0733f4e4579aba2a589bef8f5d6bb27fb23f7ceb671072d6861f1f5f8c"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/result.json",
+        "sha256": "aa80b301117e68f01bf4e3624b2483a4a41c66e3b08f4b22c4c73f3d395f2db5"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/source-range-and-codec.json",
+        "sha256": "06cf2042d4bff5eead723fb34443a0626d9013c270e35e921af688619378f875"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/timestamp-audit.json",
+        "sha256": "887924845c4b4e4ff4a4256225c545e906b18bf3512a52b2e3465a2db0c7fd6e"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-process-audit.json",
+        "sha256": "ddf283aea18fbeed4fe573124fd29c89dcf8f8ad153b68a5320c36bda87e7449"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-qualification-final.json",
+        "sha256": "1ffe8464cf84d358ac365c32ca8c4ea2e7badf67d0e672b2cbebcc3f829bfe14"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/capture-v1/result.json",
+        "sha256": "5c930bb8ce59e479d1c1de4262694c6328c93c872e0a63d96dd2fd2f27cab2c9"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/evaluator-evidence/captions-location-context.json",
+        "sha256": "dbc612d0b8dd3cb43f0daa861009c790830f9a149b1d94391a21928b6e70eac4"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/evaluator-evidence/captions-nl.json",
+        "sha256": "585d7e1d67a92f13269e6b2250419b93ddf93b55cc657235c6791b47a6dd2844"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/evaluator-evidence/captions-retrieval.json",
+        "sha256": "23ab8a5197c711e34508f23d1b0c4ad92bfa8e59d1b1cedb63d8e2189428f66e"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/evaluator-evidence/osm-spectator-strip-features.json",
+        "sha256": "a6dc45430400ec9ae8ac92b43826e3d6f1612864c3636640e4c0ac023f120353"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/evaluator-evidence/osm-spectator-strip.xml",
+        "sha256": "adfda6406d6b1849ca13563e35e9659e3e31fdb74083570c5a3d37d247e26939"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/evaluator-evidence/pdok-2026-official-spotting-area.jpg",
+        "sha256": "7efb25501e78b02ca09eb3690023f96f28621b77dbdd4597ac3eb901e82a029b"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/evaluator-evidence/pdok-2026-retrieval.json",
+        "sha256": "85437766be056d967f9aab440f5869f093d61e93b18c275d492086ee534acfba"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/evaluator-union-proposal-v2.json",
+        "sha256": "90b7021796c11bbab152fe96f54d45762037795be32adcc35ac79de08f5a2eb7"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/independent-review-v1/review.json",
+        "sha256": "4f07442031e240501866d08aefd1f29c2e847980f7e52ccf5bc8f66758e9b545"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/coverage-gate.json",
+        "sha256": "fbacbd4ad0220fd0c737b0f0b4dacf98597e6eb8d0d7cf88ddfc4bbf1bc35956"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/coverage_stage.py",
+        "sha256": "2b4d677a634b9558732585d299d9d54543cd5c71e9056638a25fb14ce19bf11f"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/execution-plan.json",
+        "sha256": "84443025f75ca97e4c7f2afcc045dd611fa204ce96369a703126821220340269"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/input-inventory.json",
+        "sha256": "2b8a0fef0d3e54257f1136ca32da090b76c8eb7b7bbad87000b2a7483e516fd2"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/input-qualification-final.json",
+        "sha256": "a5f0a40dfc7a20b1cce18c44f3c472f425dc89d39352f2c05ee7dc1556d4404d"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/job.json",
+        "sha256": "a45b7a37583afdba31948b3a6ee43aa167d5ac0632618f3a7d14834d020f40e0"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/preparation-audit.json",
+        "sha256": "83133ecc1e8cc45d79a1627b2f4e12256a8e526e7665d27e0880ab82b0411bd6"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/preparation-plan.json",
+        "sha256": "c11832a2558f3fb58faf3a7b7fdf2fc55c7ed1647f051fd561b7a76f721cef5c"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/prepare_inputs.py",
+        "sha256": "fdab58e27d470acc5b711c5a5a569fb241174d15cfdc249ea78e3cf55b8848f8"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/prospective-method-intent.json",
+        "sha256": "3221f65d2e058055c1dd1d1ec48c6a60879cae7eb52efa0f0cacf11fb610bc89"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/regional-coverage/2026-11-01.json",
+        "sha256": "e01f076085645b4278312ee739b1f94050718204cbadf063f04dfd30707afeca"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/regional-coverage/2026-11-03.json",
+        "sha256": "b197b1e949a0c37e78318c24317a6d86b8d6410a75566e3d885845f2d3c3ddd9"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/regional-coverage/2026-11-04.json",
+        "sha256": "70d343cb3cbc493b2c4685a35ea5df168c6674de86b601136f5f01ec936d2af5"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/source-evidence/provider/2026-11-01.json",
+        "sha256": "8c2993019138748ca03e8071d5cc97f9022561e11fa2560a9cadd11d81eaa090"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/source-evidence/provider/2026-11-03.json",
+        "sha256": "6e12dbbe754f6c6c48492a8f0ba4622af96816dc738e4120ac74e61f87692f76"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/source-evidence/provider/2026-11-04.json",
+        "sha256": "0a7c876aa3415e318085f699d082c3be32a0cdd7c47d5089a6b7e1d25b830efd"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/source-preflight.json",
+        "sha256": "61d31c2ac8aa04e5b7735422cd146c761a66a6d7a387858904094517c0bd7b70"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/stable-cli-media-decoder-receipt.json",
+        "sha256": "0bfff7ba05a2b9693ddf99d6fdb95d0a90276e16d7cc873c7718dc08cc293b8b"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/terrain-receipt.json",
+        "sha256": "35d20a6a19212123e1212c8f892da7c983999638775bf972cbb5f777ae16ed33"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/metadata.raw.json",
+        "sha256": "29c970624085c7d5ce515430e81322fd387bdedf3c7a82700025af06abcd18f4"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/offline-input-qualification-plan-v2.json",
+        "sha256": "a8fa7bfb403a97569de2efb5d6842b18349725c4d527bf2449efb4bd9c102e32"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/parent-union-review.json",
+        "sha256": "87d06ec9da7ef0b3d2afa468f1c5f7b797f5f25d5623ed6a85efbe171bba1622"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/preparation-setbacks.json",
+        "sha256": "2778b9bb7834351ffc90cd6acafa63ad1f4f6c3e7c3f3b5c85f0c13e96217bf3"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/prospective-plan-v1.json",
+        "sha256": "885052b01fd54b86abf3a2f17b36c5c4dcef32233c24d1175ea51e89367fc957"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/prospective-reference-reuse.json",
+        "sha256": "85d9eb91bb4b36a1d4a1507d151d9366ce587a661f8db898d33794bf15d2f30f"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/terminal-services.json",
+        "sha256": "a779eb2e5dc374d7df92116314321669e321295ded3074f9d6fcc3e71b468fbd"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/derived-marker-policy.json",
+        "sha256": "d2fed254495e61752e526a7ba10a4b40c213a583e029cde866cb104cb0060537"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/evaluator-test-receipt.json",
+        "sha256": "2729bf3d4b9e9908fca10ef618f3751c97118a60e5dd67288419fe8c79205fe4"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/evaluator-tests.log",
+        "sha256": "5770dae94ab9fe3231aed609eff59552787da7794a2b3ecc09e44ca2902a9003"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/runner-delta-from-heathrow-v2.patch",
+        "sha256": "5c8c478e668b46fef8255bea22ccb6c1b5fe4c4774dea74e02a41faddc2df815"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/runner-origin.json",
+        "sha256": "4854c403095399d50361f04a688a66729fc9658affb0348db1041460b36e9484"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/source-proof/src-archive_refresh.rs",
+        "sha256": "190108eab28d55ae1fe3ea0e6caa804b5660507b2ed66cddad4c337458a2f239"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/source-proof/src-geo.rs",
+        "sha256": "26e9f9c1ef16a60dd830d71d76fa8eb9498f64697d2c1ef06b3e5311539838f9"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/source-proof/src-timing-assessment.rs",
+        "sha256": "56d2f05752a2543ec4de8c601ab0543ddc9a0a5d45720d7cc3b6b14a04097ba8"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/source-proof/src-timing-search.rs",
+        "sha256": "d31ef3c86a74f2859cbda463d82e20476cda0e2d51ee797ee76902e0bf0dc5c5"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/terminal-auditor-plan.json",
+        "sha256": "32f5767b251e10b911c2cafc1418403ac58fee2fffe1360ea4e1ff5a2e09f1eb"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/test_timing_runner.py",
+        "sha256": "78f14f85afc84717bf54f9729e66bb6f2d3cd0022d248e25a8ff28001c464953"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/timing-execution-plan.json",
+        "sha256": "f55e07edccbd8810da8128caa26a94afd55c05a0698bd8aa0de773c25c45bce9"
+      },
+      {
+        "path": "artifacts/prospective-airport-source-v1/visual-source-review.json",
+        "sha256": "93d21906ef63fdf7385368c6a9696c560ff41ce0f758e5462782ebd0c95a8af3"
+      }
+    ],
+    "raw_date_cache_finite": [
+      "2026-11-01",
+      "2026-11-03",
+      "2026-11-04"
+    ],
+    "cache_reused_without_bulk_copy": true,
+    "only_recursive_derived_exclusion": [
+      "artifacts/heathrow-third-site-v1/input-preparation-v1/inputs/cache/decoded-tracks"
+    ],
+    "additional_archive_complete_marker_paths_allowed": [],
+    "source_presence_coverage_is_not_surveillance_completeness": true
+  },
+  "audit": {
+    "original_terminal_check_count": 176,
+    "original_audit_passed": false,
+    "original_failed_checks": [
+      "same_service_invocation",
+      "service_limits_retained"
+    ],
+    "original_failure_preserved": true,
+    "resolved_audit_passed": true,
+    "resolution_checks": 13,
+    "resolution": "Successful transient unit was garbage-collected before terminal systemctl; default unloaded properties cannot establish runtime limits/invocation/exit. Intact live startup/kernel evidence plus PID1 exact-invocation start and successful deactivation resolve lifecycle. No retrospective live observation invented.",
+    "full_audit_was_completed_before_correction": true,
+    "no_model_or_input_hash_rerun": true
+  },
+  "artifact_bindings": {
+    "source_selection_plan": {
+      "path": "artifacts/prospective-airport-source-v1/prospective-plan-v1.json",
+      "bytes": 3234,
+      "sha256": "885052b01fd54b86abf3a2f17b36c5c4dcef32233c24d1175ea51e89367fc957"
+    },
+    "prospective_method_intent": {
+      "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/prospective-method-intent.json",
+      "bytes": 1056,
+      "sha256": "3221f65d2e058055c1dd1d1ec48c6a60879cae7eb52efa0f0cacf11fb610bc89"
+    },
+    "source_capture_qualification": {
+      "path": "artifacts/prospective-airport-source-v1/capture-qualification-final.json",
+      "bytes": 6116,
+      "sha256": "1ffe8464cf84d358ac365c32ca8c4ea2e7badf67d0e672b2cbebcc3f829bfe14"
+    },
+    "source_capture_audit": {
+      "path": "artifacts/prospective-airport-source-v1/capture-audit-v1/result.json",
+      "bytes": 1013,
+      "sha256": "aa80b301117e68f01bf4e3624b2483a4a41c66e3b08f4b22c4c73f3d395f2db5"
+    },
+    "source_visual_review": {
+      "path": "artifacts/prospective-airport-source-v1/visual-source-review.json",
+      "bytes": 5391,
+      "sha256": "93d21906ef63fdf7385368c6a9696c560ff41ce0f758e5462782ebd0c95a8af3"
+    },
+    "source_independent_capture_review": {
+      "path": "artifacts/prospective-airport-source-v1/independent-review-v1/review.json",
+      "bytes": 12299,
+      "sha256": "4f07442031e240501866d08aefd1f29c2e847980f7e52ccf5bc8f66758e9b545"
+    },
+    "evaluator_union": {
+      "path": "artifacts/prospective-airport-source-v1/evaluator-union-proposal-v2.json",
+      "bytes": 4343,
+      "sha256": "90b7021796c11bbab152fe96f54d45762037795be32adcc35ac79de08f5a2eb7"
+    },
+    "parent_conditional_union_review": {
+      "path": "artifacts/prospective-airport-source-v1/parent-union-review.json",
+      "bytes": 1103,
+      "sha256": "87d06ec9da7ef0b3d2afa468f1c5f7b797f5f25d5623ed6a85efbe171bba1622"
+    },
+    "input_inventory": {
+      "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/input-inventory.json",
+      "bytes": 9908,
+      "sha256": "2b8a0fef0d3e54257f1136ca32da090b76c8eb7b7bbad87000b2a7483e516fd2"
+    },
+    "input_qualification": {
+      "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/input-qualification-final.json",
+      "bytes": 2411,
+      "sha256": "a5f0a40dfc7a20b1cce18c44f3c472f425dc89d39352f2c05ee7dc1556d4404d"
+    },
+    "input_preparation_audit": {
+      "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/preparation-audit.json",
+      "bytes": 2640,
+      "sha256": "83133ecc1e8cc45d79a1627b2f4e12256a8e526e7665d27e0880ab82b0411bd6"
+    },
+    "coverage_presence_gate": {
+      "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/coverage-gate.json",
+      "bytes": 2214,
+      "sha256": "fbacbd4ad0220fd0c737b0f0b4dacf98597e6eb8d0d7cf88ddfc4bbf1bc35956"
+    },
+    "terrain_receipt": {
+      "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/terrain-receipt.json",
+      "bytes": 1433,
+      "sha256": "35d20a6a19212123e1212c8f892da7c983999638775bf972cbb5f777ae16ed33"
+    },
+    "stable_cli_receipt": {
+      "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/stable-cli-media-decoder-receipt.json",
+      "bytes": 2010,
+      "sha256": "0bfff7ba05a2b9693ddf99d6fdb95d0a90276e16d7cc873c7718dc08cc293b8b"
+    },
+    "frozen_build_receipt": {
+      "path": "artifacts/checkpoint-freeze-4f8764c/build-receipt.json",
+      "bytes": 1806,
+      "sha256": "2648e9cadf7043f2ee0a20ce146059919d3b945b72511a3c9ac3a45f14937fc5"
+    },
+    "root_launch_approval": {
+      "path": "artifacts/prospective-airport-source-v1/timing-launch-approval-v1.json",
+      "bytes": 18599,
+      "sha256": "f308baa3cde092ad823581ca157a10cb610104344f2d041099b6ecda3b748337"
+    },
+    "execution_plan": {
+      "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/timing-execution-plan.json",
+      "bytes": 9651,
+      "sha256": "f55e07edccbd8810da8128caa26a94afd55c05a0698bd8aa0de773c25c45bce9"
+    },
+    "runner": {
+      "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/run_amsterdam_timing_baseline.py",
+      "bytes": 28828,
+      "sha256": "bf3a1ceaa4acf7e9bc956a29de723e9955b6a2e918cbc0706d813a62d5a3dcf8"
+    },
+    "pure_evaluator_test_receipt": {
+      "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/evaluator-test-receipt.json",
+      "bytes": 1280,
+      "sha256": "2729bf3d4b9e9908fca10ef618f3751c97118a60e5dd67288419fe8c79205fe4"
+    },
+    "marker_policy": {
+      "path": "artifacts/prospective-airport-source-v1/timing-execution-proposal-v1/derived-marker-policy.json",
+      "bytes": 5595,
+      "sha256": "d2fed254495e61752e526a7ba10a4b40c213a583e029cde866cb104cb0060537"
+    },
+    "job": {
+      "path": "artifacts/prospective-airport-source-v1/input-preparation-v1/job.json",
+      "bytes": 749,
+      "sha256": "a45b7a37583afdba31948b3a6ee43aa167d5ac0632618f3a7d14834d020f40e0"
+    },
+    "native_report": {
+      "path": "artifacts/prospective-airport-source-v1/passage-timing-baseline-attempt-1/report.json",
+      "bytes": 1086776,
+      "sha256": "37aec51b4b4f028ae80419d5b0407daefb79d6dd32c4e9bf4daef388f8e3a10d"
+    },
+    "native_log": {
+      "path": "artifacts/prospective-airport-source-v1/passage-timing-baseline-attempt-1/native.log",
+      "bytes": 870804,
+      "sha256": "80bb69a1f35730b96b9d0c4c5c40b7a542e0fd1bebfbf3f1c6f402f8bee750f6"
+    },
+    "runner_result": {
+      "path": "artifacts/prospective-airport-source-v1/passage-timing-baseline-attempt-1/result.json",
+      "bytes": 183756,
+      "sha256": "d7e84e3594a086908bfab8a0110f67bfe5cdab89c7805d9afecf74aef91cfa1d"
+    },
+    "startup_observation": {
+      "path": "artifacts/prospective-airport-source-v1/timing-baseline-independent-audit-v1/startup-observation.json",
+      "bytes": 8520,
+      "sha256": "1fa421fa18ee2d3e941572e39cfea14bfbb070bba2ba65598c39e139853db652"
+    },
+    "startup_audit": {
+      "path": "artifacts/prospective-airport-source-v1/timing-baseline-independent-audit-v1/startup-audit.json",
+      "bytes": 2359,
+      "sha256": "03a14fcb2b8aa64935886705177c0264794387d24ab90379e146d11f7d5733f3"
+    },
+    "original_terminal_audit": {
+      "path": "artifacts/prospective-airport-source-v1/timing-baseline-independent-audit-v1/terminal-audit.json",
+      "bytes": 46701,
+      "sha256": "5fb7abc475b6900c48d6ee701db20b1ee1dd15a8a16351c74eeb27cf8358164c"
+    },
+    "resolved_terminal_audit": {
+      "path": "artifacts/prospective-airport-source-v1/timing-baseline-independent-audit-v1/resolved-terminal-audit-v2.json",
+      "bytes": 7394,
+      "sha256": "c8dc9ef41ffbb7347aa99b529d0199a7cea071343be5e0367c8d78708e15187e"
+    },
+    "journal_service_lifecycle": {
+      "path": "artifacts/prospective-airport-source-v1/timing-baseline-independent-audit-v1/journal-service-lifecycle.json",
+      "bytes": 1692,
+      "sha256": "35c784de7ce331e2a1470d8ff5158d24c0428c3fb142f29e8bf06efbae05743c"
+    },
+    "auditor_source": {
+      "path": "artifacts/prospective-airport-source-v1/timing-baseline-independent-audit-v1/audit_timing_terminal.py",
+      "bytes": 21738,
+      "sha256": "169b4f9d4ea52e24daddb9d6ecc8c295c6446e71436ca1aae4c3ba32a9cdcdc2"
+    },
+    "auditor_self_tests": {
+      "path": "artifacts/prospective-airport-source-v1/timing-baseline-independent-audit-v1/auditor-self-test.json",
+      "bytes": 923,
+      "sha256": "15a282b6424415263d4c71c5b947b0f1cc42e20187c092ceb49075ac00920e0c"
+    },
+    "portable_record_v2": {
+      "path": "artifacts/prospective-airport-source-v1/timing-baseline-independent-audit-v1/portable-result-record-v2.json",
+      "bytes": 5191,
+      "sha256": "ae0f007600d12fe33e8facb4e700d429265bde6434b817e385dc017b0ae5a9d0"
+    }
+  },
+  "next_gate": "Further independent samples and qualification of later code revisions; no automatic retry of this accepted case.",
+  "root_scientific_review": {
+    "reviewer": "/root",
+    "reviewed_utc": "2026-11-11T01:51:46.392937+00:00",
+    "complete": true,
+    "accepted_under_frozen_conditional_protocol": true,
+    "unconditional_accuracy_claim": false,
+    "source_report_sha256": "37aec51b4b4f028ae80419d5b0407daefb79d6dd32c4e9bf4daef388f8e3a10d",
+    "resolved_audit_sha256": "c8dc9ef41ffbb7347aa99b529d0199a7cea071343be5e0367c8d78708e15187e",
+    "original_audit_preserved": true,
+    "original_audit_checks": 176,
+    "original_failed_lifecycle_checks": 2,
+    "supplemental_lifecycle_checks_passed": 13,
+    "source_input_hashes_basis": "Independent terminal auditor rehashed35 solver inputs and70 metadata pins; root bound its receipts without repeating10GB hashing.",
+    "checks_recomputed": [
+      "Native exit/status",
+      "No supplied recording date/clock/camera point or height",
+      "Full audio duration",
+      "Three dates/two complete checkpoints",
+      "Both38335point default grids",
+      "All19 seeds and per-window scores",
+      "Exact per-seed maximum merge",
+      "Track/hypothesis sums",
+      "At least6 qualified pairs and all controls beaten",
+      "Returned region center geometry plus frozen220m allowance"
+    ],
+    "qualified_pairs": 25,
+    "best_score": 31.794653218195407,
+    "worst_control_score": 12.57236526311163,
+    "region_center_error_m": 268.53615149128467,
+    "conditional_upper_error_m": 488.53615149128467,
+    "model_enclosing_radius_m": 805.9972579148529,
+    "original_250m_target_accepted": false,
+    "model_or_decoder_rerun": false,
+    "limits": [
+      "The220m union/setup allowance assumes microphone co-location and bounded hidden movement; it is not a survey.",
+      "Model region radius is separate from evaluated center error.",
+      "Frozen4f result; not an equivalence claim for the pending JSON-parser revision.",
+      "Original27-recording benchmark remains unchanged."
+    ],
+    "sha256": "4a40328c7ec14e6725503742898504f6814f15f23f105c17a5dfed887447d4b2"
+  },
+  "portability": {
+    "paths_are_artifact_labels": true,
+    "original_staged_record_sha256": "4cdbb06aa76c4a31c0ad69bd21b507e27c218b1e3357461c97128c38bbc93b5b",
+    "actual_jobs_and_raw_receipts_preserved": true
+  }
+}

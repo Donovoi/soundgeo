@@ -1,0 +1,184 @@
+{
+  "schema": 1,
+  "case_id": "heathrow-fixed-hour-reconstruction-305bd32-v1",
+  "packaged_utc": "2026-11-14T18:55:14.482651+00:00",
+  "scope": "Reference evidence for a predeclared conditional filming-site evaluation. No location output was available when this bundle was prepared.",
+  "evaluation_plan_sha256": "8d7584f6ca3a02ea7288d457f573592e241f9bf04d66373fc6ebe4fd0b5b265f",
+  "matches_search_input_manifest": true,
+  "source_video": "https://www.youtube.com/watch?v=3i-UaF6biQo",
+  "source_media_sha256": "332374ffe17ff057b1ccc9f9ebf4aa2262e809c0fcbd761b0cc46323cbb28dcb",
+  "decoder_sha256": "bdf6aabffdba7411edff8d36c389d695257fcdf823d196020176e117612862f6",
+  "reference_point": {
+    "latitude": 51.4683672,
+    "longitude": -0.4189246
+  },
+  "reference_allowance_m": 200,
+  "reference_status": "conditional inferred filming site; microphone position not surveyed",
+  "frame_offsets_note": "FFmpeg seek offsets in the retained Matroska file. The file has video preroll; these are not recording-clock values or exact original-stream timestamps.",
+  "frames": [
+    {
+      "file": "frame-00.png",
+      "clip_seek_seconds": 0,
+      "bytes": 83121,
+      "sha256": "7bb9df0eaf1788597b62bf90cb817374a1ddc8e6c61030b77f99d0980b74e6d0",
+      "reextracted_bytes_match": true,
+      "original_mtime_utc": "2026-11-14T12:47:34.056762+00:00",
+      "original_mtime_precedes_search": true
+    },
+    {
+      "file": "frame-01.png",
+      "clip_seek_seconds": 450,
+      "bytes": 137158,
+      "sha256": "ce5f214b271c57b728a3b9e9459a781482acb27e8c0258e5982a1e3d581e549e",
+      "reextracted_bytes_match": true,
+      "original_mtime_utc": "2026-11-14T12:47:34.209491+00:00",
+      "original_mtime_precedes_search": true
+    },
+    {
+      "file": "frame-02.png",
+      "clip_seek_seconds": 900,
+      "bytes": 110888,
+      "sha256": "efbffecafdce8fade0fa78657f533f7c01ec3203f0d54a96d5d3f8c4ba7d386c",
+      "reextracted_bytes_match": true,
+      "original_mtime_utc": "2026-11-14T12:47:34.347144+00:00",
+      "original_mtime_precedes_search": true
+    },
+    {
+      "file": "frame-03.png",
+      "clip_seek_seconds": 1350,
+      "bytes": 33770,
+      "sha256": "e9d17dbcc4862c7afed6687055ce04c43ceeee03c0138e4fa13e7e3f79996ee6",
+      "reextracted_bytes_match": true,
+      "original_mtime_utc": "2026-11-14T12:47:34.507896+00:00",
+      "original_mtime_precedes_search": true
+    },
+    {
+      "file": "frame-04.png",
+      "clip_seek_seconds": 1800,
+      "bytes": 177108,
+      "sha256": "1b1c8fab6e9dcb3f9f5177522380cbfa3ddf4de600932124a4bf8a843f52ddb6",
+      "reextracted_bytes_match": true,
+      "original_mtime_utc": "2026-11-14T12:47:34.678868+00:00",
+      "original_mtime_precedes_search": true
+    },
+    {
+      "file": "frame-05.png",
+      "clip_seek_seconds": 2250,
+      "bytes": 108112,
+      "sha256": "fc2e99c66e81f38ef2f3065d4e8cdd84ced01fd31b262b593760cf537c59df58",
+      "reextracted_bytes_match": true,
+      "original_mtime_utc": "2026-11-14T12:47:34.808606+00:00",
+      "original_mtime_precedes_search": true
+    },
+    {
+      "file": "frame-06.png",
+      "clip_seek_seconds": 2700,
+      "bytes": 105277,
+      "sha256": "df0fec7dc81490606fbf82dd64b351caa39066a51d6598f59893596caca625d3",
+      "reextracted_bytes_match": true,
+      "original_mtime_utc": "2026-11-14T12:47:34.936454+00:00",
+      "original_mtime_precedes_search": true
+    },
+    {
+      "file": "frame-07.png",
+      "clip_seek_seconds": 3150,
+      "bytes": 114977,
+      "sha256": "a64491c1c6727ebf89ad7c9dff0a213c0c3e672d12e3ee6c86ae3fdf142dd2e4",
+      "reextracted_bytes_match": true,
+      "original_mtime_utc": "2026-11-14T12:47:35.096353+00:00",
+      "original_mtime_precedes_search": true
+    },
+    {
+      "file": "frame-08.png",
+      "clip_seek_seconds": 3590,
+      "bytes": 151648,
+      "sha256": "ed4d52c3f6f92f5dd402eed3536f242b43fbd23497fb478558b4a14e480a0152",
+      "reextracted_bytes_match": true,
+      "original_mtime_utc": "2026-11-14T12:47:35.266593+00:00",
+      "original_mtime_precedes_search": true
+    }
+  ],
+  "frame_verification": "All nine PNG files were regenerated to memory at their original seek offsets using the pinned media and decoder. Each PNG byte hash matched. Filesystem modification times are supporting metadata, not a cryptographic capture-time proof.",
+  "original_preparation_script_sha256": "1a2e66433c478956e6ab671a503a71bb3dec4d30dd0abf41c212151805214ac0",
+  "osm_reference": {
+    "url": "https://www.openstreetmap.org/way/187395726",
+    "file": "heathrow-hotel-geocode.json",
+    "licence": "Data \u00a9 OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "center_and_building_bounds_match_evaluation_plan": true
+  },
+  "primary_sources_rechecked": [
+    {
+      "url": "https://bigjet.tv/corporate/",
+      "checked_date_utc": "2026-11-14",
+      "excerpt": "shows from our roof",
+      "finding": "The publisher describes broadcasts from its Heathrow Hilton Garden Inn partner's roof."
+    },
+    {
+      "url": "https://www.hilton.com/en/hotels/lhrepgi-hilton-garden-inn-london-heathrow-airport/hotel-location/",
+      "checked_date_utc": "2026-11-14",
+      "excerpt": "Eastern Perimeter Rd, Hatton Cross",
+      "finding": "The hotel location page identifies the Hatton Cross property."
+    }
+  ],
+  "source_recheck_method": "Read the official pages through the web page reader while the original search was still running. Full HTML was not archived in this bundle.",
+  "preserved_capture_limit": {
+    "file": "hilton-evaluator-source.html",
+    "bytes": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "status": "The earlier local HTML capture is empty and remains preserved in the working evidence."
+  },
+  "selected_reference_changed": false,
+  "location_output_used": false,
+  "supplied_to_solver": false,
+  "scope_limits": [
+    "The recorded aircraft audio comes from a microphone at or near this filming site.",
+    "The microphone remains within the stated 200 m allowance around the mapped center.",
+    "The interval has no unobserved remote audio substitution; successful decoding and sampled frames cannot prove this."
+  ],
+  "files": {
+    "heathrow-hotel-geocode.json": {
+      "bytes": 588,
+      "sha256": "7ee68563f877107c2e25943bca899ea802361ad177c7b63571e2ef49e1897b86"
+    },
+    "heathrow-evaluation-plan.json": {
+      "bytes": 2555,
+      "sha256": "8d7584f6ca3a02ea7288d457f573592e241f9bf04d66373fc6ebe4fd0b5b265f"
+    },
+    "frame-00.png": {
+      "bytes": 83121,
+      "sha256": "7bb9df0eaf1788597b62bf90cb817374a1ddc8e6c61030b77f99d0980b74e6d0"
+    },
+    "frame-01.png": {
+      "bytes": 137158,
+      "sha256": "ce5f214b271c57b728a3b9e9459a781482acb27e8c0258e5982a1e3d581e549e"
+    },
+    "frame-02.png": {
+      "bytes": 110888,
+      "sha256": "efbffecafdce8fade0fa78657f533f7c01ec3203f0d54a96d5d3f8c4ba7d386c"
+    },
+    "frame-03.png": {
+      "bytes": 33770,
+      "sha256": "e9d17dbcc4862c7afed6687055ce04c43ceeee03c0138e4fa13e7e3f79996ee6"
+    },
+    "frame-04.png": {
+      "bytes": 177108,
+      "sha256": "1b1c8fab6e9dcb3f9f5177522380cbfa3ddf4de600932124a4bf8a843f52ddb6"
+    },
+    "frame-05.png": {
+      "bytes": 108112,
+      "sha256": "fc2e99c66e81f38ef2f3065d4e8cdd84ced01fd31b262b593760cf537c59df58"
+    },
+    "frame-06.png": {
+      "bytes": 105277,
+      "sha256": "df0fec7dc81490606fbf82dd64b351caa39066a51d6598f59893596caca625d3"
+    },
+    "frame-07.png": {
+      "bytes": 114977,
+      "sha256": "a64491c1c6727ebf89ad7c9dff0a213c0c3e672d12e3ee6c86ae3fdf142dd2e4"
+    },
+    "frame-08.png": {
+      "bytes": 151648,
+      "sha256": "ed4d52c3f6f92f5dd402eed3536f242b43fbd23497fb478558b4a14e480a0152"
+    }
+  }
+}

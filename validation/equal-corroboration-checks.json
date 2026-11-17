@@ -1,0 +1,177 @@
+{
+  "problem": "The minimum-consensus objective can improve while the complete fit gets worse with the same number of supported sounds. The previous endpoint selection discarded the earlier lower-error fit.",
+  "change": "Retain the lower-error fit when it supports the same number of sounds. Keep the refinement endpoint and apply quiet-gap checks to both before ranking.",
+  "acceptance_rules_changed": false,
+  "local_checks": {
+    "source_commit": "bd4d948254d1993d0fc93d5fe0e40878304c6101",
+    "source_tree": "dfeb4bb5f19cbc64bcab412d677c3234bab45987",
+    "cli": "analysis-build/soundgeo-cli-corroboration-bd4d948.exe",
+    "cli_sha256": "4d34769b2db63dae58044895914eb9d2adbc12acbaaee99fbd6db012358a2c6b",
+    "rust_tests_passed": 157,
+    "python_tests_passed": 10,
+    "checks": [
+      {
+        "check": "fmt",
+        "exit_code": 0,
+        "elapsed_s": 0.49376480000501033
+      },
+      {
+        "check": "clippy",
+        "exit_code": 0,
+        "elapsed_s": 4.728194000002986
+      },
+      {
+        "check": "tests",
+        "exit_code": 0,
+        "elapsed_s": 285.3777371000033
+      },
+      {
+        "check": "doc-tests",
+        "exit_code": 0,
+        "elapsed_s": 1.1687376000045333
+      },
+      {
+        "check": "build",
+        "exit_code": 0,
+        "elapsed_s": 0.5972903000001679
+      },
+      {
+        "check": "python",
+        "exit_code": 0,
+        "elapsed_s": 0.20866409999871394
+      }
+    ],
+    "logs": [
+      {
+        "file": "equal-corroboration-fmt.log",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "file": "equal-corroboration-clippy.log",
+        "sha256": "5adfbf324211a67928d098ead7377656004609d40b37ce74a78ab5a2a914453c"
+      },
+      {
+        "file": "equal-corroboration-tests.log",
+        "sha256": "0022327eefc2d30db02a140587b172848e5094cfd5b39ae91a89f2e465a0dd83"
+      },
+      {
+        "file": "equal-corroboration-doc-tests.log",
+        "sha256": "ced5d2960d9a9c8ea26d8d542bb1613770dd2099ee9e96e4e190ea8e64268b69"
+      },
+      {
+        "file": "equal-corroboration-build.log",
+        "sha256": "058601355273cf5b5e04dac59bf04dc3b51f11799bc251a1c98373d587220dc6"
+      },
+      {
+        "file": "equal-corroboration-python.log",
+        "sha256": "615a76c7d8d90618b39c2afa8567b22181ea7f619f7cd76e053eaa73b8e70c18"
+      }
+    ],
+    "regression_before_fix": {
+      "file": "equal-corroboration-before-v3.log",
+      "sha256": "076f405909bb955a9e9562bb601065b4ce72cad7c267e8fa0c1a75d909a92aa9"
+    },
+    "before_fix_source": {
+      "file": "equal-corroboration-before-v3-search.rs",
+      "sha256": "1069ee240e354bbea9af62c161c76e57fc0a338c20c08c11a96e61a62538776a"
+    }
+  },
+  "regression": {
+    "name": "refinement_preserves_lower_error_with_equal_corroboration",
+    "fixture": "Four synthetic physical flight curves. At two nearby positions all four pass; moving toward the three-curve minimum increases the combined error.",
+    "before_fix": "Failed because the lower-error four-curve fit did not reach candidate ranking.",
+    "after_fix": "Passed. Both fits remain available, including the original endpoint.",
+    "artifacts": [
+      {
+        "file": "equal-corroboration-before-v3.log",
+        "sha256": "076f405909bb955a9e9562bb601065b4ce72cad7c267e8fa0c1a75d909a92aa9"
+      },
+      {
+        "file": "equal-corroboration-before-v3-search.rs",
+        "sha256": "1069ee240e354bbea9af62c161c76e57fc0a338c20c08c11a96e61a62538776a"
+      },
+      {
+        "file": "equal-corroboration-before-v3.patch",
+        "sha256": "acbbc698d1722fe8efe718b4b4f6b084f86f0d4eb727953d6ef666ab9441f5cf"
+      },
+      {
+        "file": "equal-corroboration-after.log",
+        "sha256": "fd43ad9d4282b414d53cb486d59db5120c12b86ec3954c94bf83aacb5a8b0e96"
+      }
+    ],
+    "earlier_fixture_probes": [
+      {
+        "outcome": "The first fixture passed without exposing the defect.",
+        "artifact": {
+          "file": "equal-corroboration-before.log",
+          "sha256": "2627cd08eefc820da2e4a920cd730a12a5fdafb13a6909d3d792fea7aa3c557f"
+        }
+      },
+      {
+        "outcome": "The narrowed-area fixture failed before refinement because no coarse proposal survived.",
+        "artifact": {
+          "file": "equal-corroboration-before-v2.log",
+          "sha256": "6fef3e9d3ce58c62802269b3a4bb5e00804809c19982ce18cb25480c04127c65"
+        }
+      }
+    ]
+  },
+  "real_video_replay": {
+    "status_at_publication": "Queued after the preceding paired comparison.",
+    "plan": {
+      "scope": "Paired single-day Doppler source diagnostic over the original broad area. The multi-date timing benchmark remains separate.",
+      "source_commit": "bd4d948254d1993d0fc93d5fe0e40878304c6101",
+      "cli_sha256": "4d34769b2db63dae58044895914eb9d2adbc12acbaaee99fbd6db012358a2c6b",
+      "script_sha256": "8c849778f0bcb5a11afa5518969ae94ca0bb455f838a263b7d6bea3898df83a4",
+      "original_manifest_sha256": "c4e5ae7710b3f92683a0c4264249b16b2b683f4fa3602e4bc613e29c1bd893fa",
+      "reference_exports": [
+        {
+          "variant": "traces",
+          "points": 156946,
+          "tracks": 1291,
+          "sha256": "4d790cb6dc00c6a7f82d3be33f5f2fab9bc304b14fa8be7c28a0ed5b3c0249a1",
+          "elapsed_s": 3.1078347000002395
+        },
+        {
+          "variant": "hires-traces",
+          "points": 432574,
+          "tracks": 1489,
+          "sha256": "bc1faa1b1b44dce1dfdb51bbc6a365c20ac1309e839b8b7c68901490bd9b6416",
+          "elapsed_s": 49.543430500001705
+        }
+      ],
+      "case_ids": [
+        "lake-hood-nov1",
+        "lake-hood-nov1-later"
+      ],
+      "case_selection": "Both existing Lake Hood recordings originally validated with the November 1 free sample.",
+      "reference_coverage": "Complete prepared November 1 standard or high-resolution sample",
+      "recording_date_argument_supplied": false,
+      "recording_clock_supplied": false,
+      "known_position_supplied_to_app": false,
+      "video_clues": false,
+      "offline": true,
+      "search_mode": "flight_corridors",
+      "max_hypotheses": 20000000,
+      "model_options": "Current frozen CLI defaults and original case settings; only method, search mode, reference variant, and hypothesis budget are specified above.",
+      "workers": 2,
+      "timeout_per_case_s": 7200,
+      "baseline": "lake-hires-doppler-spacing",
+      "start_condition": "The preceding paired run must finish before any new analysis starts.",
+      "change": "Refinement retains a lower-error fit when it has the same number of supported sounds. All four input jobs are byte-identical to the preceding run.",
+      "target_error_m": 1000
+    },
+    "plan_artifact": {
+      "file": "lake-hires-doppler-corroboration/plan.json",
+      "sha256": "eb4e423d386cd74b58b9f65e54737a994e8c4307e76239d5395de22819c72500"
+    },
+    "input_jobs_identical_to_preceding_run": true,
+    "accepted_locations_added": 0,
+    "status": "Completed: four ambiguous results, zero accepted locations"
+  },
+  "completed_replay": {
+    "result": "lake-fit-retention-results.json",
+    "accepted": 0,
+    "cases": 4
+  }
+}

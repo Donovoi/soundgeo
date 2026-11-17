@@ -1,0 +1,225 @@
+{
+  "scope": "One complete full-search whole-activity control on the later Lake Hood recording, with the same qualified build, broad bounds and fixed single-day reference as its baseline.",
+  "plan": {
+    "scope": "Up to 19 whole-activity full-search controls for the later existing Lake Hood clip, using the completed baseline from the same qualified eight-worker build.",
+    "source_commit": "512c645cc56e42f893b374cc6eb1f9df7efaa367",
+    "cli_sha256": "01d4c7cf6e87eae5d5ea7e481944cfa99ba1ed702ec9d32baf9e357c1eb69370",
+    "control_tool_sha256": "6dcc55ce84f2df24736beed560c1ef578c3f9a4fef7ddc02a3041c3845ef0ecd",
+    "script_sha256": "f0b8304125a45a6a74f0fa364b51823ff4874118f989ecd814d3f8a3df14e5fe",
+    "baseline_run_plan_sha256": "42a9fbe3e2952007c91cbc25b9bcaf436a475bc963f6b6d31b4675eb67c2629b",
+    "original_job_sha256": "890a1463c6b8d9871fb01c98659732cccbcb74e3aa314d783802e8a4704a497c",
+    "job_sha256": "b982d7b44b5d7f67710e9f7299933e3c43e727c4628235918d1b2241958b784f",
+    "inputs": {
+      "media": {
+        "path": "WORK\\real-validation\\lake-hood-nov1-later\\recording.mp4",
+        "sha256": "5663053d448cf6bb706855be2fb9b8f4def8bc5f83b5c9116ed3f09958bb4dff"
+      },
+      "tracks": {
+        "path": "WORK\\lake-hires-reference-check\\traces.csv",
+        "sha256": "4d790cb6dc00c6a7f82d3be33f5f2fab9bc304b14fa8be7c28a0ed5b3c0249a1"
+      },
+      "decoder": {
+        "path": "external_tool/ffmpeg.exe",
+        "sha256": "09948d4cdd0650da6ff5a87577469f2a218dc2615ae379f8f734d24c49de0f73"
+      }
+    },
+    "recording_date_argument_supplied": false,
+    "recording_clock_supplied": false,
+    "known_position_supplied_to_search": false,
+    "video_clues": false,
+    "offline": true,
+    "reference_scope": "Original broad bounds and fixed November sample CSV. The provider-discovered multi-date benchmark remains separate.",
+    "controls_planned": 19,
+    "concurrent_searches": 1,
+    "corridor_workers": 8,
+    "timeout_per_search_s": 14400,
+    "wait_limit_s": 21600,
+    "start_condition": "The later eight-worker replay completes with the same full report, unchanged inputs and no proxy contacts.",
+    "ranking": "More matched independent sounds first; then lower relative error plus 0.25 per silence conflict, matching the native sorter.",
+    "stop_rule": "Stop on the first shuffled search with at least the baseline ranking, a processing failure, or completion of all 19 controls. A partial set cannot pass.",
+    "changes_location_acceptance": false,
+    "exchangeability_verified": false,
+    "spatial_screen_performed": false
+  },
+  "baseline_binding": {
+    "source_report_sha256": "fba890e2da7b2c21cfd65c55b684bdd869cfd2789fbbb219686b1303d253b579",
+    "completion_sha256": "dd6891f38f3298c4ab34c4b7ecbb568bc84e299c0f48e6ae86440c6342d2b5f6",
+    "source_commit": "512c645cc56e42f893b374cc6eb1f9df7efaa367"
+  },
+  "result": {
+    "complete": true,
+    "changes_location_acceptance": false,
+    "counts_as_location_acceptance": false,
+    "baseline_statistic": {
+      "matches": 5,
+      "ranking_error": 0.8097829683341314,
+      "relative_error_percent": 0.8097829683341314,
+      "silence_conflicts": 0
+    },
+    "controls_planned": 19,
+    "controls_completed": 1,
+    "comparison": "counterexample_found",
+    "exchangeability_verified": false,
+    "spatial_screen_performed": false,
+    "proxy_connections": 0,
+    "inputs_unchanged": true
+  },
+  "controls": [
+    {
+      "index": 0,
+      "statistic": {
+        "matches": 5,
+        "ranking_error": 0.5651828369915601,
+        "relative_error_percent": 0.5651828369915601,
+        "silence_conflicts": 0
+      },
+      "at_least_baseline_ranking": true,
+      "result_sha256": "1cbbdc6597eb88b92bd7f1ee946a559f47ec8ccb8c7cb6896a7e833e8a240764",
+      "hypotheses": 16721120
+    }
+  ],
+  "selected_control": {
+    "index": 0,
+    "permutation": {
+      "order": [
+        2,
+        9,
+        8,
+        11,
+        4,
+        10,
+        7,
+        1,
+        3,
+        0,
+        5,
+        6
+      ],
+      "seed": 202611090
+    },
+    "shifts": [
+      {
+        "block_index": 2,
+        "new_index": 0,
+        "original_index": 2,
+        "seconds": -1195.9065
+      },
+      {
+        "block_index": 2,
+        "new_index": 1,
+        "original_index": 3,
+        "seconds": -1195.9065
+      },
+      {
+        "block_index": 9,
+        "new_index": 2,
+        "original_index": 12,
+        "seconds": -2421.4065
+      },
+      {
+        "block_index": 8,
+        "new_index": 3,
+        "original_index": 11,
+        "seconds": -2157.1565
+      },
+      {
+        "block_index": 11,
+        "new_index": 4,
+        "original_index": 14,
+        "seconds": -2361.1565
+      },
+      {
+        "block_index": 11,
+        "new_index": 5,
+        "original_index": 15,
+        "seconds": -2361.1565
+      },
+      {
+        "block_index": 4,
+        "new_index": 6,
+        "original_index": 5,
+        "seconds": -540.2268749999998
+      },
+      {
+        "block_index": 4,
+        "new_index": 7,
+        "original_index": 6,
+        "seconds": -540.2268749999998
+      },
+      {
+        "block_index": 10,
+        "new_index": 8,
+        "original_index": 13,
+        "seconds": -1419.7268749999998
+      },
+      {
+        "block_index": 7,
+        "new_index": 9,
+        "original_index": 10,
+        "seconds": -936.9768749999998
+      },
+      {
+        "block_index": 1,
+        "new_index": 10,
+        "original_index": 1,
+        "seconds": 727.483125
+      },
+      {
+        "block_index": 3,
+        "new_index": 11,
+        "original_index": 4,
+        "seconds": 370.61562500000014
+      },
+      {
+        "block_index": 0,
+        "new_index": 12,
+        "original_index": 0,
+        "seconds": 2149.684625
+      },
+      {
+        "block_index": 5,
+        "new_index": 13,
+        "original_index": 7,
+        "seconds": 1100.4746250000003
+      },
+      {
+        "block_index": 6,
+        "new_index": 14,
+        "original_index": 8,
+        "seconds": 1100.4746250000003
+      },
+      {
+        "block_index": 6,
+        "new_index": 15,
+        "original_index": 9,
+        "seconds": 1100.4746250000003
+      }
+    ],
+    "hypotheses": 16721120,
+    "track_count": 1166
+  },
+  "independent_verification": {
+    "complete": true,
+    "comparison": "counterexample_found",
+    "source_commit": "512c645cc56e42f893b374cc6eb1f9df7efaa367",
+    "baseline_matches": 5,
+    "baseline_ranking_error": 0.8097829683341314,
+    "control_matches": 5,
+    "control_ranking_error": 0.5651828369915601,
+    "baseline_sha256": "fba890e2da7b2c21cfd65c55b684bdd869cfd2789fbbb219686b1303d253b579",
+    "control_sha256": "1cbbdc6597eb88b92bd7f1ee946a559f47ec8ccb8c7cb6896a7e833e8a240764",
+    "plan_sha256": "1fbf08b97d25256edcd4c36049d53fc15b42704bb3797cfa735fd4e58110c231",
+    "controls_plan_sha256": "cbf5cbdeef33ce739a218cd043aa3e863ed238fa5f021e4d72c671493e80b9ea",
+    "completion_sha256": "7efae34964fd028bfed387e68f1e54ce98ec3a76e7672003c0a9ceddb164197f",
+    "all_events_and_alternatives_preserved_with_time_shifts": true,
+    "maximum_numeric_rounding_difference": 4.547473508864641e-13,
+    "whole_block_permutation_verified": true,
+    "media_and_reference_hashes_verified": true,
+    "proxy_connections": 0,
+    "counts_as_location_acceptance": false
+  },
+  "control_top_distance_from_original_camera_m": 8529.844659406843,
+  "comparison_test_passed": false,
+  "location_acceptance_changed": false,
+  "interpretation": "The reordered recording matched five activities with lower relative error than the original baseline. The experiment stopped at its first counterexample. This scoring rule did not pass the planned signal check."
+}

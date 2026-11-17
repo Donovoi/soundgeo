@@ -65,7 +65,7 @@ pub fn fetch_file(
     control.require_network(&path.display().to_string())?;
     let parent = path.parent().unwrap_or_else(|| Path::new("."));
     std::fs::create_dir_all(parent)?;
-    let mut temp = tempfile::NamedTempFile::new_in(parent)?;
+    let (mut temp, destination) = crate::atomic_file::prepare(path)?;
     let runtime = tokio::runtime::Builder::new_current_thread()
         .enable_all()
         .build()?;
@@ -107,7 +107,7 @@ pub fn fetch_file(
     })?;
     control.check()?;
     temp.as_file().sync_all()?;
-    temp.persist(path)?;
+    temp.persist(destination)?;
     std::fs::write(stamp, hash)?;
     Ok(())
 }

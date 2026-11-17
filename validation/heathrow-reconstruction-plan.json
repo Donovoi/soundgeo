@@ -1,0 +1,46 @@
+{
+  "schema": 1,
+  "case_id": "heathrow-fixed-hour-reconstruction-305bd32-v1",
+  "created_date": "2026-11-14",
+  "source_commit": "305bd324a22d4fffe041b9189942feddf590ee7d",
+  "historical_record": "validation/heathrow-fixed-hour-timing.json",
+  "scope": "Reconstruct the original fixed interval and finish a separate Doppler validation attempt with the current qualified source. Preserve the earlier zero-peak timing result and interrupted Doppler attempt.",
+  "source_url": "https://www.youtube.com/watch?v=3i-UaF6biQo",
+  "fixed_source_interval_seconds": [
+    1200,
+    4800
+  ],
+  "requested_formats": "134+140",
+  "audio_reencoding": false,
+  "historical_media_sha256": "7f3a58192fccd8a1e78a50a23b4869cc3ddba8476443cfd04ff0512910ef984f",
+  "identity_rule": "Compare reconstructed media against the historical hash. A differing hash is a new reconstruction, never an exact replay. Record decoder, extractor, duration, packet continuity and new hashes.",
+  "reference_dates_to_prepare": [
+    "2026-11-01",
+    "2026-11-03",
+    "2026-11-04"
+  ],
+  "reference_provider": "adsb_lol",
+  "reference_dates_supplied_to_solver": false,
+  "recording_time_supplied": false,
+  "camera_coordinates_supplied": false,
+  "visual_text_supplied_to_solver": false,
+  "broad_bounds": {
+    "south": 51.25,
+    "north": 51.75,
+    "west": -0.8,
+    "east": 0.2
+  },
+  "terrain": "Download all whole-degree tiles intersecting the broad area through the application's free terrain command.",
+  "analysis_method": "doppler",
+  "search_mode": "flight_corridors",
+  "max_hypotheses_per_partition": 20000000,
+  "search_threads": 2,
+  "other_model_settings": "Current production defaults; record the fully resolved job in the report.",
+  "offline_analysis": true,
+  "date_checkpoints": true,
+  "target_error_m": 1000,
+  "acceptance": "Complete every prepared date batch and retain the native strict status. Evaluate returned candidates against independently documented reference position and declared microphone uncertainty. An uncertain reference or ambiguous native status prevents an accepted-location claim. Preserve all competing candidates and failures.",
+  "missing_historical_assets": "The original job, raw media, partial logs, binary and local source manifests were not recovered. Their recorded hashes remain historical evidence and cannot be reconstructed by assertion.",
+  "source_substitution": "Do not change the interval, tune the detector or select a replacement recording based on search results. If this source is unavailable, retain the failure before selecting a separately planned case.",
+  "execution_environment": "All further builds and tests run inside WSL2, headless, under a systemd limit of 2 CPU cores and 8 GiB RAM with low priority."
+}

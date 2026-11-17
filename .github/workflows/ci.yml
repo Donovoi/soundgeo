@@ -25,9 +25,9 @@ jobs:
         env:
           DEBIAN_FRONTEND: noninteractive
         run: |
-          # The Azure mirror took over 26 minutes to download 73 packages.
-          # Use Ubuntu's public mirror and bound network and lock waits.
-          for source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources; do
+          # Runner images can use a separate mirror list as well as direct sources.
+          # Select Ubuntu's public mirror and bound network and lock waits.
+          for source in /etc/apt/sources.list /etc/apt/sources.list.d/*.list /etc/apt/sources.list.d/*.sources /etc/apt/apt-mirrors.txt; do
             if [ -f "$source" ]; then
               sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g; s|https://azure.archive.ubuntu.com/ubuntu|https://archive.ubuntu.com/ubuntu|g' "$source"
             fi

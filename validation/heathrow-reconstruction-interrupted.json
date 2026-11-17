@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "case_id": "heathrow-fixed-hour-reconstruction-305bd32-v1",
+  "source_commit": "305bd324a22d4fffe041b9189942feddf590ee7d",
+  "outcome": "interrupted_by_vm_shutdown",
+  "shutdown_utc": "2026-11-15T03:16:49Z",
+  "runner_signal": 15,
+  "service_elapsed_seconds": 49379.942,
+  "service_cpu_seconds": 88688.391,
+  "memory_peak_bytes_observed": 677752832,
+  "last_native_progress": "62% Dates 2026-11-01 to 2026-11-01 (1/2): Flight proposal batch 6/7: Indexed flight corridors: anchor 7/8, track 513/5467, 12297515 hypotheses",
+  "completed_proposal_batches_in_memory": 5,
+  "completed_date_checkpoints": 0,
+  "prepared_dates": [
+    "2026-11-01",
+    "2026-11-03",
+    "2026-11-04"
+  ],
+  "final_report_exists": false,
+  "location_outcome": null,
+  "accepted_location": false,
+  "inputs_unchanged": true,
+  "unchanged_input_count": 44,
+  "derived_cache_preserved": true,
+  "original_receipt_left_incomplete": true,
+  "shuffled_controls_run": 0,
+  "recovery_limit": "The original executable checkpoints only complete date batches. Five completed proposal batches existed only in process memory and cannot be recovered from the progress log.",
+  "next_step": "Add recovery of complete proposal batches, qualify the changed executable, and repeat the same fixed recording and date coverage with a new plan and checkpoint folder.",
+  "original_27_recording_benchmark_changed": false,
+  "artifacts_sha256": {
+    "derived-cache-storage.json": "f344af8dd37975fafc62a70af1bd28065f73833f64dadf3f239ea24a8e069136",
+    "input-manifest.json": "733d991ff0f764793c6f9abdf3c5f33ea281faeb02c874b0d9dda45872f21915",
+    "native.log": "34e0ae06d6645c9c6f5887100d8415f51002a94d1a67b736a99d560db36f6dcb",
+    "packet-audit.json": "e50c52cea7eb3e7be3f54521a513681f072ca1e17c468d3966354b163d8fae99",
+    "packet-audit.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "run.json": "58f97c7953cbef0249a21e8527db745ad9bdc4fd620cae0c63e201e38363806c",
+    "vm-startup.json": "bad4e857b785fceee956c56126b64349bd70eb263c5d800132da59b5138d1119"
+  },
+  "checkpoint_manifest_sha256": "94b0abac498cf8710a8358e11f5e3307d6aadb11389e39bb740de98f596d3a55",
+  "service_journal_sha256": "387c9513ad1b5b7c0f4bb93facd413119354166a173a5417ff6d59e401fef74b",
+  "shutdown_journal_sha256": "37660873393e14e790b237e49d5c8c47028a09dba724213e61178c6ca7d7e371"
+}

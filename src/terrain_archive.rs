@@ -90,10 +90,10 @@ fn cached(root: &Path, tile: &str, url: &str, control: &Control) -> Result<Optio
 }
 
 fn write_atomic(root: &Path, name: &str, bytes: &[u8]) -> Result<()> {
-    let mut file = tempfile::NamedTempFile::new_in(root)?;
+    let (mut file, destination) = crate::atomic_file::prepare(&root.join(name))?;
     file.write_all(bytes)?;
     file.as_file().sync_all()?;
-    file.persist(root.join(name))?;
+    file.persist(destination)?;
     Ok(())
 }
 

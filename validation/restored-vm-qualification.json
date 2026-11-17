@@ -1,0 +1,181 @@
+{
+  "schema": 1,
+  "recorded_utc": "2026-11-14T13:26:49.662787+00:00",
+  "source_commit": "305bd324a22d4fffe041b9189942feddf590ee7d",
+  "scope": "Clean-source build qualification in a fresh VM environment. Real-recording location accuracy is evaluated separately.",
+  "platform": "Ubuntu 26.04.1 inside WSL2, headless",
+  "cpu_limit_cores": 2,
+  "memory_limit_bytes": 8589934592,
+  "memory_swap_limit_bytes": 1073741824,
+  "nice": 10,
+  "io_weight_requested": 20,
+  "io_weight_enforced": false,
+  "io_weight_note": "The WSL guest does not expose cgroup io.weight. CPU and memory limits were observed live; later field runs additionally use idle I/O scheduling.",
+  "cargo_build_jobs": 2,
+  "rust_test_threads": 2,
+  "tools": {
+    "rustc": "rustc 1.93.1 (01f6ddf75 2026-02-11) (built from a source tarball)",
+    "cargo": "cargo 1.93.1 (083ac5135 2025-12-15) (built from a source tarball)",
+    "ffmpeg": "ffmpeg version 8.0.1-3ubuntu2 Copyright (c) 2000-2025 the FFmpeg developers",
+    "python3": "Python 3.14.4"
+  },
+  "checks": [
+    {
+      "name": "format",
+      "command": [
+        "cargo",
+        "fmt",
+        "--all",
+        "--",
+        "--check"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.3918741190000219,
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "name": "python",
+      "command": [
+        "python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "validation",
+        "-p",
+        "test_run_timing.py"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.1258263239999451,
+      "log_sha256": "da984b448877b08d1c0e8083ff3f010e25d38dde2bde43f7c27411640762b62f"
+    },
+    {
+      "name": "clippy",
+      "command": [
+        "cargo",
+        "clippy",
+        "--release",
+        "--all-targets",
+        "--locked",
+        "--",
+        "-D",
+        "warnings"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 138.46543877900012,
+      "log_sha256": "2c52a14cce19ffdcac6b01754f67a8122dec6c26ecec49eea6e568ad50cb4e81"
+    },
+    {
+      "name": "rust-tests",
+      "command": [
+        "cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--all-targets"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 1179.3408182560001,
+      "log_sha256": "5a2949428e56e4706cbfa8cfd68dc2100b070ad5a147198a585beeb57f952d38"
+    },
+    {
+      "name": "doctests",
+      "command": [
+        "cargo",
+        "test",
+        "--release",
+        "--locked",
+        "--doc"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.7283928239999113,
+      "log_sha256": "e9d189d17c6ab4863a89f290c480c70548e136947f773bcbe15e72df296d8d57"
+    },
+    {
+      "name": "binaries",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--bins"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 0.20300070500024958,
+      "log_sha256": "a50f4a953f17e887d3844be51c0df233623b83d4462c96d5392c2671458d7fef"
+    },
+    {
+      "name": "helpers",
+      "command": [
+        "cargo",
+        "build",
+        "--release",
+        "--locked",
+        "--example",
+        "inspect_audio",
+        "--example",
+        "doppler_controls"
+      ],
+      "exit_code": 0,
+      "elapsed_seconds": 63.56676608900034,
+      "log_sha256": "74320c839056bd665dd83aedd5de14c7737c76fb340d475580f0e70ccbcef59c"
+    }
+  ],
+  "audit": {
+    "schema": 1,
+    "source_commit": "305bd324a22d4fffe041b9189942feddf590ee7d",
+    "source_file_count": 262,
+    "source_manifest_sha256": "525cce3aa99398a14fb3f815822202f6746befcd7c50ae48ade5cc85c4f05f3c",
+    "rust_tests_passed": 237,
+    "python_tests_passed": 10,
+    "test_names_match_source": true,
+    "all_check_logs_and_frozen_binaries_match": true,
+    "clean_source_matches_before_and_after": true,
+    "passed": true
+  },
+  "binaries": {
+    "soundgeo": {
+      "name": "soundgeo",
+      "sha256": "2f375a2a4a992625b87cf98ccb4f18f21d59d915507230818c015f1b5378db04",
+      "bytes": 30038016
+    },
+    "soundgeo-cli": {
+      "name": "soundgeo-cli",
+      "sha256": "cec9ea3db3ae51b14d52f51b0cd676e9ca3b0a70c0a8e00665baa36e1f9dc721",
+      "bytes": 30038016
+    },
+    "examples/inspect_audio": {
+      "name": "inspect_audio",
+      "sha256": "18972e7809c1e6f4d4ab35d8db9d798a5d6141dee8eab7b4502be752f4b9f04b",
+      "bytes": 1803152
+    },
+    "examples/doppler_controls": {
+      "name": "doppler_controls",
+      "sha256": "9c6417bdfcc282f3b2332d46bb0a614e9a37d6907eb66eb80c6db15c931d12da",
+      "bytes": 16435328
+    }
+  },
+  "qualification_started_utc": "2026-11-14T13:02:45Z",
+  "qualification_finished_utc": "2026-11-14T13:25:49Z",
+  "source_manifest_sha256": "525cce3aa99398a14fb3f815822202f6746befcd7c50ae48ade5cc85c4f05f3c",
+  "qualification_receipt_sha256": "a3db7122cff91f60dc259b48c7cdf22331cc2a7606003ea95e1dbfdb23b73ff3",
+  "audit_receipt_sha256": "c078163684ba3fdf2c63e020d8424fcc7fa94f13344fe3a875b46d423b5a93f2",
+  "windows_ci": {
+    "run_url": "https://github.com/Donovoi/soundgeo/actions/runs/42958562758",
+    "artifact_id": 13829196334,
+    "archive_sha256": "11fb58ac40746212d55aa79e218aa09d6bd91b35e23df8415901eeb0dc725514",
+    "cli_sha256": "ce70dc5df4066d1cb27b95f4a3eadb21362d0532425d035a7128787e798f61d3",
+    "source_commit": "305bd324a22d4fffe041b9189942feddf590ee7d"
+  },
+  "preserved_incomplete_attempts": [
+    {
+      "attempt": "initial build",
+      "outcome": "Stopped before qualification to apply VM resource limits; log and build directory retained."
+    },
+    {
+      "attempt": "qualification-v1",
+      "outcome": "Formatting and 10 Python tests passed. Clippy was interrupted while moving the build to the VM native filesystem. The new checkout used its own target directory and retained the dependency cache."
+    }
+  ],
+  "new_location_result_claimed": false
+}

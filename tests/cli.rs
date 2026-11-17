@@ -82,6 +82,8 @@ fn headless_cli_generates_demo_and_streams_a_complete_report() {
             "--require-unambiguous",
             "--max-hypotheses",
             "50000000",
+            "--search-threads",
+            "8",
         ])
         .output()
         .unwrap();
@@ -98,8 +100,10 @@ fn headless_cli_generates_demo_and_streams_a_complete_report() {
     assert_eq!(report.status, "candidates_found");
     assert!(report.job.start_utc.is_none());
     assert_eq!(report.job.max_hypotheses, 50_000_000);
+    assert_eq!(report.job.search_threads, Some(8));
     let saved: soundgeo::Job = serde_json::from_slice(&std::fs::read(&config).unwrap()).unwrap();
     assert_eq!(saved.max_hypotheses, job.max_hypotheses);
+    assert_eq!(saved.search_threads, None);
     assert_eq!(report.version, env!("CARGO_PKG_VERSION"));
     assert!(!result.stderr.is_empty());
 }
@@ -124,7 +128,12 @@ fn headless_cli_direct_paths_quiet_mode_and_no_match_exit_code() {
     writer.finalize().unwrap();
     let tracks = dir.path().join("flights.csv");
     std::fs::write(&tracks, b"aircraft,time,lat,lon,altitude_m\n").unwrap();
-    let output = dir.path().join("reports/result.json");
+    let mut folder = dir.path().to_path_buf();
+    for _ in 0..16 {
+        folder.push("analysis-reports");
+    }
+    let output = folder.join("result.json");
+    assert!(output.as_os_str().len() > 260);
     let result = cli()
         .args(["analyze", "--input"])
         .arg(&wav)
@@ -243,6 +252,7 @@ fn headless_cli_help_and_errors_have_documented_exit_codes() {
     assert!(String::from_utf8_lossy(&help.stdout).contains("--require-match"));
     assert!(String::from_utf8_lossy(&help.stdout).contains("--require-unambiguous"));
     assert!(String::from_utf8_lossy(&help.stdout).contains("--max-hypotheses"));
+    assert!(String::from_utf8_lossy(&help.stdout).contains("--search-threads"));
     for budget in ["0", "99", "100000001", "-1", "many"] {
         let invalid = cli()
             .args([
@@ -257,6 +267,22 @@ fn headless_cli_help_and_errors_have_documented_exit_codes() {
             .output()
             .unwrap();
         assert_eq!(invalid.status.code(), Some(2), "invalid budget: {budget}");
+        assert!(invalid.stdout.is_empty());
+    }
+    for workers in ["0", "-1", "many", "18446744073709551616"] {
+        let invalid = cli()
+            .args([
+                "analyze",
+                "--config",
+                "unused.json",
+                "--output",
+                "-",
+                "--search-threads",
+                workers,
+            ])
+            .output()
+            .unwrap();
+        assert_eq!(invalid.status.code(), Some(2), "invalid workers: {workers}");
         assert!(invalid.stdout.is_empty());
     }
     let invalid = cli().arg("analyze").output().unwrap();

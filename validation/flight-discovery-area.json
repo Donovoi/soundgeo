@@ -1,0 +1,241 @@
+{
+  "scope": "Free flight-data discovery over a complete prepared UTC day. No recording clock, recording date, video or known camera position was supplied. This is a coverage diagnostic; it does not establish video location accuracy.",
+  "source": "https://www.adsbexchange.com/pull-data/",
+  "source_manifest_sha256": "7c3faef26c9a84c654c4f7198c41e2745b10393a2827421a438c7096e735f768",
+  "observer_bounds": {
+    "south": 61.0,
+    "north": 61.36,
+    "west": -150.36,
+    "east": -149.62
+  },
+  "defect": "Sample discovery selected aircraft only inside observer bounds. The flight reader retained positions beyond those bounds, so automatic preparation omitted useful nearby flights.",
+  "selection_rule": "Use the existing flight importer area: 0.6 degrees beyond latitude bounds and 0.6 / max(abs(cos(latitude)), 0.05) degrees beyond longitude bounds. Accept valid source coordinates only. No generated positions or speed extrapolation.",
+  "snapshot_objects_checked": 288,
+  "original_aircraft": 388,
+  "wider_selection_aircraft": 565,
+  "additional_aircraft": 177,
+  "independent_minute_discovery_airborne_ids_recovered": [
+    "781060",
+    "840a64",
+    "842370",
+    "86951c",
+    "86d5b6",
+    "86dca2",
+    "a2a3b6",
+    "a4871c",
+    "a6905a",
+    "ab5257"
+  ],
+  "independent_minute_discovery_airborne_ids_still_missing": [],
+  "source_objects_hash_verified": true,
+  "original_cache_unchanged": true,
+  "network_requests": 0,
+  "manual_imported_aircraft_not_selected": [
+    "aa6b9f",
+    "~26c4ec",
+    "~26cc01"
+  ],
+  "remaining_coverage_gap": "Aircraft can still pass through the reference area between five-minute snapshots.",
+  "plan_sha256": "dab7ccbfc14515d9ae24958e83d1040c9b122e2179e372c827f8030ca6808a47",
+  "selection_sha256": "7e7dd3555f52573875083b6e2fadf8aef0908d8bdec8099468cfb895477ee0ee",
+  "result_sha256": "862b05c47d4ecb92e702a9d168d094b6109317754f4a5d640e79b27f947ab999",
+  "script_sha256": "71ebaf13f5b8ee1ce2beca6bef38116525278fb49b8a6122e3fe056c8c136b05",
+  "speed_reach_diagnostic": {
+    "scope": "Separate offline experiment; not applied to the application. Recorded ground speed and source observation time were used to select possible crossings between snapshot cells. No positions were generated.",
+    "original_aircraft": 388,
+    "selected_aircraft": 420,
+    "additional_aircraft": 32,
+    "minute_discovery_airborne_ids_recovered": 10,
+    "result_sha256": "632028c81435e4e1a760543535ad3bc9f1fdb53d637a1b74ebfccb10dfb56713"
+  },
+  "duplicate_reference_attempt": {
+    "scope": "Ten newly downloaded airborne traces were byte-identical to files in the earlier manual reference. Two additional ground-only identities produced no exported tracks.",
+    "combined_csv_created": false,
+    "additional_audio_run_started": false,
+    "receipt_sha256": "b9031b5f6d72d3d48795384dec5daca2ac51024a40380853d7945b41c278c279"
+  },
+  "native_migration_validation": {
+    "complete": true,
+    "source_commit": "7d979b7a902d300870baa15287110b3c42dbb270",
+    "cli_sha256": "66b7b8eed61b9eb2a2165b40f8eaaac8be57df555a5a618299c0e2b9a4404c9d",
+    "original_aircraft": 388,
+    "selected_aircraft": 565,
+    "added_aircraft": 177,
+    "full_day_traces": 563,
+    "missing_aircraft": [
+      "~26c414",
+      "~574a91"
+    ],
+    "recovered_positions": 0,
+    "new_manifest_sha256": "fc456d0df9ca1d354f9fcbe879c3bf2c865474117f770f4de2ecbf91d987e5ee",
+    "original_cache_unchanged": true,
+    "original_copy_unchanged": true,
+    "offline_date_arguments": [],
+    "offline_cache_unchanged": true,
+    "offline_proxy_connections": 0,
+    "online_elapsed_s": 283.85971780000546,
+    "offline_elapsed_s": 66.56103020001319,
+    "video_accuracy_test": false,
+    "result_sha256": "00e2e9ec4fe23f55e1fe01092fff260e99f9cc593a533194fcc71e85613f4308",
+    "independent_verification": {
+      "complete": true,
+      "result_sha256": "00e2e9ec4fe23f55e1fe01092fff260e99f9cc593a533194fcc71e85613f4308",
+      "manual_reference_receipt_sha256": "a3ffdf5d2cd6c30897af58a052caf2ff02ce77159e0e2d7410a97266caf07655",
+      "new_manifest_sha256": "fc456d0df9ca1d354f9fcbe879c3bf2c865474117f770f4de2ecbf91d987e5ee",
+      "verified_native_trace_files": 563,
+      "byte_identical_to_independent_manual_downloads": 563,
+      "original_traces_preserved": 387,
+      "new_trace_files": 176,
+      "source_gap_aircraft": [
+        "~26c414",
+        "~574a91"
+      ],
+      "offline_proxy_connections": 0,
+      "video_accuracy_test": false
+    },
+    "independent_verification_sha256": "437f2b5ace8c438ed0604011f05846ffd992397f17386b65682ff153133327d4"
+  },
+  "video_accuracy_accepted": false,
+  "initial_ci_failure": {
+    "commit": "04bba8f9a44fee5990e9fe54c12f3693bf001bef",
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42706697001",
+    "platforms": [
+      "Windows",
+      "Ubuntu"
+    ],
+    "test": "empty_sample_dates_keep_later_matches_and_damaged_cache_still_fails",
+    "failure": "The damaged legacy cache was rejected, but the error omitted the Offline mode marker.",
+    "repair": "Restore the offline error marker without weakening integrity checks or changing the test.",
+    "ci_log_sha256": "ef62e070d834d2d534d706540f7b23115f88a64606145f94d62e5305d36d3147",
+    "local_qualification": "Stopped after the same source failed CI; only verified compiler children of that qualification job were terminated. Logs and terminal owner receipts were retained.",
+    "frozen_executable_created": false,
+    "native_replay_started": false
+  },
+  "qualification": {
+    "source_commit": "7d979b7a902d300870baa15287110b3c42dbb270",
+    "ci_url": "https://github.com/Donovoi/soundgeo/actions/runs/42709059233",
+    "rust_tests_passed_per_platform": 196,
+    "python_tests_passed_per_platform": 10,
+    "required_checks_passed_locally_and_on_windows_and_ubuntu": true,
+    "local_control_tool_build_passed": true,
+    "local_checks_sha256": "f80c11997d0106fb60d946e9e7b626633350ba193b91808df1029438cc8482fe",
+    "ci_verification_sha256": "fb494633562205e0e414a5f0454e400a8b35e19f14abe6eb7c3ccb0b43a2ecef",
+    "ci_artifact_digest_matches_provider": true,
+    "ci_checkout_tree_matches_source": true,
+    "ci_cli_sha256": "66b7b8eed61b9eb2a2165b40f8eaaac8be57df555a5a618299c0e2b9a4404c9d",
+    "ci_desktop_sha256": "4588269b6ccfbf99f56032cc8a281a63e6061a8e13feed7d4e84c48988e9bf46",
+    "local_cli_sha256": "64dfe92490c11c8a3960d9b3ee9c632179fe0f891a70b28b7fff0ef919a85e5d",
+    "local_desktop_sha256": "3f5cfdbdb6c82a5ec8b8ed1c9a09f27f1bf6c0028184fdb77c552852e084e40f",
+    "local_build_receipt_sha256": "741fdabc34f4a25a04303c656292166b0a9d54dcf1f8ea6cd61f55085985a234",
+    "ci_build_receipt_sha256": "870f747ed199bec41665d721cea37ae0e899038ed95b1bc2dd5215493ffb0a13"
+  },
+  "offline_video_regression": {
+    "status": "ambiguous",
+    "source_commit": "7d979b7a902d300870baa15287110b3c42dbb270",
+    "cli_sha256": "66b7b8eed61b9eb2a2165b40f8eaaac8be57df555a5a618299c0e2b9a4404c9d",
+    "plan_sha256": "b9d47b50267589eb6299c0d41d2d7f9b96f70ff7cc485bcf5cd6ec8fce48f809",
+    "scope": "Single prepared-day native-cache regression. Wider-date acceptance and full-search controls remain separate.",
+    "accepted": false,
+    "result_sha256": "eaa78543427c309478f2883093819716c90128ce088790aeee8c3a1fa2973801",
+    "report_sha256": "2374cb2bc41c7c090649d131b56ffecccef9a810e50c3b65be597bad6c84d143",
+    "log_sha256": "b9942ce86c61b8620e58042e6556ee7abc16cea8e89c9f114b09fe204867356a",
+    "native_exit_code": 4,
+    "elapsed_s": 12857.841574999999,
+    "input_hashes_verified": true,
+    "original_cache_files_verified": 2480,
+    "original_cache_files_unchanged": true,
+    "new_derived_cache_files": [
+      "decoded-tracks/481d1515aa1392b198c5e22eb385754823100fd0a91b7da72fac916ddedaf30b.sgcache"
+    ],
+    "proxy_connections": 0,
+    "no_supplied_date_or_clock": true,
+    "original_broad_bounds_preserved": true,
+    "prepared_dates": [
+      "2026-11-01"
+    ],
+    "all_prepared_dates_searched": true,
+    "hypotheses": 15274007,
+    "track_count": 1314,
+    "events": 24,
+    "unmatched_events": 19,
+    "status_reasons": {
+      "fewer_than_two_detections": false,
+      "provisional_clock": false,
+      "unmatched_detections": true,
+      "competing_fit_under_current_residual_rule": false
+    },
+    "candidates": [
+      {
+        "rank": 1,
+        "error_m": 56.34390338288821,
+        "support": 4.489469355705654,
+        "matches": 5,
+        "relative_error_percent": 0.3628384437798451
+      },
+      {
+        "rank": 2,
+        "error_m": 17020.149482296263,
+        "support": 3.5550336737564567,
+        "matches": 4,
+        "relative_error_percent": 0.8069876189573181
+      },
+      {
+        "rank": 3,
+        "error_m": 10041.790479921876,
+        "support": 3.513924894032308,
+        "matches": 5,
+        "relative_error_percent": 0.8741121925056266
+      },
+      {
+        "rank": 4,
+        "error_m": 6563.983524915665,
+        "support": 3.385348941447964,
+        "matches": 4,
+        "relative_error_percent": 0.7234904050741279
+      },
+      {
+        "rank": 5,
+        "error_m": 7122.060294845624,
+        "support": 3.2908392326684526,
+        "matches": 4,
+        "relative_error_percent": 0.6689856076725245
+      },
+      {
+        "rank": 6,
+        "error_m": 7478.108160599781,
+        "support": 3.290432796969571,
+        "matches": 4,
+        "relative_error_percent": 0.9307288571703722
+      },
+      {
+        "rank": 7,
+        "error_m": 5501.2240190765,
+        "support": 3.2771018098683093,
+        "matches": 4,
+        "relative_error_percent": 0.8750433261366989
+      },
+      {
+        "rank": 8,
+        "error_m": 10980.640637743258,
+        "support": 3.2354384001825576,
+        "matches": 4,
+        "relative_error_percent": 0.9188908520873852
+      },
+      {
+        "rank": 9,
+        "error_m": 5760.503746670459,
+        "support": 3.226796156760485,
+        "matches": 4,
+        "relative_error_percent": 0.8628520178342952
+      },
+      {
+        "rank": 10,
+        "error_m": 7008.422221223875,
+        "support": 3.1478528130355476,
+        "matches": 4,
+        "relative_error_percent": 0.9267900247002667
+      }
+    ],
+    "independent_verification_sha256": "19ab7585e6141b285ddfdb2724edd99ffe5f1c580072f9ec392c2815daa7e3e4"
+  }
+}

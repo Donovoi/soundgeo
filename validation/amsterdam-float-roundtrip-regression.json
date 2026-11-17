@@ -1,0 +1,684 @@
+{
+  "schema": 1,
+  "case_id": "amsterdam-polderbaan-same-hour-parser656-regression-v2",
+  "status": "accepted_under_frozen_conditional_protocol",
+  "new_independent_site_or_sample": false,
+  "source": {
+    "url": "https://www.youtube.com/watch?v=fBb1dzRteNo",
+    "publisher": "Tip of the Wing",
+    "fixed_source_interval_seconds": [
+      1200,
+      4800
+    ],
+    "interval_was_selected_before_first_detector_or_reference_counts": true,
+    "media": {
+      "sha256": "57e48287a5d9eef031fe400799add635b72151fa00cc9c5880b20f420c737808",
+      "bytes": 121347721
+    },
+    "original_audio_stream_copy": true,
+    "decoded_audio_duration_s": 3600.02175,
+    "container_duration_s": 3603.034,
+    "audio_first_pts_s": 2.95,
+    "timebase": "Decoded audio samples; no overlay clock or known recording date/start supplied."
+  },
+  "product": {
+    "source_commit": "65669df095316358eecc78145ae567ddb0aac42b",
+    "cli_sha256": "59d24f088fa2f7660196db074ec316f7f8400c6c8a404cd83737b4b8de535686",
+    "qualified_dirty_snapshot": true,
+    "compiled_files": 68,
+    "rust_tests": 228,
+    "python_tests": 10,
+    "baseline_source_commit": "4f8764c557339bc02da8b6464b3c6bfce1564d80",
+    "baseline_cli_sha256": "be3be6e40b04d14a0bd8bd1d0bf8cf9edfc625b2a75e9d46751105e5a5784cf9",
+    "terrain_parallel_implementation_used": false
+  },
+  "frozen_scientific_policy": {
+    "analysis_method": "passage_timing",
+    "job_sha256": "a45b7a37583afdba31948b3a6ee43aa167d5ac0632618f3a7d14834d020f40e0",
+    "broad_bounds": {
+      "south": 52.1,
+      "north": 52.6,
+      "west": 4.3,
+      "east": 5.2
+    },
+    "start_utc": null,
+    "date_from": "",
+    "date_to": null,
+    "known_point_or_microphone_height_supplied": false,
+    "ordinary_default_terrain_height_model": true,
+    "default_timing_options": {
+      "grid_m": 300.0,
+      "maximum_grid_points": 50000,
+      "maximum_passage_distance_m": 500.0,
+      "timing_sigma_s": 1.0,
+      "retained_candidates": 256
+    },
+    "grid_points_per_search": 38335,
+    "hypothesis_limit_field": 20000000,
+    "hypothesis_limit_field_applies_to": "Doppler only; unchanged and not a timing override",
+    "native_strict_acceptance_required": true,
+    "all_frozen_acceptance_gates": {
+      "native_strict_success": true,
+      "timing_candidate_screen": true,
+      "full_dates": true,
+      "full_default_grid": true,
+      "all19_controls_complete": true,
+      "all19_controls_beaten": true,
+      "at_least6_matches": true,
+      "valid_model_region": true,
+      "conditional_region_center_within1km": true
+    }
+  },
+  "native_result": {
+    "complete": true,
+    "accepted_conditionally": true,
+    "native_exit_code": 0,
+    "status": "candidates_found",
+    "timing_screen": "timing_candidate",
+    "timing_peak_count": 110,
+    "doppler_event_count": 0,
+    "track_segments_including_date_overlap": 12552,
+    "hypotheses": 434641,
+    "retained_timing_candidates": 256,
+    "top_candidate_pairs": 25,
+    "top_candidate_pairs_within3s": 25,
+    "top_log_likelihood_ratio": 31.794653218195407,
+    "worst_shuffled_control_score": 12.57236526311163,
+    "score_margin": 19.22228795508378,
+    "date_search": {
+      "dates": [
+        "2026-11-01",
+        "2026-11-03",
+        "2026-11-04"
+      ],
+      "completed_batches": 2,
+      "complete": true,
+      "track_count_includes_overlap": true
+    },
+    "actual_completed_windows": 2,
+    "actual_per_window_control_searches": 38,
+    "merged_control_identities": 19,
+    "merged_control_seeds": [
+      202611090,
+      202611091,
+      202611092,
+      202611093,
+      202611094,
+      202611095,
+      202611096,
+      202611097,
+      202611098,
+      202611099,
+      202611100,
+      202611101,
+      202611102,
+      202611103,
+      202611104,
+      202611105,
+      202611106,
+      202611107,
+      202611108
+    ],
+    "merged_control_scores": [
+      11.72128328906852,
+      11.764326276714602,
+      12.223634583113954,
+      10.926359322380538,
+      10.653370846331134,
+      11.072204978367791,
+      12.02568543995193,
+      10.220747021681625,
+      11.3084755507405,
+      11.028262670761764,
+      10.508113340441549,
+      10.242242445587262,
+      10.63070948841407,
+      12.212498020947274,
+      11.611794981328229,
+      11.842807722141202,
+      12.57236526311163,
+      11.455041601438646,
+      11.456013429579448
+    ],
+    "completed_windows": [
+      {
+        "window": [
+          "2026-11-01",
+          "2026-11-01"
+        ],
+        "status": "insufficient_evidence",
+        "screen": "insufficient_evidence",
+        "tracks": 3951,
+        "peaks": 110,
+        "grid_points": 38335,
+        "seeds": [
+          202611090,
+          202611091,
+          202611092,
+          202611093,
+          202611094,
+          202611095,
+          202611096,
+          202611097,
+          202611098,
+          202611099,
+          202611100,
+          202611101,
+          202611102,
+          202611103,
+          202611104,
+          202611105,
+          202611106,
+          202611107,
+          202611108
+        ],
+        "scores": [
+          10.886972537047534,
+          10.450419292422968,
+          9.547742686932509,
+          10.052182500819121,
+          9.326644714702574,
+          9.621418022410927,
+          12.02568543995193,
+          8.912345964125935,
+          10.267132223273025,
+          10.341392964447156,
+          9.094831845737161,
+          10.242242445587262,
+          10.026009825224074,
+          12.212498020947274,
+          10.08033416933067,
+          9.002547014490414,
+          11.727600202974855,
+          11.455041601438646,
+          11.112759078384766
+        ],
+        "sha256": "19bdd99aaa3b06cf21b495795f688fcb2339b4400a392dfba162cace3c7ca83e"
+      },
+      {
+        "window": [
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "status": "candidates_found",
+        "screen": "timing_candidate",
+        "tracks": 8601,
+        "peaks": 110,
+        "grid_points": 38335,
+        "seeds": [
+          202611090,
+          202611091,
+          202611092,
+          202611093,
+          202611094,
+          202611095,
+          202611096,
+          202611097,
+          202611098,
+          202611099,
+          202611100,
+          202611101,
+          202611102,
+          202611103,
+          202611104,
+          202611105,
+          202611106,
+          202611107,
+          202611108
+        ],
+        "scores": [
+          11.72128328906852,
+          11.764326276714602,
+          12.223634583113954,
+          10.926359322380538,
+          10.653370846331134,
+          11.072204978367791,
+          11.136885614432225,
+          10.220747021681625,
+          11.3084755507405,
+          11.028262670761764,
+          10.508113340441549,
+          10.23540413260103,
+          10.63070948841407,
+          10.566419888951291,
+          11.611794981328229,
+          11.842807722141202,
+          12.57236526311163,
+          11.127665360113134,
+          11.456013429579448
+        ],
+        "sha256": "9312e897951266d97abfeb9166539c3244d8093d56a33ab37c068c9a0cd8ff01"
+      }
+    ],
+    "merge_rule": "Exact per-seed maximum across both complete windows, independently recomputed."
+  },
+  "conditional_accuracy": {
+    "scored_point": "Returned timing.region center; raw top candidates are diagnostic only.",
+    "returned_region": {
+      "latitude": 52.34327956989247,
+      "longitude": 4.7102941176470665,
+      "enclosing_radius_m": 805.9972579148529,
+      "competitive_points": 18
+    },
+    "reference_point": {
+      "latitude": 52.34235107142857,
+      "longitude": 4.706645
+    },
+    "center_distance_m": 268.53615149128467,
+    "approved_unsurveyed_allowance_m": 220,
+    "conditional_error_interval_m": [
+      48.53615149128467,
+      488.53615149128467
+    ],
+    "target_m": 1000,
+    "passes_frozen_center_rule": true,
+    "competitive_location_spread_m": 1080.2412858575124,
+    "score_gap_beyond_1km": 1.519202307283713,
+    "historical_250m_classification": {
+      "point_distance_m": 268.53615149128467,
+      "error_interval_m": [
+        48.53615149128467,
+        488.53615149128467
+      ],
+      "classification": "boundary_indeterminate"
+    },
+    "assumptions": [
+      "Ambient microphone and worn headset remain within the mapped Polderbaan spectator/setup union plus stated margin.",
+      "Two local camera viewpoints, tripod repositioning and possible headset movement are covered conditionally, not surveyed.",
+      "Source ASR and sampled fixed frames support co-location but do not independently exclude remote/mixed audio, gain changes, donation inserts or movement outside the union.",
+      "Model enclosing radius and native timing screen are not calibrated location-accuracy probabilities or surveyed ground truth."
+    ],
+    "unconditional_accuracy_claim": false
+  },
+  "comparison_with_4f": {
+    "scientific_fields_unchanged_on_this_recording": true,
+    "full_report_differences": [
+      {
+        "path": "/created_utc",
+        "kind": "value",
+        "old": "2026-11-11T01:27:06.020561733+00:00",
+        "new": "2026-11-11T02:59:25.201888476+00:00"
+      }
+    ],
+    "both_checkpoint_reports_differ_only_in_created_utc": true,
+    "checkpoint_metadata_changes": [
+      "source-dependent checkpoint key",
+      "serialized report checksum due to created_utc"
+    ],
+    "decoded_reference_payload_differences": 0,
+    "decoded_reference_identity_scope": "All stored IEEEu64 sample bits, track identity/kind/order, sample counts/order and warnings; new source/parser cache keys differ.",
+    "full_streams": [
+      {
+        "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/baseline-report-deltas.jsonl",
+        "sha256": "6612fc0de735e6403137bffe5c22b1eb1291db136fb5c4ddf9bcddc9c1409505",
+        "difference_count": 1,
+        "by_section": {
+          "created_utc": 1
+        },
+        "full_stream_verified": true
+      },
+      {
+        "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/batch-0000-report-deltas.jsonl",
+        "sha256": "6612fc0de735e6403137bffe5c22b1eb1291db136fb5c4ddf9bcddc9c1409505",
+        "difference_count": 1,
+        "by_section": {
+          "created_utc": 1
+        },
+        "full_stream_verified": true
+      },
+      {
+        "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/batch-0000-metadata-deltas.jsonl",
+        "sha256": "0b812f39e20aff45003f93bc28ac3872184778e71c47fdb4d04ee230c42cc2f5",
+        "difference_count": 2,
+        "by_section": {
+          "key": 1,
+          "report_sha256": 1
+        },
+        "full_stream_verified": true
+      },
+      {
+        "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/batch-0001-report-deltas.jsonl",
+        "sha256": "6612fc0de735e6403137bffe5c22b1eb1291db136fb5c4ddf9bcddc9c1409505",
+        "difference_count": 1,
+        "by_section": {
+          "created_utc": 1
+        },
+        "full_stream_verified": true
+      },
+      {
+        "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/batch-0001-metadata-deltas.jsonl",
+        "sha256": "5d919cd55a4fee5d61a3ddaa65cd09c98d55353c3a18ca174299fb480931692c",
+        "difference_count": 2,
+        "by_section": {
+          "key": 1,
+          "report_sha256": 1
+        },
+        "full_stream_verified": true
+      },
+      {
+        "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/decoded-window-0-payload-deltas.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "difference_count": 0,
+        "by_section": {},
+        "full_stream_verified": true
+      },
+      {
+        "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/decoded-window-1-payload-deltas.jsonl",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "difference_count": 0,
+        "by_section": {},
+        "full_stream_verified": true
+      }
+    ],
+    "representation_equivalence_was_not_an_acceptance_requirement": true,
+    "no_general_parser_equivalence_claim": true,
+    "native_elapsed_s": {
+      "old": 937.4698768329981,
+      "new": 860.5222561430055,
+      "performance_claim": "Different source/cache warmth/load; descriptive durations only."
+    },
+    "controlled_speedup_claim": false
+  },
+  "source_cache_policy": {
+    "own_new_cache_files": [
+      {
+        "window": [
+          "2026-11-01",
+          "2026-11-01"
+        ],
+        "present": true,
+        "receipt": {
+          "path": "artifacts/shared-reference-cache/decoded-tracks/f4d22d86032a51cb02d6a5de74ff1b2fa83cce734bd74d5b5a5e47e5dca3b526.sgcache",
+          "key": "f4d22d86032a51cb02d6a5de74ff1b2fa83cce734bd74d5b5a5e47e5dca3b526",
+          "sha256": "79d3fc1ac0bff63c6583b2ba757fd01c08826109b9f470679437a5d92fe989f2",
+          "payload_sha256": "fa7d24b8078509e22ee3c67fc89772225b9aab41ec623c665a10e2e4fe19ef55",
+          "tracks": 3951,
+          "samples": 366340,
+          "warnings": [
+            "Read 12582 reception-gap markers. Recorded positions after each gap are retained; interpolation does not cross the gap.",
+            "Passage timing includes 411 short flight segments with 3 to 7 recorded positions. Positions are not added and gaps are not extended.",
+            "Skipped 10959540 malformed, ground, or missing-altitude trace records.",
+            "24720 positions use pressure altitude; weather-dependent height error affects location estimates.",
+            "246 flight segments have unknown aircraft type. Load the type catalog or use propeller-only mode to exclude unclassified aircraft."
+          ]
+        }
+      },
+      {
+        "window": [
+          "2026-11-03",
+          "2026-11-04"
+        ],
+        "present": true,
+        "receipt": {
+          "path": "artifacts/shared-reference-cache/decoded-tracks/c8c4febde43bac482893a9ca5471c1186ca281ef6fa352662e2bcb183bd797e4.sgcache",
+          "key": "c8c4febde43bac482893a9ca5471c1186ca281ef6fa352662e2bcb183bd797e4",
+          "sha256": "aa4f5e1ea76602c1c58ed15f4d2cd5a00fc08d85d0faedefc5533657c9674dd6",
+          "payload_sha256": "7af616ad0818ff28cd2081d8e8c4b479b809451892376e9ac1ca319c50ee67a1",
+          "tracks": 8601,
+          "samples": 806219,
+          "warnings": [
+            "Read 36050 reception-gap markers. Recorded positions after each gap are retained; interpolation does not cross the gap.",
+            "Passage timing includes 1262 short flight segments with 3 to 7 recorded positions. Positions are not added and gaps are not extended.",
+            "Skipped 24716201 malformed, ground, or missing-altitude trace records.",
+            "85681 positions use pressure altitude; weather-dependent height error affects location estimates.",
+            "471 flight segments have unknown aircraft type. Load the type catalog or use propeller-only mode to exclude unclassified aircraft."
+          ]
+        }
+      }
+    ],
+    "preserved_old_three": [
+      {
+        "path": "artifacts/shared-reference-cache/decoded-tracks/82615c5d4fec2744ae5506c2dd2f387626875fe045b0e25f6f16b21fe2234f6d.sgcache",
+        "sha256": "ddbb4c37d0a3d5411e09aa574ac61c9dcc94e2a2a55f24b392ad745c0fe1195a"
+      },
+      {
+        "path": "artifacts/shared-reference-cache/decoded-tracks/040f23f2bfb3ed3f6fc69104bbcd1bda6e7acda18bdbf1bad762391ec67a7780.sgcache",
+        "sha256": "d0d3a705ffbac81fa2e3a56348836e4ed40789e0e6a002430d1c96592e065293"
+      },
+      {
+        "path": "artifacts/shared-reference-cache/decoded-tracks/cc9f69b4fe7afc7ca363b194953ceb5dc87254d56a6a0b3e0bba064e6c81f33f.sgcache",
+        "sha256": "62c7a5a44c3f075a92c68b01db7214bd7abb956f2fe3a9ba7b8c184f827f048f"
+      }
+    ],
+    "optional_foreign_heathrow_file_present_at_terminal": false,
+    "optional_foreign_file_present_at_resume_review": false,
+    "foreign_transient_observations": [],
+    "foreign_policy": "Exactly one source-bound4f Heathrow key; partial/empty prefix can only wait after live FD/inode/ELF/argv/unit/startticks proof, within30s, with fully valid final payload mandatory. No transient or foreign artifact was accepted as Amsterdam output.",
+    "new_parser_salt": "soundgeo-decoded-tracks-v2-float-roundtrip",
+    "all35_source_inputs_unchanged_at_terminal": true,
+    "all238_bound_metadata_pins_unchanged_at_terminal_and_resume": true,
+    "full_raw_archive_rehash_repeated_after_resume": false,
+    "coverage_limit": "Finite prepared Nov1/3/4 reference dates and presence coverage; not proof of complete surveillance."
+  },
+  "execution_and_audit": {
+    "service": "soundgeo-amsterdam-timing-regression-656-v2.service",
+    "invocation_id": "11987f9569e145d4b1d79d221546c521",
+    "observed_coordinator_pid": 236402,
+    "observed_native_pid": 237126,
+    "native_started_utc": "2026-11-11T02:59:07.998856+00:00",
+    "native_completed_utc": "2026-11-11T03:14:46.449036+00:00",
+    "wrapper_finished_utc": "2026-11-11T03:15:15.117367+00:00",
+    "native_elapsed_s": 860.5222561430055,
+    "VM_cpu_count": 11,
+    "host_cpu_count": 22,
+    "native_service_limits": {
+      "cpu_quota_percent": 200,
+      "memory_max_bytes": 8589934592,
+      "runtime_max_seconds": 21900,
+      "kill_mode": "control-group",
+      "timeout_stop_seconds": 15
+    },
+    "auditor_service_CPU_percent": 200,
+    "auditor_service_memory_bytes": 2147483648,
+    "terminal_independent_checks": 349,
+    "terminal_audit_passed": true,
+    "post_resume_checks": 266,
+    "post_resume_review_passed": true,
+    "startup_live_identity_and_kernel_caps_captured": true,
+    "successful_exit_proof": "Exact invocation PID1 journal and coordinator terminal result; unloaded transient-unit defaults are not used as runtime evidence.",
+    "proxy_connections": 0,
+    "proxy_capture_is_not_system_wide_network_capture": true,
+    "model_retries": 0,
+    "new_observers_after_resume": 0,
+    "all_case_native_and_auditor_services_terminal": true
+  },
+  "artifact_bindings": {
+    "approval": {
+      "path": "artifacts/amsterdam/timing-regression-656-approval-v3.json",
+      "bytes": 60804,
+      "sha256": "bf2e0595e88b3988d0062ff9003f3d85dc3e5204f034aaa60eef2d76990322d1"
+    },
+    "execution_plan": {
+      "path": "artifacts/amsterdam/timing-regression-656-proposal-v3/timing-execution-plan.json",
+      "bytes": 24568,
+      "sha256": "f602c0a2b6668a1237856eefc74b0240c21f64c78223486bdae52c498204a428"
+    },
+    "runner": {
+      "path": "artifacts/amsterdam/timing-regression-656-proposal-v3/run_amsterdam_timing_baseline.py",
+      "bytes": 29878,
+      "sha256": "276d8f65fb72864b2821851e142089fec0e93fd80f5c5d9260571cf5b64ec36f"
+    },
+    "support": {
+      "path": "artifacts/amsterdam/timing-regression-656-proposal-v3/regression_support.py",
+      "bytes": 15575,
+      "sha256": "06d986a50a330670b133489e24215b405dacb966566fcad913a8fec3c901ec7d"
+    },
+    "cache_policy": {
+      "path": "artifacts/amsterdam/timing-regression-656-proposal-v3/decoded-cache-policy.json",
+      "bytes": 13791,
+      "sha256": "0771e80f5e3d79e21645040dfce677065f59b625740d8681cd7cfedf7aafd7bf"
+    },
+    "qualified_build": {
+      "path": "artifacts/qualification/report-roundtrip-freeze-v1/build-receipt.json",
+      "bytes": 13945,
+      "sha256": "1660835d880932363c25c213534316890bcef634e93cb7f8400829a8c8213da9"
+    },
+    "commit_binding": {
+      "path": "artifacts/qualification/report-roundtrip-commit-binding-65669df/committed-source-binding.json",
+      "bytes": 19261,
+      "sha256": "9e9ba0ae5adb6c9627ad92f198f64fc37372ba35847fe220912431f111f8ea4f"
+    },
+    "compiled_completion_audit": {
+      "path": "artifacts/qualification/report-roundtrip-independent-completion-audit-v1/audit.json",
+      "bytes": 36855,
+      "sha256": "860ce24af35538810d4c85c25ed4272061b9ac79ffa2830ec3386f1b142aeffe"
+    },
+    "input_inventory": {
+      "path": "artifacts/amsterdam/timing-regression-656-proposal-v1/input-inventory.json",
+      "bytes": 9998,
+      "sha256": "1985f393353f9233448d0acd98657d92a2dc900718f984e440706913c9a193ae"
+    },
+    "input_qualification": {
+      "path": "artifacts/amsterdam/input-preparation-v1/input-qualification-final.json",
+      "bytes": 2411,
+      "sha256": "a5f0a40dfc7a20b1cce18c44f3c472f425dc89d39352f2c05ee7dc1556d4404d"
+    },
+    "capture_qualification": {
+      "path": "artifacts/amsterdam/capture-qualification-final.json",
+      "bytes": 6116,
+      "sha256": "1ffe8464cf84d358ac365c32ca8c4ea2e7badf67d0e672b2cbebcc3f829bfe14"
+    },
+    "conditional_footprint_review": {
+      "path": "artifacts/amsterdam/parent-union-review.json",
+      "bytes": 1103,
+      "sha256": "87d06ec9da7ef0b3d2afa468f1c5f7b797f5f25d5623ed6a85efbe171bba1622"
+    },
+    "evaluator_union": {
+      "path": "artifacts/amsterdam/evaluator-union-proposal-v2.json",
+      "bytes": 4343,
+      "sha256": "90b7021796c11bbab152fe96f54d45762037795be32adcc35ac79de08f5a2eb7"
+    },
+    "independent_capture_review": {
+      "path": "artifacts/amsterdam/independent-review-v1/review.json",
+      "bytes": 12299,
+      "sha256": "4f07442031e240501866d08aefd1f29c2e847980f7e52ccf5bc8f66758e9b545"
+    },
+    "native_report": {
+      "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/report.json",
+      "bytes": 1086776,
+      "sha256": "a1f31de210b71b2978dbfb57b6036a1adbab4bd593ededf2c81a6a613bf3d931"
+    },
+    "runner_result": {
+      "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/result.json",
+      "bytes": 184067,
+      "sha256": "a03ae13372c5a1c28fde755868e1ab90336a978a251ffc9e0c8f52bdcd3e838b"
+    },
+    "native_log": {
+      "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/native.log",
+      "bytes": 870810,
+      "sha256": "6972841f5a0f9ab711ffef049ee679f4913b2583d87f71c7ce794fdac2fbd8e0"
+    },
+    "baseline_report": {
+      "path": "artifacts/amsterdam/passage-timing-baseline-attempt-1/report.json",
+      "bytes": 1086776,
+      "sha256": "37aec51b4b4f028ae80419d5b0407daefb79d6dd32c4e9bf4daef388f8e3a10d"
+    },
+    "baseline_result": {
+      "path": "artifacts/amsterdam/passage-timing-baseline-attempt-1/result.json",
+      "bytes": 183756,
+      "sha256": "d7e84e3594a086908bfab8a0110f67bfe5cdab89c7805d9afecf74aef91cfa1d"
+    },
+    "baseline_comparison": {
+      "path": "artifacts/amsterdam/passage-timing-regression-656-attempt-2/baseline-comparison.json",
+      "bytes": 5347,
+      "sha256": "fab259d65dbf334b8ca06a1e9be891b6adf91f44ac97a11cb7dc92e19a7b2879"
+    },
+    "terminal_audit": {
+      "path": "artifacts/amsterdam/timing-regression-656-independent-audit-v3/terminal-audit.json",
+      "bytes": 77822,
+      "sha256": "2879809c99834b42193c52d6c6f553b4ecc36ae96b05d0dd07956b04b56615a6"
+    },
+    "decoded_cache_audit": {
+      "path": "artifacts/amsterdam/timing-regression-656-independent-audit-v3/independent-decoded-cache-audit.json",
+      "bytes": 4739,
+      "sha256": "5e5e63ae3224e3608d176be6603651fae5406422584ce64f82c1533e7f01c162"
+    },
+    "delta_audit": {
+      "path": "artifacts/amsterdam/timing-regression-656-independent-audit-v3/independent-delta-audit.json",
+      "bytes": 2818,
+      "sha256": "f0b5b3d3d75ce2cc129bbe49d9c7b05a3c19f1bdf01a1cd65e1d4608375f664e"
+    },
+    "lifecycle_audit": {
+      "path": "artifacts/amsterdam/timing-regression-656-independent-audit-v3/terminal-lifecycle-audit.json",
+      "bytes": 1328,
+      "sha256": "8a9ef807c5f44f924b5730eb639b733915bdba19bff424af6c8aef4af356ba50"
+    },
+    "startup_audit": {
+      "path": "artifacts/amsterdam/timing-regression-656-independent-audit-v3/startup-audit.json",
+      "bytes": 2389,
+      "sha256": "245605ac8e6ba7f67fbfce3614dbf7106d0e37e81ce15b3899585465064358ca"
+    },
+    "lifecycle_journal": {
+      "path": "artifacts/amsterdam/timing-regression-656-independent-audit-v3/exact-invocation-journal.json",
+      "bytes": 2002,
+      "sha256": "911b65bc53d36352592c26fc82f17ea346ec5f48e01d094eb671635e9197c50d"
+    },
+    "auditor": {
+      "path": "artifacts/amsterdam/timing-regression-656-independent-audit-v3/audit_regression_terminal.py",
+      "bytes": 29742,
+      "sha256": "282757ed0e1d20d7279265f44fe7f0f829875af1411e614d7407feba816ad6f5"
+    },
+    "auditor_helper": {
+      "path": "artifacts/amsterdam/timing-regression-656-independent-audit-v3/independent_regression_checks.py",
+      "bytes": 9968,
+      "sha256": "cda119eefd9d05d49a3f75782d71ed2e7b82b44654c3baeeb18040db80e67222"
+    },
+    "auditor_pure_tests": {
+      "path": "artifacts/amsterdam/timing-regression-656-independent-audit-v3/pure-test-receipt.json",
+      "bytes": 490,
+      "sha256": "23fa787fbe5447f5863c850d43d348ff61ecc091c8ddddd4933f0c85ec9c7c91"
+    },
+    "post_resume_review": {
+      "path": "artifacts/resumed-review/post-resume-review.json",
+      "bytes": 58177,
+      "sha256": "10cfa54cdac54d08e66afe5a35cbe26bd7bfe71be50a3f64d70b7417cf390ed2"
+    }
+  },
+  "artifact_reference_policy": {
+    "paths": "Relative artifact labels identify retained hash-bound evidence. Large raw artifacts are not bundled with this portable record.",
+    "json_pointer_paths": "Leading slashes in reported difference paths denote JSON Pointers, not filesystem paths."
+  },
+  "independent_root_review": {
+    "source_artifact_label": "artifacts/amsterdam/root-parser656-scientific-review-v1.json",
+    "source_sha256": "08a5e9f6978ba1452c6b4fd7335ff4292020be24a91829e10a88b29cba09de88",
+    "source_hash_scope": "SHA256 identifies the retained original receipt; the embedded reviewer label is made portable.",
+    "receipt": {
+      "complete": true,
+      "reviewer": "independent project reviewer",
+      "reviewed_utc": "2026-11-11T03:51:33.540190+00:00",
+      "accepted_under_frozen_conditional_protocol": true,
+      "unconditional_accuracy_claim": false,
+      "new_independent_site_or_sample": false,
+      "draft_sha256": "26242b54749074cde92c27afc4df80fe480374fb49475416d97f1401373f92d4",
+      "artifact_bindings_verified": 30,
+      "report_sha256": "a1f31de210b71b2978dbfb57b6036a1adbab4bd593ededf2c81a6a613bf3d931",
+      "baseline_report_sha256": "37aec51b4b4f028ae80419d5b0407daefb79d6dd32c4e9bf4daef388f8e3a10d",
+      "prior_root_scientific_review_sha256": "4a40328c7ec14e6725503742898504f6814f15f23f105c17a5dfed887447d4b2",
+      "comparison": "Duplicate keys and nonfinite values rejected; types, keys, array order and IEEE754 float bits compared. The only report change is created_utc; both typed checkpoint reports have only that change.",
+      "report_difference_paths": [
+        "/created_utc"
+      ],
+      "checkpoint_difference_paths": [
+        [
+          "/object/created_utc/string"
+        ],
+        [
+          "/object/created_utc/string"
+        ]
+      ],
+      "terminal_independent_checks_passed": 349,
+      "source_inventory_basis": "Bound independent terminal audit rehashed all35 inputs; root did not repeat the large raw archive scan.",
+      "root_recomputed_geometry": true,
+      "region_center_error_m": 268.53615149128467,
+      "conditional_upper_error_m": 488.53615149128467,
+      "original_250m_target_accepted": false,
+      "limits": [
+        "Same recording and frozen evaluation protocol; this does not add a validation sample or site.",
+        "The220m microphone footprint/setup allowance remains conditional and unsurveyed.",
+        "Exact results on this recording do not establish general parser equivalence.",
+        "Durations are descriptive; no controlled speedup claim."
+      ],
+      "model_or_decoder_rerun": false
+    }
+  }
+}

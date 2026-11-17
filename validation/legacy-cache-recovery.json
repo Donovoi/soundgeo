@@ -1,0 +1,80 @@
+{
+  "scope": "Reference-data regression. Ordinary preparation of a complete older cache must add missing-flight recovery when the required source snapshots are available.",
+  "video_accuracy_test": false,
+  "source": "https://www.adsbexchange.com/data-products/sample-data/",
+  "source_day": "2025-07-01",
+  "day_selection": "An earlier audit of all 288 discovery snapshots found a missing airborne trace on this day.",
+  "target": "~574db9",
+  "legacy_manifest_sha256": "5543064927208966ead94b53ab4071104465932f6d41aa2e4cffd7040041a6e3",
+  "legacy_schema": 4,
+  "known_recovery": {
+    "source_commit": "b31eb4eeddef022092e11716af0219743e3b7a2c",
+    "positions": 40,
+    "source_snapshots": 122,
+    "missing_slots": [],
+    "derived_trace_sha256": "4b76f0cb28bab469535fbc3b2747331d58f3cbf2f59bef0df9a093f609a3d2f2"
+  },
+  "failed_build": {
+    "source_commit": "4a516354d445d5fe5e2426fa277f0b1aa7b49fed",
+    "ci": "https://github.com/Donovoi/soundgeo/actions/runs/42679867006",
+    "cli_sha256": "02a2ada726c6b308a880eefc9d1cd63fdb7f4178b12d0f1f6943bf58ee5b767a",
+    "checkout_tree_verified": true,
+    "artifact_digest_verified": true,
+    "required_checks_passed_on_windows_and_ubuntu": true,
+    "rust_tests_per_platform": 190,
+    "python_tests_per_platform": 10
+  },
+  "reproduction": {
+    "cache": "A separate copy of the original legacy regional cache and the previously downloaded source snapshots used by the successful recovery.",
+    "mode": "Normal online download with a rejecting local test proxy.",
+    "native_exit_code": 0,
+    "elapsed_s": 124.02671000000555,
+    "recovery_backfilled": false,
+    "legacy_schema_after": 4,
+    "proxy_connections": 0,
+    "original_caches_unchanged": true,
+    "copied_cache_unchanged": true,
+    "plan_sha256": "8e995b825f6ffbc3da4fe889031cd8ec0ddf969fd22f7e2d40a89beb739e519b",
+    "result_sha256": "a2ee5902f2499538050d1a2df4294a607998873cdec5464b92c8fae283858bd1",
+    "log_sha256": "ed13805c42e4132686b4d0bde7bbc7b6b58579ff8a6807c032562bef0dff537b"
+  },
+  "cause": "Completed legacy manifests returned from the cache reuse path before missing-flight recovery ran.",
+  "regressions": [
+    "legacy_missing_ground_records_upgrade_once_without_rechecking_source_gaps",
+    "legacy_missing_airborne_trace_uses_saved_recovery_sources_and_replays_offline",
+    "legacy_recovery_refusal_preserves_manifest_and_can_resume",
+    "atomic_cache_writes_create_and_replace_files_beyond_windows_path_limit"
+  ],
+  "fixed_native_replay": "Pending checks and a new replay at the original long path length or longer.",
+  "windows_path_failure": {
+    "source_commit": "6e397afd9ce6dd55bcfa875a4c6671c16db51db1",
+    "cli_sha256": "b05c02c05e7e31afc74c103ff01c5c8250ddf1252f198c1ee922f2090f466476",
+    "online_exit_code": 1,
+    "online_elapsed_s": 129.04621159999806,
+    "online_log_sha256": "47a9c867e337915a49d541472120d83149fee8160f0033b324a4884298a1414d",
+    "plan_sha256": "9172c4d1ec71fb1cc792bdd119e4629a2bb0985ea582505ab5e2099be35c11f4",
+    "backup_path_characters": 264,
+    "original_caches_unchanged": true,
+    "copied_cache_files_unchanged": true,
+    "legacy_schema_after": 4,
+    "proxy_connections": 0,
+    "offline_started": false,
+    "video_accuracy_test": false,
+    "cause": "The native temporary-file replacement failed on a 264-character Windows backup path.",
+    "native_probe": {
+      "exit_code": 0,
+      "source_sha256": "2251d396421ebf3c348ca9f2b146a9435f5e3c3d8c05d5abc41cd8786c05c450",
+      "exe_sha256": "58dfcc191db2a404c3099885e418b656be068574edb5c17bc20063c215e1803e",
+      "tempfile_rlib_sha256": "4fb069a8fe406f7a1117e031faeddfb186965653af53ae5e795fc34182901810",
+      "log_sha256": "a7146b28a107ac4a01df2c0e1e1da80fc7359f5ae82360f9017812545aae792f",
+      "rustc": "rustc 1.95.0 (59807616e 2026-04-14)",
+      "scope": "Isolated native path probe. The unmodified atomic-write shape must fail beyond 260 characters; canonical parent paths must support creation and replacement. No application cache was modified."
+    },
+    "audit_sha256": "721e3fe49cff9f7463f35169f72c52fdad18e5e76ad3d7081fbd784fe4ed3e7b",
+    "ci": "https://github.com/Donovoi/soundgeo/actions/runs/42686634314",
+    "required_checks_passed_on_windows_and_ubuntu": true,
+    "rust_tests_per_platform": 193,
+    "python_tests_per_platform": 10
+  },
+  "long_path_fix": "Prepare temporary files and final paths under the same canonical parent directory. Apply this to cache files, backups, and reports."
+}
