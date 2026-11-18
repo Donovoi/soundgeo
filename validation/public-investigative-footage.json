@@ -1,0 +1,111 @@
+{
+  "schema": 1,
+  "scope": "Public historical scene research and audio suitability checks. No person tracking, identities, private addresses or investigative leads were produced.",
+  "location_target_m": 1000,
+  "accepted_locations": 0,
+  "unknown_location_media_analysed": 1,
+  "known_location_comparisons_analysed": 1,
+  "location_error_evaluated": false,
+  "recording_clock_supplied": false,
+  "camera_coordinates_supplied": false,
+  "recording_date_supplied": false,
+  "flight_data_loaded": false,
+  "location_hypotheses": 0,
+  "research_limits": [
+    "Unknown means the cited publication did not establish the filming location. This is not proof that investigators still do not know it.",
+    "Missing-person whereabouts and an unidentified filming site are different questions. No missing-person footage was selected.",
+    "No video was reconstructed from article text or substituted for an unavailable original.",
+    "The separate Sycamore Gap comparison has a publicly known filming site. It is not an unresolved-location case or a successful blind location test."
+  ],
+  "analysed": [
+    {
+      "id": "bahamas-warning-shots",
+      "source": "https://www.tribune242.com/news/2019/dec/09/police-shoot-air-calm-rowdy-crowd/",
+      "player": "https://www.tribune242.com/videos/2019/dec/09/218/",
+      "media_source": "https://thetribune.media.clients.ellingtoncms.com/video/2019/12/09/Warning_shots_video.mp4",
+      "publication_date": "2019-12-09",
+      "case_context": "A public disturbance clip published with reporting of a police investigation. The article leaves the filming site unidentified.",
+      "recording_date": null,
+      "file_creation_time_is_recording_evidence": false,
+      "download": "First request returned HTTP 403. A normal browser User-Agent and the public player Referer retrieved the embedded file. No authentication was used.",
+      "media_sha256": "be5f119cb621b2143d839bb08477512edb8c3f555cc5e6d1b37fb27f9362f11a",
+      "media_bytes": 12675066,
+      "decoded_audio_duration_s": 27.413375,
+      "doppler_observations": 0,
+      "timing_peaks": 0,
+      "audio_check_exit_code": 3,
+      "audio_check_report_sha256": "59ea40b4fd5f2cfc4c11c7634c840e6d99ba89cf61e30c2f25541f48503b56a0",
+      "full_analysis_status": "insufficient_evidence",
+      "full_analysis_exit_code": 3,
+      "full_analysis_report_sha256": "6b3f171b69ace445d06c8224eb4f6e57cc8b166aaf8813ad7a568c3809013444",
+      "candidates": [],
+      "position_error_m": null
+    },
+    {
+      "id": "sycamore-gap-known-site-comparison",
+      "source": "https://www.youtube.com/watch?v=Rcuc5eqID3c",
+      "publisher": "Times Radio",
+      "publication_date": "2025-04-30",
+      "case_source": "https://www.cps.gov.uk/north-east/news/pair-who-felled-tree-sycamore-gap-convicted-criminal-damage",
+      "case_context": "A published excerpt of the Sycamore Gap felling footage. The site is publicly known; no site or date was supplied to SoundGeo.",
+      "scope": "Known-site negative comparison, separate from unidentified scenes. The published excerpt is shorter than the recording described in court reporting.",
+      "download": "The police page and Sky copy returned HTTP 403. The public Times Radio YouTube upload was retrieved with the installed Node runtime. The first successful low-audio-quality copy was preserved but not analysed; the analysis uses the highest available audio quality, with no audio re-encoding.",
+      "youtube_formats": "269+251",
+      "media_sha256": "ca72414ee9e432baaaf435e127262bf4d306357fe7b8afec3c20195d42aad08a",
+      "media_bytes": 1151345,
+      "decoded_audio_duration_s": 55.6815,
+      "doppler_observations": 0,
+      "timing_peaks": 2,
+      "audio_check_exit_code": 3,
+      "audio_check_report_sha256": "c93f2d3de3b58bd5655bad75eada016af28c72cdf2e1ea2ee71745f59b9d07af",
+      "full_analysis_status": "insufficient_evidence",
+      "full_analysis_exit_code": 3,
+      "full_analysis_report_sha256": "ad19e62b3d0b9f06b70546578f8cbdd92428004c5acbe006656e4036938332d8",
+      "candidates": [],
+      "position_error_m": null
+    }
+  ],
+  "other_candidates": [
+    {
+      "id": "subway-video",
+      "source": "https://www.cbsnews.com/newyork/news/subway-vandalism-arrests/",
+      "media_source": "https://www.youtube.com/watch?v=avG6goQiuSQ",
+      "publication_date": "2015-05-22",
+      "status": "media_unavailable",
+      "reason": "The linked video is private. No media analysed."
+    },
+    {
+      "id": "wiltshire-wildlife-appeal",
+      "source": "https://www.salisburyradio.co.uk/news/local-news/wiltshire-police-appeal-for-help-on-wildlife-offences/",
+      "publication_date": "2023-02-10",
+      "status": "no_video_obtained",
+      "reason": "The report quotes a police appeal about an unidentified filming location. The accessible publication provides still images, not the underlying recording. Its radio player is unrelated."
+    },
+    {
+      "id": "consett-outdoor-footage",
+      "source": "https://www.itv.com/news/tyne-tees/2023-09-22/man-banned-from-keeping-dogs-after-being-caught-on-camera-slapping-puppy",
+      "publication_date": "2023-09-22",
+      "status": "no_video_obtained",
+      "reason": "Reporting supplies the town but no exact filming site. A direct page request timed out. The downloader then exited zero with zero media items; this is not a successful acquisition. No media analysed."
+    },
+    {
+      "id": "mislabelled-cyberabad-clip",
+      "source": "https://telanganatoday.com/video-of-cop-being-thrashed-is-not-from-telangana-say-cyberabad-police",
+      "follow_up": "https://www.indiatoday.in/fact-check/story/fact-check-this-video-of-a-policeman-being-thrashed-is-not-from-hyderabad-1808687-2021-05-30",
+      "status": "excluded_from_unknown_location_set",
+      "reason": "Follow-up reporting identifies Ahmedabad. No SoundGeo result claimed."
+    }
+  ],
+  "execution": {
+    "environment": "Headless WSL2 virtual machine",
+    "media_analysis": "CPU quota 50%, 1 GiB RAM, no swap, nice 15, idle I/O priority, private network with loopback only",
+    "builds_and_required_checks": "CPU quota 200%, 8 GiB RAM, 1 GiB swap, nice 10, idle I/O priority, offline; one default Cargo target directory",
+    "audio_check_source_commit": "83e4fd4a2360c5f1969ec0355bbf5f03be2ad72c",
+    "audio_check_binary_sha256": "e86281144f343462b905c1288d6c6ad474ca11fd9d978875d131ae1041f90f73",
+    "full_analysis_source_commit": "ed7a1207d5bd748fd597813244eee592bb950f80",
+    "full_analysis_binary_sha256": "84e12fbf360f07627034d48f29c4530c642ceb22311cd8a2d10434775bc28890",
+    "inputs_unchanged_after_each_run": true
+  },
+  "result": "Neither downloaded clip supported a location search. Both full analyses stopped before loading flight references. No location or investigative lead was established.",
+  "improvement": "Added check-audio: an offline, reference-free intake command with a media hash, decoded duration, default detector settings, individual observations, method-specific reasons and an optional insufficient-evidence exit code. Existing output files are preserved. Detector and location acceptance thresholds are unchanged."
+}

@@ -8,6 +8,13 @@ New results must state which target they use.
 
 ## Current checks
 
+The [public investigative footage record](public-investigative-footage.json)
+preserves candidate selection, unavailable sources, input hashes and failed audio
+attempts. One unidentified-site clip and one separate known-site comparison both
+returned insufficient evidence, with no location search or accepted result.
+The new offline `check-audio` command exposes the audio-stage observations before
+flight references are chosen. It does not change detector or acceptance thresholds.
+
 The [1 km policy and Heathrow pair diagnosis](heathrow-one-km-diagnostic.json)
 separates location uncertainty from nearby clock alternatives and permits a
 two-thirds sound consensus. Competitors with at least 90% of the leading curve

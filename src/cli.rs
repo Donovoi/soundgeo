@@ -22,6 +22,19 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Commands {
+    /// Check audio locally before choosing flight data; does not locate the recording.
+    CheckAudio {
+        #[arg(long)]
+        input: PathBuf,
+        #[arg(long)]
+        ffmpeg: Option<PathBuf>,
+        /// New report file, or - for JSON on stdout. Existing files are preserved.
+        #[arg(long)]
+        output: PathBuf,
+        /// Return exit code 3 if neither method has enough observations to search.
+        #[arg(long)]
+        require_searchable: bool,
+    },
     /// Discover free flight archive dates without downloading flight files.
     Dates {
         #[arg(long, default_value = "adsb-lol")]
@@ -196,6 +209,23 @@ fn run(args: Args) -> Result<u8> {
         }
     };
     match args.command {
+        Some(Commands::CheckAudio {
+            input,
+            ffmpeg,
+            output,
+            require_searchable,
+        }) => {
+            let report =
+                soundgeo::audio_check::inspect(&input, ffmpeg.as_deref(), &control, &progress)?;
+            soundgeo::audio_check::write_report(&report, &output)?;
+            return Ok(
+                if require_searchable && report.status == "insufficient_evidence" {
+                    3
+                } else {
+                    0
+                },
+            );
+        }
         Some(Commands::Dates {
             provider,
             cache,

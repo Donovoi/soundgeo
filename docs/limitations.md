@@ -130,6 +130,22 @@ plans, failed tests, older wrong Doppler results, source records, and build chec
 
 ## Input coverage
 
+The [public investigative footage checks](../validation/public-investigative-footage.json)
+examined one clip whose publication leaves its filming location unidentified and
+one separate known-site comparison. The 27.41-second Bahamas clip produced no
+Doppler observations or timing peaks. The 55.68-second Sycamore Gap excerpt
+produced no Doppler observations and two timing peaks. Both analyses returned
+insufficient evidence before loading flight references. Neither yielded a location.
+Unavailable videos and a previously resolved filming location are recorded separately.
+
+`check-audio` runs the default audio detectors without flight data, dates or a
+search area. Its report records whether each method has enough observations to
+attempt a search. This does not identify aircraft, verify a continuous timeline,
+or establish location accuracy. The existing 20-second to two-hour decoder limits
+apply. Decode failures return an error; no successful intake report is written.
+Publication dates and container creation times can describe an upload or export.
+They do not establish when the scene was recorded.
+
 - Audio analysis accepts recordings from 20 seconds to two hours long.
   Optional video text can read shorter clips.
 - Passage timing needs at least eight minutes of continuous audio and six

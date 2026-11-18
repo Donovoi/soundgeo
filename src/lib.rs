@@ -3,6 +3,7 @@ pub mod archive;
 mod archive_refresh;
 mod atomic_file;
 pub mod audio;
+pub mod audio_check;
 pub mod availability;
 pub mod data;
 mod date_checkpoint;

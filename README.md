@@ -73,6 +73,21 @@ To use existing flight data, clear the automatic-download option. Then select th
 Select **Try a synthetic demo** to create a test recording and example flight data.
 The demo runs offline.
 
+## Check a recording before preparing flight data
+
+Check the audio with the default detectors, without a date, search area or flight cache:
+
+```powershell
+soundgeo-cli.exe check-audio --input recording.mp4 --output audio-check.json
+```
+
+This check always runs offline. It records the file hash, decoded duration,
+detected tones and sound peaks, and whether each method has enough observations
+to attempt a search. It preserves existing output files. Add `--require-searchable`
+to return exit code 3 when both methods lack enough evidence.
+The check does not establish a location. Review the source for edits, added audio
+and camera movement before running a location search.
+
 ## Prepare data for offline use
 
 To list available days without downloading flight files:
