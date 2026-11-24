@@ -62,6 +62,7 @@ jobs:
           throw 'FFmpeg is unavailable after three installation attempts.'
       - run: cargo fmt --all -- --check
       - run: python -m unittest discover -s validation -p test_run_timing.py
+      - run: python -m unittest discover -s scripts -p test_publish_release.py
       - run: cargo clippy --release --all-targets --locked -- -D warnings
       - name: Rust tests and source audit
         shell: bash

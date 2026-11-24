@@ -103,6 +103,9 @@ def main():
     for name in ('soundgeo', 'soundgeo-cli'):
         shutil.copy2(ROOT / 'target' / 'release' / (name + suffix), folder / (name + suffix))
     shutil.copy2(ROOT / 'README.md', folder / 'README.md')
+    (folder / 'assets').mkdir()
+    for path in (ROOT / 'assets').glob('*.txt'):
+        shutil.copy2(path, folder / 'assets' / path.name)
     shutil.copytree(ROOT / 'docs', folder / 'docs')
     shutil.copytree(ROOT / 'validation', folder / 'validation',
                     ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))

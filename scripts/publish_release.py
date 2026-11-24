@@ -20,16 +20,22 @@ def gh(*args):
     return subprocess.check_output(['gh', *map(str, args)], text=True).strip()
 
 
-existing = subprocess.run(['gh', 'api', f'repos/{repo}/releases/tags/{tag}'], capture_output=True, text=True)
-draft = None
-if existing.returncode == 0:
-    draft = json.loads(existing.stdout)
+def find_release():
+    # The tag endpoint returns published releases; list releases also finds
+    # drafts whose tag has not been created yet. Paginate for older drafts.
+    pages = json.loads(gh('api', '--paginate', '--slurp', f'repos/{repo}/releases?per_page=100'))
+    matches = [release for page in pages for release in page if release['tag_name'] == tag]
+    assert len(matches) <= 1, 'Multiple releases use the requested tag'
+    return matches[0] if matches else None
+
+
+draft = find_release()
+if draft is not None:
     if not draft['draft']:
         print(f'{tag} is already published; leaving its tag and assets unchanged.')
         raise SystemExit(0)
     assert draft['target_commitish'] == commit, 'An existing draft belongs to another source revision'
-elif '404' not in existing.stderr:
-    raise RuntimeError(existing.stderr)
+    assert draft['prerelease'] == request['prerelease'], 'Existing draft has a different release classification'
 
 assert version == tomllib.loads((root / 'Cargo.toml').read_text())['package']['version']
 assert isinstance(request['prerelease'], bool)
@@ -61,9 +67,11 @@ if draft is None:
     if request['prerelease']:
         args.append('--prerelease')
     gh(*args)
+    draft = find_release()
+    assert draft is not None and draft['draft'] and draft['target_commitish'] == commit
 # Only an unpublished draft from the exact checked revision can be resumed.
 gh('release', 'upload', tag, '--repo', repo, '--clobber', *assets)
-uploaded = json.loads(gh('api', f'repos/{repo}/releases/tags/{tag}'))
+uploaded = json.loads(gh('api', f'repos/{repo}/releases/{draft["id"]}'))
 assert uploaded['draft'] and uploaded['target_commitish'] == commit
 by_name = {a['name']: a for a in uploaded['assets']}
 assert set(by_name) == {p.name for p in assets}, 'Unexpected assets in draft'
@@ -71,6 +79,6 @@ for path in assets:
     assert by_name[path.name]['size'] == path.stat().st_size
     assert by_name[path.name]['digest'] == 'sha256:' + hashlib.sha256(path.read_bytes()).hexdigest()
 gh('release', 'edit', tag, '--repo', repo, '--draft=false', '--latest=false')
-published = json.loads(gh('api', f'repos/{repo}/releases/tags/{tag}'))
+published = json.loads(gh('api', f'repos/{repo}/releases/{draft["id"]}'))
 assert not published['draft'] and published['prerelease'] == request['prerelease']
 print(published['html_url'])
