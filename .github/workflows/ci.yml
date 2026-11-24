@@ -8,13 +8,20 @@ permissions:
   contents: read
 jobs:
   check:
+    timeout-minutes: 60
+    env:
+      CARGO_BUILD_JOBS: 2
+      RUST_TEST_THREADS: 2
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, ubuntu-24.04]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -34,7 +41,7 @@ jobs:
           done
           apt_options=(-o Acquire::Retries=2 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o DPkg::Lock::Timeout=60)
           sudo apt-get "${apt_options[@]}" update
-          sudo apt-get "${apt_options[@]}" install -y --no-install-recommends ffmpeg libx11-dev libxkbcommon-dev libwayland-dev libgl1-mesa-dev libudev-dev pkg-config
+          sudo apt-get "${apt_options[@]}" install -y --no-install-recommends ffmpeg libx11-dev libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libgl1-mesa-dev libegl1 libudev-dev libxcb-shape0 libxcb-xfixes0 pkg-config xvfb xauth xdotool
           ffmpeg -version
       - name: Windows FFmpeg
         if: runner.os == 'Windows'
@@ -55,14 +62,64 @@ jobs:
           throw 'FFmpeg is unavailable after three installation attempts.'
       - run: cargo fmt --all -- --check
       - run: python -m unittest discover -s validation -p test_run_timing.py
+      - run: python -m unittest discover -s scripts -p test_publish_release.py
       - run: cargo clippy --release --all-targets --locked -- -D warnings
-      - run: cargo test --release --locked --all-targets
+      - name: Rust tests and source audit
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p release-logs
+          cargo test --release --locked --all-targets 2>&1 | tee release-logs/rust-tests.log
+          python scripts/audit_test_log.py release-logs/rust-tests.log
       - run: cargo test --release --locked --doc
       - run: cargo build --release --locked --bins
-      - uses: actions/upload-artifact@v4
+      - name: Package tested binaries
+        run: python scripts/package_release.py
+      - name: Software OpenGL for Windows VM
         if: runner.os == 'Windows'
+        run: python scripts/setup_windows_test_gl.py
+      - name: Verify extracted Linux release in virtual display
+        if: runner.os == 'Linux'
+        env:
+          LIBGL_ALWAYS_SOFTWARE: '1'
+        run: xvfb-run -a python scripts/verify_release.py
+      - name: Verify extracted Windows release
+        if: runner.os == 'Windows'
+        run: python scripts/verify_release.py
+      - uses: actions/upload-artifact@v4
+        if: always()
         with:
-          name: soundgeo-windows
+          name: release-${{ runner.os }}
+          if-no-files-found: warn
           path: |
-            target/release/soundgeo.exe
-            target/release/soundgeo-cli.exe
+            dist/*.zip
+            dist/*.sha256
+            dist/validation-*.json
+      - name: Preserve package-check logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-logs-${{ runner.os }}
+          path: |
+            release-logs/
+            release-check/*.log
+  publish:
+    needs: check
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    concurrency:
+      group: soundgeo-release
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: release-*
+          path: release-artifacts
+      - name: Publish requested version after both platform checks
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 scripts/publish_release.py
