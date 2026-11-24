@@ -30,6 +30,10 @@ The [validation record](validation/README.md) contains test results, sources, an
 
 ## Requirements
 
+Download a Windows x64 or Linux x64 archive from [Releases](https://github.com/Donovoi/soundgeo/releases).
+Extract the whole archive, then follow [installation instructions](docs/installation.md).
+Releases marked **Pre-release** are experimental builds.
+
 - A local video or audio file.
 - FFmpeg to read the audio.
 - A free flight-data source, or a prepared flight cache.

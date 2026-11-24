@@ -1,4 +1,7 @@
 /target/
+/dist/
+/release-check/
+/release-logs/
 /demo/
 /reports/
 /cache/
