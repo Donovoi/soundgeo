@@ -1,6 +1,10 @@
-import ctypes, hashlib, json, subprocess, time
+import ctypes, hashlib, json, os, shutil, subprocess, time
 from pathlib import Path
 folder=Path('preflight').resolve()
+for dll in Path(os.environ['SOUNDGEO_TEST_MESA_DIR']).glob('*.dll'):
+    shutil.copy2(dll, folder/dll.name)
+os.environ['GALLIUM_DRIVER']='llvmpipe'
+os.environ['LIBGL_ALWAYS_SOFTWARE']='1'
 gui=folder/'soundgeo.exe'
 cli=folder/'soundgeo-cli.exe'
 print(json.dumps({'scope':'Display environment preflight, not new release qualification','source_run':44204778664,'gui_sha256':hashlib.sha256(gui.read_bytes()).hexdigest(),'version':subprocess.check_output([str(cli),'--version'],text=True).strip()}),flush=True)

@@ -17,6 +17,8 @@ jobs:
           run-id: 44204778664
           github-token: ${{ github.token }}
           path: preflight
+      - name: Install software OpenGL in this VM
+        run: python scripts/setup_windows_test_gl.py
       - name: Probe previously qualified desktop in runner VM
         run: python scripts/display_preflight.py
       - uses: actions/upload-artifact@v4
