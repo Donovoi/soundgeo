@@ -109,6 +109,7 @@ with (destination / 'desktop.log').open('wb') as log:
         if process.poll() is None:
             process.terminate()
         process.wait(timeout=15)
+        print((destination / 'desktop.log').read_text(encoding='utf-8', errors='replace'))
 platform = 'windows-x64' if sys.platform == 'win32' else 'linux-x64'
 receipt = {'version': build['version'], 'source_commit': build['source_commit'],
            'source_tree': build['source_tree'], 'target': build['target'],
