@@ -75,6 +75,9 @@ jobs:
       - run: cargo build --release --locked --bins
       - name: Package tested binaries
         run: python scripts/package_release.py
+      - name: Software OpenGL for Windows VM
+        if: runner.os == 'Windows'
+        run: python scripts/setup_windows_test_gl.py
       - name: Verify extracted Linux release in virtual display
         if: runner.os == 'Linux'
         env:

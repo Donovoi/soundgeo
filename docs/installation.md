@@ -11,6 +11,9 @@ automatic updater. Keep earlier versions and reports when upgrading.
 Use `soundgeo-VERSION-windows-x64.zip` on 64-bit Windows 10 or 11.
 Install the [Microsoft Visual C++ x64 runtime](https://aka.ms/vs/17/release/vc_redist.x64.exe)
 if Windows reports a missing runtime DLL.
+The desktop app needs a graphics driver with OpenGL 2.0 or newer. Install the
+current driver from your graphics-card manufacturer if the app reports an OpenGL
+error. Basic display drivers in some VMs and remote sessions only provide OpenGL 1.1.
 
 Install FFmpeg using a Windows build linked from the
 [FFmpeg download page](https://ffmpeg.org/download.html). Put `ffmpeg.exe` and

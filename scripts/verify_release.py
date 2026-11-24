@@ -5,6 +5,7 @@ import json
 import math
 import os
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import time
@@ -27,6 +28,20 @@ assert build['source_commit'] == subprocess.check_output(['git', 'rev-parse', 'H
 actual = {p.relative_to(folder).as_posix(): hashlib.sha256(p.read_bytes()).hexdigest()
           for p in folder.rglob('*') if p.is_file() and p.name != 'BUILD.json'}
 assert actual == build['files'], 'Extracted archive contents do not match the manifest'
+renderer = 'System OpenGL in Linux Xvfb VM'
+if sys.platform == 'win32':
+    # Cloud runners have only OpenGL 1.1. Install a VM-only runtime beside the
+    # extracted executable after verifying all original archive files. The ZIP
+    # remains unchanged; no driver is included in the published package.
+    mesa = Path(os.environ['SOUNDGEO_TEST_MESA_DIR'])
+    assert (mesa / 'opengl32.dll').is_file()
+    for path in mesa.glob('*.dll'):
+        destination_dll = folder / path.name
+        assert not destination_dll.exists()
+        shutil.copy2(path, destination_dll)
+    os.environ['GALLIUM_DRIVER'] = 'llvmpipe'
+    os.environ['LIBGL_ALWAYS_SOFTWARE'] = '1'
+    renderer = 'Mesa 26.3.1 llvmpipe in Windows VM (external test runtime)'
 suffix = '.exe' if sys.platform == 'win32' else ''
 cli, gui = (folder / (name + suffix) for name in ('soundgeo-cli', 'soundgeo'))
 if sys.platform != 'win32':
@@ -115,6 +130,7 @@ receipt = {'version': build['version'], 'source_commit': build['source_commit'],
            'source_tree': build['source_tree'], 'target': build['target'],
            'archive': archive.name, 'archive_sha256': hashlib.sha256(archive.read_bytes()).hexdigest(),
            'file_hashes_verified': True, 'checks': checks,
+           'desktop_renderer': renderer,
            'scope': 'Package smoke checks using synthetic/silent inputs; no new real-world accuracy measurement',
            'passed': True}
 (root / 'dist' / f'validation-{platform}.json').write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8')
