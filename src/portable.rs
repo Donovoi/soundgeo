@@ -19,6 +19,7 @@ pub struct Payload {
     start: u64,
     len: u64,
     position: u64,
+    digest: [u8; 32],
 }
 
 impl Read for Payload {
@@ -73,6 +74,7 @@ pub fn open_payload(path: &Path) -> Result<Payload> {
         start,
         len,
         position: 0,
+        digest: trailer[24..].try_into()?,
     };
     let mut hasher = Sha256::new();
     std::io::copy(&mut payload, &mut hasher)?;
@@ -203,6 +205,90 @@ pub fn extract_to(path: &Path, destination: &Path) -> Result<PathBuf> {
     extract(payload, destination)
 }
 
+/// Reuse a content-addressed runtime so executable paths in resumable searches
+/// stay stable. Always compare every cached file with the embedded manifest.
+/// A partially extracted directory is never published as a runnable cache.
+pub fn prepare_cached(executable: &Path, base: &Path) -> Result<PathBuf> {
+    let payload = open_payload(executable)?;
+    let key = payload
+        .digest
+        .iter()
+        .map(|b| format!("{b:02x}"))
+        .collect::<String>();
+    let destination = base.join(key);
+    let mut archive = zip::ZipArchive::new(payload)?;
+    let mut manifest = None;
+    for index in 0..archive.len() {
+        let mut entry = archive.by_index(index)?;
+        let name = entry.name()?.into_owned();
+        if name.ends_with("/BUILD.json") {
+            ensure!(
+                manifest.is_none() && entry.size() < 4 * 1024 * 1024,
+                "Invalid bundle manifest"
+            );
+            let path = safe_path(&name)?;
+            ensure!(path.components().count() == 2, "Invalid bundle layout");
+            let mut bytes = Vec::new();
+            entry.read_to_end(&mut bytes)?;
+            manifest = Some((
+                path.parent()
+                    .context("Missing application folder")?
+                    .to_path_buf(),
+                bytes,
+            ));
+        }
+    }
+    let (relative, bytes) = manifest.context("Missing bundle manifest")?;
+    if !destination.exists() {
+        fs::create_dir_all(base)?;
+        let temporary = tempfile::Builder::new()
+            .prefix("unpacking-")
+            .tempdir_in(base)?;
+        let mut payload = archive.into_inner();
+        payload.rewind()?;
+        extract(payload, temporary.path())?;
+        // Another launcher can finish first. A rename never replaces an existing
+        // complete directory; the losing launch verifies the winner below.
+        if let Err(error) = fs::rename(temporary.path(), &destination)
+            && !destination.exists()
+        {
+            return Err(error).context("Cannot publish the unpacked runtime");
+        }
+    }
+    verify_cached(&destination, &relative, &bytes).with_context(|| format!(
+        "The cached SoundGeo runtime is damaged. Close SoundGeo, remove {}, and run the downloaded EXE again", destination.display()
+    ))
+}
+
+fn verify_cached(destination: &Path, relative: &Path, manifest: &[u8]) -> Result<PathBuf> {
+    let folder = destination.join(relative);
+    let expected: Build = serde_json::from_slice(manifest)?;
+    let mut expected_files = BTreeMap::new();
+    for (name, digest) in expected.files {
+        expected_files.insert(relative.join(safe_path(&name)?), digest);
+    }
+    expected_files.insert(
+        relative.join("BUILD.json"),
+        format!("{:x}", Sha256::digest(manifest)),
+    );
+    let mut actual = BTreeMap::new();
+    for entry in walkdir::WalkDir::new(destination).follow_links(false) {
+        let entry = entry?;
+        ensure!(!entry.path_is_symlink(), "Cached runtime contains a link");
+        if entry.file_type().is_file() {
+            actual.insert(
+                entry.path().strip_prefix(destination)?.to_path_buf(),
+                hash_file(entry.path())?,
+            );
+        }
+    }
+    ensure!(
+        actual == expected_files,
+        "Cached runtime files do not match the embedded manifest"
+    );
+    Ok(folder)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -273,5 +359,54 @@ mod tests {
         fs::write(&marker, b"keep").unwrap();
         assert!(extract(Cursor::new(bytes), dir.path()).is_err());
         assert_eq!(fs::read(marker).unwrap(), b"keep");
+    }
+
+    #[test]
+    fn portable_cache_keeps_stable_paths_and_rejects_modified_or_extra_files() {
+        let dir = tempfile::tempdir().unwrap();
+        let exe = dir.path().join("download.exe");
+        let names = [
+            "soundgeo.exe",
+            "soundgeo-cli.exe",
+            "ffmpeg.exe",
+            "ffprobe.exe",
+            "tesseract.exe",
+            "tessdata/eng.traineddata",
+            "opengl32.dll",
+        ];
+        let digest = format!("{:x}", Sha256::digest(b"fixture"));
+        let files = names
+            .into_iter()
+            .map(|n| (n, digest.clone()))
+            .collect::<BTreeMap<_, _>>();
+        let manifest = serde_json::to_vec(&serde_json::json!({"files": files})).unwrap();
+        let mut zip = zip::ZipWriter::new(Cursor::new(Vec::new()));
+        let options = zip::write::SimpleFileOptions::default();
+        for name in names {
+            zip.start_file(format!("app/{name}"), options).unwrap();
+            zip.write_all(b"fixture").unwrap();
+        }
+        zip.start_file("app/BUILD.json", options).unwrap();
+        zip.write_all(&manifest).unwrap();
+        let payload = zip.finish().unwrap().into_inner();
+        let mut file = File::create(&exe).unwrap();
+        file.write_all(b"launcher").unwrap();
+        file.write_all(&payload).unwrap();
+        file.write_all(MAGIC).unwrap();
+        file.write_all(&(payload.len() as u64).to_le_bytes())
+            .unwrap();
+        file.write_all(&Sha256::digest(&payload)).unwrap();
+        drop(file);
+        let base = dir.path().join("runtime");
+        let first = prepare_cached(&exe, &base).unwrap();
+        assert_eq!(prepare_cached(&exe, &base).unwrap(), first);
+        fs::write(first.join("ffprobe.exe"), b"changed").unwrap();
+        assert!(prepare_cached(&exe, &base).is_err());
+        fs::write(first.join("ffprobe.exe"), b"fixture").unwrap();
+        fs::write(first.join("unlisted.dll"), b"extra").unwrap();
+        assert!(prepare_cached(&exe, &base).is_err());
+        fs::remove_file(first.join("unlisted.dll")).unwrap();
+        assert_eq!(prepare_cached(&exe, &base).unwrap(), first);
+        assert_eq!(fs::read_dir(base).unwrap().count(), 1);
     }
 }

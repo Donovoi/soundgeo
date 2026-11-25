@@ -84,6 +84,12 @@ def run(name, args, expected=0, timeout=240):
 
 
 assert build['version'] in run('version', ['--version'])
+if sys.platform == 'win32':
+    cache_root = isolated / 'SoundGeo/runtime'
+    cached_folders = list(cache_root.iterdir())
+    assert len(cached_folders) == 1
+    cached_app, = cached_folders[0].glob('*/soundgeo-cli.exe')
+    original_mtime = cached_app.stat().st_mtime_ns
 assert 'check-audio' in run('help', ['--help'])
 silent = destination / 'silence.wav'
 with wave.open(str(silent), 'wb') as stream:
@@ -139,12 +145,17 @@ $bitmap.Dispose()
                             '--frames', '1', '--output', ocr_report, '--require-match'])
     ocr = json.loads(ocr_report.read_text(encoding='utf-8'))
     assert ocr['status'] == 'place_clues_found' and any('LONDON' in frame['text'].upper() for frame in ocr['frames'])
-    # Each invocation has its own extraction; parallel launches must not collide.
+    # Start two instances with a fresh profile to exercise atomic first extraction.
+    original_profile = os.environ['LOCALAPPDATA']
+    os.environ['LOCALAPPDATA'] = str(destination / 'Concurrent fresh profile')
     concurrent = [subprocess.Popen([str(archive), '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                   for _ in range(2)]
     for child in concurrent:
         stdout, stderr = child.communicate(timeout=120)
         assert child.returncode == 0 and build['version'].encode() in stdout, stderr
+    fresh_root = Path(os.environ['LOCALAPPDATA']) / 'SoundGeo/runtime'
+    assert len(list(fresh_root.iterdir())) == 1, 'Concurrent launches left incomplete runtime folders'
+    os.environ['LOCALAPPDATA'] = original_profile
     checks.append('simultaneous-portable-launches')
 
 
@@ -227,8 +238,18 @@ with (destination / 'desktop.log').open('wb') as log:
 platform = 'windows-x64' if sys.platform == 'win32' else 'linux-x64'
 extra = []
 if sys.platform == 'win32':
-    assert not list((isolated / 'SoundGeo/runtime').glob('run-*')), 'Temporary runtimes were not cleaned up'
-    checks.append('temporary-runtime-cleanup')
+    assert list(cache_root.iterdir()) == cached_folders and cached_app.stat().st_mtime_ns == original_mtime
+    checks.append('stable-runtime-path-for-resumable-searches')
+    cached_probe = cached_app.with_name('ffprobe.exe')
+    original = cached_probe.read_bytes()
+    cached_probe.write_bytes(b'corrupted cached tool')
+    run('modified-runtime-rejected', ['--version'], 1)
+    cached_probe.write_bytes(original)
+    extra_dll = cached_app.with_name('unlisted.dll')
+    extra_dll.write_bytes(b'unexpected library')
+    run('unlisted-runtime-file-rejected', ['--version'], 1)
+    extra_dll.unlink()
+    assert build['version'] in run('verified-cache-reused', ['--version'])
     sources, = (root / 'dist').glob('*-windows-runtime-sources.zip')
     extra.append({'name': sources.name, 'sha256': hashlib.sha256(sources.read_bytes()).hexdigest()})
 receipt = {'version': build['version'], 'source_commit': build['source_commit'],

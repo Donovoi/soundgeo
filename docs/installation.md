@@ -12,12 +12,14 @@ the English OCR model, software OpenGL, and dependency notices. You do not need
 to install those tools, a Visual C++ runtime, Python, Rust, or a graphics driver.
 No administrator permission is needed.
 
-Allow several seconds for startup. Each run verifies and unpacks its embedded
-files into a new folder under `%LOCALAPPDATA%\SoundGeo\runtime`, and removes that
-folder when SoundGeo closes normally. Leave at least 1 GB of free disk space.
-Separate launches use separate folders. Interrupted launches can leave temporary
-folders there; close SoundGeo before removing leftover `run-*` folders.
-Recordings, reports, and downloaded reference data stay in the locations you
+Allow several seconds for first startup and leave at least 1 GB of free disk space.
+The EXE unpacks its embedded files into a versioned cache under
+`%LOCALAPPDATA%\SoundGeo\runtime`. Later launches verify every cached file and
+reuse the same folder. This keeps executable paths stable for resumable searches.
+Concurrent launches share a complete, verified cache. Close SoundGeo before
+removing an old runtime cache or leftover `unpacking-*` folders from interrupted
+extraction. A damaged cache is rejected with its location and recovery instructions.
+Keep your work outside the runtime cache. Recordings, reports, and reference data stay in the locations you
 choose. The app does not upload recordings.
 
 Compare the EXE's SHA-256 hash with `SHA256SUMS.txt` from the same release:

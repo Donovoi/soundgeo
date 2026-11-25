@@ -23,10 +23,7 @@ fn launch() -> anyhow::Result<i32> {
     )
     .join("SoundGeo")
     .join("runtime");
-    std::fs::create_dir_all(&base).context("Cannot create SoundGeo runtime folder")?;
-    let directory = tempfile::Builder::new().prefix("run-").tempdir_in(&base)?;
-    let folder =
-        soundgeo::portable::extract(soundgeo::portable::open_payload(&exe)?, directory.path())?;
+    let folder = soundgeo::portable::prepare_cached(&exe, &base)?;
     let name = if args.is_empty() {
         "soundgeo.exe"
     } else {
@@ -40,11 +37,6 @@ fn launch() -> anyhow::Result<i32> {
         .creation_flags(0x08000000) // no extra console window; redirected handles still work
         .status()
         .context("Could not start the bundled SoundGeo application")?;
-    // Keep the runtime alive until the child has exited. Temporary extraction
-    // avoids stale or modified cached programs and works with simultaneous runs.
-    directory
-        .close()
-        .context("SoundGeo closed, but its temporary runtime could not be removed")?;
     Ok(status.code().unwrap_or(1))
 }
 
