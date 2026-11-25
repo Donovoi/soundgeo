@@ -1,0 +1,9 @@
+{
+  "name": "soundgeo-windows-runtime",
+  "version-string": "1",
+  "dependencies": [
+    { "name": "ffmpeg", "default-features": false, "features": ["ffmpeg", "ffprobe", "avcodec", "avformat", "avfilter", "swresample", "swscale", "zlib", "dav1d"] },
+    { "name": "tesseract", "default-features": false },
+    { "name": "leptonica", "default-features": false }
+  ]
+}
