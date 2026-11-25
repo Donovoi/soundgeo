@@ -48,14 +48,18 @@ pub(crate) fn command(family: &str, name: &str) -> Result<(Command, PathBuf)> {
             })?
             .canonicalize()?
     };
-    let mut command = quiet_command(&path);
+    let command = quiet_command(&path);
     // Each native runtime has its own ggml libraries. Mixing their identically
     // named DLLs/shared objects can load a different ABI or CPU backend.
     #[cfg(unix)]
-    command.env(
-        "LD_LIBRARY_PATH",
-        path.parent().context("Missing helper directory")?,
-    );
+    let command = {
+        let mut command = command;
+        command.env(
+            "LD_LIBRARY_PATH",
+            path.parent().context("Missing helper directory")?,
+        );
+        command
+    };
     Ok((command, path))
 }
 
