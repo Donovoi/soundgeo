@@ -1,0 +1,24 @@
+name: Windows fixture diagnostic
+on:
+  push:
+    branches: [codex/windows-fixture-diagnostic]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  fixtures:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-runtime
+          run-id: 45515618943
+          github-token: ${{ github.token }}
+          path: runtime-artifact
+      - name: Exercise bundled FFmpeg fixture commands with timeouts
+        run: python scripts/diagnose_windows_fixtures.py
