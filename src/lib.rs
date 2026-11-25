@@ -15,6 +15,7 @@ pub mod geo;
 pub mod index;
 pub mod model;
 mod network;
+pub mod portable;
 mod proposal_checkpoint;
 pub mod sample_archive;
 pub mod search;

@@ -1,40 +1,53 @@
-# Install SoundGeo
+# Run SoundGeo
 
-Download the archive for your computer from
-[GitHub Releases](https://github.com/Donovoi/soundgeo/releases). Extract the whole
-archive into a new folder. Both the desktop app and command-line app are included.
-The downloads are unsigned. These experimental releases have no installer or
-automatic updater. Keep earlier versions and reports when upgrading.
+Download from [GitHub Releases](https://github.com/Donovoi/soundgeo/releases).
+These experimental downloads are unsigned. Keep earlier versions and reports
+when upgrading. SoundGeo has no automatic updater.
 
-## Windows x64
+## Windows x64: one download
 
-Use `soundgeo-VERSION-windows-x64.zip` on 64-bit Windows 10 or 11.
-Install the [Microsoft Visual C++ x64 runtime](https://aka.ms/vs/17/release/vc_redist.x64.exe)
-if Windows reports a missing runtime DLL.
-The desktop app needs a graphics driver with OpenGL 2.0 or newer. Install the
-current driver from your graphics-card manufacturer if the app reports an OpenGL
-error. Basic display drivers in some VMs and remote sessions only provide OpenGL 1.1.
+Download `soundgeo-VERSION-windows-x64.exe` for 64-bit Windows 10 or 11 and run it.
+The EXE contains the desktop and command-line apps, FFmpeg, FFprobe, Tesseract,
+the English OCR model, software OpenGL, and dependency notices. You do not need
+to install those tools, a Visual C++ runtime, Python, Rust, or a graphics driver.
+No administrator permission is needed.
 
-Install FFmpeg using a Windows build linked from the
-[FFmpeg download page](https://ffmpeg.org/download.html). Put `ffmpeg.exe` and
-`ffprobe.exe` beside `soundgeo.exe`, or add their folder to `PATH`.
-Start `soundgeo.exe` to open the desktop app.
+Allow several seconds for startup. Each run verifies and unpacks its embedded
+files into a new folder under `%LOCALAPPDATA%\SoundGeo\runtime`, and removes that
+folder when SoundGeo closes normally. Leave at least 1 GB of free disk space.
+Separate launches use separate folders. Interrupted launches can leave temporary
+folders there; close SoundGeo before removing leftover `run-*` folders.
+Recordings, reports, and downloaded reference data stay in the locations you
+choose. The app does not upload recordings.
 
-From PowerShell in that folder:
+Compare the EXE's SHA-256 hash with `SHA256SUMS.txt` from the same release:
+
+```powershell
+Get-FileHash .\soundgeo-VERSION-windows-x64.exe -Algorithm SHA256
+```
+
+The EXE also accepts the app's command-line arguments. For scripts that need a
+console executable, extract the bundle once into a new folder:
+
+```powershell
+Start-Process -Wait -FilePath .\soundgeo-VERSION-windows-x64.exe -ArgumentList '--portable-extract', 'SoundGeo-tools'
+```
+
+Open the versioned folder inside `SoundGeo-tools`, then use:
 
 ```powershell
 .\soundgeo-cli.exe --version
 .\soundgeo-cli.exe check-audio --input C:\recordings\clip.mp4 --output audio-check.json
-Get-FileHash ..\soundgeo-VERSION-windows-x64.zip -Algorithm SHA256
 ```
 
-Compare the archive hash with `SHA256SUMS.txt` from the same release.
+Keep the whole extracted folder together. Explicit FFmpeg, Tesseract and language
+folder overrides remain available for custom installations.
 
 ## Linux x64
 
 Use `soundgeo-VERSION-linux-x64.zip` on Ubuntu 24.04 or a compatible distribution
 with glibc 2.39 or newer. ARM and macOS binaries are not provided.
-On Ubuntu 24.04 install the runtime dependencies:
+Extract the whole archive. On Ubuntu 24.04 install the runtime dependencies:
 
 ```sh
 sudo apt-get update
@@ -51,26 +64,25 @@ chmod +x soundgeo soundgeo-cli
 ```
 
 The desktop app needs a graphical session and OpenGL support. The CLI can run
-headlessly. In the download folder, verify the archives with
+headlessly. Optional video text reading also needs `tesseract-ocr` and
+`tesseract-ocr-eng`. In the download folder verify hashes with
 `sha256sum --check --ignore-missing SHA256SUMS.txt`.
 
 ## First use
 
-Try **Try a synthetic demo** in the desktop app, or use the CLI:
+Try **Try a synthetic demo** in the desktop app, or run `soundgeo-cli demo
+--output demo`, followed by `soundgeo-cli --offline analyze --config demo/job.json
+--output demo/report.json`. The demo needs no flight download. It is a software
+check using synthetic audio.
 
-```powershell
-.\soundgeo-cli.exe demo --output demo
-.\soundgeo-cli.exe --offline analyze --config demo/job.json --output demo/report.json
-```
-
-On Linux replace `.\soundgeo-cli.exe` with `./soundgeo-cli`.
-The demo needs no flight download. It is a software check using synthetic audio.
-
-For your own recording, start with `check-audio`. A location search also needs
-flight references, and can take substantial time and disk space. See the
-[README](../README.md) for online and offline workflows and
+For your own recording, start with `check-audio`. Flight references, terrain and
+GeoNames place data are downloaded through the app when needed; they vary by
+date and search area and can require substantial disk space. An offline search
+needs those references prepared in advance. See the [README](../README.md) and
 [limitations](limitations.md) for supported evidence and accuracy results.
 
-FFmpeg, flight data, terrain, Tesseract and GeoNames are separate downloads.
-Dependency notices are included in `THIRD_PARTY.txt`; `BUILD.json` records the
-source revision, tools and file hashes for this archive.
+`THIRD_PARTY.txt` and `runtime-notices` contain dependency notices. `BUILD.json`
+records source and bundled-file hashes. Windows runtime versions are recorded
+in `RUNTIME.json`. Corresponding media-tool sources and build instructions are
+provided in `soundgeo-VERSION-windows-runtime-sources.zip` on the same release.
+SoundGeo includes FFmpeg under LGPL 2.1 or later as separate executables.

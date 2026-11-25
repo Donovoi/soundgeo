@@ -6,7 +6,9 @@ samples remains unfinished. The current location target is within 1 km.
 ## Video text clues
 
 Video text reading is optional. It needs Tesseract 5, English language data,
-FFmpeg, FFprobe, and a local GeoNames file. It samples frames across the video
+FFmpeg, FFprobe, and a local GeoNames file. The Windows portable EXE includes
+the tools and English model; place data is prepared separately through the app.
+It samples frames across the video
 and reads the full image and the top and bottom edges. Text that appears briefly
 can fall between the sampled frames. Small, blurred, or compressed text can fail.
 

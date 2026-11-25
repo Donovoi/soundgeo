@@ -20,7 +20,7 @@ class PublisherTests(unittest.TestCase):
         self.cwd = Path.cwd()
         self.addCleanup(self.directory.cleanup)
         self.addCleanup(os.chdir, self.cwd)
-        self.version = '0.3.0-alpha.1'
+        self.version = '0.3.0-alpha.2'
         self.commit = 'a' * 40
         self.tree = 'b' * 40
         self.release = None
@@ -34,12 +34,17 @@ class PublisherTests(unittest.TestCase):
         for platform, runner in [('windows-x64', 'Windows'), ('linux-x64', 'Linux')]:
             folder = self.root / 'release-artifacts' / ('release-' + runner)
             folder.mkdir(parents=True)
-            archive = folder / f'soundgeo-{self.version}-{platform}.zip'
+            extension = '.exe' if runner == 'Windows' else '.zip'
+            archive = folder / f'soundgeo-{self.version}-{platform}{extension}'
             archive.write_bytes(b'archive fixture')
             receipt = {'passed': True, 'file_hashes_verified': True,
-                       'checks': ['desktop-visible-window'], 'source_commit': self.commit,
+                       'checks': ['desktop-visible-window', 'bundled-video-ocr', 'windows-inbox-or-bundled-dlls-only'], 'source_commit': self.commit,
                        'source_tree': self.tree, 'version': self.version,
                        'archive_sha256': hashlib.sha256(archive.read_bytes()).hexdigest()}
+            if runner == 'Windows':
+                sources = folder / f'soundgeo-{self.version}-windows-runtime-sources.zip'
+                sources.write_bytes(b'sources fixture')
+                receipt['additional_assets'] = [{'name': sources.name, 'sha256': hashlib.sha256(sources.read_bytes()).hexdigest()}]
             (folder / f'validation-{platform}.json').write_text(json.dumps(receipt))
 
     def output(self, command, **kwargs):
@@ -64,7 +69,7 @@ class PublisherTests(unittest.TestCase):
             self.release['assets'] = [{'name': p.name, 'size': p.stat().st_size,
                                       'digest': 'sha256:' + hashlib.sha256(p.read_bytes()).hexdigest()} for p in paths]
         elif action == 'edit':
-            assert self.release['draft'] and len(self.release['assets']) == 5
+            assert self.release['draft'] and len(self.release['assets']) == 6
             self.release['draft'] = False
         else:
             raise AssertionError(args)
@@ -115,6 +120,26 @@ class PublisherTests(unittest.TestCase):
             self.execute()
         self.assertEqual(self.mutations, ['create', 'upload'])
         self.assertTrue(self.release['draft'])
+
+    def test_rejects_corrupted_corresponding_sources(self):
+        next(self.root.rglob('*-runtime-sources.zip')).write_bytes(b'corrupt sources')
+        with self.assertRaises(AssertionError):
+            self.execute()
+        self.assertEqual(self.mutations, [])
+
+    def test_waits_for_new_draft_visibility(self):
+        original = self.output
+        hidden = [False]
+        def eventual(command, **kwargs):
+            if command[1:4] == ['api', '--paginate', '--slurp'] and self.release and not hidden[0]:
+                hidden[0] = True
+                return '[[]]'
+            return original(command, **kwargs)
+        self.output = eventual
+        with patch('time.sleep'):
+            self.execute()
+        self.assertEqual(self.mutations, ['create', 'upload', 'edit'])
+        self.assertTrue(hidden[0])
 
 
 if __name__ == '__main__':

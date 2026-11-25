@@ -30,12 +30,13 @@ The [validation record](validation/README.md) contains test results, sources, an
 
 ## Requirements
 
-Download a Windows x64 or Linux x64 archive from [Releases](https://github.com/Donovoi/soundgeo/releases).
-Extract the whole archive, then follow [installation instructions](docs/installation.md).
+Download the Windows x64 EXE or Linux x64 archive from [Releases](https://github.com/Donovoi/soundgeo/releases).
+On Windows, run the EXE: media tools, English OCR and software graphics are included.
+See [installation instructions](docs/installation.md) for Linux and console scripts.
 Releases marked **Pre-release** are experimental builds.
 
 - A local video or audio file.
-- FFmpeg to read the audio.
+- FFmpeg to read the audio (included in the Windows EXE).
 - A free flight-data source, or a prepared flight cache.
 - A folder for downloaded data.
 
@@ -52,7 +53,8 @@ Releases marked **Pre-release** are experimental builds.
 9. Select **Analyze recording**.
 10. Read the result and its warnings. Export the JSON report if necessary.
 
-Put FFmpeg on `PATH`, beside the application, or select its path in the advanced settings.
+The Windows EXE selects its bundled tools automatically. For other installations,
+put FFmpeg on `PATH`, beside the application, or select its path in advanced settings.
 A new daily flight archive can require several GB of storage.
 The program checks downloaded files and uses valid files again.
 A split archive must be complete before the app marks it ready.
@@ -142,8 +144,9 @@ SoundGeo can read visible place names and clocks from a video. This option uses
 local text recognition. It produces a separate JSON report with the text, frame
 times, and matching places on a map. Audio searches keep their own results.
 
-Install [Tesseract 5](https://tesseract-ocr.github.io/tessdoc/Installation.html)
-with its English language data. Keep FFmpeg and FFprobe together. Prepare free
+The Windows EXE includes Tesseract and English language data. On other platforms,
+install [Tesseract 5](https://tesseract-ocr.github.io/tessdoc/Installation.html)
+with its English model and keep FFmpeg and FFprobe together. Prepare free
 [GeoNames](https://www.geonames.org/) place data before going offline:
 
 ```powershell
@@ -152,9 +155,9 @@ soundgeo-cli.exe video-data --country ALL --output video-data
 
 Use a two-letter country code such as `US` to prepare one country. GeoNames data
 uses the [CC BY 4.0 license](https://creativecommons.org/licenses/by/4.0/).
-Copy the `.txt` and `.source.json` files to the offline computer. Also copy
-the complete Tesseract installation, including its `tessdata` folder,
-and both FFmpeg and FFprobe.
+Copy the `.txt` and `.source.json` files to the offline computer. The Windows EXE
+contains the required tools; other installations also need Tesseract, its
+`tessdata` folder, FFmpeg and FFprobe on that computer.
 
 ```powershell
 soundgeo-cli.exe video-clues --input recording.mp4 --gazetteer video-data/allCountries.txt --offline --output video-clues.json
@@ -167,7 +170,8 @@ The `--require-match` option returns exit code 3 if no place names match.
 Read all entries in `places` and the source text in `frames`.
 
 In the desktop app, open **Video clues (optional)** below the recording field.
-Prepare or select the place data, select Tesseract, then choose **Read video clues**.
+Prepare or select the place data, then choose **Read video clues**. The Windows
+download selects bundled Tesseract automatically.
 
 ## Use the command line
 

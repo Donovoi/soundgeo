@@ -108,8 +108,8 @@ def main():
                     output.write(path, 'patched-sources/' + path.relative_to(vcpkg / 'buildtrees').as_posix())
         for path in sorted((ROOT / 'scripts/windows-runtime').iterdir()):
             if path.is_file():
-                output.write(path, 'soundgeo-build/windows-runtime/' + path.name)
-        output.write(Path(__file__), 'soundgeo-build/build_windows_runtime.py')
+                output.write(path, 'soundgeo-build/scripts/windows-runtime/' + path.name)
+        output.write(Path(__file__), 'soundgeo-build/scripts/build_windows_runtime.py')
         output.write(bundle / 'RUNTIME.json', 'RUNTIME.json')
     with zipfile.ZipFile(base / 'windows-runtime.zip', 'x', zipfile.ZIP_DEFLATED) as output:
         for path in sorted(bundle.rglob('*')):
