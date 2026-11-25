@@ -3,9 +3,11 @@ import hashlib
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import tomllib
 import time
+from urllib.parse import urljoin
 
 root = Path(__file__).resolve().parents[1]
 os.chdir(root)
@@ -30,9 +32,39 @@ def find_release():
     return matches[0] if matches else None
 
 
+def linked_notes(body):
+    # Release bodies do not inherit the docs/releases/ file's link context.
+    prefix = f'https://github.com/{repo}/blob/{tag}/'
+    def replace(match):
+        target = urljoin(prefix + 'docs/releases/', match[1])
+        return '](' + target + ')' if target.startswith(prefix) else match[0]
+    return re.sub(r'\]\((\.\.?/[^)\s]+)\)', replace, body)
+
+
+def notes_file(body):
+    path = root / 'release-artifacts/RELEASE_NOTES.md'
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(body, encoding='utf-8')
+    return path
+
+
 draft = find_release()
 if draft is not None:
     if not draft['draft']:
+        original = draft.get('body') or ''
+        corrected = linked_notes(original)
+        if corrected != original:
+            # Preserve published prose and binaries; repair only the relative
+            # documentation targets using this release's own immutable tag.
+            gh('release', 'edit', tag, '--repo', repo, '--notes-file', notes_file(corrected))
+            updated = json.loads(gh('api', f'repos/{repo}/releases/{draft["id"]}'))
+            assert updated['body'] == corrected
+            for field in ('id', 'tag_name', 'target_commitish', 'prerelease', 'draft'):
+                assert updated.get(field) == draft.get(field), field
+            def assets(value):
+                return [(a.get('id'), a['name'], a['size'], a.get('digest')) for a in value['assets']]
+            assert assets(updated) == assets(draft), 'Published asset identity changed'
+            print(f'Corrected versioned documentation links in {tag} notes.')
         print(f'{tag} is already published; leaving its tag and assets unchanged.')
         raise SystemExit(0)
     assert draft['target_commitish'] == commit, 'An existing draft belongs to another source revision'
@@ -42,6 +74,7 @@ assert version == tomllib.loads((root / 'Cargo.toml').read_text())['package']['v
 assert isinstance(request['prerelease'], bool)
 notes = root / 'docs' / 'releases' / (tag + '.md')
 assert notes.is_file()
+notes = notes_file(linked_notes(notes.read_text(encoding='utf-8')))
 assets = []
 for platform, runner in [('windows-x64', 'Windows'), ('linux-x64', 'Linux')]:
     folder = root / 'release-artifacts' / ('release-' + runner)

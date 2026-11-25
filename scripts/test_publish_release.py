@@ -62,6 +62,7 @@ class PublisherTests(unittest.TestCase):
             assert '--draft' in args and '--prerelease' in args
             self.release = {'id': 123, 'tag_name': 'v' + self.version, 'draft': True,
                             'prerelease': True, 'target_commitish': self.commit, 'assets': [],
+                            'body': Path(args[args.index('--notes-file') + 1]).read_text(),
                             'html_url': 'https://example.invalid/release'}
         elif action == 'upload':
             assert self.release['draft']
@@ -69,8 +70,12 @@ class PublisherTests(unittest.TestCase):
             self.release['assets'] = [{'name': p.name, 'size': p.stat().st_size,
                                       'digest': 'sha256:' + hashlib.sha256(p.read_bytes()).hexdigest()} for p in paths]
         elif action == 'edit':
-            assert self.release['draft'] and len(self.release['assets']) == 6
-            self.release['draft'] = False
+            if '--notes-file' in args:
+                assert not self.release['draft'] and '--draft=false' not in args
+                self.release['body'] = Path(args[args.index('--notes-file') + 1]).read_text()
+            else:
+                assert self.release['draft'] and len(self.release['assets']) == 6
+                self.release['draft'] = False
         else:
             raise AssertionError(args)
         return ''
@@ -122,6 +127,36 @@ class PublisherTests(unittest.TestCase):
         with self.assertRaises(SystemExit) as result:
             self.execute()
         self.assertEqual(result.exception.code, 0)
+        self.assertEqual(self.mutations, [])
+
+    def test_new_release_links_resolve_from_document_directory_at_release_tag(self):
+        notes = self.root / f'docs/releases/v{self.version}.md'
+        notes.write_text('[Speech](../speech.md#commands) [Validation](../../validation/README.md) '
+                         '[External](https://example.invalid/a) [Outside](../../../../outside.md)')
+        self.execute()
+        prefix = f'https://github.com/test/soundgeo/blob/v{self.version}/'
+        self.assertEqual(self.release['body'],
+                         f'[Speech]({prefix}docs/speech.md#commands) '
+                         f'[Validation]({prefix}validation/README.md) '
+                         '[External](https://example.invalid/a) [Outside](../../../../outside.md)')
+
+    def test_repairs_published_links_without_replacing_prose_tag_or_assets(self):
+        self.release = {'id': 123, 'tag_name': 'v' + self.version, 'draft': False,
+                        'prerelease': True, 'target_commitish': 'c' * 40,
+                        'assets': [{'id': 10, 'name': 'existing.exe', 'size': 12, 'digest': 'sha256:existing'}],
+                        'body': 'Existing user prose. [Speech](../speech.md#commands)'}
+        before = json.loads(json.dumps(self.release))
+        with self.assertRaises(SystemExit) as result:
+            self.execute()
+        self.assertEqual(result.exception.code, 0)
+        self.assertEqual(self.mutations, ['edit'])
+        self.assertEqual(self.release['body'],
+                         f'Existing user prose. [Speech](https://github.com/test/soundgeo/blob/v{self.version}/docs/speech.md#commands)')
+        self.assertEqual({k: v for k, v in self.release.items() if k != 'body'},
+                         {k: v for k, v in before.items() if k != 'body'})
+        self.mutations.clear()
+        with self.assertRaises(SystemExit):
+            self.execute()
         self.assertEqual(self.mutations, [])
 
     def test_wrong_uploaded_digest_leaves_release_unpublished(self):
