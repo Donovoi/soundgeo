@@ -111,6 +111,12 @@
       "https://github.com/Donovoi/soundgeo/releases/download/v0.3.0-alpha.3/validation-linux-x64.json"
     ]
   },
+  "retained_release_failure": {
+    "workflow": "https://github.com/Donovoi/soundgeo/actions/runs/45562936316",
+    "source_commit": "584be3399240fbea9f5de8ab183233f6f7940c47",
+    "result": "Linux passed. Windows stopped before packaging when the cancellation test's PowerShell child did not signal readiness within ten seconds. Publication was skipped.",
+    "correction": "Use the native Rust test executable for both parent and descendant fixtures. Check normal completion first, capture startup diagnostics, and allow the descendant's attempted write only after cancellation returns. The application process-management code is unchanged."
+  },
   "bundled_versions": {
     "yt-dlp": "2026.11.23",
     "gallery-dl": "1.32.21",
