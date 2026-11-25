@@ -60,7 +60,7 @@ def main():
                 for name in wheel.namelist():
                     if any(word in name.lower() for word in ['license', 'copying', 'notice']):
                         output.write(f'\n--- {name} ---\n' + wheel.read(name).decode('utf-8', errors='replace'))
-    for label, archive in [('yt', 'yt-dlp.tar.gz'), ('gallery', 'gallery_dl-1.32.21.tar.gz'), ('aria', 'aria2-1.37.0.tar.xz')]:
+    for label, archive in [('yt', 'yt-dlp-source-2026.11.23.tar.gz'), ('gallery', 'gallery-dl-source-1.32.21.tar.gz'), ('aria', 'aria2-1.37.0.tar.xz')]:
         dest = work / label; dest.mkdir()
         with tarfile.open(sources / archive) as stream: stream.extractall(dest, filter='data')
     yt, = (work / 'yt').iterdir()

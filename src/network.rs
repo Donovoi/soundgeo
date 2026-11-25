@@ -66,15 +66,7 @@ fn fetch_native(
     progress: &Progress<'_>,
 ) -> Result<()> {
     control.check()?;
-    let expected = digest
-        .and_then(|d| d.strip_prefix("sha256:"))
-        .map(str::to_ascii_lowercase);
-    if expected
-        .as_ref()
-        .is_some_and(|s| s.len() != 64 || !s.bytes().all(|b| b.is_ascii_hexdigit()))
-    {
-        bail!("Invalid archive SHA-256 digest");
-    }
+    let expected = expected_digest(digest)?;
     let stamp = path.with_extension(format!(
         "{}.sha256",
         path.extension().unwrap_or_default().to_string_lossy()
@@ -290,6 +282,7 @@ fn fetch_aria(
             "--max-connection-per-server=4",
             "--min-split-size=8M",
             "--max-overall-download-limit=0",
+            "--auto-save-interval=5",
             "--connect-timeout=20",
             "--timeout=30",
             "--max-tries=3",
@@ -384,15 +377,99 @@ fn fetch_aria(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn aria2_batch_verifies_all_files_and_rejects_corrupted_offline_cache() {
+        let tool = aria2().expect("Install aria2 for downloader qualification tests");
+        let dir = tempfile::tempdir().unwrap();
+        let first = dir.path().join("first.part");
+        let second = dir.path().join("second.part");
+        let body = b"verified archive fixture";
+        let digest = format!("sha256:{:x}", Sha256::digest(body));
+        let (url1, thread1) = server(body, body.len(), false);
+        let (url2, thread2) = server(body, body.len(), false);
+        let files = [
+            Transfer {
+                url: &url1,
+                path: &first,
+                size: body.len() as u64,
+                digest: Some(&digest),
+            },
+            Transfer {
+                url: &url2,
+                path: &second,
+                size: body.len() as u64,
+                digest: Some(&digest),
+            },
+        ];
+        let result = fetch_aria(&files, &tool, &Control::default(), &|_, _| {});
+        thread1.join().unwrap();
+        thread2.join().unwrap();
+        result.unwrap();
+        assert_eq!(std::fs::read(&first).unwrap(), body);
+        assert_eq!(std::fs::read(&second).unwrap(), body);
+        fetch_aria(
+            &files,
+            &tool,
+            &Control::default().with_offline(true),
+            &|_, _| {},
+        )
+        .unwrap();
+        std::fs::write(&first, vec![0; body.len()]).unwrap();
+        assert!(
+            fetch_aria(
+                &files,
+                &tool,
+                &Control::default().with_offline(true),
+                &|_, _| {}
+            )
+            .unwrap_err()
+            .to_string()
+            .contains("Offline mode")
+        );
+        assert_eq!(std::fs::read(&second).unwrap(), body);
+    }
+    #[test]
+    fn invalid_digest_never_starts_a_download() {
+        let dir = tempfile::tempdir().unwrap();
+        for digest in ["md5:abc", "sha256:abc", "sha256:gggg"] {
+            let error = fetch_native(
+                "http://127.0.0.1:1/unused",
+                &dir.path().join("part"),
+                1,
+                Some(digest),
+                &Control::default(),
+                &|_, _| {},
+            )
+            .unwrap_err();
+            assert!(error.to_string().contains("SHA-256"));
+        }
+    }
     fn server(
         body: &'static [u8],
         declared: usize,
         stall: bool,
     ) -> (String, std::thread::JoinHandle<()>) {
         let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
         let address = listener.local_addr().unwrap();
         let thread = std::thread::spawn(move || {
-            let (mut connection, _) = listener.accept().unwrap();
+            let start = std::time::Instant::now();
+            let mut connection = loop {
+                match listener.accept() {
+                    Ok((connection, _)) => break connection,
+                    Err(error) if error.kind() == std::io::ErrorKind::WouldBlock => {
+                        assert!(
+                            start.elapsed() < Duration::from_secs(10),
+                            "Fixture received no request"
+                        );
+                        std::thread::sleep(Duration::from_millis(10));
+                    }
+                    Err(error) => panic!("{error}"),
+                }
+            };
+            connection
+                .set_read_timeout(Some(Duration::from_secs(10)))
+                .unwrap();
             let mut request = [0; 2048];
             let _ = connection.read(&mut request);
             let header = format!(

@@ -360,14 +360,14 @@
       "sha256": "60a420ad7085eb616cb6e2bdf0a7206d68ff3d37fb5a956dc44242eb2f79b66b"
     },
     {
-      "name": "yt-dlp.tar.gz",
-      "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.11.23/yt-dlp.tar.gz",
-      "sha256": "8f757547e94c723415fd82bb5da857d8e1b24be2e34218890dfaac134907723e"
+      "name": "yt-dlp-source-2026.11.23.tar.gz",
+      "url": "https://codeload.github.com/yt-dlp/yt-dlp/tar.gz/refs/tags/2026.11.23",
+      "sha256": "129f357ae3d81191a02bcd2c7af591d1c2c6b3346053e91ae041ab5a5c7877d8"
     },
     {
-      "name": "gallery_dl-1.32.21.tar.gz",
-      "url": "https://codeberg.org/mikf/gallery-dl/releases/download/v1.32.21/gallery_dl-1.32.21.tar.gz",
-      "sha256": "4a1f71cc9a95dae9098d63e79049fbdccfec44386ba9ca49c7248eb8b3b821c0"
+      "name": "gallery-dl-source-1.32.21.tar.gz",
+      "url": "https://codeload.github.com/mikf/gallery-dl/tar.gz/refs/tags/v1.32.21",
+      "sha256": "f10d32a3e5b51b28fe0a8434916f4c8a2fbc58302f15678a116442e3c1c3e56c"
     }
   ],
   "deno": {
