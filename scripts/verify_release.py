@@ -168,12 +168,18 @@ def visible_windows(pid):
         user32.GetWindowThreadProcessId.argtypes = [ctypes.c_void_p, ctypes.POINTER(ctypes.c_ulong)]
         user32.IsWindowVisible.argtypes = [ctypes.c_void_p]
         user32.EnumWindows.argtypes = [callback_type, ctypes.c_void_p]
+        user32.GetWindowTextW.argtypes = [ctypes.c_void_p, ctypes.c_wchar_p, ctypes.c_int]
         @callback_type
         def callback(handle, _):
             owner = ctypes.c_ulong()
             user32.GetWindowThreadProcessId(handle, ctypes.byref(owner))
             if owner.value == pid and user32.IsWindowVisible(handle):
-                found.append(handle)
+                # Winit also owns an event-loop helper window. Only test and
+                # close the actual application window.
+                title = ctypes.create_unicode_buffer(1024)
+                user32.GetWindowTextW(handle, title, 1024)
+                if title.value == 'SoundGeo':
+                    found.append(handle)
             return True
         user32.EnumWindows(callback, 0)
         return found
@@ -229,7 +235,7 @@ with (destination / 'desktop.log').open('wb') as log:
             if sys.platform == 'win32' and windows:
                 ctypes.windll.user32.PostMessageW.argtypes = [ctypes.c_void_p, ctypes.c_uint, ctypes.c_size_t, ctypes.c_ssize_t]
                 for window in windows:
-                    ctypes.windll.user32.PostMessageW(window, 0x0010, 0, 0)
+                    assert ctypes.windll.user32.PostMessageW(window, 0x0010, 0, 0), 'Could not close SoundGeo window'
             else:
                 process.terminate()
         process.wait(timeout=30)
