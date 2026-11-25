@@ -33,6 +33,13 @@ repository-root license file.
 The packager includes license and notice files from the locked Cargo dependency
 sources and the Rust toolchain. For crates declaring Apache-2.0 that omit the
 license text, it includes the standard Apache-2.0 text from the same dependency set.
+
+Windows speech helpers use a shared Microsoft C++ runtime because their native
+DLLs exchange runtime-owned objects. Required x64 DLLs are copied unmodified
+from the compiling Visual Studio installation's REDIST directory into each
+helper's folder. `speech-notices/windows-runtime` records their versions, hashes,
+source directory and Microsoft redistribution terms. Users do not need a
+separate Visual C++ runtime installation.
 The package's `THIRD_PARTY.txt` identifies each component and its source.
 
 ## Bundled Windows graphics

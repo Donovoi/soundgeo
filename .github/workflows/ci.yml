@@ -100,6 +100,8 @@ jobs:
           key: speech-tools-v1-${{ runner.os }}-${{ hashFiles('scripts/build_speech_tools.py', 'scripts/speech-tools-lock.json', 'scripts/speech-fonts-lock.json', 'scripts/speech-utf8.manifest', 'scripts/speech-patches/**', 'src/speech/models.json', 'docs/third-party/speech/**', 'scripts/pe_dependencies.py') }}
       - name: Build native local speech runtime
         if: steps.speech-cache.outputs.cache-hit != 'true'
+        env:
+          SOUNDGEO_SPEECH_BUILD_PROBE: '1'
         run: python scripts/build_speech_tools.py
       - name: Save built local speech tools
         if: steps.speech-cache.outputs.cache-hit != 'true'

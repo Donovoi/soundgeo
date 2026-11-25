@@ -85,6 +85,78 @@ def licenses(source, destination):
     (destination / 'SOURCE-NOTICES.txt').write_text('\n'.join(notices), encoding='utf-8')
 
 
+def bundle_windows_runtime(build_dir, destination, notices):
+    from pe_dependencies import imports, system
+    cache = {}
+    for line in (build_dir / 'CMakeCache.txt').read_text(encoding='utf-8').splitlines():
+        if line and not line.startswith(('#', '//')) and '=' in line:
+            key, value = line.split('=', 1)
+            cache[key.split(':', 1)[0]] = value
+    instance = Path(cache['CMAKE_GENERATOR_INSTANCE'].split(',', 1)[0])
+    assert instance.is_dir(), 'CMake did not record its Visual Studio installation'
+    vswhere = Path(os.environ['ProgramFiles(x86)']) / 'Microsoft Visual Studio/Installer/vswhere.exe'
+    installations = json.loads(subprocess.check_output(
+        [str(vswhere), '-all', '-products', '*', '-format', 'json', '-utf8'], encoding='utf-8'))
+    selected, = [item for item in installations if Path(item['installationPath']).resolve() == instance.resolve()]
+    assert not selected.get('isPrerelease', False), 'Preview Visual Studio runtimes cannot be redistributed'
+    candidates = {p.resolve() for p in instance.glob('VC/Redist/MSVC/*/x64/Microsoft.VC*.CRT')}
+    assert candidates, 'The selected Visual Studio installation has no x64 redistributable runtime'
+    redist = max(candidates, key=lambda p: tuple(map(int, re.findall(r'\d+', p.parent.parent.name))))
+    available = {p.name.lower(): p for p in redist.glob('*.dll')}
+    copied = {}
+    while True:
+        files = {p.name.lower(): p for p in destination.iterdir() if p.suffix.lower() in ('.exe', '.dll')}
+        missing = {name for path in files.values() for name in imports(path)
+                   if name not in files and not system(name)}
+        if not missing:
+            break
+        for name in sorted(missing):
+            assert name in available, f'Native helper needs a library outside the selected CRT redist: {name}'
+            shutil.copy2(available[name], destination / available[name].name)
+            copied[available[name].name] = sha(available[name])
+    assert copied, 'Shared native helpers unexpectedly have no redistributable C++ runtime dependencies'
+    major = int(selected['installationVersion'].split('.')[0])
+    assert major in (17, 18), 'Review the redistributable terms for this Visual Studio version'
+    year = 2022 if major == 17 else 2026
+    record = {'visual_studio_version': selected['installationVersion'],
+        'redist_version': redist.parent.parent.name, 'architecture': 'x64',
+        'source': redist.relative_to(instance).as_posix(),
+        'redistribution_terms': f'https://learn.microsoft.com/en-us/visualstudio/releases/{year}/redistribution',
+        'files': copied}
+    notices.mkdir(parents=True)
+    (notices / 'MSVC-RUNTIME.json').write_text(json.dumps(record, indent=2) + '\n', encoding='utf-8')
+    (notices / 'NOTICE.txt').write_text(
+        'Microsoft Visual C++ Runtime\nCopyright Microsoft Corporation. All rights reserved.\n\n'
+        'These unmodified x64 runtime DLLs come from the REDIST directory of the Visual Studio\n'
+        'installation used to compile this native helper. They are deployed beside the helper\n'
+        'so the application does not require a separate runtime installation.\n'
+        'Redistribution is governed by the Microsoft Visual Studio license terms and REDIST list:\n'
+        + record['redistribution_terms'] + '\n'
+        'https://learn.microsoft.com/cpp/windows/redistributing-visual-cpp-files\n', encoding='utf-8')
+    return record
+
+
+def probe_translator(destination):
+    model, = [entry for entry in json.loads((ROOT / 'src/speech/models.json').read_text())
+              if entry['id'] == 'translation-compact']
+    path = fetch(model)
+    executable = destination / ('llama-completion.exe' if WINDOWS else 'llama-completion')
+    # Model loading crosses native DLL boundaries and is not covered by --help.
+    # CI enables this probe; downloaded weights never enter the runtime bundle.
+    command = [str(executable), '-m', str(path), '-p',
+        'Translate the following text into English. Output only the translation: Le ciel est bleu.',
+        '--jinja', '-cnv', '-st', '-ngl', '0', '-n', '128', '-c', '2048', '-t', '2',
+        '--temp', '0', '--seed', '42', '--no-display-prompt', '--simple-io', '--no-warmup']
+    environment = dict(os.environ, LD_LIBRARY_PATH=str(destination))
+    result = subprocess.run(command, capture_output=True, timeout=600, env=environment, stdin=subprocess.DEVNULL)
+    (WORK / 'logs/translator-probe.stdout').write_bytes(result.stdout)
+    (WORK / 'logs/translator-probe.stderr').write_bytes(result.stderr)
+    assert result.returncode == 0, result.stderr.decode('utf-8', errors='replace')[-5000:]
+    text = result.stdout.decode('utf-8')
+    assert text.strip().endswith('[end of text]') and all(word in text.casefold() for word in ('sky', 'blue')), text
+    print('Real translator model load and completion passed', flush=True)
+
+
 def build(entry, bundle, sources):
     archive = fetch(entry)
     shutil.copy2(archive, sources / archive.name)
@@ -109,10 +181,11 @@ def build(entry, bundle, sources):
                  '-DTRANSCRIBE_X86_CONSERVATIVE=ON', '-DTRANSCRIBE_BUILD_TESTS=ON',
                  '-DTRANSCRIBE_USE_SYSTEM_BLAS=OFF', '-DTRANSCRIBE_USE_OPENMP=OFF']
     if WINDOWS:
-        # whisper's top-level CMake minimum predates CMP0091. Without NEW at
-        # the first project(), CMAKE_MSVC_RUNTIME_LIBRARY is silently ignored.
+        # Native DLLs exchange FILE pointers and C++ objects. They must share
+        # one CRT; separate /MT copies can fail fast when loading a model.
+        # CMP0091 must be NEW before whisper's first project() call.
         arguments += ['-A', 'x64', '-DCMAKE_POLICY_DEFAULT_CMP0091=NEW',
-                      '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded']
+                      '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreadedDLL']
         manifest = (ROOT / 'scripts/speech-utf8.manifest').as_posix()
         arguments += [f'-DCMAKE_EXE_LINKER_FLAGS=/MANIFEST:EMBED /MANIFESTINPUT:"{manifest}"']
     execute(arguments, WORK / 'logs' / (entry['name'] + '-configure.log'))
@@ -137,9 +210,12 @@ def build(entry, bundle, sources):
         raise RuntimeError('Native helper executable was not built')
     if WINDOWS:
         from pe_dependencies import audit
+        bundle_windows_runtime(build_dir, destination, bundle / 'speech-notices/windows-runtime' / entry['name'])
         (destination / 'PE-IMPORTS.json').write_text(json.dumps(audit(destination), indent=2) + '\n')
     environment = dict(os.environ, LD_LIBRARY_PATH=str(destination))
     execute([str(destination / executable), '--help'], WORK / 'logs' / (entry['name'] + '-help.log'), 60, environment)
+    if entry['name'] == 'llama' and os.environ.get('SOUNDGEO_SPEECH_BUILD_PROBE') == '1':
+        probe_translator(destination)
     licenses(source, bundle / 'speech-notices' / entry['name'])
     print(entry['name'] + ' built and checked', flush=True)
 
@@ -170,7 +246,7 @@ def main():
         build(entry, bundle, sources)
     shutil.copytree(ROOT / 'docs/third-party/speech', bundle / 'speech-notices/models')
     shutil.copytree(ROOT / 'scripts/speech-patches', sources / 'soundgeo-patches')
-    for name in ('build_speech_tools.py', 'speech-tools-lock.json', 'speech-fonts-lock.json', 'speech-utf8.manifest'):
+    for name in ('build_speech_tools.py', 'pe_dependencies.py', 'speech-tools-lock.json', 'speech-fonts-lock.json', 'speech-utf8.manifest'):
         shutil.copy2(ROOT / 'scripts' / name, sources / name)
     shutil.copy2(ROOT / 'src/speech/models.json', sources / 'models.json')
     # Exercise actual model loading, not merely --help: this catches a shared
