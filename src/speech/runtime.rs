@@ -235,6 +235,26 @@ mod tests {
     fn delayed_video_audio_keeps_its_original_media_offset() {
         let directory = tempfile::tempdir().unwrap();
         let input = directory.path().join("delayed.mkv");
+        let image = directory.path().join("frame.ppm");
+        let mut pixels = b"P6\n16 16\n255\n".to_vec();
+        pixels.resize(pixels.len() + 16 * 16 * 3, 0);
+        std::fs::write(&image, pixels).unwrap();
+        let audio = directory.path().join("tone.wav");
+        let mut writer = hound::WavWriter::create(
+            &audio,
+            hound::WavSpec {
+                channels: 1,
+                sample_rate: RATE,
+                bits_per_sample: 16,
+                sample_format: hound::SampleFormat::Int,
+            },
+        )
+        .unwrap();
+        for sample in 0..RATE {
+            let phase = f64::from(sample) * 440. * std::f64::consts::TAU / f64::from(RATE);
+            writer.write_sample((phase.sin() * 4096.) as i16).unwrap();
+        }
+        writer.finalize().unwrap();
         let ffmpeg = crate::audio::ffmpeg_path(&crate::Job::default());
         let mut command = quiet_command(&ffmpeg);
         command
@@ -242,16 +262,18 @@ mod tests {
                 "-nostdin",
                 "-v",
                 "error",
-                "-f",
-                "lavfi",
+                "-loop",
+                "1",
+                "-framerate",
+                "1",
                 "-i",
-                "color=c=black:s=16x16:r=1:d=4",
-                "-itsoffset",
-                "1.25",
-                "-f",
-                "lavfi",
-                "-i",
-                "sine=frequency=440:sample_rate=16000:duration=1",
+            ])
+            .arg(&image)
+            .args(["-itsoffset", "1.25", "-i"])
+            .arg(&audio)
+            .args([
+                "-t",
+                "4",
                 "-map",
                 "0:v:0",
                 "-map",
