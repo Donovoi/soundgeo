@@ -6,19 +6,38 @@ permissions:
   contents: read
   actions: read
 jobs:
-  fixtures:
+  package:
     runs-on: windows-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: diagnostic
+      - uses: actions/checkout@v4
+        with:
+          ref: 80902580605aef2ca0bf064344e4179785931093
+          path: candidate
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
       - uses: actions/download-artifact@v4
         with:
-          name: windows-runtime
-          run-id: 45515618943
+          name: release-Windows
+          run-id: 45523211907
           github-token: ${{ github.token }}
-          path: runtime-artifact
-      - name: Exercise bundled FFmpeg fixture commands with timeouts
-        run: python scripts/diagnose_windows_fixtures.py
+          path: candidate/dist
+      - name: Retest the preserved EXE with the corrected OCR fixture
+        run: |
+          Copy-Item -LiteralPath diagnostic/scripts/verify_release.py -Destination candidate/scripts/verify_release.py
+          python candidate/scripts/verify_release.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: package-diagnostic
+          path: |
+            candidate/release-check/*.log
+            candidate/release-check/*.json
+            candidate/release-check/*.png
+            candidate/release-check/*.mkv
+            candidate/release-check/*.ps1
+            candidate/dist/validation-windows-x64.json

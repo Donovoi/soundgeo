@@ -128,7 +128,7 @@ $bitmap = New-Object Drawing.Bitmap 1280,720
 $graphics = [Drawing.Graphics]::FromImage($bitmap)
 $graphics.Clear([Drawing.Color]::White)
 $font = New-Object Drawing.Font 'Arial',72
-$graphics.DrawString('LONDON', $font, [Drawing.Brushes]::Black, 150, 250)
+$graphics.DrawString('NEW YORK', $font, [Drawing.Brushes]::Black, 150, 250)
 $bitmap.Save($args[0], [Drawing.Imaging.ImageFormat]::Png)
 $graphics.Dispose()
 $bitmap.Dispose()
@@ -139,12 +139,13 @@ $bitmap.Dispose()
     subprocess.run([str(folder / 'ffmpeg.exe'), '-v', 'error', '-loop', '1', '-i', str(image),
                     '-t', '2', '-r', '2', '-c:v', 'ffv1', str(video)], check=True, timeout=30)
     gazetteer = destination / 'places.txt'
-    gazetteer.write_text('2643743\tLondon\tLondon\t\t51.50853\t-0.12574\tP\tPPLC\tGB\t\tENG\t\t\t\t8961989\t\t25\tEurope/London\t2026-01-01\n', encoding='utf-8')
+    # Place matching deliberately requires at least two words.
+    gazetteer.write_text('5128581\tNew York\tNew York\t\t40.71427\t-74.00597\tP\tPPL\tUS\t\tNY\t\t\t\t8175133\t\t10\tAmerica/New_York\t2026-01-01\n', encoding='utf-8')
     ocr_report = destination / 'ocr.json'
     run('bundled-video-ocr', ['video-clues', '--input', video, '--gazetteer', gazetteer,
                             '--frames', '1', '--output', ocr_report, '--require-match'])
     ocr = json.loads(ocr_report.read_text(encoding='utf-8'))
-    assert ocr['status'] == 'place_clues_found' and any('LONDON' in frame['text'].upper() for frame in ocr['frames'])
+    assert ocr['status'] == 'place_clues_found' and any('NEW YORK' in frame['text'].upper() for frame in ocr['frames']), ocr
     # Start two instances with a fresh profile to exercise atomic first extraction.
     original_profile = os.environ['LOCALAPPDATA']
     os.environ['LOCALAPPDATA'] = str(destination / 'Concurrent fresh profile')
