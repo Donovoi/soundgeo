@@ -336,6 +336,13 @@ recording and preserve the original-language transcript alongside translations.
 The initial model comparison uses a small read-speech sample; it does not
 establish accuracy for arbitrary crime or missing-person footage.
 
+Observed errors include an Urdu compact translation that rendered abductees as
+an invented name, and a quality translation that described people as released
+by photographers instead of alongside them. Recognition also changed elderly
+people to adults in that sample. A Bengali compact translation described brief
+expressions as permanent. A Complete report means processing finished; it does
+not confirm the meaning, people or actions described by the translated text.
+
 Detection samples at most three speech intervals. It can miss a language spoken
 elsewhere in the recording. A recording is transcribed with one selected
 language; mixed-language recordings should be split or reviewed carefully.

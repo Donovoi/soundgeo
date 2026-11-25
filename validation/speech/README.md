@@ -60,10 +60,15 @@ result survived a subsequent aircraft-analysis error.
 
 `fixtures/manifest.json` records four held-out FLEURS recordings in English,
 French, Bengali and Urdu. They were selected before integrated-app evaluation,
-after excluding the model-selection sample. The package check uses original
-transcripts and independent English references, and records source and fixture
-hashes. A broad character-error bound catches unusable packaged recognizers;
-it is not an estimate of field accuracy.
+after excluding the model-selection sample. The manifest retains original
+transcripts, independent English references, and source and fixture hashes.
+The automated package check compares original transcripts with a broad
+character-error bound and requires completed English output. It does not
+establish translation meaning or field accuracy. Review of the Windows package
+reports found an invented name in compact Urdu and a brief/permanent meaning
+error in compact Bengali. The integrated quality-mode Urdu result also changed
+who released the people described. These errors remain in the recorded outputs;
+see [speech limitations](../../docs/limitations.md#speech-analysis).
 
 The release check exercises real native model loading, Unicode recording paths,
 automatic language detection, explicit language choices, offline cached use,
