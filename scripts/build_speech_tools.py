@@ -108,7 +108,10 @@ def build(entry, bundle, sources):
                  '-DTRANSCRIBE_X86_CONSERVATIVE=ON', '-DTRANSCRIBE_BUILD_TESTS=ON',
                  '-DTRANSCRIBE_USE_SYSTEM_BLAS=OFF', '-DTRANSCRIBE_USE_OPENMP=OFF']
     if WINDOWS:
-        arguments += ['-A', 'x64', '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded']
+        # whisper's top-level CMake minimum predates CMP0091. Without NEW at
+        # the first project(), CMAKE_MSVC_RUNTIME_LIBRARY is silently ignored.
+        arguments += ['-A', 'x64', '-DCMAKE_POLICY_DEFAULT_CMP0091=NEW',
+                      '-DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded']
         manifest = (ROOT / 'scripts/speech-utf8.manifest').as_posix()
         arguments += [f'-DCMAKE_EXE_LINKER_FLAGS=/MANIFEST:EMBED /MANIFESTINPUT:"{manifest}"']
     execute(arguments, WORK / 'logs' / (entry['name'] + '-configure.log'))
