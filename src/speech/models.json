@@ -1,0 +1,72 @@
+[
+  {
+    "id": "whisper-large",
+    "name": "Whisper large-v3 speech recognition",
+    "url": "https://huggingface.co/ggerganov/whisper.cpp/resolve/5359861c739e955e79d9a303bcbc70fb988958b1/ggml-large-v3-q5_0.bin",
+    "revision": "5359861c739e955e79d9a303bcbc70fb988958b1",
+    "sha256": "d75795ecff3f83b5faa89d1900604ad8c780abd5739fae406de19f23ecd98ad1",
+    "size": 1081140203,
+    "filename": "ggml-large-v3-q5_0.bin",
+    "license": "MIT"
+  },
+  {
+    "id": "translation-compact",
+    "name": "Hy-MT3 compact English translation",
+    "url": "https://huggingface.co/tencent/Hy-MT3-1.8B-GGUF/resolve/4c4370b31f13ccac4ac71133e3a0967c88cc792c/Hy-MT3-1.8B-Q4_K_M.gguf",
+    "revision": "4c4370b31f13ccac4ac71133e3a0967c88cc792c",
+    "sha256": "bae6e591103654ff43ef0de7d1492f6e6df1f955505f6bb2cc52e86fc399a942",
+    "size": 1348432160,
+    "filename": "Hy-MT3-1.8B-Q4_K_M.gguf",
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "silero-vad",
+    "name": "Speech activity detector",
+    "url": "https://huggingface.co/ggml-org/whisper-vad/resolve/9ffd54a1e1ee413ddf265af9913beaf518d1639b/ggml-silero-v6.2.0.bin",
+    "revision": "9ffd54a1e1ee413ddf265af9913beaf518d1639b",
+    "sha256": "2aa269b785eeb53a82983a20501ddf7c1d9c48e33ab63a41391ac6c9f7fb6987",
+    "size": 885098,
+    "filename": "ggml-silero-v6.2.0.bin",
+    "license": "MIT"
+  },
+  {
+    "id": "qwen-asr",
+    "name": "Qwen3 speech recognition",
+    "url": "https://huggingface.co/handy-computer/Qwen3-ASR-1.7B-gguf/resolve/0e0a596e3959c3f3f2ab7d443a5b6f0f4a4bba6f/Qwen3-ASR-1.7B-Q8_0.gguf",
+    "revision": "0e0a596e3959c3f3f2ab7d443a5b6f0f4a4bba6f",
+    "sha256": "9a0d81792dfea2d5f278b8a63deb3ea6e02139ce42c2301f32ea19c4f77526b7",
+    "size": 2185030624,
+    "filename": "Qwen3-ASR-1.7B-Q8_0.gguf",
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "ecapa-lid",
+    "name": "Language detector",
+    "url": "https://huggingface.co/handy-computer/lang-id-voxlingua107-ecapa-gguf/resolve/e59f0f3847e77723b7d58447ef9456fa0c7e9436/lang-id-voxlingua107-ecapa-F16.gguf",
+    "revision": "e59f0f3847e77723b7d58447ef9456fa0c7e9436",
+    "sha256": "1f4f1a8279a3bf6eef63ff1fe2b6e5328adb184d43cacab55557592b6197530e",
+    "size": 45299872,
+    "filename": "lang-id-voxlingua107-ecapa-F16.gguf",
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "translation-quality",
+    "name": "Hy-MT3 quality English translation",
+    "url": "https://huggingface.co/tencent/Hy-MT3-7B-GGUF/resolve/f7f0f5c2d4be781b49ec2cbb4a37a9588e5f0b41/Hy-MT3-7B-Q4_K_M.gguf",
+    "revision": "f7f0f5c2d4be781b49ec2cbb4a37a9588e5f0b41",
+    "sha256": "e08a5098918c6615e1a84fbe714637237bfdc832e17761bdde4bb65878eb17c9",
+    "size": 5145531232,
+    "filename": "Hy-MT3-7B-Q4_K_M.gguf",
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "bengali-asr",
+    "name": "Bengali.AI speech recognition",
+    "url": "https://huggingface.co/winshades/bengaliai-whisper-medium-ggml/resolve/11cf5cbd282e0e46a761093939952f74906ddce1/ggml-bengaliai-whisper-medium-q5_0.bin",
+    "revision": "11cf5cbd282e0e46a761093939952f74906ddce1",
+    "sha256": "2c64c7f1e2c8f2417ed1fe5b78c7238933c00a2cdc2ef33e7087a95475256605",
+    "size": 539257671,
+    "filename": "ggml-bengaliai-whisper-medium-q5_0.bin",
+    "license": "Apache-2.0"
+  }
+]

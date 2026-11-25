@@ -51,6 +51,7 @@ for platform, runner in [('windows-x64', 'Windows'), ('linux-x64', 'Linux')]:
     check = json.loads(receipt.read_text())
     assert check['passed'] and check['file_hashes_verified'] and 'desktop-visible-window' in check['checks']
     assert 'bundled-url-intake-and-parallel-downloads' in check['checks']
+    assert 'bundled-local-speech-and-translation' in check['checks']
     assert check['source_commit'] == commit and check['version'] == version
     assert check['source_tree'] == gh('api', f'repos/{repo}/git/commits/{commit}', '--jq', '.tree.sha')
     assert check['archive_sha256'] == hashlib.sha256(archive.read_bytes()).hexdigest()

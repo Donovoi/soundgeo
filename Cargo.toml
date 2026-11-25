@@ -1,6 +1,6 @@
 [package]
 name = "soundgeo"
-version = "0.3.0-alpha.3"
+version = "0.4.0-alpha.1"
 edition = "2024"
 description = "Local aircraft-Doppler geolocation workbench"
 rust-version = "1.89"
@@ -11,6 +11,7 @@ anyhow = "1"
 chrono = { version = "0.4", features = ["serde"] }
 chrono-tz = "0.10"
 clap = { version = "4", features = ["derive"] }
+cosmic-text = { version = "0.19", default-features = false, features = ["std", "swash"] }
 csv = "1.4"
 eframe = { version = "0.33", default-features = false, features = ["default_fonts", "glow", "x11", "wayland", "accesskit"] }
 flate2 = "1"

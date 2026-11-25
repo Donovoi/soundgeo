@@ -94,6 +94,9 @@ assert 'check-audio' in run('help', ['--help'])
 from verify_url_intake import verify as verify_url_intake
 verify_url_intake(cli, folder, destination, run)
 checks.append('bundled-url-intake-and-parallel-downloads')
+from verify_speech import verify as verify_speech
+speech_review = verify_speech(cli, folder, destination, run)
+checks.append('bundled-local-speech-and-translation')
 silent = destination / 'silence.wav'
 with wave.open(str(silent), 'wb') as stream:
     stream.setnchannels(1)
@@ -219,7 +222,7 @@ def child_pids(parent):
 
 
 with (destination / 'desktop.log').open('wb') as log:
-    process = subprocess.Popen([str(gui)], cwd=destination, stdout=log, stderr=subprocess.STDOUT)
+    process = subprocess.Popen([str(gui), 'view-speech', str(speech_review)], cwd=destination, stdout=log, stderr=subprocess.STDOUT)
     try:
         deadline = time.monotonic() + 120
         windows = []
@@ -268,7 +271,7 @@ receipt = {'version': build['version'], 'source_commit': build['source_commit'],
            'file_hashes_verified': True, 'checks': checks,
            'desktop_renderer': renderer,
            'additional_assets': extra,
-           'scope': 'Package smoke checks using synthetic/silent inputs; no new real-world accuracy measurement',
+           'scope': 'Package checks with synthetic/silent inputs and four held-out read-speech recordings; no geolocation field-accuracy claim',
            'passed': True}
 (root / 'dist' / f'validation-{platform}.json').write_text(json.dumps(receipt, indent=2) + '\n', encoding='utf-8')
 print(json.dumps(receipt, indent=2))

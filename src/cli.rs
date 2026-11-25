@@ -22,6 +22,41 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Commands {
+    /// Transcribe locally and translate into English using verified open-source models.
+    Transcribe {
+        #[arg(long, required_unless_present = "url", conflicts_with = "url")]
+        input: Option<PathBuf>,
+        #[arg(long)]
+        url: Option<String>,
+        #[arg(long)]
+        media_item: Option<usize>,
+        #[arg(long)]
+        media_cache: Option<PathBuf>,
+        #[arg(long)]
+        impersonate: bool,
+        /// Spoken language code; omitted means detect. Hindi/Urdu require an explicit script choice.
+        #[arg(long)]
+        language: Option<String>,
+        #[arg(long)]
+        cache: Option<PathBuf>,
+        #[arg(long)]
+        ffmpeg: Option<PathBuf>,
+        #[arg(long, default_value = "quality")]
+        translation_quality: soundgeo::speech::TranslationQuality,
+        #[arg(long, default_value = "2")]
+        threads: usize,
+        /// Detect language and download required weights without transcribing.
+        #[arg(long)]
+        prepare_only: bool,
+        #[arg(long, default_value = "json")]
+        format: soundgeo::speech::ExportFormat,
+        /// Export English for TXT/SRT/VTT; JSON always preserves both versions.
+        #[arg(long)]
+        english: bool,
+        /// New report file, or - for stdout. Incomplete speech returns exit code 3.
+        #[arg(long, default_value = "-")]
+        output: PathBuf,
+    },
     /// Find media on a URL, then download a selected recording into a verified local cache.
     FetchMedia {
         #[arg(long)]
@@ -214,6 +249,8 @@ enum Commands {
     },
     /// Open the desktop app with an existing report.
     View { report: PathBuf },
+    /// Review a saved speech report in the desktop app without running models.
+    ViewSpeech { report: PathBuf },
 }
 pub fn entry(desktop_default: bool) -> std::process::ExitCode {
     let args = Args::parse();
@@ -247,10 +284,92 @@ fn run(args: Args) -> Result<u8> {
     let control = Control::default().with_offline(args.offline);
     let progress = |message: &str, fraction: f32| {
         if !args.quiet {
-            eprintln!("{:3.0}% {message}", fraction * 100.);
+            if fraction > 0. {
+                eprintln!("{:3.0}% {message}", fraction * 100.);
+            } else {
+                eprintln!("{message}");
+            }
         }
     };
     match args.command {
+        Some(Commands::Transcribe {
+            input,
+            url,
+            media_item: item,
+            media_cache,
+            impersonate,
+            language,
+            cache,
+            ffmpeg,
+            translation_quality,
+            threads,
+            prepare_only,
+            format,
+            english,
+            output,
+        }) => {
+            let options = soundgeo::speech::Options {
+                enabled: true,
+                language,
+                cache: cache.unwrap_or_else(soundgeo::speech::default_cache),
+                threads,
+                translation_quality,
+            };
+            options.validate()?;
+            anyhow::ensure!(
+                output.as_os_str() == "-" || !output.exists(),
+                "The speech output already exists; choose a new path"
+            );
+            let media = if let Some(url) = url {
+                let intake = soundgeo::media_url::Options {
+                    url,
+                    impersonate,
+                    cache: media_cache.unwrap_or_else(soundgeo::media_url::default_cache),
+                    ..Default::default()
+                };
+                let listing = soundgeo::media_url::discover(&intake, &control, &progress)?;
+                let item = media_item(&listing, item)?;
+                soundgeo::media_url::download(&intake, &listing, item, &control, &progress)?.path
+            } else {
+                input.context("Choose a recording or URL")?
+            };
+            let job = Job {
+                media,
+                ffmpeg,
+                ..Default::default()
+            };
+            let prepared = soundgeo::speech::prepare(
+                &job.media,
+                &soundgeo::audio::ffmpeg_path(&job),
+                &options,
+                &control,
+                &progress,
+            )?
+            .context("Speech analysis is disabled")?;
+            let report = if prepare_only {
+                prepared.report.clone()
+            } else {
+                soundgeo::speech::transcribe(&prepared, &control, &progress)?
+            };
+            if output.as_os_str() == "-" {
+                print!("{}", report.export(format, english)?);
+            } else {
+                soundgeo::speech::write_report(&report, &output, format, english)?;
+            }
+            if !args.quiet {
+                eprintln!("Speech checkpoint: {}", prepared.checkpoint.display());
+            }
+            return Ok(
+                if report.status == soundgeo::speech::Status::Complete
+                    || (prepare_only && prepared.ready())
+                    || report.status == soundgeo::speech::Status::NoSpeech
+                {
+                    0
+                } else {
+                    3
+                },
+            );
+        }
         Some(Commands::FetchMedia {
             url,
             list,
@@ -590,10 +709,22 @@ fn run(args: Args) -> Result<u8> {
             }
         }
         command => {
-            let report = if let Some(Commands::View { report }) = command {
-                Some(serde_json::from_reader(std::fs::File::open(report)?)?)
-            } else {
-                None
+            let (report, speech_report) = match command {
+                Some(Commands::View { report }) => (
+                    Some(serde_json::from_reader(std::fs::File::open(report)?)?),
+                    None,
+                ),
+                Some(Commands::ViewSpeech { report }) => {
+                    anyhow::ensure!(
+                        report.metadata()?.len() <= 16 * 1024 * 1024,
+                        "Speech report exceeds 16 MiB"
+                    );
+                    let speech: soundgeo::speech::Report =
+                        serde_json::from_reader(std::fs::File::open(report)?)?;
+                    speech.validate()?;
+                    (None, Some(speech))
+                }
+                _ => (None, None),
             };
             let options = eframe::NativeOptions {
                 viewport: eframe::egui::ViewportBuilder::default()
@@ -604,7 +735,11 @@ fn run(args: Args) -> Result<u8> {
             eframe::run_native(
                 "SoundGeo",
                 options,
-                Box::new(move |cc| Ok(Box::new(ui::App::new(cc, report)))),
+                Box::new(move |cc| {
+                    Ok(Box::new(
+                        ui::App::new(cc, report).with_speech(speech_report),
+                    ))
+                }),
             )
             .map_err(|e| anyhow::anyhow!("{e}"))
             .context("Could not open the desktop window")?;

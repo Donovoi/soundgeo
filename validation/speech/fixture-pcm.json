@@ -1,0 +1,154 @@
+[
+  {
+    "language": "en",
+    "pcm_sha256": [
+      "6f693050787918cc5229d67f42389883ce257cea835182cd77e8d2922cde648e",
+      "fb60ce6eb2c9c21e72d2e59f634081718e48bd8a4345961eb251cb51eb287359"
+    ],
+    "streams": [
+      {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "pcm_f32le",
+            "sample_fmt": "flt",
+            "sample_rate": "16000",
+            "channels": 1
+          }
+        ]
+      },
+      {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "flac",
+            "sample_fmt": "s32",
+            "sample_rate": "16000",
+            "channels": 1
+          }
+        ]
+      }
+    ],
+    "samples": 166080,
+    "maximum_pcm16_difference": 1,
+    "differing_samples": 83415,
+    "quantization_snr_db": 30.540452973503406,
+    "passed": true
+  },
+  {
+    "language": "fr",
+    "pcm_sha256": [
+      "29cdee8892d18c915c0d0052897ce3b33829b39a462c0079083290af216be758",
+      "6877401659cd45f7ce9a256908701b9530d35af5bca153da44c445f11c2e3523"
+    ],
+    "streams": [
+      {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "pcm_f32le",
+            "sample_fmt": "flt",
+            "sample_rate": "16000",
+            "channels": 1
+          }
+        ]
+      },
+      {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "flac",
+            "sample_fmt": "s32",
+            "sample_rate": "16000",
+            "channels": 1
+          }
+        ]
+      }
+    ],
+    "samples": 300480,
+    "maximum_pcm16_difference": 1,
+    "differing_samples": 150042,
+    "quantization_snr_db": 56.07742453812082,
+    "passed": true
+  },
+  {
+    "language": "bn",
+    "pcm_sha256": [
+      "66059aa72f014d492e4d9443528ca998d7b165bf1356ca4cc731a9683bcfdb8d",
+      "efc540dba9a47ad4a83fc301eb56ea2c04efd532cde37c420e69a7afe2beec5f"
+    ],
+    "streams": [
+      {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "pcm_f32le",
+            "sample_fmt": "flt",
+            "sample_rate": "16000",
+            "channels": 1
+          }
+        ]
+      },
+      {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "flac",
+            "sample_fmt": "s32",
+            "sample_rate": "16000",
+            "channels": 1
+          }
+        ]
+      }
+    ],
+    "samples": 209280,
+    "maximum_pcm16_difference": 1,
+    "differing_samples": 104770,
+    "quantization_snr_db": 66.38460081660301,
+    "passed": true
+  },
+  {
+    "language": "ur",
+    "pcm_sha256": [
+      "849c508164eb54d425d0ad3ca3ca55ed0c8471188865de3db538c0f5b3dc1560",
+      "56c1323dd5c8489e63d17468444d5888a81319d217adbf9c94f4c1a8d4d1c477"
+    ],
+    "streams": [
+      {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "pcm_f32le",
+            "sample_fmt": "flt",
+            "sample_rate": "16000",
+            "channels": 1
+          }
+        ]
+      },
+      {
+        "programs": [],
+        "stream_groups": [],
+        "streams": [
+          {
+            "codec_name": "flac",
+            "sample_fmt": "s32",
+            "sample_rate": "16000",
+            "channels": 1
+          }
+        ]
+      }
+    ],
+    "samples": 99840,
+    "maximum_pcm16_difference": 1,
+    "differing_samples": 50005,
+    "quantization_snr_db": 59.07337587766121,
+    "passed": true
+  }
+]
