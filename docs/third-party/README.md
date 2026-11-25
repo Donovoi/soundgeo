@@ -25,9 +25,21 @@ included with V8.
 [the exact upstream revision](https://github.com/DoumanAsh/clipboard-win/blob/ed27008ae5d1f10cfbb266de039f0fb35fd05a56/LICENSE)
 recorded in that crate's `.cargo_vcs_info.json`. The published crate omits this file.
 
+`harfrust-0.5.2-LICENSE.txt` preserves the MIT permission and copyright notices
+from [its exact upstream revision](https://github.com/harfbuzz/harfrust/blob/efdae3142ab76a2f1524d72cff9e3dfdc5afd7ca/LICENSE),
+recorded in the crate's `.cargo_vcs_info.json`. The published crate omits the
+repository-root license file.
+
 The packager includes license and notice files from the locked Cargo dependency
 sources and the Rust toolchain. For crates declaring Apache-2.0 that omit the
 license text, it includes the standard Apache-2.0 text from the same dependency set.
+
+Windows speech helpers use a shared Microsoft C++ runtime because their native
+DLLs exchange runtime-owned objects. Required x64 DLLs are copied unmodified
+from the compiling Visual Studio installation's REDIST directory into each
+helper's folder. `speech-notices/windows-runtime` records their versions, hashes,
+source directory and Microsoft redistribution terms. Users do not need a
+separate Visual C++ runtime installation.
 The package's `THIRD_PARTY.txt` identifies each component and its source.
 
 ## Bundled Windows graphics

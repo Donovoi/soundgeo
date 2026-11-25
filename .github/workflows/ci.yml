@@ -8,7 +8,7 @@ permissions:
   contents: read
 jobs:
   check:
-    timeout-minutes: 120
+    timeout-minutes: 180
     env:
       CARGO_BUILD_JOBS: 2
       RUST_TEST_THREADS: 2
@@ -92,6 +92,25 @@ jobs:
           key: windows-url-tools-v1-${{ hashFiles('scripts/build_url_tools.py', 'scripts/deno_notices.py', 'docs/third-party/deno-*.json', 'docs/third-party/CC0-1.0.txt', 'scripts/url-tools-lock.json', 'scripts/audit_url_tools.py', 'scripts/pe_dependencies.py') }}
       - name: Prepare URL tools for VM tests
         run: python scripts/prepare_url_test_tools.py
+      - name: Restore built local speech tools
+        id: speech-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: speech-tools-build/*.zip
+          key: speech-tools-v1-${{ runner.os }}-${{ hashFiles('scripts/build_speech_tools.py', 'scripts/speech-tools-lock.json', 'scripts/speech-fonts-lock.json', 'scripts/speech-utf8.manifest', 'scripts/speech-patches/**', 'src/speech/models.json', 'docs/third-party/speech/**', 'scripts/pe_dependencies.py') }}
+      - name: Build native local speech runtime
+        if: steps.speech-cache.outputs.cache-hit != 'true'
+        env:
+          SOUNDGEO_SPEECH_BUILD_PROBE: '1'
+        run: python scripts/build_speech_tools.py
+      - name: Save built local speech tools
+        if: steps.speech-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: speech-tools-build/*.zip
+          key: speech-tools-v1-${{ runner.os }}-${{ hashFiles('scripts/build_speech_tools.py', 'scripts/speech-tools-lock.json', 'scripts/speech-fonts-lock.json', 'scripts/speech-utf8.manifest', 'scripts/speech-patches/**', 'src/speech/models.json', 'docs/third-party/speech/**', 'scripts/pe_dependencies.py') }}
+      - name: Prepare speech runtime and fonts for VM tests
+        run: python scripts/prepare_speech_test_tools.py
       - run: cargo fmt --all -- --check
       - run: python -m unittest discover -s validation -p test_run_timing.py
       - run: python -m unittest discover -s scripts -p test_publish_release.py
@@ -138,12 +157,22 @@ jobs:
             release-check/*.png
             release-check/*.mkv
             release-check/*.ps1
+            release-check/speech-check/*.json
       - name: Preserve Windows runtime build logs
         if: failure() && runner.os == 'Windows'
         uses: actions/upload-artifact@v4
         with:
           name: runtime-build-logs
           path: ${{ runner.temp }}/soundgeo-runtime-build/vcpkg/buildtrees/**/*.log
+      - name: Preserve native speech build diagnostics
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: speech-build-logs-${{ runner.os }}
+          if-no-files-found: warn
+          path: |
+            speech-tools-build/logs/
+            speech-tools-build/bundle/SPEECH-TOOLS.json
       - name: Preserve URL tool build diagnostics
         if: always() && runner.os == 'Windows'
         uses: actions/upload-artifact@v4

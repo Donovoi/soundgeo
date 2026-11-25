@@ -6,10 +6,15 @@ use std::{
     time::Duration,
 };
 
+#[path = "speech_ui.rs"]
+mod speech_ui;
+
 const ACCENT: Color32 = Color32::from_rgb(76, 224, 194);
 const MUTED: Color32 = Color32::from_rgb(147, 164, 188);
 const PANEL: Color32 = Color32::from_rgb(21, 31, 47);
 enum Message {
+    SpeechPrepared(std::sync::Arc<soundgeo::speech::Prepared>),
+    SpeechReport(Box<soundgeo::speech::Report>, bool),
     MediaListing(Box<soundgeo::media_url::Listing>),
     MediaDownloaded(Box<soundgeo::media_url::Download>),
     Progress(String, f32),
@@ -23,6 +28,7 @@ enum Message {
     Error(String),
 }
 pub struct App {
+    speech: speech_ui::State,
     job: Job,
     clock: String,
     use_bounds: bool,
@@ -61,6 +67,7 @@ impl App {
             .insert(egui::TextStyle::Button, egui::FontId::proportional(15.));
         cc.egui_ctx.set_style(style);
         Self {
+            speech: speech_ui::State::default(),
             job: Job {
                 ground_datum: soundgeo::geo::ElevationDatum::Egm96,
                 archive: Some(soundgeo::archive::ArchiveRequest {
@@ -98,6 +105,10 @@ impl App {
     }
     fn busy(&self) -> bool {
         self.receiver.is_some()
+    }
+    pub fn with_speech(mut self, report: Option<soundgeo::speech::Report>) -> Self {
+        self.speech.report = report;
+        self
     }
     fn url_controls(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         ui.collapsing("Or paste a video / page URL", |ui| {
@@ -166,22 +177,27 @@ impl App {
     }
     fn run(&mut self, ctx: &egui::Context) {
         let mut job = self.job.clone();
-        job.start_utc = if self.clock.trim().is_empty() {
+        let clock_error = if self.clock.trim().is_empty() {
+            job.start_utc = None;
             None
         } else {
             match soundgeo::data::parse_time(self.clock.trim()) {
-                Ok(t) => Some(t),
-                Err(e) => {
-                    self.error = Some(e.to_string());
-                    return;
+                Ok(t) => {
+                    job.start_utc = Some(t);
+                    None
                 }
+                Err(e) => Some(e.to_string()),
             }
         };
         job.bounds = self.use_bounds.then_some(self.bounds);
-        if let Err(e) = job.validate() {
-            self.error = Some(e.to_string());
+        let geo_error = clock_error.or_else(|| job.validate().err().map(|e| e.to_string()));
+        if !self.speech.options.enabled && geo_error.is_some() {
+            self.error = geo_error;
             return;
         }
+        let options = self.speech.options.clone();
+        let prepared = self.speech.current_prepared(&job);
+        self.speech.mark_requested(&job);
         self.report = None;
         self.selected = 0;
         self.status = "Starting analysis".into();
@@ -189,6 +205,28 @@ impl App {
             let progress = |m: &str, p: f32| {
                 let _ = tx.send(Message::Progress(m.into(), p));
             };
+            if options.enabled {
+                let speech = speech_ui::analyze(&job, &options, prepared, &control, &progress);
+                match speech {
+                    Ok(report) => {
+                        let _ = tx.send(Message::SpeechReport(Box::new(report), false));
+                    }
+                    Err(error) => {
+                        let _ = tx.send(Message::Error(format!("Speech analysis: {error:#}")));
+                        return;
+                    }
+                }
+            }
+            if let Err(error) = control.check() {
+                let _ = tx.send(Message::Error(error.to_string()));
+                return;
+            }
+            if let Some(error) = geo_error {
+                let _ = tx.send(Message::Error(format!(
+                    "Speech results were retained. Geolocation needs attention: {error}"
+                )));
+                return;
+            }
             let result = soundgeo::analyze(&job, &control, &progress);
             let _ = tx.send(match result {
                 Ok(r) => Message::Done(Box::new(r)),
@@ -215,6 +253,28 @@ impl App {
             .unwrap_or_default();
         for message in messages {
             match message {
+                Message::SpeechPrepared(prepared) => {
+                    self.status = if prepared.ready() {
+                        "Speech models ready".into()
+                    } else {
+                        prepared.report.warnings.join(" ")
+                    };
+                    self.speech.report = Some(prepared.report.clone());
+                    self.speech.prepared = Some(prepared);
+                    self.speech.clear_preview();
+                    self.progress = 1.;
+                    self.receiver = None;
+                }
+                Message::SpeechReport(report, terminal) => {
+                    self.speech.report = Some(*report);
+                    self.speech.clear_preview();
+                    if terminal {
+                        self.status =
+                            "Speech analysis finished; review its status and original text".into();
+                        self.progress = 1.;
+                        self.receiver = None;
+                    }
+                }
                 Message::MediaListing(listing) => {
                     self.media_item = listing.candidates.first().map(|c| c.item).unwrap_or(1);
                     self.media_listing = Some(*listing);
@@ -225,6 +285,7 @@ impl App {
                 Message::MediaDownloaded(download) => {
                     self.job.media = download.path;
                     self.visual_report = None;
+                    self.speech.invalidate();
                     self.status = if download.has_audio {
                         "Recording downloaded and ready for analysis"
                     } else {
@@ -448,6 +509,7 @@ impl App {
                 if ui.button("Choose FFmpeg executable…").clicked(){self.job.ffmpeg=rfd::FileDialog::new().pick_file();}
             });
             ui.add_space(10.);
+            self.speech_controls(ui, ctx);
             if ui.add_sized([ui.available_width(),42.],egui::Button::new(RichText::new("Analyze recording").strong().color(Color32::from_rgb(9,26,30))).fill(ACCENT)).clicked(){self.run(ctx);}
             if ui.add_sized([ui.available_width(),34.],egui::Button::new("Try a synthetic demo")).clicked(){self.load_demo(ctx);}
         });
@@ -577,6 +639,7 @@ impl App {
         });
     }
     fn results(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        self.speech.results(ui, ctx, &mut self.error);
         if let Some(report) = &self.visual_report {
             ui.heading("Video text clues");
             if report.places.is_empty() {
@@ -949,6 +1012,7 @@ impl eframe::App for App {
                         self.results(ui, ctx);
                     });
             });
+        self.schedule_speech(ctx);
     }
     fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
         self.control.stop();

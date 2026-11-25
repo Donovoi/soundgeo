@@ -70,6 +70,9 @@ def notices(target):
         if not text_files and (package['name'], package['version'], package['license']) == ('clipboard-win', '5.4.3', 'BSL-1.0'):
             text_files = [('LICENSE (from exact upstream revision)',
                            (ROOT / 'docs/third-party/clipboard-win-5.4.3-LICENSE.txt').read_text(encoding='utf-8'))]
+        if not text_files and (package['name'], package['version'], package['license']) == ('harfrust', '0.5.2', 'MIT'):
+            text_files = [('LICENSE (from exact upstream revision)',
+                           (ROOT / 'docs/third-party/harfrust-0.5.2-LICENSE.txt').read_text(encoding='utf-8'))]
         if not text_files:
             raise RuntimeError(f"Missing dependency license text: {package['name']} {package['version']}")
         inventory.append({key: package[key] for key in ('name', 'version', 'license', 'repository')})
@@ -129,10 +132,18 @@ def main():
                                  folder / 'runtime-notices/graphics', sources)
         with zipfile.ZipFile(sources, 'a', zipfile.ZIP_DEFLATED) as stream:
             stream.write(ROOT / 'url-tools-build/url-tools-sources.zip', 'url-tools-sources.zip')
+            stream.write(ROOT / 'speech-tools-build/speech-tools-sources.zip', 'speech-tools-sources.zip')
     shutil.copy2(ROOT / 'README.md', folder / 'README.md')
     (folder / 'assets').mkdir()
     for path in (ROOT / 'assets').glob('*.txt'):
         shutil.copy2(path, folder / 'assets' / path.name)
+    with zipfile.ZipFile(ROOT / 'speech-tools-build/speech-tools.zip') as stream:
+        stream.extractall(folder)
+    if sys.platform != 'win32':
+        for helper in (folder / 'speech-tools').glob('*/*'):
+            if helper.name in ('whisper-cli', 'transcribe-cli', 'llama-completion'):
+                helper.chmod(0o755)
+        shutil.copy2(ROOT / 'speech-tools-build/speech-tools-sources.zip', folder / 'speech-tools-sources.zip')
     shutil.copytree(ROOT / 'docs', folder / 'docs')
     shutil.copytree(ROOT / 'validation', folder / 'validation',
                     ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))

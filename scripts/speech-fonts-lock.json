@@ -1,0 +1,75 @@
+{
+  "revision": "aa235c2ef8d678e6f1d4797d1514fccfbe160c18",
+  "files": [
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notosans/NotoSans%5Bwdth%2Cwght%5D.ttf",
+      "filename": "notosans.ttf",
+      "sha256": "bfb7bb691513f12e734dc346c03a03f784912432d7e3fa8e56efcf906fe86b3d",
+      "size": 2049096,
+      "license": "OFL-1.1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notosans/OFL.txt",
+      "filename": "notosans-OFL.txt",
+      "sha256": "cee9892f9f0cc8fe882c9e9537ee6a89621d86ee7ceaf70b02e2b2b1c25c061a",
+      "size": 4396,
+      "license": "OFL-1.1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notosanssc/NotoSansSC%5Bwght%5D.ttf",
+      "filename": "notosanssc.ttf",
+      "sha256": "a3041811a78c361b1de50f953c805e0244951c21c5bd412f7232ef0d899af0da",
+      "size": 17772300,
+      "license": "OFL-1.1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notosanssc/OFL.txt",
+      "filename": "notosanssc-OFL.txt",
+      "sha256": "1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9",
+      "size": 4388,
+      "license": "OFL-1.1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notosansdevanagari/NotoSansDevanagari%5Bwdth%2Cwght%5D.ttf",
+      "filename": "notosansdevanagari.ttf",
+      "sha256": "14ec4af41f27482216d1c2229f417ff9b1425e1babb014e57d1d40d03229853e",
+      "size": 641944,
+      "license": "OFL-1.1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notosansdevanagari/OFL.txt",
+      "filename": "notosansdevanagari-OFL.txt",
+      "sha256": "a216f6f8d85c7228093e0ee5e258d9d377e6671f68acb4db1930b29583d0f331",
+      "size": 4386,
+      "license": "OFL-1.1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notosansbengali/NotoSansBengali%5Bwdth%2Cwght%5D.ttf",
+      "filename": "notosansbengali.ttf",
+      "sha256": "dcd42978094e584a849c84a51450eeac40c8826057d566ea6d4b9627a403a05a",
+      "size": 463668,
+      "license": "OFL-1.1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notosansbengali/OFL.txt",
+      "filename": "notosansbengali-OFL.txt",
+      "sha256": "754f0e221aa7d5a915489f3bf1f20fe53ddc35ab2834a4d91656d78f9622de70",
+      "size": 4383,
+      "license": "OFL-1.1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notonaskharabic/NotoNaskhArabic%5Bwght%5D.ttf",
+      "filename": "notonaskharabic.ttf",
+      "sha256": "67b5a525a661b607971fbd3f96a81b89d3a768e74534fca84f18ac97e6fab72f",
+      "size": 307592,
+      "license": "OFL-1.1"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/google/fonts/aa235c2ef8d678e6f1d4797d1514fccfbe160c18/ofl/notonaskharabic/OFL.txt",
+      "filename": "notonaskharabic-OFL.txt",
+      "sha256": "a7a5a25eb188bf1cd96982030d53e23c33485c69b1044a562254226857ee13af",
+      "size": 4382,
+      "license": "OFL-1.1"
+    }
+  ]
+}

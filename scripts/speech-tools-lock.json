@@ -1,0 +1,26 @@
+[
+  {
+    "name": "whisper",
+    "executable": "whisper-cli",
+    "url": "https://codeload.github.com/ggml-org/whisper.cpp/tar.gz/96ec4d9823e9d0211944172da35f9f29134af990",
+    "filename": "whisper-96ec4d9823e9d0211944172da35f9f29134af990.tar.gz",
+    "size": 10070481,
+    "sha256": "4d46e659151f31535b3947e322a58b0c604d3cbe93dfb284294e989a19d25ad7"
+  },
+  {
+    "name": "llama",
+    "executable": "llama-completion",
+    "url": "https://codeload.github.com/ggml-org/llama.cpp/tar.gz/b1b770d90d94cad9e9ea5b993bdbc383a522fb28",
+    "filename": "llama-b1b770d90d94cad9e9ea5b993bdbc383a522fb28.tar.gz",
+    "size": 38905965,
+    "sha256": "ae8556670b17c25931cd39eb7c95617650eaf6091bbcff206750583ddde1acb4"
+  },
+  {
+    "name": "transcribe",
+    "executable": "transcribe-cli",
+    "url": "https://codeload.github.com/handy-computer/transcribe.cpp/tar.gz/cfa237c2551a4b2d3a56ff8fe5461e3c67c51772",
+    "filename": "transcribe-cfa237c2551a4b2d3a56ff8fe5461e3c67c51772.tar.gz",
+    "size": 46599600,
+    "sha256": "0f95abaac418faec34c5aa5c30b318071a84637cc3055385b0a1a30c1b109a52"
+  }
+]

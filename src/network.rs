@@ -281,8 +281,6 @@ fn fetch_aria(
             "--file-allocation=none",
             "--max-concurrent-downloads=16",
             "--optimize-concurrent-downloads=true",
-            "--split=4",
-            "--max-connection-per-server=4",
             "--min-split-size=8M",
             "--max-overall-download-limit=0",
             "--auto-save-interval=5",
@@ -297,6 +295,11 @@ fn fetch_aria(
             "--input-file",
         ])
         .arg(&input_path);
+    let connections = if pending.len() == 1 { 16 } else { 4 };
+    command.args([
+        format!("--split={connections}"),
+        format!("--max-connection-per-server={connections}"),
+    ]);
     let out = attempt.join("aria2.out");
     let err = attempt.join("aria2.err");
     let total: u64 = pending.iter().map(|(f, _, _)| f.size).sum();
@@ -307,7 +310,6 @@ fn fetch_aria(
         control,
         Duration::from_secs(7200),
         || {
-            let mut received = 0;
             for (file, cache, _) in &pending {
                 let length = cache
                     .join("payload")
@@ -318,16 +320,19 @@ fn fetch_aria(
                     length <= file.size,
                     "Archive part exceeds its published size"
                 );
-                received += length;
             }
-            // Sparse ranged files can have their final length before completion.
-            progress(
-                &format!(
-                    "Parallel archive transfer: up to 16 files, {:.2} GB total; aria2 adapts concurrency to bandwidth",
-                    total as f64 / 1e9
-                ),
-                0.05 + 0.85 * received as f32 / total.max(1) as f32,
+            // Sparse ranged files can have their final length immediately.
+            // Show aria2's received-byte status, never a percentage from length.
+            let tail = crate::subprocess::tail(&out);
+            let transfer = tail
+                .lines()
+                .rev()
+                .find(|line| line.starts_with("[#") && line.contains("DL:"));
+            let message = transfer.map_or_else(
+                || format!("Downloading {:.2} GB across {} files; up to {connections} connections per file", total as f64 / 1e9, pending.len()),
+                |line| format!("Downloading: {line}"),
             );
+            progress(&message, 0.);
             Ok(())
         },
     );
