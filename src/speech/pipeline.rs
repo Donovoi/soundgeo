@@ -274,6 +274,7 @@ pub fn prepare(
         let path = translator.ensure(&options.cache, control, progress)?;
         prepared.translator = Some((translator, path));
     }
+    prepared.report.status = Status::Ready;
     prepared.save(&prepared.report)?;
     progress(
         "Speech models ready. Analyze the recording to transcribe and translate.",
@@ -293,6 +294,8 @@ pub fn transcribe(
     if !prepared.ready() {
         return Ok(report);
     }
+    // Checkpoints written during inference must remain explicitly incomplete.
+    report.status = Status::Partial;
     let result = run(prepared, &mut report, control, progress);
     match result {
         Ok(()) => report.status = Status::Complete,

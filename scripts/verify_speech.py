@@ -77,7 +77,7 @@ def verify(cli, folder, destination, run):
         preparation = directory / (language + '-preparation.json')
         run('speech-prepare-' + language, [*arguments, '--prepare-only', '--output', preparation], timeout=1800)
         prepared = json.loads(preparation.read_text(encoding='utf-8'))
-        assert prepared['selected_language'] == language and not prepared['segments']
+        assert prepared['status'] == 'ready' and prepared['selected_language'] == language and not prepared['segments']
         output = directory / (language + '.json')
         run('speech-offline-' + language, ['--offline', *arguments, '--output', output], timeout=1800)
         report = json.loads(output.read_text(encoding='utf-8'))

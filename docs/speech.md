@@ -74,7 +74,8 @@ the original text unless `--english` is supplied. Existing output files are
 preserved. An incomplete English translation cannot be exported as a complete
 English subtitle file; save the original or JSON instead. The command returns
 exit code 3 when a language choice is needed or speech analysis is incomplete.
-No-speech and successful preparation return zero.
+No-speech and successful preparation return zero. Prepared reports have status
+`ready`; analysis changes this to `complete` or `partial`.
 
 ## Evidence and provenance
 
@@ -84,7 +85,7 @@ intervals; Urdu timestamps describe recognizer segments. Neither is claimed
 as word-level alignment. JSON records the source hash, decoder version, model
 revisions and hashes, helper executable hashes, language choices and warnings.
 
-Original text is checkpointed before translation. Cancellation or a model
+Original text is checkpointed before translation. The desktop Cancel button or a model
 failure produces an explicitly partial report and preserves completed text.
 Speech results remain separate from the aircraft search and do not change the
 1 km geolocation acceptance rules. Review [speech limitations](limitations.md#speech-analysis).
