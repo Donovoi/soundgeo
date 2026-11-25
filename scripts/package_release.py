@@ -70,6 +70,9 @@ def notices(target):
         if not text_files and (package['name'], package['version'], package['license']) == ('clipboard-win', '5.4.3', 'BSL-1.0'):
             text_files = [('LICENSE (from exact upstream revision)',
                            (ROOT / 'docs/third-party/clipboard-win-5.4.3-LICENSE.txt').read_text(encoding='utf-8'))]
+        if not text_files and (package['name'], package['version'], package['license']) == ('harfrust', '0.5.2', 'MIT'):
+            text_files = [('LICENSE (from exact upstream revision)',
+                           (ROOT / 'docs/third-party/harfrust-0.5.2-LICENSE.txt').read_text(encoding='utf-8'))]
         if not text_files:
             raise RuntimeError(f"Missing dependency license text: {package['name']} {package['version']}")
         inventory.append({key: package[key] for key in ('name', 'version', 'license', 'repository')})

@@ -36,7 +36,7 @@ non-English languages; it does not need a separate download for each language.
 Recognition downloads are separate. The initial routing uses Qwen3-ASR 1.7B
 Q8_0 (2.19 GB) for its eight supported languages, Bengali.AI Whisper medium
 Q5_0 (539 MB) for Bengali, and Whisper large-v3 Q5_0 (1.08 GB) for Urdu. Model
-choices and measurements are recorded in the speech validation record. English
+choices and measurements are recorded in the [speech validation record](../validation/speech/METHOD.md). English
 recordings need a recognizer but no translator. With no speech detected, large
 recognition and translation downloads are skipped.
 
@@ -85,7 +85,7 @@ intervals; Urdu timestamps describe recognizer segments. Neither is claimed
 as word-level alignment. JSON records the source hash, decoder version, model
 revisions and hashes, helper executable hashes, language choices and warnings.
 
-Original text is checkpointed before translation. The desktop Cancel button or a model
+Original text is checkpointed before translation. Desktop cancellation or a model
 failure produces an explicitly partial report and preserves completed text.
 Speech results remain separate from the aircraft search and do not change the
 1 km geolocation acceptance rules. Review [speech limitations](limitations.md#speech-analysis).

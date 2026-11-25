@@ -1,2 +1,6 @@
 # Keep published validation hashes consistent across operating systems.
 validation/*.json text eol=lf
+validation/speech/**/*.json text eol=lf
+
+# Native source archives use LF; patches must retain matching line endings on Windows.
+scripts/speech-patches/*.patch text eol=lf

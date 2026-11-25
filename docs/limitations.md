@@ -360,6 +360,12 @@ location from the spoken language or change aircraft-based location acceptance.
 
 See [speech use and model downloads](speech.md).
 
+Very quiet speech can be missed after noise or compression. One of ten fixed
+noise/compression trials returned no detected speech despite speech in the clean
+source. A no-speech result describes the detector's output. Listen to the source
+before concluding that a recording contains no speech. See the
+[speech validation record](../validation/speech/README.md).
+
 ## Terrain and processing
 
 Terrain tiles supply ground elevation. Microphone height on buildings or towers
