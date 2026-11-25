@@ -10,6 +10,8 @@ const ACCENT: Color32 = Color32::from_rgb(76, 224, 194);
 const MUTED: Color32 = Color32::from_rgb(147, 164, 188);
 const PANEL: Color32 = Color32::from_rgb(21, 31, 47);
 enum Message {
+    MediaListing(Box<soundgeo::media_url::Listing>),
+    MediaDownloaded(Box<soundgeo::media_url::Download>),
     Progress(String, f32),
     Done(Box<Report>),
     Demo(Box<Job>),
@@ -37,6 +39,9 @@ pub struct App {
     visual_options: soundgeo::visual::Options,
     visual_report: Option<soundgeo::visual::Report>,
     visual_country: String,
+    media_options: soundgeo::media_url::Options,
+    media_listing: Option<soundgeo::media_url::Listing>,
+    media_item: usize,
 }
 impl App {
     pub fn new(cc: &eframe::CreationContext<'_>, report: Option<Report>) -> Self {
@@ -86,10 +91,54 @@ impl App {
             visual_options: soundgeo::visual::Options::default(),
             visual_report: None,
             visual_country: "ALL".into(),
+            media_options: Default::default(),
+            media_listing: None,
+            media_item: 1,
         }
     }
     fn busy(&self) -> bool {
         self.receiver.is_some()
+    }
+    fn url_controls(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        ui.collapsing("Or paste a video / page URL", |ui| {
+            if ui.add(egui::TextEdit::singleline(&mut self.media_options.url).hint_text("https://…").desired_width(f32::INFINITY)).changed() { self.media_listing = None; }
+            let previous = (self.media_options.engine, self.media_options.impersonate);
+            egui::ComboBox::from_id_salt("media_engine").selected_text(format!("{:?}", self.media_options.engine)).show_ui(ui, |ui| {
+                use soundgeo::media_url::Engine;
+                ui.selectable_value(&mut self.media_options.engine, Engine::Auto, "Automatic: yt-dlp, then gallery-dl");
+                ui.selectable_value(&mut self.media_options.engine, Engine::YtDlp, "yt-dlp");
+                ui.selectable_value(&mut self.media_options.engine, Engine::GalleryDl, "gallery-dl");
+            });
+            ui.checkbox(&mut self.media_options.impersonate, "Browser impersonation (Chrome)");
+            if previous != (self.media_options.engine, self.media_options.impersonate) { self.media_listing = None; }
+            if ui.add_enabled(!self.media_options.url.trim().is_empty(), egui::Button::new("Find media")).clicked() {
+                let options = self.media_options.clone(); self.media_listing = None;
+                self.status = "Finding downloadable clips".into();
+                self.worker(ctx, move |tx, control| {
+                    let progress = |m: &str, p| { let _ = tx.send(Message::Progress(m.into(), p)); };
+                    let result = soundgeo::media_url::discover(&options, &control, &progress);
+                    let _ = tx.send(match result { Ok(value) => Message::MediaListing(Box::new(value)), Err(error) => Message::Error(format!("{error:#}")) });
+                });
+            }
+            if let Some(listing) = &self.media_listing {
+                ui.label("Select the recording to download:");
+                for candidate in &listing.candidates {
+                    ui.radio_value(&mut self.media_item, candidate.item, format!("{}: {}", candidate.item, candidate.title));
+                }
+                ui.label(RichText::new("Up to 20 clips. Downloaded page metadata is kept as provenance; it does not set the search location or clock.").small().color(MUTED));
+                if ui.button("Download and use selected clip").clicked() {
+                    let listing = listing.clone(); let options = self.media_options.clone(); let item = self.media_item;
+                    self.status = "Downloading selected clip".into();
+                    self.worker(ctx, move |tx, control| {
+                        let progress = |m: &str, p| { let _ = tx.send(Message::Progress(m.into(), p)); };
+                        let result = soundgeo::media_url::download(&options, &listing, item, &control, &progress);
+                        let _ = tx.send(match result { Ok(value) => Message::MediaDownloaded(Box::new(value)), Err(error) => Message::Error(format!("{error:#}")) });
+                    });
+                }
+            }
+            ui.label(RichText::new(format!("Media cache: {}", self.media_options.cache.display())).small().color(MUTED));
+            if ui.small_button("Choose media cache folder…").clicked() && let Some(path) = rfd::FileDialog::new().pick_folder() { self.media_options.cache = path; self.media_listing = None; }
+        });
     }
     fn worker(
         &mut self,
@@ -166,6 +215,25 @@ impl App {
             .unwrap_or_default();
         for message in messages {
             match message {
+                Message::MediaListing(listing) => {
+                    self.media_item = listing.candidates.first().map(|c| c.item).unwrap_or(1);
+                    self.media_listing = Some(*listing);
+                    self.status = "Choose a clip, then download it".into();
+                    self.progress = 1.;
+                    self.receiver = None;
+                }
+                Message::MediaDownloaded(download) => {
+                    self.job.media = download.path;
+                    self.visual_report = None;
+                    self.status = if download.has_audio {
+                        "Recording downloaded and ready for analysis"
+                    } else {
+                        "Video downloaded; no audio stream, so only video clues are available"
+                    }
+                    .into();
+                    self.progress = 1.;
+                    self.receiver = None;
+                }
                 Message::VideoClues(report) => {
                     self.visual_report = Some(*report);
                     self.status = "Video clues ready".into();
@@ -244,6 +312,7 @@ impl App {
         ui.add_enabled_ui(!self.busy(),|ui|{
             ui.label(RichText::new("1  Video or audio").strong());
             file_field(ui,&mut self.job.media,"Choose recording…",&["mp4","mov","mkv","webm","avi","wav","mp3","flac","m4a"]);
+            self.url_controls(ui, ctx);
             self.video_controls(ui, ctx);
             ui.label(RichText::new("You can also drop a file into this window.").small().color(MUTED));
             ui.add_space(6.);ui.label(RichText::new("2  Historical flight data").strong());

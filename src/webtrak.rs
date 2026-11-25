@@ -254,7 +254,7 @@ fn ensure_day(
     control.require_network(&folder.display().to_string())?;
     let first = day.and_hms_opt(0, 0, 0).unwrap().and_utc().timestamp() / 30;
     let handles: Vec<_> = (first..first + CHUNKS as i64).collect();
-    let pool = rayon::ThreadPoolBuilder::new().num_threads(2).build()?;
+    let pool = rayon::ThreadPoolBuilder::new().num_threads(8).build()?;
     let (mut temporary, destination) = crate::atomic_file::prepare(&folder.join("flights.csv"))?;
     let mut rows = 0;
     let mut offline = 0;

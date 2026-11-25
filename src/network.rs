@@ -8,7 +8,7 @@ use std::{
     time::Duration,
 };
 
-fn hash_file(path: &Path, control: &Control) -> Result<String> {
+pub(crate) fn hash_file(path: &Path, control: &Control) -> Result<String> {
     let mut file = std::fs::File::open(path)?;
     let mut hasher = Sha256::new();
     let mut buffer = [0u8; 262144];
@@ -33,6 +33,31 @@ pub(crate) async fn cancelable<F: Future>(future: F, control: &Control) -> Resul
     }
 }
 pub fn fetch_file(
+    url: &str,
+    path: &Path,
+    size: u64,
+    digest: Option<&str>,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<()> {
+    if size >= 8 * 1024 * 1024
+        && let Some(tool) = aria2()
+    {
+        return fetch_aria(
+            &[Transfer {
+                url,
+                path,
+                size,
+                digest,
+            }],
+            &tool,
+            control,
+            progress,
+        );
+    }
+    fetch_native(url, path, size, digest, control, progress)
+}
+fn fetch_native(
     url: &str,
     path: &Path,
     size: u64,
@@ -109,6 +134,250 @@ pub fn fetch_file(
     temp.as_file().sync_all()?;
     temp.persist(destination)?;
     std::fs::write(stamp, hash)?;
+    Ok(())
+}
+
+pub(crate) fn aria2() -> Option<std::path::PathBuf> {
+    crate::audio::bundled_tool("aria2c").or_else(|| {
+        std::env::var_os("PATH").and_then(|paths| {
+            std::env::split_paths(&paths)
+                .map(|p| {
+                    p.join(if cfg!(windows) {
+                        "aria2c.exe"
+                    } else {
+                        "aria2c"
+                    })
+                })
+                .find(|p| p.is_file())
+        })
+    })
+}
+pub(crate) fn configure_media_downloader(command: &mut std::process::Command, impersonate: bool) {
+    command.args(["--concurrent-fragments", "8"]);
+    // curl_cffi must own the media request when impersonating; aria2 cannot
+    // reproduce its TLS fingerprint. Native HLS keeps per-fragment auth intact.
+    if !impersonate && let Some(path) = aria2() {
+        command.arg("--downloader").arg(format!("http,https:{}", path.display()))
+            .args(["--downloader", "dash,m3u8:native", "--downloader-args", "aria2c:--no-conf --split=16 --max-connection-per-server=16 --min-split-size=8M --max-tries=3 --retry-wait=5 --file-allocation=none --max-overall-download-limit=0"]);
+    }
+}
+pub(crate) struct Transfer<'a> {
+    pub url: &'a str,
+    pub path: &'a Path,
+    pub size: u64,
+    pub digest: Option<&'a str>,
+}
+pub(crate) fn fetch_files(
+    files: &[Transfer<'_>],
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<()> {
+    if let Some(tool) = aria2() {
+        return fetch_aria(files, &tool, control, progress);
+    }
+    use rayon::prelude::*;
+    let completed = std::sync::atomic::AtomicUsize::new(0);
+    rayon::ThreadPoolBuilder::new()
+        .num_threads(4)
+        .build()?
+        .install(|| {
+            files.par_iter().try_for_each(|file| {
+                fetch_native(
+                    file.url,
+                    file.path,
+                    file.size,
+                    file.digest,
+                    control,
+                    &|message, _| {
+                        progress(
+                            message,
+                            completed.load(std::sync::atomic::Ordering::Relaxed) as f32
+                                / files.len().max(1) as f32,
+                        )
+                    },
+                )?;
+                completed.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+                Ok::<_, anyhow::Error>(())
+            })
+        })
+}
+fn stamp(path: &Path) -> std::path::PathBuf {
+    path.with_extension(format!(
+        "{}.sha256",
+        path.extension().unwrap_or_default().to_string_lossy()
+    ))
+}
+fn expected_digest(digest: Option<&str>) -> Result<Option<String>> {
+    let expected = digest.map(|d| d.strip_prefix("sha256:").unwrap_or("").to_ascii_lowercase());
+    if expected
+        .as_ref()
+        .is_some_and(|d| d.len() != 64 || !d.bytes().all(|b| b.is_ascii_hexdigit()))
+    {
+        bail!("Invalid archive SHA-256 digest");
+    }
+    Ok(expected)
+}
+fn fetch_aria(
+    files: &[Transfer<'_>],
+    tool: &Path,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<()> {
+    use anyhow::{Context, ensure};
+    let mut pending = vec![];
+    let mut locks = vec![];
+    let mut input = String::new();
+    for file in files {
+        control.check()?;
+        crate::media_url::validate_url(file.url)?;
+        let expected = expected_digest(file.digest)?;
+        let saved = std::fs::read_to_string(stamp(file.path)).ok();
+        if file.path.metadata().is_ok_and(|m| m.len() == file.size)
+            && let Some(hash) = expected.as_ref().or(saved.as_ref())
+            && hash_file(file.path, control)? == hash.trim()
+        {
+            continue;
+        }
+        control.require_network("archive transfer")?;
+        let key = format!(
+            "{:x}",
+            Sha256::digest(serde_json::to_vec(&(file.url, file.size, &expected))?)
+        );
+        let parent = file
+            .path
+            .parent()
+            .filter(|p| !p.as_os_str().is_empty())
+            .unwrap_or(Path::new("."));
+        let cache = parent.join(".soundgeo-downloads").join(key);
+        locks.push(crate::media_url::lock(&cache)?);
+        let cache = cache.canonicalize()?;
+        ensure!(
+            !cache.to_string_lossy().chars().any(char::is_control),
+            "Download folder contains control characters"
+        );
+        input.push_str(&format!(
+            "{}\n dir={}\n out=payload\n",
+            file.url,
+            cache.display()
+        ));
+        if let Some(hash) = &expected {
+            input.push_str(&format!(" checksum=sha-256={hash}\n"));
+        }
+        pending.push((file, cache, expected));
+    }
+    if pending.is_empty() {
+        progress("Using verified cached archive parts", 1.);
+        return Ok(());
+    }
+    let attempt = tempfile::Builder::new()
+        .prefix("attempt-")
+        .tempdir_in(&pending[0].1)?
+        .keep();
+    let input_path = attempt.join("transfers.txt");
+    std::fs::write(&input_path, input)?;
+    let mut command = crate::audio::quiet_command(tool);
+    command
+        .args([
+            "--no-conf",
+            "--continue=true",
+            "--auto-file-renaming=false",
+            "--allow-overwrite=true",
+            "--check-integrity=true",
+            "--file-allocation=none",
+            "--max-concurrent-downloads=16",
+            "--optimize-concurrent-downloads=true",
+            "--split=4",
+            "--max-connection-per-server=4",
+            "--min-split-size=8M",
+            "--max-overall-download-limit=0",
+            "--connect-timeout=20",
+            "--timeout=30",
+            "--max-tries=3",
+            "--retry-wait=5",
+            "--summary-interval=5",
+            "--console-log-level=warn",
+            "--enable-color=false",
+            "--download-result=hide",
+            "--input-file",
+        ])
+        .arg(&input_path);
+    let out = attempt.join("aria2.out");
+    let err = attempt.join("aria2.err");
+    let total: u64 = pending.iter().map(|(f, _, _)| f.size).sum();
+    let result = crate::subprocess::run(
+        &mut command,
+        &out,
+        &err,
+        control,
+        Duration::from_secs(7200),
+        || {
+            let mut received = 0;
+            for (file, cache, _) in &pending {
+                let length = cache
+                    .join("payload")
+                    .metadata()
+                    .map(|m| m.len())
+                    .unwrap_or(0);
+                ensure!(
+                    length <= file.size,
+                    "Archive part exceeds its published size"
+                );
+                received += length;
+            }
+            // Sparse ranged files can have their final length before completion.
+            progress(
+                &format!(
+                    "Parallel archive transfer: up to 16 files, {:.2} GB total; aria2 adapts concurrency to bandwidth",
+                    total as f64 / 1e9
+                ),
+                0.05 + 0.85 * received as f32 / total.max(1) as f32,
+            );
+            Ok(())
+        },
+    );
+    control.check()?;
+    let mut failures = vec![];
+    for (file, cache, expected) in pending {
+        let path = cache.join("payload");
+        if cache.join("payload.aria2").exists()
+            || !path.metadata().is_ok_and(|m| m.len() == file.size)
+        {
+            failures.push(file.path.display().to_string());
+            continue;
+        }
+        let hash = hash_file(&path, control)?;
+        if expected.as_ref().is_some_and(|value| value != &hash) {
+            // Preserve rejected bytes but ensure the next attempt starts fresh.
+            let rejected = tempfile::Builder::new()
+                .prefix("rejected-")
+                .tempdir_in(&cache)?
+                .keep();
+            std::fs::rename(&path, rejected.join("payload"))?;
+            failures.push(format!("{} (SHA-256 mismatch)", file.path.display()));
+            continue;
+        }
+        let (mut temp, destination) = crate::atomic_file::prepare(file.path)?;
+        std::io::copy(&mut std::fs::File::open(&path)?, temp.as_file_mut())?;
+        temp.as_file().sync_all()?;
+        temp.persist(destination)?;
+        std::fs::write(stamp(file.path), hash)?;
+        std::fs::remove_file(path)?;
+    }
+    if !failures.is_empty() {
+        bail!(
+            "Incomplete archive transfers: {}. Retry to resume. {} {}. Logs: {}",
+            failures.join(", "),
+            crate::subprocess::tail(&out),
+            crate::subprocess::tail(&err),
+            attempt.display()
+        );
+    }
+    ensure!(
+        result.context("aria2 transfer stopped")?.success(),
+        "aria2 reported failure; verified completed parts are saved. Logs: {}",
+        attempt.display()
+    );
+    progress("All archive parts verified", 1.);
     Ok(())
 }
 

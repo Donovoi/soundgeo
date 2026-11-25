@@ -1,0 +1,378 @@
+{
+  "checked_utc": "2026-11-25",
+  "python": "3.14.10",
+  "packages": [
+    {
+      "name": "gallery_dl",
+      "version": "1.32.21",
+      "url": "https://files.pythonhosted.org/packages/80/e3/889fb3ac6dabd28ff432763e0414ddb7d0d6a3b38df88d6e602e185548c8/gallery_dl-1.32.21-py3-none-any.whl",
+      "sha256": "f3f3e62bf3863cae6e1635045748c50fc51d52c111ca64b068d618e9334e8811",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/37/a1/bffb3ccddd5d829ac1e444d0f8be640461e2031cf0f779efbf50c47629dc/gallery_dl-1.32.21.tar.gz",
+          "sha256": "4a1f71cc9a95dae9098d63e79049fbdccfec44386ba9ca49c7248eb8b3b821c0",
+          "filename": "gallery_dl-1.32.21.tar.gz"
+        }
+      ],
+      "license": "GPL-2.0-only"
+    },
+    {
+      "name": "yt-dlp",
+      "version": "2026.11.23",
+      "url": "https://files.pythonhosted.org/packages/30/1e/f4bf64ca733135e609696c6df77a6c22c6d4909b6e293e4563ae51ea335c/yt_dlp-2026.11.23-py3-none-any.whl",
+      "sha256": "e9188e0c559905f7ee05acc1ba0b6fb3f310e7565bf6dea5f62b5300e0775e35",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/c4/5a/1b6b13c8bf553841e7deaf204105dc63d4765aca9143def73a130da228c1/yt_dlp-2026.11.23.tar.gz",
+          "sha256": "1db83772a8de7855a2dab551a94d7f617c88629dfdf506531c06b369b47f88a4",
+          "filename": "yt_dlp-2026.11.23.tar.gz"
+        }
+      ],
+      "license": "Unlicense"
+    },
+    {
+      "name": "yt-dlp-ejs",
+      "version": "0.8.0",
+      "url": "https://files.pythonhosted.org/packages/e3/bd/520769863744b669440a924271a6159ddd82ad5ae26b4ac4d4b69e9f8d44/yt_dlp_ejs-0.8.0-py3-none-any.whl",
+      "sha256": "79300e5fca7f937a1eeede11f0456862c1b41107ce1d726871e0207424f4bdb4",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/d3/e6/cceb9530e8f4e5940f6f7822d90e9d94f1b85343329a16baaf47bbbb3de1/yt_dlp_ejs-0.8.0.tar.gz",
+          "sha256": "d5fa1639f63b5c4af8d932495f60689d5370f1a095782c944f7f62a303eb104e",
+          "filename": "yt_dlp_ejs-0.8.0.tar.gz"
+        }
+      ],
+      "license": "Unlicense AND MIT AND ISC"
+    },
+    {
+      "name": "curl_cffi",
+      "version": "0.17.0",
+      "url": "https://files.pythonhosted.org/packages/a1/9f/e860ed1a3fc55c06ea2a148613d07342dc6c6ec2844a2f0ee864eb1b19ce/curl_cffi-0.17.0-cp310-abi3-win_amd64.whl",
+      "sha256": "4c3993c7df155d622869b82a56adb018440587fd3faffeaf8d01cc016d2e1357",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/96/4c/69074f9797d83a5401b3c6bc58c5de5aad6d1a085d0497b87a093a152e87/curl_cffi-0.17.0.tar.gz",
+          "sha256": "31ee8500d06d6502ce1ec0b7ded1c5aa8e8f3401bbe37ccd78d6153d859d8f3c",
+          "filename": "curl_cffi-0.17.0.tar.gz"
+        }
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "requests",
+      "version": "2.34.2",
+      "url": "https://files.pythonhosted.org/packages/a0/f4/c67b0b3f1b9245e8d266f0f112c500d50e5b4e83cb6f3b71b6528104182a/requests-2.34.2-py3-none-any.whl",
+      "sha256": "2a0d60c172f83ac6ab31e4554906c0f3b3588d37b5cb939b1c061f4907e278e0",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/ac/c3/e2a2b89f2d3e2179abd6d00ebd70bff6273f37fb3e0cc209f48b39d00cbf/requests-2.34.2.tar.gz",
+          "sha256": "f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed",
+          "filename": "requests-2.34.2.tar.gz"
+        }
+      ],
+      "license": "Apache-2.0"
+    },
+    {
+      "name": "charset-normalizer",
+      "version": "3.5.3",
+      "url": "https://files.pythonhosted.org/packages/a0/4e/0d31216be12c3146dd282b043957805d4dda8806cd7b99c90273d251f0f2/charset_normalizer-3.5.3-cp314-cp314-win_amd64.whl",
+      "sha256": "b66a0e045cf859d7418f26a554509b65f21ebb6d90a95152460781939e8264f4",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/c2/c3/cae6d3bdefd96a941ffc247c714ac4babc488a69012e11c058f6c17c6c47/charset_normalizer-3.5.3.tar.gz",
+          "sha256": "a250888753faa289e2997962fbb17c4960cbdb58575533ca6fceee68c224bdff",
+          "filename": "charset_normalizer-3.5.3.tar.gz"
+        }
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "idna",
+      "version": "3.20",
+      "url": "https://files.pythonhosted.org/packages/58/a2/bb081bab032533a855d44de1d56f8e8426114ff1ba5d1f07a438a0a654f8/idna-3.20-py3-none-any.whl",
+      "sha256": "ab7ae7122974553370f0bdb919e1a960b2cd1bc1ef0276416d896db81c14582c",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/f5/08/8eea9d4b8302028f3abb2c0813953f7aec26d33b7a8960ed760e65ff29fa/idna-3.20.tar.gz",
+          "sha256": "a7db850025b95ded1eae8a46181a1a6c56c92c96f0e2b005d9ff8dc0210cab44",
+          "filename": "idna-3.20.tar.gz"
+        }
+      ],
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "urllib3",
+      "version": "2.8.0",
+      "url": "https://files.pythonhosted.org/packages/92/9d/c4e665119135114480843e7ab388fa94d8480650450e6f8e26b70d323a4c/urllib3-2.8.0-py3-none-any.whl",
+      "sha256": "0cf3cae568d36aa9576b28dfb35f11328f1cb974ca7647d9475ebb86c75ac6e3",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/e3/05/b17359e1cefb4f909b5e40b1b90a496d987258916dbbf88e842c729f510e/urllib3-2.8.0.tar.gz",
+          "sha256": "63bf2ead4c879426ebf22ef2a781eeb4aa3b4ae798a0435506f8687fd5bb9b63",
+          "filename": "urllib3-2.8.0.tar.gz"
+        }
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "PyYAML",
+      "version": "6.0.4",
+      "url": "https://files.pythonhosted.org/packages/b4/b5/e5cf6ca786f8a5b9bd91e01fe8f2113300bc5628fcfdd3ca02d271970824/pyyaml-6.0.4-cp314-cp314-win_amd64.whl",
+      "sha256": "1d2f08c122727c86f8303bb1dd45159ca1de1f2d68798e671ec46974e321008e",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/76/b8/c0b780928e2fb1c87e9e375818c6f121da2398b071012d1747be300b83f4/pyyaml-6.0.4.tar.gz",
+          "sha256": "e24bf71af8a432d7808fabff134d38dfe16d3cbb41f2873bb4b1e42422de0a1a",
+          "filename": "pyyaml-6.0.4.tar.gz"
+        }
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "truststore",
+      "version": "0.10.5",
+      "url": "https://files.pythonhosted.org/packages/51/e9/3a7820be2bb0fe53b6bc9c3be26d3d1158004e4c3ab953aa6840b955b1e9/truststore-0.10.5-py3-none-any.whl",
+      "sha256": "9aaaedaefaf06d8b206278cf8b5012bc897f485a874503501e12d776df78951c",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/ee/9f/c5201d42a484c061e528825fc8e2d565f5abd50a4ced6fb7d29c4ec99b2b/truststore-0.10.5.tar.gz",
+          "sha256": "30d36967ccaded5cbb38d602c433f53600036c79d502f4533a49b60a03bbefcd",
+          "filename": "truststore-0.10.5.tar.gz"
+        }
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "pyinstaller",
+      "version": "6.22.3",
+      "url": "https://files.pythonhosted.org/packages/24/83/c5422204772a27aef643280fdc887b7ef55679989096b21dceb1b9625fc4/pyinstaller-6.22.3-py3-none-win_amd64.whl",
+      "sha256": "500bd58c7bf7e584a8435adccbd763a0b918d5c12b08d74ff50fd79b2915458b",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/63/41/f90302845945abd4ed647933ff5ee7c6ac93983187be67f897b6cb613331/pyinstaller-6.22.3.tar.gz",
+          "sha256": "05eb2f5615503e72939a7224d68b4aff572c6b0438ee4a17d0a4b481f399362d",
+          "filename": "pyinstaller-6.22.3.tar.gz"
+        }
+      ],
+      "license": "GPLv2-or-later with a special exception which allows to use PyInstaller to build and distribute non-free programs (including commercial ones)"
+    },
+    {
+      "name": "certifi",
+      "version": "2026.11.20",
+      "url": "https://files.pythonhosted.org/packages/6d/39/5eec3296860b94ac20bb8ed807725b88f6adfab3f343df592afd975f5f86/certifi-2026.11.20-py3-none-any.whl",
+      "sha256": "7422df25243767b9877031a2248cb14d09ddac9beee846f4cef3d5c9191d488f",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/51/33/4cd27639502f010084bcef7a2036391dd637439901341ce1a530f36f6e51/certifi-2026.11.20.tar.gz",
+          "sha256": "af1cb240a8133f105aa52684a3a3258339d7f2fd0bd4e2812698ff5cf5588c4e",
+          "filename": "certifi-2026.11.20.tar.gz"
+        }
+      ],
+      "license": "MPL-2.0"
+    },
+    {
+      "name": "cffi",
+      "version": "2.1.1",
+      "url": "https://files.pythonhosted.org/packages/a7/06/1c3e01e3ba14c39f6d10bfbac52753b7e22259e38088e5cfe1d704918690/cffi-2.1.1-cp314-cp314-win_amd64.whl",
+      "sha256": "3222ba5d678f80a030e6afbcc33dc1ae5cb45facabb61cee2c7016b8432fde48",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/9e/ef/008a1939e372c06329a3fce4279c02f328488f3526744906eeec3da7ad5f/cffi-2.1.1.tar.gz",
+          "sha256": "dd31f52ea1086513bb9df30f8fcee9b8918323ae067a3d5b78bc826a000712be",
+          "filename": "cffi-2.1.1.tar.gz"
+        }
+      ],
+      "license": "MIT-0"
+    },
+    {
+      "name": "packaging",
+      "version": "26.4",
+      "url": "https://files.pythonhosted.org/packages/ba/7b/5504f91c9c2733f693d7759e50ede5d27119d4da7e5836c46d3b5ff81d56/packaging-26.4-py3-none-any.whl",
+      "sha256": "81383611a09c1bc0b08b76e0fd5829d7c6824c65b27a6aee339da133f4233ea2",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/c3/75/ffb1dc0ed12352139fb4ca0e3fde4325a23e3d0f3f40efe89717bc4f557b/packaging-26.4.tar.gz",
+          "sha256": "c4b671c41ddb9bf26e543c37723610d28fb6bf7affc4da17cf048d419d2c062a",
+          "filename": "packaging-26.4.tar.gz"
+        }
+      ],
+      "license": "Apache-2.0 OR BSD-2-Clause"
+    },
+    {
+      "name": "pyinstaller-hooks-contrib",
+      "version": "2026.10",
+      "url": "https://files.pythonhosted.org/packages/08/10/4a6d13adaa93d0bbcfea082a78965e970cae7a8bfa82ac1557a1dc8f1cba/pyinstaller_hooks_contrib-2026.10-py3-none-any.whl",
+      "sha256": "dfc3cde20a7ce6c92e803016e66eed4b7050467e2c5f886a3745d89b258c6d6d",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/45/87/9a32062fb1296b43e866ec78313f887e12b09e6bc344c694647856bcd907/pyinstaller_hooks_contrib-2026.10.tar.gz",
+          "sha256": "7e906c659522e592a1680f30f709ffb6333277141a695926aa7190592205c5e3",
+          "filename": "pyinstaller_hooks_contrib-2026.10.tar.gz"
+        }
+      ],
+      "license": null
+    },
+    {
+      "name": "PySocks",
+      "version": "1.7.1",
+      "url": "https://files.pythonhosted.org/packages/8d/59/b4572118e098ac8e46e399a1dd0f2d85403ce8bbaad9ec79373ed6badaf9/PySocks-1.7.1-py3-none-any.whl",
+      "sha256": "2725bd0a9925919b9b51739eea5f9e2bae91e83288108a9ad338b2e3a4435ee5",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/bd/11/293dd436aea955d45fc4e8a35b6ae7270f5b8e00b53cf6c024c83b657a11/PySocks-1.7.1.tar.gz",
+          "sha256": "3f8804571ebe159c380ac6de37643bb4685970655d3bba243530d6558b799aa0",
+          "filename": "PySocks-1.7.1.tar.gz"
+        }
+      ],
+      "license": "BSD"
+    },
+    {
+      "name": "setuptools",
+      "version": "84.2.1",
+      "url": "https://files.pythonhosted.org/packages/ef/55/6dc6d6bb953bdfc52519a0059592c52b6e3b8ad51cf8256dffceb55b0610/setuptools-84.2.1-py3-none-any.whl",
+      "sha256": "ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/70/b3/c19426f783614d625699a4b247faf628ea9ab1db228674491767b417f9e1/setuptools-84.2.1.tar.gz",
+          "sha256": "3ff8b3b5492a0aa66960f4419365a86b84e013070d4313e4d4a6894f5d64d6bc",
+          "filename": "setuptools-84.2.1.tar.gz"
+        }
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "websockets",
+      "version": "17.4",
+      "url": "https://files.pythonhosted.org/packages/6d/85/2496a24de80c215b55a15f037bc368a2ed0ce7ecb1e909039ff4e76395de/websockets-17.4-cp314-cp314-win_amd64.whl",
+      "sha256": "70293c25d79d1f084fdd665894481547575e429d2a75e8d72caec2f6b6b07af8",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/75/79/590c5f0cc7d1661195aeefccb0e342b79f4c77d368d526d028821a390332/websockets-17.4.tar.gz",
+          "sha256": "09d3939b70df0c8ad2da145ebd50978bccaee1d565e838b0e7921a34d38571eb",
+          "filename": "websockets-17.4.tar.gz"
+        }
+      ],
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "altgraph",
+      "version": "0.17.5",
+      "url": "https://files.pythonhosted.org/packages/a9/ba/000a1996d4308bc65120167c21241a3b205464a2e0b58deda26ae8ac21d1/altgraph-0.17.5-py2.py3-none-any.whl",
+      "sha256": "f3a22400bce1b0c701683820ac4f3b159cd301acab067c51c653e06961600597",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/7e/f8/97fdf103f38fed6792a1601dbc16cc8aac56e7459a9fff08c812d8ae177a/altgraph-0.17.5.tar.gz",
+          "sha256": "c87b395dd12fabde9c99573a9749d67da8d29ef9de0125c7f536699b4a9bc9e7",
+          "filename": "altgraph-0.17.5.tar.gz"
+        }
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "brotli",
+      "version": "1.2.1",
+      "url": "https://files.pythonhosted.org/packages/24/5e/80cd38322263da5e92ea4935423f1d3cfa2509201673dce77b772c47b997/brotli-1.2.1-cp314-cp314-win_amd64.whl",
+      "sha256": "972a2e19dbaab47d0aa77c1d07f71c930bdc53538f2b33decc905e92a4be5cbd",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/cf/81/1546c983678a9b4e77cb4718eaedd1b2caf24a6cdbf1eb8775938d22aff7/brotli-1.2.1.tar.gz",
+          "sha256": "02b2f7b5a83485efe448a44ddf7983def05c3bb1dcf917d4f7154070260e13de",
+          "filename": "brotli-1.2.1.tar.gz"
+        }
+      ],
+      "license": "MIT"
+    },
+    {
+      "name": "mutagen",
+      "version": "1.48.1",
+      "url": "https://files.pythonhosted.org/packages/47/d8/a29e4e3991765e7ce4ed1f7e4074fe1ba9da03e0048639734de60f9cadb9/mutagen-1.48.1-py3-none-any.whl",
+      "sha256": "4f077fe87d3fc7fba259aa63d8c026b18382ca6a42ef37c61e16f1b1b5b82fe7",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/df/70/1675da133ea92227da41bf5b24e1c66be597ff736a1533ade41da986852f/mutagen-1.48.1.tar.gz",
+          "sha256": "8f95637ab9f6f305cec6bd1294e197debe207998e3e068596563c74f86b0a173",
+          "filename": "mutagen-1.48.1.tar.gz"
+        }
+      ],
+      "license": "GPL-2.0-or-later"
+    },
+    {
+      "name": "pycparser",
+      "version": "3.12",
+      "url": "https://files.pythonhosted.org/packages/b6/ae/315bbeee126a769cbde43cf4908acb4b40408d8bf8bbf334dd7368d8dadf/pycparser-3.12-py3-none-any.whl",
+      "sha256": "a076f3f489b39b43ed13563a1dafe42447445bec2e294154ec5c57fcdda4c85e",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/cb/27/eeb9f307bf07060f3d9f9aa0fb8c15b01bdfded0a941e4b2719c7f94cacd/pycparser-3.12.tar.gz",
+          "sha256": "f03387877eab82ce01bbdfd0ba7252ee55a90b1c708d5129e2ce915475cf1db6",
+          "filename": "pycparser-3.12.tar.gz"
+        }
+      ],
+      "license": "BSD-3-Clause"
+    },
+    {
+      "name": "pycryptodomex",
+      "version": "3.24.2",
+      "url": "https://files.pythonhosted.org/packages/21/f9/4363334c762c2463d9d403894e83922959d9392e7cfa15bb1335e790851d/pycryptodomex-3.24.2-cp37-abi3-win_amd64.whl",
+      "sha256": "6e912e3a21061bf8f4ce89223cb46f5e98a6b32420d08d770605891a2be266c6",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/f3/c2/f5855412372e47d635599a97c00cfcf9fc40accac9436a11bf9ded19f859/pycryptodomex-3.24.2.tar.gz",
+          "sha256": "e4dbc29e2575365d15e272f769329106277649aea081e2119cf43d66950f8f8f",
+          "filename": "pycryptodomex-3.24.2.tar.gz"
+        }
+      ],
+      "license": "BSD, Public Domain"
+    },
+    {
+      "name": "pefile",
+      "version": "2024.8.26",
+      "url": "https://files.pythonhosted.org/packages/54/16/12b82f791c7f50ddec566873d5bdd245baa1491bac11d15ffb98aecc8f8b/pefile-2024.8.26-py3-none-any.whl",
+      "sha256": "76f8b485dcd3b1bb8166f1128d395fa3d87af26360c2358fb75b80019b957c6f",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/03/4f/2750f7f6f025a1507cd3b7218691671eecfd0bbebebe8b39aa0fe1d360b8/pefile-2024.8.26.tar.gz",
+          "sha256": "3ff6c5d8b43e8c37bb6e6dd5085658d658a7a0bdcd20b6a07b1fcfc1c4e9d632",
+          "filename": "pefile-2024.8.26.tar.gz"
+        }
+      ],
+      "license": null
+    },
+    {
+      "name": "pywin32-ctypes",
+      "version": "0.2.3",
+      "url": "https://files.pythonhosted.org/packages/de/3d/8161f7711c017e01ac9f008dfddd9410dff3674334c233bde66e7ba65bbf/pywin32_ctypes-0.2.3-py3-none-any.whl",
+      "sha256": "8a1513379d709975552d202d942d9837758905c8d01eb82b8bcc30918929e7b8",
+      "sources": [
+        {
+          "url": "https://files.pythonhosted.org/packages/85/9f/01a1a99704853cb63f253eea009390c88e7131c67e66a0a02099a8c917cb/pywin32-ctypes-0.2.3.tar.gz",
+          "sha256": "d162dc04946d704503b2edc4d55f3dba5c1d539ead017afa00142c38b9885755",
+          "filename": "pywin32-ctypes-0.2.3.tar.gz"
+        }
+      ],
+      "license": null
+    }
+  ],
+  "sources": [
+    {
+      "name": "aria2-1.37.0.tar.xz",
+      "url": "https://github.com/aria2/aria2/releases/download/release-1.37.0/aria2-1.37.0.tar.xz",
+      "sha256": "60a420ad7085eb616cb6e2bdf0a7206d68ff3d37fb5a956dc44242eb2f79b66b"
+    },
+    {
+      "name": "yt-dlp.tar.gz",
+      "url": "https://github.com/yt-dlp/yt-dlp/releases/download/2026.11.23/yt-dlp.tar.gz",
+      "sha256": "8f757547e94c723415fd82bb5da857d8e1b24be2e34218890dfaac134907723e"
+    },
+    {
+      "name": "gallery_dl-1.32.21.tar.gz",
+      "url": "https://codeberg.org/mikf/gallery-dl/releases/download/v1.32.21/gallery_dl-1.32.21.tar.gz",
+      "sha256": "4a1f71cc9a95dae9098d63e79049fbdccfec44386ba9ca49c7248eb8b3b821c0"
+    }
+  ],
+  "deno": {
+    "version": "2.9.8",
+    "url": "https://github.com/denoland/deno/releases/download/v2.9.8/deno-x86_64-pc-windows-msvc.zip",
+    "sha256": "cba84b26e0df5ae7f74fc66b86a95b866872a86292ebd84fa1e959927edd93bf"
+  }
+}

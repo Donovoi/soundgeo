@@ -120,11 +120,15 @@ def main():
                 shutil.copytree(path, folder / path.name)
             else:
                 shutil.copy2(path, folder / path.name)
+        with zipfile.ZipFile(ROOT / 'url-tools-build/url-tools.zip') as stream:
+            stream.extractall(folder)
         (folder / 'PE-IMPORTS.json').write_text(json.dumps(audit(folder), indent=2) + '\n', encoding='utf-8')
         sources = dist / f'soundgeo-{version}-windows-runtime-sources.zip'
         shutil.copy2(ROOT / 'runtime-build/windows-runtime-sources.zip', sources)
         prepare_graphics_notices(ROOT / 'runtime-build/graphics-downloads',
                                  folder / 'runtime-notices/graphics', sources)
+        with zipfile.ZipFile(sources, 'a', zipfile.ZIP_DEFLATED) as stream:
+            stream.write(ROOT / 'url-tools-build/url-tools-sources.zip', 'url-tools-sources.zip')
     shutil.copy2(ROOT / 'README.md', folder / 'README.md')
     (folder / 'assets').mkdir()
     for path in (ROOT / 'assets').glob('*.txt'):
