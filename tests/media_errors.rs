@@ -54,6 +54,10 @@ fn missing_decoder_short_recording_and_silent_video_fail_clearly() {
             .contains("at least 20 seconds")
     );
     let video = dir.path().join("no-audio.mp4");
+    let image = dir.path().join("frame.ppm");
+    let mut pixels = b"P6\n32 32\n255\n".to_vec();
+    pixels.extend([16, 25, 40].repeat(32 * 32));
+    std::fs::write(&image, pixels).unwrap();
     let status = audio::quiet_command(audio::ffmpeg_path(&job))
         .args([
             "-nostdin",
@@ -61,15 +65,14 @@ fn missing_decoder_short_recording_and_silent_video_fail_clearly() {
             "-loglevel",
             "error",
             "-y",
-            "-f",
-            "lavfi",
+            "-loop",
+            "1",
+            "-framerate",
+            "1",
             "-i",
-            "color=s=32x32:r=1",
-            "-t",
-            "2",
-            "-c:v",
-            "libx264",
         ])
+        .arg(&image)
+        .args(["-t", "2", "-c:v", "mpeg4", "-pix_fmt", "yuv420p"])
         .arg(&video)
         .status()
         .unwrap();

@@ -247,6 +247,11 @@ fn synthetic_video_unknown_clock_recovers_location() {
     let mut job = soundgeo::demo::create(dir.path()).unwrap();
     // Exercise actual video -> FFmpeg -> spectrum -> detection -> flight matching.
     let video = dir.path().join("synthetic.mp4");
+    // Use native codecs available in the portable LGPL FFmpeg build.
+    let image = dir.path().join("frame.ppm");
+    let mut pixels = b"P6\n160 90\n255\n".to_vec();
+    pixels.extend([16, 25, 40].repeat(160 * 90));
+    std::fs::write(&image, pixels).unwrap();
     let result = audio::quiet_command(audio::ffmpeg_path(&job))
         .args([
             "-nostdin",
@@ -254,18 +259,20 @@ fn synthetic_video_unknown_clock_recovers_location() {
             "-loglevel",
             "error",
             "-y",
-            "-f",
-            "lavfi",
-            "-i",
-            "color=c=0x101928:s=160x90:r=1",
+            "-loop",
+            "1",
+            "-framerate",
+            "1",
             "-i",
         ])
+        .arg(&image)
+        .arg("-i")
         .arg(&job.media)
         .args([
             "-c:v",
-            "libx264",
-            "-preset",
-            "ultrafast",
+            "mpeg4",
+            "-pix_fmt",
+            "yuv420p",
             "-c:a",
             "aac",
             "-b:a",
