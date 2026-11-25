@@ -3,7 +3,7 @@
   "revision": "70bb2e84b976b7e960aa89f1c648e09c59f894dd",
   "license": "CC-BY-4.0",
   "source": "https://huggingface.co/datasets/google/fleurs",
-  "attribution": "FLEURS: Few-shot Learning Evaluation of Universal Representations of Speech, Conneau et al., 2022. Recordings are unchanged speech, losslessly encoded from the published WAV files to 16 kHz mono FLAC.",
+  "attribution": "FLEURS: Few-shot Learning Evaluation of Universal Representations of Speech, Conneau et al., 2022. Published floating-point WAV recordings were converted to integer 16 kHz mono FLAC. Speech and sample counts are unchanged; PCM16 decoding differs by at most one integer level. See ../fixture-pcm.json.",
   "selection": "First independently held-out eligible recording in each of English, French, Bengali and Urdu; fixed before running the integrated app.",
   "fixtures": [
     {

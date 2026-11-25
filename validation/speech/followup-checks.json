@@ -1,0 +1,79 @@
+{
+  "scope": "Local VM follow-up checks; platform package checks are recorded separately in release receipts",
+  "source_binding": {
+    "source_commit": "f5da0e7c09d88d683de005ec4a9085ad82d130bb",
+    "source_tree": "7a51cd6a97420a69cc97cf7e7a7cdf88018a5633",
+    "frozen_manifest_sha256": "869bd8bcc028955fb382f9d9124f374a41ffe8ebb7ad9e04bef25108d4a7001f",
+    "binary_sha256": {
+      "soundgeo": "5e49fe31fb597ebf3276b018492c9f0a7cdede61d6fc01670c55f15f5282f68b",
+      "soundgeo-cli": "3320c3456c31d805fe3af3d73e515c58b084bff10e1bb12808a335c76bef3dfe"
+    },
+    "source_files_match_published_commit": true
+  },
+  "rust_checks": [
+    {
+      "check": "format",
+      "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "passed": true
+    },
+    {
+      "check": "clippy",
+      "log_sha256": "61bfdb20f914d2deacc81c68ddd1ceafa3761f58a2b91d65d5863f0d6de68c40",
+      "passed": true
+    },
+    {
+      "check": "build",
+      "log_sha256": "6d978a274dc1767757e05ee3b8b9508460ec08c658c17671c851b1a8f24228bf",
+      "passed": true
+    },
+    {
+      "check": "tests",
+      "log_sha256": "a20386c5875fc1cda5934429d9b60e45a34e8c82b6328a9445afa835a33b8f56",
+      "passed": true
+    },
+    {
+      "check": "test-name-audit",
+      "log_sha256": "7a821087ef4d59ffa23ca784ca99f329d15674a0420ca910860704296e54fc84",
+      "passed": true
+    },
+    {
+      "check": "doctests",
+      "log_sha256": "42e26da128de8f82705c29b023023f569c4b68e90172ac7d9812be555773a3c4",
+      "passed": true
+    }
+  ],
+  "rust_test_count": 285,
+  "audit_followup": "The first audit used the VM checkout index, which omitted 18 new speech-test source files. The corrected audit read the published source checkout after matching all Rust/Cargo file hashes; all 285 executed names matched. The initial failed audit was retained.",
+  "packaging_preflight": {
+    "notices_targets": [
+      "linux-x64",
+      "windows-x64"
+    ],
+    "patched_source_normalized_lf_sha256": "fa7f3ca346a21f8da49be6013efa127d4195fca76c789afd63ab8e2c622a8937",
+    "passed": true
+  },
+  "packaging_preflight_attempts": [
+    "v1 used an incorrect archive path after collecting both license inventories; retained",
+    "v2 applied the patch successfully but expected LF bytes after a simulated core.autocrlf checkout; retained",
+    "v3 confirmed identical normalized LF source content to both the compiled portable helper and the research helper"
+  ],
+  "public_url": {
+    "source_url": "https://raw.githubusercontent.com/Donovoi/soundgeo/f2d1e4224514eaf2c0454c1eac452f113f723bee/validation/speech/fixtures/en.flac",
+    "input_sha256": "f05085fcb5fba7055b03670842b60ed624f9310526ba228c72a177fa19ec07b8",
+    "binary_sha256": "3320c3456c31d805fe3af3d73e515c58b084bff10e1bb12808a335c76bef3dfe",
+    "status": "complete",
+    "language": "en",
+    "original": "Popular sports include football, basketball, volleyball, water polo, fencing, rugby, cycling, ice hockey, roller hockey, and F1 motor racing.",
+    "elapsed_s": 14.168991935000008,
+    "passed": true
+  },
+  "desktop_geolocation_failure": {
+    "passed": true,
+    "speech_status": "complete",
+    "source_sha256": "f05085fcb5fba7055b03670842b60ed624f9310526ba228c72a177fa19ec07b8",
+    "checkpoint_sha256": "49d85ae635f659c45c787c71d1459c61527199d58b44a4b71785fb4298598e95",
+    "observed": "Analyze recording completed speech, then aircraft analysis rejected the 10.38-second recording with Use at least 20 seconds of audio to resolve a flyover curve. The complete original/English transcript stayed visible.",
+    "screenshot_sha256": "db8514ad774fec1f41b5099130243bcde0e1ea3170492fabf28bc716246c79d7"
+  },
+  "execution": "Headless bounded Linux VM; no host application execution"
+}

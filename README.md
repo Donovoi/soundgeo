@@ -513,10 +513,26 @@ A map link sends the selected coordinates to OpenStreetMap when you open it.
 
 ## Build and test
 
-Install Rust stable, the native build tools for your platform, and FFmpeg.
+Run builds and tests inside a VM. Install Rust stable, Python 3.14, CMake, Git,
+the native build tools for your platform, and FFmpeg.
 Windows requires the MSVC C++ build tools.
 Linux requires X11, Wayland, and OpenGL development libraries, plus a file dialog portal.
 The [CI configuration](.github/workflows/ci.yml) lists the platform dependencies.
+
+Prepare the pinned speech helpers, small detectors and fonts before testing.
+This does not download the large recognition or translation weights:
+
+```powershell
+python scripts/build_speech_tools.py
+python scripts/prepare_speech_test_tools.py
+$env:SOUNDGEO_TEST_SPEECH_FONTS = (Resolve-Path "target/release/assets/speech-fonts").Path
+```
+
+On Linux, use `python3` and set
+`export SOUNDGEO_TEST_SPEECH_FONTS="$PWD/target/release/assets/speech-fonts"`.
+URL tests also need the downloaders described in the
+[installation instructions](docs/installation.md#linux-x64) on PATH; CI prepares
+their pinned versions before testing.
 
 ```powershell
 cargo fmt --all -- --check

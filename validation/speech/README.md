@@ -51,6 +51,11 @@ quality translation. Cancel preserved the original French transcript in the
 window and checkpoint. A confusing preparation status was changed from Partial
 to Ready and verified in a subsequent real preparation and desktop run.
 
+[Follow-up checks](followup-checks.json) record all 285 Rust test names matching
+the published source, the required format/lint/build checks, public-URL intake
+followed by real transcription, and a combined desktop analysis whose speech
+result survived a subsequent aircraft-analysis error.
+
 ## Packaged runtime checks
 
 `fixtures/manifest.json` records four held-out FLEURS recordings in English,
