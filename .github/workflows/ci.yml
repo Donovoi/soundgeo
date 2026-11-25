@@ -26,6 +26,8 @@ jobs:
         with:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
+        with:
+          cache-on-failure: true
       - name: Linux dependencies
         if: runner.os == 'Linux'
         timeout-minutes: 15
@@ -104,6 +106,10 @@ jobs:
           path: |
             release-logs/
             release-check/*.log
+            release-check/*.json
+            release-check/*.png
+            release-check/*.mkv
+            release-check/*.ps1
       - name: Preserve Windows runtime build logs
         if: failure() && runner.os == 'Windows'
         uses: actions/upload-artifact@v4
