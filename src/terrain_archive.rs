@@ -1,6 +1,7 @@
 //! Free, bounded Skadi downloads. Files are usable only after gzip and size checks.
 use crate::{Control, Progress, geo::Bounds, network::cancelable};
 use anyhow::{Context, Result, bail};
+use futures_util::{StreamExt, TryStreamExt};
 use serde::{Deserialize, Serialize};
 use sha2::{Digest, Sha256};
 use std::{
@@ -125,25 +126,28 @@ fn ensure_from(
         .timeout(Duration::from_secs(120))
         .user_agent("soundgeo/0.3")
         .build()?;
-    let mut records = Vec::new();
-    for (i, tile) in names.iter().enumerate() {
-        control.check()?;
-        let url = format!("{source}/{}/{tile}.hgt.gz", &tile[..3]);
-        if let Some(record) = cached(root, tile, &url, control)? {
-            progress(
-                &format!("Using verified terrain {tile}"),
-                (i + 1) as f32 / names.len() as f32,
-            );
-            records.push(record);
-            continue;
-        }
-        progress(
-            &format!("Downloading free terrain {tile}"),
-            i as f32 / names.len() as f32,
-        );
-        control.require_network(&root.join(format!("{tile}.hgt")).display().to_string())?;
-        let compressed = runtime
-            .block_on(async {
+    runtime.block_on(async {
+        let records =
+            futures_util::stream::iter(names.iter().enumerate()).map(|(i, tile)| {
+                let client = &client;
+                let names = &names;
+                async move {
+                    control.check()?;
+                    let url = format!("{source}/{}/{tile}.hgt.gz", &tile[..3]);
+                    if let Some(record) = cached(root, tile, &url, control)? {
+                        progress(
+                            &format!("Using verified terrain {tile}"),
+                            (i + 1) as f32 / names.len() as f32,
+                        );
+                        return Ok(record);
+                    }
+                    progress(
+                        &format!("Downloading free terrain {tile}"),
+                        i as f32 / names.len() as f32,
+                    );
+                    control
+                        .require_network(&root.join(format!("{tile}.hgt")).display().to_string())?;
+                    let compressed = async {
                 let mut response = cancelable(client.get(&url).send(), control)
                     .await??
                     .error_for_status()?;
@@ -161,56 +165,58 @@ fn ensure_from(
                     bytes.extend_from_slice(&chunk);
                 }
                 Ok::<_, anyhow::Error>(bytes)
-            })
+            }.await
             .with_context(|| {
                 format!("Could not download terrain {tile}; verified earlier tiles remain cached")
             })?;
-        // Read through EOF to check the gzip CRC and length trailer. A decompression
-        // cap prevents a small, invalid response from allocating unbounded memory.
-        let mut decoder = flate2::bufread::GzDecoder::new(compressed.as_slice());
-        let mut decoded = Vec::new();
-        let mut buffer = [0; 65536];
-        loop {
-            control.check()?;
-            let n = decoder
-                .read(&mut buffer)
-                .context("Invalid terrain gzip data")?;
-            if n == 0 {
-                break;
-            }
-            if decoded.len() + n > MAX_TILE_BYTES {
-                bail!("Terrain tile is too large");
-            }
-            decoded.extend_from_slice(&buffer[..n]);
-        }
-        if !decoder.get_ref().is_empty() {
-            bail!("Terrain response contains trailing data");
-        }
-        if !valid_size(decoded.len()) {
-            bail!("Terrain tile has an invalid HGT size");
-        }
-        control.check()?;
-        let record = TileRecord {
-            tile: tile.clone(),
-            source_url: url,
-            sha256: format!("{:x}", Sha256::digest(&decoded)),
-            compressed_sha256: format!("{:x}", Sha256::digest(&compressed)),
-            size_bytes: decoded.len(),
-            downloaded_utc: chrono::Utc::now().to_rfc3339(),
-        };
-        write_atomic(root, &format!("{tile}.hgt"), &decoded)?;
-        write_atomic(
-            root,
-            &format!("{tile}.terrain.json"),
-            &serde_json::to_vec_pretty(&record)?,
-        )?;
-        records.push(record);
-        progress(
-            &format!("Verified terrain {tile}"),
-            (i + 1) as f32 / names.len() as f32,
-        );
-    }
-    Ok(records)
+                    // Read through EOF to check the gzip CRC and length trailer. A decompression
+                    // cap prevents a small, invalid response from allocating unbounded memory.
+                    let mut decoder = flate2::bufread::GzDecoder::new(compressed.as_slice());
+                    let mut decoded = Vec::new();
+                    let mut buffer = [0; 65536];
+                    loop {
+                        control.check()?;
+                        let n = decoder
+                            .read(&mut buffer)
+                            .context("Invalid terrain gzip data")?;
+                        if n == 0 {
+                            break;
+                        }
+                        if decoded.len() + n > MAX_TILE_BYTES {
+                            bail!("Terrain tile is too large");
+                        }
+                        decoded.extend_from_slice(&buffer[..n]);
+                    }
+                    if !decoder.get_ref().is_empty() {
+                        bail!("Terrain response contains trailing data");
+                    }
+                    if !valid_size(decoded.len()) {
+                        bail!("Terrain tile has an invalid HGT size");
+                    }
+                    control.check()?;
+                    let record = TileRecord {
+                        tile: tile.clone(),
+                        source_url: url,
+                        sha256: format!("{:x}", Sha256::digest(&decoded)),
+                        compressed_sha256: format!("{:x}", Sha256::digest(&compressed)),
+                        size_bytes: decoded.len(),
+                        downloaded_utc: chrono::Utc::now().to_rfc3339(),
+                    };
+                    write_atomic(root, &format!("{tile}.hgt"), &decoded)?;
+                    write_atomic(
+                        root,
+                        &format!("{tile}.terrain.json"),
+                        &serde_json::to_vec_pretty(&record)?,
+                    )?;
+                    progress(
+                        &format!("Verified terrain {tile}"),
+                        (i + 1) as f32 / names.len() as f32,
+                    );
+                    Ok::<_, anyhow::Error>(record)
+                }
+            });
+        records.buffered(4).try_collect().await
+    })
 }
 
 #[cfg(test)]

@@ -11,7 +11,7 @@ It compares changes in sound frequency, or the timing of sound peaks, with recor
 It can search when the recording start time is unknown.
 
 The project uses Rust. It has a desktop application and a command-line application.
-It can download missing flight data from free sources.
+It can download recordings from media/page URLs and missing flight data from free sources.
 It processes and keeps recordings on your computer.
 
 ## Source video
@@ -31,13 +31,13 @@ The [validation record](validation/README.md) contains test results, sources, an
 ## Requirements
 
 Download the Windows x64 EXE or Linux x64 archive from [Releases](https://github.com/Donovoi/soundgeo/releases).
-On Windows, run the EXE: media tools, English OCR and software graphics are included.
+On Windows, run the EXE: media tools, URL downloaders, English OCR and software graphics are included.
 See [installation instructions](docs/installation.md) for Linux and console scripts.
 Releases marked **Pre-release** are experimental builds.
 The Windows bundle includes FFmpeg under LGPL 2.1 or later. Corresponding sources
 and dependency notices are provided with each release.
 
-- A local video or audio file.
+- A video/audio file or an HTTP(S) link to the recording or its page.
 - FFmpeg to read the audio (included in the Windows EXE).
 - A free flight-data source, or a prepared flight cache.
 - A folder for downloaded data.
@@ -45,7 +45,7 @@ and dependency notices are provided with each release.
 ## Use the desktop application
 
 1. Start `soundgeo.exe`.
-2. Select a recording, or drag the file into the window.
+2. Select a recording, drag a file into the window, or open **Or paste a video / page URL**. Paste the link, select **Find media**, choose the clip, then **Download and use selected clip**.
 3. Keep **Download missing flight data automatically** selected.
 4. Leave the dates blank to find and search available days. You can also enter a UTC date range.
 5. Select a folder for the downloaded data.
@@ -59,6 +59,9 @@ The Windows EXE selects its bundled tools automatically. For other installations
 put FFmpeg on `PATH`, beside the application, or select its path in advanced settings.
 A new daily flight archive can require several GB of storage.
 The program checks downloaded files and uses valid files again.
+A large archive uses parallel, resumable aria2 transfers. Concurrency adjusts to
+available bandwidth, with up to 16 files at once. Small authenticated flight
+requests and terrain tiles also download concurrently.
 A split archive must be complete before the app marks it ready.
 When online, it can upgrade a saved ADSB.lol staging archive to a production
 archive. It keeps the previous files until the replacement is verified.
@@ -80,6 +83,24 @@ To use existing flight data, clear the automatic-download option. Then select th
 
 Select **Try a synthetic demo** to create a test recording and example flight data.
 The demo runs offline.
+
+## Download a recording from a URL
+
+The Windows EXE includes yt-dlp, gallery-dl, curl_cffi browser impersonation,
+Deno for YouTube JavaScript challenges, and aria2. SoundGeo tries yt-dlp first,
+retries discovery with Chrome impersonation, then tries gallery-dl. You can
+also choose either downloader or force impersonation in the app.
+
+```powershell
+soundgeo-cli.exe fetch-media --url "https://example.org/video-page" --list
+soundgeo-cli.exe fetch-media --url "https://example.org/video-page" --item 2
+soundgeo-cli.exe analyze --url "https://example.org/video-page" --media-item 2 --config job.json --output report.json
+```
+
+The selected clip keeps its video and audio. Source links, tool versions and a
+file hash are saved with the local download. Page titles, dates and location
+metadata do not set the geolocation search inputs. See [URL intake](docs/url-intake.md)
+for supported input types, cache use and command options.
 
 ## Check a recording before preparing flight data
 

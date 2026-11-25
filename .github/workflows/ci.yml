@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
+          python-version: '3.14.10'
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
@@ -43,7 +43,7 @@ jobs:
           done
           apt_options=(-o Acquire::Retries=2 -o Acquire::http::Timeout=30 -o Acquire::https::Timeout=30 -o DPkg::Lock::Timeout=60)
           sudo apt-get "${apt_options[@]}" update
-          sudo apt-get "${apt_options[@]}" install -y --no-install-recommends ffmpeg libx11-dev libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libgl1-mesa-dev libegl1 libudev-dev libxcb-shape0 libxcb-xfixes0 pkg-config xvfb xauth xdotool
+          sudo apt-get "${apt_options[@]}" install -y --no-install-recommends ffmpeg aria2 libx11-dev libxkbcommon-dev libxkbcommon-x11-0 libwayland-dev libgl1-mesa-dev libegl1 libudev-dev libxcb-shape0 libxcb-xfixes0 pkg-config xvfb xauth xdotool
           ffmpeg -version
       - name: Restore built Windows runtime
         if: runner.os == 'Windows'
@@ -64,6 +64,34 @@ jobs:
       - name: Prepare bundled tools for Windows unit tests
         if: runner.os == 'Windows'
         run: python scripts/prepare_windows_test_tools.py
+      - name: Restore built URL tools
+        if: runner.os == 'Windows'
+        id: url-cache
+        uses: actions/cache/restore@v4
+        with:
+          path: url-tools-build/*.zip
+          key: windows-url-tools-v1-${{ hashFiles('scripts/build_url_tools.py', 'scripts/deno_notices.py', 'docs/third-party/deno-*.json', 'docs/third-party/CC0-1.0.txt', 'scripts/url-tools-lock.json', 'scripts/audit_url_tools.py', 'scripts/pe_dependencies.py') }}
+      - name: Prepare current MinGW compiler
+        if: runner.os == 'Windows' && steps.url-cache.outputs.cache-hit != 'true'
+        id: msys
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW64
+          update: true
+          install: make mingw-w64-x86_64-gcc mingw-w64-x86_64-pkgconf
+      - name: Build current URL downloaders
+        if: runner.os == 'Windows' && steps.url-cache.outputs.cache-hit != 'true'
+        env:
+          MSYS2_ROOT: ${{ steps.msys.outputs.msys2-location }}
+        run: python scripts/build_url_tools.py
+      - name: Save built URL tools
+        if: runner.os == 'Windows' && steps.url-cache.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: url-tools-build/*.zip
+          key: windows-url-tools-v1-${{ hashFiles('scripts/build_url_tools.py', 'scripts/deno_notices.py', 'docs/third-party/deno-*.json', 'docs/third-party/CC0-1.0.txt', 'scripts/url-tools-lock.json', 'scripts/audit_url_tools.py', 'scripts/pe_dependencies.py') }}
+      - name: Prepare URL tools for VM tests
+        run: python scripts/prepare_url_test_tools.py
       - run: cargo fmt --all -- --check
       - run: python -m unittest discover -s validation -p test_run_timing.py
       - run: python -m unittest discover -s scripts -p test_publish_release.py
@@ -116,6 +144,16 @@ jobs:
         with:
           name: runtime-build-logs
           path: ${{ runner.temp }}/soundgeo-runtime-build/vcpkg/buildtrees/**/*.log
+      - name: Preserve URL tool build diagnostics
+        if: always() && runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: url-tool-build-logs
+          if-no-files-found: warn
+          path: |
+            ${{ runner.temp }}/soundgeo-url-tools/**/config.log
+            ${{ runner.temp }}/soundgeo-url-tools/**/*.spec
+            ${{ runner.temp }}/soundgeo-url-tools/bundle/*.json
   publish:
     needs: check
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

@@ -91,6 +91,9 @@ if sys.platform == 'win32':
     cached_app, = cached_folders[0].glob('*/soundgeo-cli.exe')
     original_mtime = cached_app.stat().st_mtime_ns
 assert 'check-audio' in run('help', ['--help'])
+from verify_url_intake import verify as verify_url_intake
+verify_url_intake(cli, folder, destination, run)
+checks.append('bundled-url-intake-and-parallel-downloads')
 silent = destination / 'silence.wav'
 with wave.open(str(silent), 'wb') as stream:
     stream.setnchannels(1)

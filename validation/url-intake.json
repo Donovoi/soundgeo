@@ -1,0 +1,127 @@
+{
+  "date": "2026-11-25",
+  "scope": "URL intake and transfer qualification only. No new location-accuracy measurement; the 1 km acceptance benchmark is unchanged.",
+  "checked_code_revision": "84bfc54836ded695c6efc359bd5a08d364219c9e",
+  "preflight": {
+    "source_commit": "85ee3b9608e505b2c1a77b360b14f6a714bbc468",
+    "binary_sha256": "cc3479c10a14990b11022596fdd2de61b2cb38aea2f5116b560d5fbeac585277",
+    "diagnostic_wrapper": "Adds yt-dlp verbose logging and changes its downloader protocol prefix from http,https: to http:. The same functional correction is in checked_code_revision. These exploratory runs are separate from packaged release qualification.",
+    "environment": "Headless Linux VM; bounded CPU, memory and I/O. Controlled HTTP fixtures run with external networking disabled. Public source checks require network access.",
+    "controlled_cases": [
+      "Two clips listed from an embedded-player page",
+      "Explicit item required for multiple clips",
+      "Selected video retains audio and video",
+      "gallery-dl discovery hands off selected media",
+      "Chrome impersonation through curl_cffi",
+      "Ranged media SHA-256 equals the original fixture",
+      "Offline cache reuse sends no HTTP requests",
+      "Same-size corrupt cache rejected offline",
+      "file:// URLs rejected",
+      "Uncached URLs rejected offline"
+    ],
+    "parallel_transfer": {
+      "fixture_bytes": 33554476,
+      "peak_simultaneous_transfers": 4,
+      "ranged_requests": 3
+    },
+    "public_cases": [
+      {
+        "name": "public-https-mp4",
+        "url": "https://www.w3schools.com/html/mov_bbb.mp4",
+        "returncode": 0,
+        "seconds": 6.741806507110596,
+        "size": 788493,
+        "sha256": "3bb938fb70049e3e45f533b37ccae995ae96516e04c2f35b0c1142e47b2a39c1",
+        "duration_s": 10.026667,
+        "has_audio": true,
+        "has_video": true,
+        "selected_item": 1,
+        "outcome": "Media discovered or downloaded and verified. No geolocation analysis was performed.",
+        "preflight_attempt": "url-public-probe-v1"
+      },
+      {
+        "name": "youtube-test-list",
+        "url": "https://www.youtube.com/watch?v=BaW_jenozKc",
+        "returncode": 1,
+        "seconds": 6.632816553115845,
+        "outcome": "Unavailable video; normal and impersonated extraction failed; gallery-dl did not support the URL. No recording or location result.",
+        "preflight_attempt": "url-public-probe-v1"
+      },
+      {
+        "name": "youtube-short-video",
+        "url": "https://www.youtube.com/watch?v=jNQXAC9IVRw",
+        "returncode": 0,
+        "seconds": 47.02843642234802,
+        "size": 474596,
+        "sha256": "bf9aeb71d8ef69bde781a8fe8256192d1177f27ee2a3e4f877ce2d4f99221157",
+        "duration_s": 19.028,
+        "has_audio": true,
+        "has_video": true,
+        "selected_item": 1,
+        "outcome": "Media discovered or downloaded and verified. No geolocation analysis was performed.",
+        "preflight_attempt": "url-public-probe-v2"
+      },
+      {
+        "name": "youtube-project-reference",
+        "url": "https://www.youtube.com/watch?v=UytYrhYLOKI",
+        "returncode": 0,
+        "seconds": 138.23087763786316,
+        "candidate_count": 1,
+        "outcome": "Media discovery passed with one candidate. This case covers discovery only.",
+        "preflight_attempt": "url-public-probe-v2"
+      },
+      {
+        "name": "wikimedia-gallery-video",
+        "url": "https://commons.wikimedia.org/wiki/File:Test-webM.webm",
+        "returncode": 1,
+        "seconds": 7.432901382446289,
+        "outcome": "Two versions were found; downloading without an explicit item was correctly refused.",
+        "preflight_attempt": "url-public-gallery-v1"
+      },
+      {
+        "name": "wikimedia-gallery-video",
+        "url": "https://commons.wikimedia.org/wiki/File:Test-webM.webm",
+        "returncode": 0,
+        "seconds": 9.777214527130127,
+        "size": 15558,
+        "sha256": "57410817ffd7bb1edd9b728176529825483f694ab3bc55a06a0012971790b4eb",
+        "duration_s": 10.137,
+        "has_audio": true,
+        "has_video": true,
+        "selected_item": 1,
+        "outcome": "Media discovered or downloaded and verified. No geolocation analysis was performed.",
+        "preflight_attempt": "url-public-gallery-v2"
+      }
+    ]
+  },
+  "findings_fixed": [
+    "gallery-dl uses --http-timeout, not --timeout.",
+    "yt-dlp uses the http downloader key for HTTP and HTTPS. An unrecognized https key silently fell back to a single connection.",
+    "Check initial public sample access before concurrent requests so an initial refusal sends only one request.",
+    "Build Python helpers from complete source archives containing their build scripts.",
+    "Deno has no license command. Collect notices from its pinned source and Cargo archives, with omitted upstream V8/ICU notices."
+  ],
+  "packaged_qualification": {
+    "workflow": "https://github.com/Donovoi/soundgeo/actions/runs/45559602460",
+    "checked_tree": "499551aa610eb9b91408338d2bec390b1523e55d",
+    "linux_result": "Passed: 267 Rust tests matched source names/count; 18 Python tests; formatting, strict Clippy, documentation tests, release builds, packaged URL fixtures and desktop launch.",
+    "windows_and_final_release": "The publisher requires both platform jobs and bundled-url-intake-and-parallel-downloads to pass for the exact release commit. Final receipts include archive hashes and source trees.",
+    "receipts": [
+      "https://github.com/Donovoi/soundgeo/releases/download/v0.3.0-alpha.3/validation-windows-x64.json",
+      "https://github.com/Donovoi/soundgeo/releases/download/v0.3.0-alpha.3/validation-linux-x64.json"
+    ]
+  },
+  "bundled_versions": {
+    "yt-dlp": "2026.11.23",
+    "gallery-dl": "1.32.21",
+    "aria2": "1.37.0 (fresh minimal HTTP(S) build using Windows TLS/DNS)",
+    "Deno": "2.9.8",
+    "curl_cffi": "0.17.0",
+    "Python": "3.14.10",
+    "certifi": "2026.11.20",
+    "FFmpeg": "9.1",
+    "Tesseract": "5.5.4",
+    "Mesa": "26.3.1"
+  },
+  "upstream_audit": "The newer vcpkg baseline changed only unrelated ports; existing bundled media/OCR dependencies remained current. Helper build inputs are hash-pinned in scripts/url-tools-lock.json. Bundled files cannot self-update without invalidating integrity checks."
+}

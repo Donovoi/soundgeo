@@ -8,7 +8,8 @@ when upgrading. SoundGeo has no automatic updater.
 
 Download `soundgeo-VERSION-windows-x64.exe` for 64-bit Windows 10 or 11 and run it.
 The EXE contains the desktop and command-line apps, FFmpeg, FFprobe, Tesseract,
-the English OCR model, software OpenGL, and dependency notices. You do not need
+the English OCR model, yt-dlp, gallery-dl, curl_cffi, Deno, aria2, software OpenGL,
+and dependency notices. You do not need
 to install those tools, a Visual C++ runtime, Python, Rust, or a graphics driver.
 No administrator permission is needed.
 
@@ -53,7 +54,7 @@ Extract the whole archive. On Ubuntu 24.04 install the runtime dependencies:
 
 ```sh
 sudo apt-get update
-sudo apt-get install ffmpeg libx11-6 libxkbcommon0 libxkbcommon-x11-0 libwayland-client0 libegl1 libgl1 libudev1 libdbus-1-3 libxcb-shape0 libxcb-xfixes0
+sudo apt-get install ffmpeg aria2 libx11-6 libxkbcommon0 libxkbcommon-x11-0 libwayland-client0 libegl1 libgl1 libudev1 libdbus-1-3 libxcb-shape0 libxcb-xfixes0
 ```
 
 After extracting, open a terminal in the extracted folder:
@@ -69,6 +70,13 @@ The desktop app needs a graphical session and OpenGL support. The CLI can run
 headlessly. Optional video text reading also needs `tesseract-ocr` and
 `tesseract-ocr-eng`. In the download folder verify hashes with
 `sha256sum --check --ignore-missing SHA256SUMS.txt`.
+
+For URL intake on Linux, put the current [yt-dlp standalone Linux executable](https://github.com/yt-dlp/yt-dlp/releases),
+[gallery-dl executable](https://codeberg.org/mikf/gallery-dl/releases), and
+[Deno executable](https://github.com/denoland/deno/releases) on PATH or beside
+SoundGeo as `yt-dlp`, `gallery-dl` and `deno`, with execute permission.
+yt-dlp's standalone Linux build includes curl_cffi for browser impersonation.
+See [URL intake](url-intake.md) for usage and the versions qualified with this release.
 
 ## First use
 
@@ -86,6 +94,6 @@ needs those references prepared in advance. See the [README](../README.md) and
 `THIRD_PARTY.txt` contains application dependency notices; the Windows package
 also has `runtime-notices` for its bundled tools and graphics. `BUILD.json`
 records source and bundled-file hashes. Windows runtime versions are recorded
-in `RUNTIME.json`. Media and graphics sources and build instructions are
+in `RUNTIME.json` and `URL-TOOLS.json`. Media, downloader and graphics sources and build instructions are
 provided in `soundgeo-VERSION-windows-runtime-sources.zip` on the same release.
 SoundGeo includes FFmpeg under LGPL 2.1 or later as separate executables.

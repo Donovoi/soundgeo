@@ -3531,7 +3531,7 @@ dependencies = [
 
 [[package]]
 name = "soundgeo"
-version = "0.3.0-alpha.2"
+version = "0.3.0-alpha.3"
 dependencies = [
  "anyhow",
  "chrono",
@@ -3540,8 +3540,10 @@ dependencies = [
  "csv",
  "eframe",
  "flate2",
+ "futures-util",
  "hmac",
  "hound",
+ "libc",
  "quick-xml",
  "rayon",
  "reqwest",
@@ -3554,6 +3556,7 @@ dependencies = [
  "tempfile",
  "tokio",
  "walkdir",
+ "windows-sys 0.61.2",
  "zip",
 ]
 

@@ -118,7 +118,7 @@ pub fn inspect(
 }
 
 /// Preserve existing files, including media, aliases and earlier reports.
-pub fn write_report(report: &Report, output: &Path) -> Result<()> {
+pub fn write_report(report: &impl serde::Serialize, output: &Path) -> Result<()> {
     if output == Path::new("-") {
         let mut stdout = std::io::stdout().lock();
         serde_json::to_writer_pretty(&mut stdout, report)?;

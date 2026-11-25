@@ -8,6 +8,12 @@ New results must state which target they use.
 
 ## Current checks
 
+The [URL intake record](url-intake.json) covers clip selection, yt-dlp,
+gallery-dl, browser impersonation, concurrent transfers and verified offline
+reuse. It preserves failed attempts and separates exploratory public-source
+checks from the packaged release receipts. These are download checks; they add
+no location-accuracy results.
+
 The [public investigative footage record](public-investigative-footage.json)
 preserves candidate selection, unavailable sources, input hashes and failed audio
 attempts. One unidentified-site clip and one separate known-site comparison both

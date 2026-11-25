@@ -5,6 +5,7 @@ use crate::{Control, Progress, geo::Bounds, network::cancelable};
 use anyhow::{Context, Result, ensure};
 use chrono::{Datelike, NaiveDate, Utc};
 use flate2::read::GzDecoder;
+use futures_util::StreamExt;
 use hmac::{Hmac, Mac};
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
@@ -795,26 +796,45 @@ async fn download(
     };
     let mut ids = BTreeSet::new();
     let mut recovery_plan = recovery::Plan::new();
-    for (index, name) in names.iter().enumerate() {
-        control.check()?;
-        let mut selected = None;
-        for minute in snapshot_choices(index) {
-            let source_name = snapshot_name(minute);
-            let expected = start + minute as f64 * 60.;
-            let result = object(
-                client,
-                &format!("readsb-hist/{prefix}/{source_name}"),
-                &shared.join(&source_name),
-                &shared.join("rejected"),
-                control,
-                |v| snapshot(v, expected, bounds).map(|_| ()),
-            )
-            .await?;
-            if let Some((record, value)) = result {
-                selected = Some((record, value, expected));
-                break;
+    // The five-minute slots have disjoint +/- one-minute fallbacks. Keep the
+    // manifest order deterministic while overlapping authenticated requests.
+    let mut pending_snapshots = names.iter().enumerate().map(|(index, name)| {
+        let prefix = &prefix;
+        let shared = &shared;
+        async move {
+            control.check()?;
+            let mut selected = None;
+            for minute in snapshot_choices(index) {
+                let source_name = snapshot_name(minute);
+                let expected = start + minute as f64 * 60.;
+                let result = object(
+                    client,
+                    &format!("readsb-hist/{prefix}/{source_name}"),
+                    &shared.join(&source_name),
+                    &shared.join("rejected"),
+                    control,
+                    |v| snapshot(v, expected, bounds).map(|_| ()),
+                )
+                .await?;
+                if let Some((record, value)) = result {
+                    selected = Some((record, value, expected));
+                    break;
+                }
             }
+            Ok::<_, anyhow::Error>((index, name, selected))
         }
+    });
+    // Check initial public access before launching concurrent requests. A refused
+    // bucket must stop immediately, without retrying it through other objects.
+    let first_snapshot = pending_snapshots
+        .next()
+        .context("Empty snapshot plan")?
+        .await?;
+    let snapshots = futures_util::stream::once(async { Ok(first_snapshot) })
+        .chain(futures_util::stream::iter(pending_snapshots).buffered(8));
+    futures_util::pin_mut!(snapshots);
+    while let Some(result) = snapshots.next().await {
+        let (index, name, selected) = result?;
         let Some((record, value, expected)) = selected else {
             // Only confirmed HTTP 404 responses reach this branch. Offline
             // cache loss, malformed data, refusal and transport errors stop.
@@ -863,56 +883,78 @@ async fn download(
     );
     std::fs::create_dir_all(&traces)?;
     manifest.aircraft = ids.iter().cloned().collect();
-    for (index, id) in ids.iter().enumerate() {
-        control.check()?;
-        let file = format!("trace_full_{id}.json.gz");
-        if let Some(prior) = &prior {
-            if let Some(record) = prior.traces.iter().find(|record| record.file == file) {
-                reuse_legacy_trace(&legacy, &traces.join(&file), record, start, id, control)?;
-            } else if !control.refresh_source_gaps
-                && prior.missing_aircraft.contains(id)
-                && !traces.join(&file).exists()
-            {
+    {
+        let downloads = futures_util::stream::iter(ids.iter().enumerate())
+            .map(|(index, id)| {
+                let prefix = &prefix;
+                let traces = &traces;
+                let prior = &prior;
+                let legacy = &legacy;
+                async move {
+                    control.check()?;
+                    let file = format!("trace_full_{id}.json.gz");
+                    if let Some(prior) = prior {
+                        if let Some(record) = prior.traces.iter().find(|record| record.file == file)
+                        {
+                            reuse_legacy_trace(
+                                legacy,
+                                &traces.join(&file),
+                                record,
+                                start,
+                                id,
+                                control,
+                            )?;
+                        } else if !control.refresh_source_gaps
+                            && prior.missing_aircraft.contains(id)
+                            && !traces.join(&file).exists()
+                        {
+                            return Ok((index, id, None));
+                        }
+                    }
+                    let key = format!(
+                        "{}/{prefix}/{}/trace_full_{id}.json",
+                        resolution.object_prefix(),
+                        &id[id.len() - 2..]
+                    );
+                    let result = object(
+                        client,
+                        &key,
+                        &traces.join(file),
+                        &root.join("rejected"),
+                        control,
+                        |v| trace(v, start, id).map(|_| ()),
+                    )
+                    .await?;
+                    Ok::<_, anyhow::Error>((index, id, result))
+                }
+            })
+            .buffered(8);
+        futures_util::pin_mut!(downloads);
+        while let Some(result) = downloads.next().await {
+            let (index, id, result) = result?;
+            if let Some((record, value)) = result {
+                let (preceding_day_positions, following_day_positions) = trace(&value, start, id)?;
+                if preceding_day_positions > 0 || following_day_positions > 0 {
+                    manifest.trace_carryover.push(TraceCarryover {
+                        file: record.file.clone(),
+                        preceding_day_positions,
+                        following_day_positions,
+                    });
+                }
+                manifest.traces.push(record);
+            } else {
                 manifest.missing_aircraft.push(id.clone());
-                continue;
             }
+            progress(
+                &format!(
+                    "Full-day free traces: {}/{}; {} unavailable",
+                    index + 1,
+                    ids.len(),
+                    manifest.missing_aircraft.len()
+                ),
+                0.7 + 0.2 * (index + 1) as f32 / ids.len().max(1) as f32,
+            );
         }
-        let key = format!(
-            "{}/{prefix}/{}/trace_full_{id}.json",
-            resolution.object_prefix(),
-            &id[id.len() - 2..]
-        );
-        if let Some((record, value)) = object(
-            client,
-            &key,
-            &traces.join(file),
-            &root.join("rejected"),
-            control,
-            |v| trace(v, start, id).map(|_| ()),
-        )
-        .await?
-        {
-            let (preceding_day_positions, following_day_positions) = trace(&value, start, id)?;
-            if preceding_day_positions > 0 || following_day_positions > 0 {
-                manifest.trace_carryover.push(TraceCarryover {
-                    file: record.file.clone(),
-                    preceding_day_positions,
-                    following_day_positions,
-                });
-            }
-            manifest.traces.push(record);
-        } else {
-            manifest.missing_aircraft.push(id.clone());
-        }
-        progress(
-            &format!(
-                "Full-day free traces: {}/{}; {} unavailable",
-                index + 1,
-                ids.len(),
-                manifest.missing_aircraft.len()
-            ),
-            0.7 + 0.2 * (index + 1) as f32 / ids.len().max(1) as f32,
-        );
     }
     recovery::recover(
         client,

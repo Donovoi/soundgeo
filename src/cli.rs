@@ -22,6 +22,27 @@ struct Args {
 }
 #[derive(Subcommand)]
 enum Commands {
+    /// Find media on a URL, then download a selected recording into a verified local cache.
+    FetchMedia {
+        #[arg(long)]
+        url: String,
+        /// Show candidate clips without downloading them.
+        #[arg(long)]
+        list: bool,
+        /// One-based item number from --list. Required when the page has several clips.
+        #[arg(long)]
+        item: Option<usize>,
+        #[arg(long)]
+        cache: Option<PathBuf>,
+        #[arg(long, default_value = "auto")]
+        engine: soundgeo::media_url::Engine,
+        /// Force Chrome TLS impersonation. Auto mode also retries with it on discovery failure.
+        #[arg(long)]
+        impersonate: bool,
+        /// New JSON report file, or - for stdout.
+        #[arg(long, default_value = "-")]
+        output: PathBuf,
+    },
     /// Check audio locally before choosing flight data; does not locate the recording.
     CheckAudio {
         #[arg(long)]
@@ -93,8 +114,18 @@ enum Commands {
         #[arg(long)]
         config: Option<PathBuf>,
         /// Recording path; overrides the configuration's media path.
-        #[arg(long, required_unless_present = "config")]
+        #[arg(long, required_unless_present_any = ["config", "url"], conflicts_with = "url")]
         input: Option<PathBuf>,
+        /// Download a recording directly from a media/page URL.
+        #[arg(long)]
+        url: Option<String>,
+        #[arg(long)]
+        media_cache: Option<PathBuf>,
+        /// Item number from fetch-media --list, for pages containing several clips.
+        #[arg(long)]
+        media_item: Option<usize>,
+        #[arg(long)]
+        impersonate: bool,
         /// Flight data path; overrides the configuration's tracks path.
         #[arg(long, required_unless_present_any = ["config", "date", "cache"])]
         tracks: Option<PathBuf>,
@@ -201,6 +232,17 @@ pub fn entry(desktop_default: bool) -> std::process::ExitCode {
     }
 }
 
+fn media_item(listing: &soundgeo::media_url::Listing, item: Option<usize>) -> Result<usize> {
+    if let Some(item) = item {
+        return Ok(item);
+    }
+    if listing.candidates.len() == 1 {
+        return Ok(listing.candidates[0].item);
+    }
+    anyhow::bail!(
+        "This page has several clips. Run fetch-media --url URL --list, then select --item N (or analyze --media-item N)."
+    )
+}
 fn run(args: Args) -> Result<u8> {
     let control = Control::default().with_offline(args.offline);
     let progress = |message: &str, fraction: f32| {
@@ -209,6 +251,32 @@ fn run(args: Args) -> Result<u8> {
         }
     };
     match args.command {
+        Some(Commands::FetchMedia {
+            url,
+            list,
+            item,
+            cache,
+            engine,
+            impersonate,
+            output,
+        }) => {
+            let options = soundgeo::media_url::Options {
+                url,
+                cache: cache.unwrap_or_else(soundgeo::media_url::default_cache),
+                engine,
+                impersonate,
+            };
+            let listing = soundgeo::media_url::discover(&options, &control, &progress)?;
+            let value = if list {
+                serde_json::to_value(listing)?
+            } else {
+                let item = media_item(&listing, item)?;
+                serde_json::to_value(soundgeo::media_url::download(
+                    &options, &listing, item, &control, &progress,
+                )?)?
+            };
+            soundgeo::audio_check::write_report(&value, &output)?;
+        }
         Some(Commands::CheckAudio {
             input,
             ffmpeg,
@@ -316,6 +384,10 @@ fn run(args: Args) -> Result<u8> {
         Some(Commands::Analyze {
             config,
             input,
+            url,
+            media_cache,
+            media_item: selected_media,
+            impersonate,
             tracks,
             date,
             date_to,
@@ -377,6 +449,25 @@ fn run(args: Args) -> Result<u8> {
             // Explicit CLI paths are relative to the caller's working directory.
             if let Some(input) = input {
                 job.media = input;
+            }
+            if let Some(url) = url {
+                let options = soundgeo::media_url::Options {
+                    url,
+                    cache: media_cache.unwrap_or_else(soundgeo::media_url::default_cache),
+                    impersonate,
+                    ..Default::default()
+                };
+                let media_control = control.with_offline(job.offline);
+                let listing = soundgeo::media_url::discover(&options, &media_control, &progress)?;
+                let item = media_item(&listing, selected_media)?;
+                job.media = soundgeo::media_url::download(
+                    &options,
+                    &listing,
+                    item,
+                    &media_control,
+                    &progress,
+                )?
+                .path;
             }
             if let Some(tracks) = tracks {
                 job.tracks = tracks;

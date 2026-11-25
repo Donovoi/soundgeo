@@ -44,12 +44,12 @@ def imports(path):
 
 # Windows 10/11 inbox libraries. VC redistributables and third-party DLLs are
 # deliberately excluded, even if the build VM happens to have them installed.
-SYSTEM = set('''advapi32.dll avrt.dll bcrypt.dll bcryptprimitives.dll cfgmgr32.dll comctl32.dll
+SYSTEM = set('''advapi32.dll avrt.dll bcrypt.dll bcryptprimitives.dll cfgmgr32.dll combase.dll comctl32.dll
 comdlg32.dll crypt32.dll cryptbase.dll d3d11.dll d3d12.dll d3d9.dll dcomp.dll
 dbghelp.dll dnsapi.dll dwmapi.dll dxgi.dll gdi32.dll hid.dll imm32.dll iphlpapi.dll
 kernel32.dll kernelbase.dll mpr.dll msvcrt.dll mswsock.dll ncrypt.dll netapi32.dll
 normaliz.dll ntdll.dll ole32.dll oleaut32.dll opengl32.dll powrprof.dll propsys.dll
-psapi.dll rpcrt4.dll secur32.dll setupapi.dll shell32.dll shcore.dll shlwapi.dll
+psapi.dll rpcrt4.dll rstrtmgr.dll secur32.dll setupapi.dll shell32.dll shcore.dll shlwapi.dll
 ucrtbase.dll uiautomationcore.dll user32.dll userenv.dll usp10.dll uxtheme.dll version.dll winhttp.dll
 wininet.dll winmm.dll winspool.drv wintrust.dll wldap32.dll ws2_32.dll wtsapi32.dll
 wsock32.dll mf.dll mfplat.dll mfreadwrite.dll mfuuid.dll strmiids.dll'''.split())

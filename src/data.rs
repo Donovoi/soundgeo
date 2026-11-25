@@ -632,14 +632,13 @@ pub fn download_day(
     if assets.is_empty() {
         bail!("No archive files in this release.");
     }
-    let total: u64 = assets.iter().map(|v| v["size"].as_u64().unwrap_or(0)).sum();
     std::fs::create_dir_all(&dir)?;
     let (mut manifest_tmp, destination) = crate::atomic_file::prepare(&manifest)?;
     serde_json::to_writer_pretty(manifest_tmp.as_file_mut(), &release)?;
     manifest_tmp.persist(destination)?;
-    let mut completed = 0u64;
     let mut first = None;
-    for asset in assets {
+    let mut downloads = vec![];
+    for asset in &assets {
         control.check()?;
         let name = asset["name"].as_str().context("Missing asset name")?;
         if name.contains(['/', '\\']) || name.contains("..") {
@@ -656,21 +655,18 @@ pub fn download_day(
         if !url.starts_with("https://github.com/adsblol/") {
             bail!("Unexpected archive host");
         }
-        crate::network::fetch_file(
-            url,
-            &path,
-            size,
-            asset["digest"].as_str(),
-            control,
-            &|message, p| {
-                progress(
-                    message,
-                    (completed as f32 + p * size as f32) / total.max(1) as f32,
-                )
-            },
-        )?;
-        completed += size;
+        downloads.push((url, path, size, asset["digest"].as_str()));
     }
+    let transfers: Vec<_> = downloads
+        .iter()
+        .map(|(url, path, size, digest)| crate::network::Transfer {
+            url,
+            path,
+            size: *size,
+            digest: *digest,
+        })
+        .collect();
+    crate::network::fetch_files(&transfers, control, progress)?;
     let license = "Source: https://www.adsb.lol/docs/open-data/historical\nDaily archive: Open Database License 1.0 https://opendatacommons.org/licenses/odbl/1-0/\nKeep attribution and check share-alike requirements when redistributing derived databases.\n";
     let license_path = dir.join("DATA-LICENSE.txt");
     // Reusing verified archives must not require rewriting unchanged attribution.
