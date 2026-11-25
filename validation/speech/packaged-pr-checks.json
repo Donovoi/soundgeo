@@ -1,0 +1,53 @@
+{
+  "schema_version": 1,
+  "scope": "Pre-release package qualification on hosted Windows and Linux VMs. Completion checks do not establish transcript or translation meaning.",
+  "code_commit": "04a03bdddc4afb785648fdc902e1146df8a7f77e",
+  "checked_merge_commit": "9eba838dddfe89ca14864ca5abf53fbcf2680398",
+  "checked_source_tree": "0358b6e8a8105f6339a17e030edc5b20267225ab",
+  "workflow_run": "https://github.com/Donovoi/soundgeo/actions/runs/45638994985",
+  "platforms": [
+    {
+      "platform": "windows-x64",
+      "job_id": 139292083206,
+      "passed": true,
+      "rust_test_names_matching_source": 285,
+      "archive_sha256": "1ca12423e524e10569b2c6ba16ab475cbdd49fdeabb604a3b51a96521d73eb02",
+      "logs_artifact_id": 15038932724,
+      "logs_artifact_sha256": "ed383c78fe165938ce7798dde51844cb976c8aee22ed6499c235d5c74d704af3",
+      "speech_cases": [
+        {"language": "en", "status": "complete", "original_cer": 0.0},
+        {"language": "fr", "status": "complete", "original_cer": 0.02197802197802198},
+        {"language": "bn", "status": "complete", "original_cer": 0.07317073170731707},
+        {"language": "ur", "status": "complete", "original_cer": 0.08641975308641975}
+      ],
+      "quality_translator_french": "complete",
+      "reviewed_translation_errors": [
+        "Compact Urdu rendered abductees as the invented name Aguashadans.",
+        "Compact Bengali described expressions lasting a few milliseconds as permanent."
+      ]
+    },
+    {
+      "platform": "linux-x64",
+      "job_id": 139292083519,
+      "passed": true,
+      "rust_test_names_matching_source": 285,
+      "archive_sha256": "116c3a85cd8a261972bda2a9d2e88443eb1265908419ec2dccccc8c8d140aca2"
+    }
+  ],
+  "checks": [
+    "Required Rust format, lint, all-target tests, source test-name audit, documentation tests and release build",
+    "Real native translator loading and completion before the Rust checks",
+    "Four held-out recordings, Unicode paths, original transcript character-error bounds and completed English output",
+    "Both compact and quality translator loading and inference",
+    "Offline cached use, missing-model rejection, silence without large model downloads and preservation of existing reports",
+    "Desktop window opening with an Urdu speech report",
+    "Existing aircraft, URL intake, OCR and portable dependency checks"
+  ],
+  "windows_runtime_fix": "Native DLLs share the C++ runtime and bundle the required unmodified Visual Studio REDIST DLLs with version, hash and redistribution records. The earlier translator model-loading crash no longer occurs in the qualified package.",
+  "retained_failed_runs": [
+    {"run_id": 45622307405, "reason": "Windows lint rejected a Unix-only mutable command binding."},
+    {"run_id": 45625811477, "reason": "The delayed-audio test fixture depended on lavfi, which the bundled FFmpeg does not include."},
+    {"run_id": 45631113000, "reason": "Windows native translator failed fast while loading a model with separate static CRT copies across DLLs."}
+  ],
+  "release_requirement": "The final main revision must pass both platform gates again; published validation receipts bind each downloadable package to that exact source commit and tree."
+}

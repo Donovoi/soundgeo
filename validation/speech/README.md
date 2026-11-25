@@ -58,6 +58,10 @@ result survived a subsequent aircraft-analysis error.
 
 ## Packaged runtime checks
 
+The [pre-release package record](packaged-pr-checks.json) identifies the qualified
+code, both VM jobs, package hashes, observed meaning errors and retained failures.
+Each published release also includes receipts for its exact final source revision.
+
 `fixtures/manifest.json` records four held-out FLEURS recordings in English,
 French, Bengali and Urdu. They were selected before integrated-app evaluation,
 after excluding the model-selection sample. The manifest retains original
