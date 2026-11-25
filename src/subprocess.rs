@@ -121,8 +121,65 @@ pub(crate) fn tail(path: &Path) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn fixture_command(role: &str, dir: &Path) -> Command {
+        let mut command = crate::audio::quiet_command(std::env::current_exe().unwrap());
+        command
+            .args([
+                "--exact",
+                "subprocess::tests::cancellation_stops_descendant_writes",
+                "--nocapture",
+            ])
+            .env("SOUNDGEO_SUBPROCESS_TEST_ROLE", role)
+            .env("SOUNDGEO_SUBPROCESS_TEST_DIR", dir);
+        command
+    }
+
+    fn wait_for(path: &Path, timeout: Duration) -> bool {
+        let start = Instant::now();
+        while !path.exists() && start.elapsed() < timeout {
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        path.exists()
+    }
+
     #[test]
     fn cancellation_stops_descendant_writes() {
+        // Re-enter this exact test as a native parent/child fixture. This avoids
+        // shell startup, execution-policy and argument-quoting dependencies.
+        if let Some(role) = std::env::var_os("SOUNDGEO_SUBPROCESS_TEST_ROLE") {
+            let dir =
+                std::path::PathBuf::from(std::env::var_os("SOUNDGEO_SUBPROCESS_TEST_DIR").unwrap());
+            if role == "parent" {
+                assert!(fixture_command("child", &dir).status().unwrap().success());
+            } else {
+                assert_eq!(role, "child");
+                std::fs::write(dir.join("child-started"), "ready").unwrap();
+                assert!(wait_for(&dir.join("allow-write"), Duration::from_secs(60)));
+                std::fs::write(dir.join("should-not-exist"), "unexpected").unwrap();
+            }
+            return;
+        }
+
+        // First prove the fixture writes when allowed to finish normally.
+        let normal = tempfile::tempdir().unwrap();
+        std::fs::write(normal.path().join("allow-write"), "go").unwrap();
+        let status = run(
+            &mut fixture_command("parent", normal.path()),
+            &normal.path().join("out"),
+            &normal.path().join("err"),
+            &Control::default(),
+            Duration::from_secs(30),
+            || Ok(()),
+        );
+        assert!(
+            status.as_ref().is_ok_and(ExitStatus::success),
+            "Native fixture failed: {status:?}; stdout: {}; stderr: {}",
+            tail(&normal.path().join("out")),
+            tail(&normal.path().join("err")),
+        );
+        assert!(normal.path().join("should-not-exist").exists());
+
         let dir = tempfile::tempdir().unwrap();
         let marker = dir.path().join("should-not-exist");
         let ready = dir.path().join("child-started");
@@ -130,54 +187,33 @@ mod tests {
         let cancel = control.clone();
         let ready_check = ready.clone();
         let thread = std::thread::spawn(move || {
-            for _ in 0..100 {
-                if ready_check.exists() {
-                    break;
-                }
-                std::thread::sleep(Duration::from_millis(100));
-            }
-            let started = ready_check.exists();
-            std::thread::sleep(Duration::from_millis(100));
+            let started = wait_for(&ready_check, Duration::from_secs(30));
             cancel.stop();
             started
         });
-        #[cfg(unix)]
-        let mut cmd = Command::new("sh");
-        #[cfg(unix)]
-        cmd.arg("-c")
-            .arg("(touch \"$2\"; sleep 1.2; touch \"$1\") & wait")
-            .arg("sh")
-            .arg(&marker)
-            .arg(&ready);
-        #[cfg(windows)]
-        let mut cmd = {
-            let powershell = std::path::PathBuf::from(std::env::var_os("SystemRoot").unwrap())
-                .join("System32/WindowsPowerShell/v1.0/powershell.exe");
-            let child = dir.path().join("child.ps1");
-            let parent = dir.path().join("parent.ps1");
-            std::fs::write(&child, "[IO.File]::WriteAllText($args[1], 'ready')\nStart-Sleep -Milliseconds 1200\n[IO.File]::WriteAllText($args[0], 'unexpected')\n").unwrap();
-            std::fs::write(&parent, "$p = Start-Process -WindowStyle Hidden -FilePath $args[0] -ArgumentList @('-NoProfile', '-File', ('\"{0}\"' -f $args[1]), ('\"{0}\"' -f $args[2]), ('\"{0}\"' -f $args[3])) -PassThru\n$p.WaitForExit()\n").unwrap();
-            let mut command = crate::audio::quiet_command(&powershell);
-            command
-                .args(["-NoProfile", "-File"])
-                .arg(parent)
-                .arg(powershell)
-                .arg(child)
-                .arg(&marker)
-                .arg(&ready);
-            command
-        };
         let result = run(
-            &mut cmd,
+            &mut fixture_command("parent", dir.path()),
             &dir.path().join("out"),
             &dir.path().join("err"),
             &control,
-            Duration::from_secs(20),
+            Duration::from_secs(45),
             || Ok(()),
         );
+        let started = thread.join().unwrap();
+        assert!(
+            started,
+            "Native child did not start: {result:?}; stdout: {}; stderr: {}",
+            tail(&dir.path().join("out")),
+            tail(&dir.path().join("err")),
+        );
         assert!(result.unwrap_err().to_string().contains("Cancelled"));
-        assert!(thread.join().unwrap(), "Child did not start");
-        std::thread::sleep(Duration::from_millis(1500));
-        assert!(!marker.exists());
+        // Release the child's write only after cancellation has returned. A
+        // surviving descendant would now create the marker, independent of how
+        // long startup or scheduling took before cancellation.
+        std::fs::write(dir.path().join("allow-write"), "go").unwrap();
+        assert!(
+            !wait_for(&marker, Duration::from_secs(2)),
+            "A descendant kept running after cancellation"
+        );
     }
 }
