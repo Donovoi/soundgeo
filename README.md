@@ -34,6 +34,8 @@ Download the Windows x64 EXE or Linux x64 archive from [Releases](https://github
 On Windows, run the EXE: media tools, English OCR and software graphics are included.
 See [installation instructions](docs/installation.md) for Linux and console scripts.
 Releases marked **Pre-release** are experimental builds.
+The Windows bundle includes FFmpeg under LGPL 2.1 or later. Corresponding sources
+and dependency notices are provided with each release.
 
 - A local video or audio file.
 - FFmpeg to read the audio (included in the Windows EXE).

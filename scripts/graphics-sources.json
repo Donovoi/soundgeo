@@ -1,0 +1,98 @@
+[
+  {
+    "name": "mesa-build.zip",
+    "url": "https://codeload.github.com/pal1000/mesa-dist-win/zip/refs/tags/26.3.1",
+    "sha256": "415dd28e08f4a99df04d903bcdfc134e7cf8b3606af492127310ecb052dadb2f",
+    "size": 211003
+  },
+  {
+    "name": "llvm.txt",
+    "url": "https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-23.1.5/llvm/LICENSE.TXT",
+    "sha256": "8d85c1057d742e597985c7d4e6320b015a9139385cff4cbae06ffc0ebe89afee",
+    "size": 15141
+  },
+  {
+    "name": "libcxx.txt",
+    "url": "https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-23.1.5/libcxx/LICENSE.TXT",
+    "sha256": "539dd7aed86e8a4f12cbdd0e6c50c189c7d74847e4fecc64ce2c6ee3a01da38b",
+    "size": 16703
+  },
+  {
+    "name": "libcxxabi.txt",
+    "url": "https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-23.1.5/libcxxabi/LICENSE.TXT",
+    "sha256": "e2b35be49f7284a45b7baca8fc7b3ab7440e7902392b2528a457816b5bb2a15c",
+    "size": 16706
+  },
+  {
+    "name": "libunwind.txt",
+    "url": "https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-23.1.5/libunwind/LICENSE.TXT",
+    "sha256": "b5efebcaca80879234098e52d1725e6d9eb8fb96a19fce625d39184b705f7b6d",
+    "size": 16706
+  },
+  {
+    "name": "compiler-rt.txt",
+    "url": "https://raw.githubusercontent.com/llvm/llvm-project/llvmorg-23.1.5/compiler-rt/LICENSE.TXT",
+    "sha256": "1a8f1058753f1ba890de984e48f0242a3a5c29a6a8f2ed9fd813f36985387e8d",
+    "size": 16708
+  },
+  {
+    "name": "zlib.txt",
+    "url": "https://raw.githubusercontent.com/madler/zlib/v1.4/LICENSE",
+    "sha256": "e32ff4e00d9d94930537635291da39e7e612703334bf6fde8c7f1686fe8a45a2",
+    "size": 1002
+  },
+  {
+    "name": "zstd.txt",
+    "url": "https://raw.githubusercontent.com/facebook/zstd/v1.5.7/LICENSE",
+    "sha256": "7055266497633c9025b777c78eb7235af13922117480ed5c674677adc381c9d8",
+    "size": 1549
+  },
+  {
+    "name": "libffi.txt",
+    "url": "https://raw.githubusercontent.com/libffi/libffi/v3.8.1/LICENSE",
+    "sha256": "17b64dc60f3b6897a60f971e288b973f655c2edcdf08b25f3c3dd5549857881c",
+    "size": 1132
+  },
+  {
+    "name": "expat.txt",
+    "url": "https://raw.githubusercontent.com/libexpat/libexpat/R_2_10_0/expat/COPYING",
+    "sha256": "31b15de82aa19a845156169a17a5488bf597e561b2c318d159ed583139b25e87",
+    "size": 1144
+  },
+  {
+    "name": "libxml2.txt",
+    "url": "https://raw.githubusercontent.com/GNOME/libxml2/v2.15.4/Copyright",
+    "sha256": "5d4873884a890122a4b9b20ad56ac6f7da1d796a5bfcf04a427970ac96217626",
+    "size": 1314
+  },
+  {
+    "name": "mingw-w64.txt",
+    "url": "https://raw.githubusercontent.com/mingw-w64/mingw-w64/e3d18511f/COPYING",
+    "sha256": "99a69660981156c21336fdb5661f89341b013c94e4bf9e1c7467b4745718397f",
+    "size": 2326
+  },
+  {
+    "name": "mingw-w64.tar.gz",
+    "url": "https://codeload.github.com/mingw-w64/mingw-w64/tar.gz/e3d18511f",
+    "sha256": "5a435c2d756f5fb9c6096424172e92330fc1258075c814347f41ba266fc93d22",
+    "size": 15849016
+  },
+  {
+    "name": "libelf.tar.gz",
+    "url": "https://fossies.org/linux/misc/old/libelf-0.8.13.tar.gz",
+    "sha256": "591a9b4ec81c1f2042a97aa60564e0cb79d041c52faa7416acb38bc95bd2c76d",
+    "size": 148529
+  },
+  {
+    "name": "llvm.tar.xz",
+    "url": "https://github.com/llvm/llvm-project/releases/download/llvmorg-23.1.5/llvm-project-23.1.5.src.tar.xz",
+    "sha256": "fb50b1eac93ddeb3aa8dab4cfe324dff74f4a9c2bdee6160c9e36188f8d06a6e",
+    "size": 179220264
+  },
+  {
+    "name": "mesa-source.tar.xz",
+    "url": "https://archive.mesa3d.org/mesa-26.3.1.tar.xz",
+    "sha256": "4e4e438eac7b840a9383988cbb7c08dad8041da544b9319fc26d319fa7348961",
+    "size": 91661844
+  }
+]

@@ -83,8 +83,9 @@ date and search area and can require substantial disk space. An offline search
 needs those references prepared in advance. See the [README](../README.md) and
 [limitations](limitations.md) for supported evidence and accuracy results.
 
-`THIRD_PARTY.txt` and `runtime-notices` contain dependency notices. `BUILD.json`
+`THIRD_PARTY.txt` contains application dependency notices; the Windows package
+also has `runtime-notices` for its bundled tools and graphics. `BUILD.json`
 records source and bundled-file hashes. Windows runtime versions are recorded
-in `RUNTIME.json`. Corresponding media-tool sources and build instructions are
+in `RUNTIME.json`. Media and graphics sources and build instructions are
 provided in `soundgeo-VERSION-windows-runtime-sources.zip` on the same release.
 SoundGeo includes FFmpeg under LGPL 2.1 or later as separate executables.

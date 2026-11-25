@@ -12,6 +12,7 @@ import zipfile
 import struct
 
 from pe_dependencies import audit, copy_graphics
+from graphics_notices import prepare as prepare_graphics_notices
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -120,6 +121,10 @@ def main():
             else:
                 shutil.copy2(path, folder / path.name)
         (folder / 'PE-IMPORTS.json').write_text(json.dumps(audit(folder), indent=2) + '\n', encoding='utf-8')
+        sources = dist / f'soundgeo-{version}-windows-runtime-sources.zip'
+        shutil.copy2(ROOT / 'runtime-build/windows-runtime-sources.zip', sources)
+        prepare_graphics_notices(ROOT / 'runtime-build/graphics-downloads',
+                                 folder / 'runtime-notices/graphics', sources)
     shutil.copy2(ROOT / 'README.md', folder / 'README.md')
     (folder / 'assets').mkdir()
     for path in (ROOT / 'assets').glob('*.txt'):
@@ -152,8 +157,6 @@ def main():
             output.write(bytes.fromhex(sha(archive)))
         audit_launcher = audit_single_launcher(portable)
         print(json.dumps({'launcher_imports': audit_launcher, 'portable_size': portable.stat().st_size}))
-        sources = dist / f'soundgeo-{version}-windows-runtime-sources.zip'
-        shutil.copy2(ROOT / 'runtime-build/windows-runtime-sources.zip', sources)
         archive = portable
     (dist / f'{platform}.sha256').write_text(f'{sha(archive)}  {archive.name}\n', encoding='utf-8')
     print(json.dumps({'archive': archive.name, 'sha256': sha(archive), 'source_commit': commit,

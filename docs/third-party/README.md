@@ -13,3 +13,14 @@ The packager includes license and notice files from the locked Cargo dependency
 sources and the Rust toolchain. For crates declaring Apache-2.0 that omit the
 license text, it includes the standard Apache-2.0 text from the same dependency set.
 The package's `THIRD_PARTY.txt` identifies each component and its source.
+
+## Bundled Windows graphics
+
+The Mesa binary archive omits its license texts. `scripts/graphics_notices.py`
+collects license files and copyright notices from pinned Mesa 26.3.1, LLVM
+23.1.5 and MinGW sources, and adds the related dependency notices. Source URLs,
+sizes and SHA-256 hashes are pinned in `scripts/graphics-sources.json`.
+These generated notices are embedded in the EXE under `runtime-notices/graphics`.
+The original source archives and graphics build scripts are retained in the
+release's corresponding runtime-source archive.
+
