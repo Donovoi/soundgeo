@@ -149,7 +149,10 @@ pub(crate) fn configure_media_downloader(command: &mut std::process::Command, im
     // curl_cffi must own the media request when impersonating; aria2 cannot
     // reproduce its TLS fingerprint. Native HLS keeps per-fragment auth intact.
     if !impersonate && let Some(path) = aria2() {
-        command.arg("--downloader").arg(format!("http,https:{}", path.display()))
+        // yt-dlp uses the protocol key "http" for HTTP and HTTPS. An unknown
+        // "https" key is parsed as part of the executable path and silently
+        // falls back to its single-connection native downloader.
+        command.arg("--downloader").arg(format!("http:{}", path.display()))
             .args(["--downloader", "dash,m3u8:native", "--downloader-args", "aria2c:--no-conf --split=16 --max-connection-per-server=16 --min-split-size=8M --max-tries=3 --retry-wait=5 --file-allocation=none --max-overall-download-limit=0"]);
     }
 }

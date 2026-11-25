@@ -11,6 +11,7 @@ import tarfile
 import urllib.request
 import venv
 import zipfile
+from deno_notices import prepare as prepare_deno_notices
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -46,6 +47,9 @@ def main():
     # Hash-pinned independent build inputs; bounded transfer parallelism.
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as pool:
         for future in [pool.submit(fetch, *args) for args in artifacts]: future.result()
+    # Deno has no license subcommand. Collect notices from its pinned source
+    # release, every checksummed Cargo archive, and omitted upstream V8 notices.
+    deno_crates = prepare_deno_notices(work / 'deno-crates', notices, sources)
     envdir = work / 'venv'; venv.create(envdir, with_pip=True)
     python = envdir / 'Scripts/python.exe'
     requirements = work / 'requirements.txt'
@@ -102,8 +106,6 @@ strip src/aria2c.exe
         run(bash, '-lc', 'pacman -Q', stdout=output)
     with zipfile.ZipFile(downloads / 'deno.zip') as stream:
         (bundle / 'deno.exe').write_bytes(stream.read('deno.exe'))
-    with (notices / 'DENO-LICENSES.txt').open('wb') as output:
-        run(bundle / 'deno.exe', 'license', stdout=output)
     versions = {}
     for tool in ('yt-dlp', 'gallery-dl', 'aria2c', 'deno'):
         versions[tool] = subprocess.check_output([str(bundle / (tool + '.exe')), '--version'], text=True).strip()
@@ -118,7 +120,12 @@ strip src/aria2c.exe
             if path.is_file(): stream.write(path, path.relative_to(bundle).as_posix())
     with zipfile.ZipFile(destination / 'url-tools-sources.zip', 'x', zipfile.ZIP_DEFLATED) as stream:
         for path in sorted(sources.iterdir()): stream.write(path, path.name)
-        for path in (script, ROOT / 'scripts/build_url_tools.py', ROOT / 'scripts/url-tools-lock.json', requirements): stream.write(path, 'build/' + path.name)
+        for path in sorted(deno_crates.glob('*.crate')): stream.write(path, 'deno-crates/' + path.name)
+        for path in (script, requirements): stream.write(path, 'build/' + path.name)
+        for name in ('build_url_tools.py', 'deno_notices.py', 'url-tools-lock.json', 'audit_url_tools.py', 'pe_dependencies.py'):
+            stream.write(ROOT / 'scripts' / name, 'scripts/' + name)
+        for path in (ROOT / 'docs/third-party').glob('deno-*.json'): stream.write(path, 'docs/third-party/' + path.name)
+        stream.write(ROOT / 'docs/third-party/CC0-1.0.txt', 'docs/third-party/CC0-1.0.txt')
         stream.write(notices / 'MINGW-PACKAGES.txt', 'build/MINGW-PACKAGES.txt')
     print(json.dumps(versions), flush=True)
 

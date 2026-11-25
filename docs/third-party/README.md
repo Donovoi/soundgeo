@@ -5,6 +5,22 @@
 It was copied from Ubuntu's `common-licenses` package. The standard text is also
 available from [SPDX](https://github.com/spdx/license-list-data/blob/main/text/CC0-1.0.txt).
 
+`deno-dependency-notices.json` supplements license files omitted from Deno's
+locked Cargo archives. Each entry records its source and SHA-256. Exact package
+revisions are used where they contain a license; later upstream license files
+are identified explicitly when the older revision omits one.
+
+`deno-v8-notices.json` preserves Rusty V8 150.4.0 and its pinned submodules'
+notices, including V8, ICU and the LLVM runtime libraries. Rusty V8's published
+crate excludes these files. The Windows builder verifies these notice hashes,
+collects all locked Deno crate notices, and includes the source archives in the
+separate runtime source download.
+
+The published `deno_core_icudata`, `deno_native_certs` and `fqdn` sources declare
+MIT but omit a license and copyright file. Their notices reproduce the standard
+MIT permission terms and Cargo author metadata. ICU's data notices are also
+included with V8.
+
 `clipboard-win-5.4.3-LICENSE.txt` is the Boost Software License 1.0 text from
 [the exact upstream revision](https://github.com/DoumanAsh/clipboard-win/blob/ed27008ae5d1f10cfbb266de039f0fb35fd05a56/LICENSE)
 recorded in that crate's `.cargo_vcs_info.json`. The published crate omits this file.

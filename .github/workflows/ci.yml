@@ -70,7 +70,7 @@ jobs:
         uses: actions/cache/restore@v4
         with:
           path: url-tools-build/*.zip
-          key: windows-url-tools-v1-${{ hashFiles('scripts/build_url_tools.py', 'scripts/url-tools-lock.json', 'scripts/audit_url_tools.py', 'scripts/pe_dependencies.py') }}
+          key: windows-url-tools-v1-${{ hashFiles('scripts/build_url_tools.py', 'scripts/deno_notices.py', 'docs/third-party/deno-*.json', 'docs/third-party/CC0-1.0.txt', 'scripts/url-tools-lock.json', 'scripts/audit_url_tools.py', 'scripts/pe_dependencies.py') }}
       - name: Prepare current MinGW compiler
         if: runner.os == 'Windows' && steps.url-cache.outputs.cache-hit != 'true'
         id: msys
@@ -89,7 +89,7 @@ jobs:
         uses: actions/cache/save@v4
         with:
           path: url-tools-build/*.zip
-          key: windows-url-tools-v1-${{ hashFiles('scripts/build_url_tools.py', 'scripts/url-tools-lock.json', 'scripts/audit_url_tools.py', 'scripts/pe_dependencies.py') }}
+          key: windows-url-tools-v1-${{ hashFiles('scripts/build_url_tools.py', 'scripts/deno_notices.py', 'docs/third-party/deno-*.json', 'docs/third-party/CC0-1.0.txt', 'scripts/url-tools-lock.json', 'scripts/audit_url_tools.py', 'scripts/pe_dependencies.py') }}
       - name: Prepare URL tools for VM tests
         run: python scripts/prepare_url_test_tools.py
       - run: cargo fmt --all -- --check
