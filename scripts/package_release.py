@@ -9,6 +9,10 @@ import subprocess
 import sys
 import tomllib
 import zipfile
+import struct
+
+from pe_dependencies import audit, copy_graphics
+from graphics_notices import prepare as prepare_graphics_notices
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -105,6 +109,22 @@ def main():
     folder.mkdir()
     for name in ('soundgeo', 'soundgeo-cli'):
         shutil.copy2(ROOT / 'target' / 'release' / (name + suffix), folder / (name + suffix))
+    if sys.platform == 'win32':
+        runtime = ROOT / 'runtime-build/runtime'
+        with zipfile.ZipFile(ROOT / 'runtime-build/windows-runtime.zip') as stream:
+            stream.extractall(runtime)
+        for path in runtime.iterdir():
+            if path.name == 'graphics':
+                copy_graphics(path, folder)
+            elif path.is_dir():
+                shutil.copytree(path, folder / path.name)
+            else:
+                shutil.copy2(path, folder / path.name)
+        (folder / 'PE-IMPORTS.json').write_text(json.dumps(audit(folder), indent=2) + '\n', encoding='utf-8')
+        sources = dist / f'soundgeo-{version}-windows-runtime-sources.zip'
+        shutil.copy2(ROOT / 'runtime-build/windows-runtime-sources.zip', sources)
+        prepare_graphics_notices(ROOT / 'runtime-build/graphics-downloads',
+                                 folder / 'runtime-notices/graphics', sources)
     shutil.copy2(ROOT / 'README.md', folder / 'README.md')
     (folder / 'assets').mkdir()
     for path in (ROOT / 'assets').glob('*.txt'):
@@ -127,9 +147,27 @@ def main():
         for path in sorted(folder.rglob('*')):
             if path.is_file():
                 stream.write(path, path.relative_to(dist).as_posix())
+    if sys.platform == 'win32':
+        portable = dist / (folder.name + '.exe')
+        shutil.copy2(ROOT / 'target/release/soundgeo-portable.exe', portable)
+        with portable.open('ab') as output, archive.open('rb') as payload:
+            shutil.copyfileobj(payload, output)
+            output.write(b'SoundGeoBundle01')
+            output.write(struct.pack('<Q', archive.stat().st_size))
+            output.write(bytes.fromhex(sha(archive)))
+        audit_launcher = audit_single_launcher(portable)
+        print(json.dumps({'launcher_imports': audit_launcher, 'portable_size': portable.stat().st_size}))
+        archive = portable
     (dist / f'{platform}.sha256').write_text(f'{sha(archive)}  {archive.name}\n', encoding='utf-8')
     print(json.dumps({'archive': archive.name, 'sha256': sha(archive), 'source_commit': commit,
                       'dependency_count': len(dependencies)}))
+
+
+def audit_single_launcher(path):
+    from pe_dependencies import imports, system
+    required = imports(path)
+    assert all(system(name) for name in required), f'Launcher needs external DLLs: {required}'
+    return sorted(required)
 
 
 if __name__ == '__main__':

@@ -2,6 +2,7 @@
 /dist/
 /release-check/
 /release-logs/
+/runtime-build/
 /demo/
 /reports/
 /cache/

@@ -488,7 +488,7 @@ impl App {
                     let _ = tx.send(match result { Ok(path) => Message::VideoData(path), Err(e) => Message::Error(format!("{e:#}")) });
                 });
             }
-            let path = self.visual_options.tesseract.get_or_insert_with(|| "tesseract".into());
+            let path = self.visual_options.tesseract.get_or_insert_with(|| soundgeo::audio::bundled_tool("tesseract").unwrap_or_else(|| "tesseract".into()));
             file_field(ui, path, "Choose Tesseract…", &["exe"]);
             if ui.small_button("Choose Tesseract language folder…").clicked() {
                 self.visual_options.tessdata = rfd::FileDialog::new().pick_folder();

@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import subprocess
 import tomllib
+import time
 
 root = Path(__file__).resolve().parents[1]
 os.chdir(root)
@@ -44,7 +45,8 @@ assert notes.is_file()
 assets = []
 for platform, runner in [('windows-x64', 'Windows'), ('linux-x64', 'Linux')]:
     folder = root / 'release-artifacts' / ('release-' + runner)
-    archive = folder / f'soundgeo-{version}-{platform}.zip'
+    extension = '.exe' if runner == 'Windows' else '.zip'
+    archive = folder / f'soundgeo-{version}-{platform}{extension}'
     receipt = folder / f'validation-{platform}.json'
     check = json.loads(receipt.read_text())
     assert check['passed'] and check['file_hashes_verified'] and 'desktop-visible-window' in check['checks']
@@ -52,6 +54,14 @@ for platform, runner in [('windows-x64', 'Windows'), ('linux-x64', 'Linux')]:
     assert check['source_tree'] == gh('api', f'repos/{repo}/git/commits/{commit}', '--jq', '.tree.sha')
     assert check['archive_sha256'] == hashlib.sha256(archive.read_bytes()).hexdigest()
     assets.extend([archive, receipt])
+    if runner == 'Windows':
+        assert 'bundled-video-ocr' in check['checks'] and 'windows-inbox-or-bundled-dlls-only' in check['checks']
+        source_name = f'soundgeo-{version}-windows-runtime-sources.zip'
+        source, = check['additional_assets']
+        assert source['name'] == source_name
+        sources = folder / source_name
+        assert source['sha256'] == hashlib.sha256(sources.read_bytes()).hexdigest()
+        assets.append(sources)
 checksums = root / 'release-artifacts' / 'SHA256SUMS.txt'
 checksums.write_text(''.join(f'{hashlib.sha256(p.read_bytes()).hexdigest()}  {p.name}\n' for p in assets), encoding='utf-8')
 assets.append(checksums)
@@ -67,7 +77,11 @@ if draft is None:
     if request['prerelease']:
         args.append('--prerelease')
     gh(*args)
-    draft = find_release()
+    for attempt in range(6):
+        draft = find_release()
+        if draft is not None:
+            break
+        time.sleep(2)
     assert draft is not None and draft['draft'] and draft['target_commitish'] == commit
 # Only an unpublished draft from the exact checked revision can be resumed.
 gh('release', 'upload', tag, '--repo', repo, '--clobber', *assets)

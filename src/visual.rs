@@ -347,7 +347,15 @@ pub fn analyze(options: &Options, control: &Control, progress: &Progress<'_>) ->
     let tesseract = options
         .tesseract
         .clone()
+        .or_else(|| audio::bundled_tool("tesseract"))
         .unwrap_or_else(|| "tesseract".into());
+    let bundled_tessdata = tesseract.with_file_name("tessdata");
+    let tessdata = options.tessdata.as_ref().or_else(|| {
+        bundled_tessdata
+            .join("eng.traineddata")
+            .is_file()
+            .then_some(&bundled_tessdata)
+    });
     let ocr_version = run(
         audio::quiet_command(&tesseract).arg("--version"),
         dir.path(),
@@ -401,7 +409,7 @@ pub fn analyze(options: &Options, control: &Control, progress: &Progress<'_>) ->
             }
             let mut cmd = audio::quiet_command(&tesseract);
             cmd.arg(&image).args(["stdout", "--psm", "11", "-l", "eng"]);
-            if let Some(path) = &options.tessdata {
+            if let Some(path) = tessdata {
                 cmd.arg("--tessdata-dir").arg(path);
             }
             cmd.args(["-c", "thresholding_method=2", "-c", "tessedit_do_invert=0"]);

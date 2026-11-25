@@ -79,17 +79,22 @@ pub fn ffmpeg_path(job: &Job) -> PathBuf {
     if let Some(path) = &job.ffmpeg {
         return path.clone();
     }
+    bundled_tool("ffmpeg").unwrap_or_else(|| PathBuf::from("ffmpeg"))
+}
+
+/// Prefer the tools shipped beside the application, preserving explicit overrides.
+pub fn bundled_tool(name: &str) -> Option<PathBuf> {
     if let Ok(exe) = std::env::current_exe() {
         let local = exe.with_file_name(if cfg!(windows) {
-            "ffmpeg.exe"
+            format!("{name}.exe")
         } else {
-            "ffmpeg"
+            name.to_owned()
         });
         if local.is_file() {
-            return local;
+            return Some(local);
         }
     }
-    PathBuf::from("ffmpeg")
+    None
 }
 pub fn quiet_command(path: impl AsRef<std::ffi::OsStr>) -> Command {
     let cmd = Command::new(path);
