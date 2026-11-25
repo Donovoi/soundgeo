@@ -13,6 +13,7 @@ It can search when the recording start time is unknown.
 The project uses Rust. It has a desktop application and a command-line application.
 It can download recordings from media/page URLs and missing flight data from free sources.
 It processes and keeps recordings on your computer.
+Optional speech analysis transcribes the original language and translates it into English using local open-source models.
 
 ## Source video
 
@@ -83,6 +84,27 @@ To use existing flight data, clear the automatic-download option. Then select th
 
 Select **Try a synthetic demo** to create a test recording and example flight data.
 The demo runs offline.
+
+## Optional transcription and translation
+
+Tick **Transcribe speech and translate to English** after choosing a recording.
+SoundGeo finds speech, tries to detect its language, and downloads the required
+model files with progress messages. The large recognition and translation
+weights stay in a reusable cache outside the EXE. English recordings skip the
+translation download. No account or API key is needed.
+
+The initial languages are English, Mandarin Chinese, Hindi, Spanish, Arabic,
+French, Bengali, Portuguese, Indonesian and Urdu. Choose the language when
+detection is uncertain. Hindi and Urdu require a script choice.
+Select **Analyze speech only** to work without flight data, or use
+**Analyze recording** for speech and geolocation. Review the original text and
+English translation, then export JSON, TXT, SRT or VTT.
+
+The default quality translator downloads 5.15 GB and needs about 10 GB of free
+memory. The compact translator downloads 1.35 GB. Recognition weights download
+separately for the chosen language. See [speech analysis](docs/speech.md) for
+cache locations, command-line use and model details, and
+[limitations](docs/limitations.md#speech-analysis) before relying on a transcript.
 
 ## Download a recording from a URL
 

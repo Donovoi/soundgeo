@@ -38,7 +38,7 @@ class PublisherTests(unittest.TestCase):
             archive = folder / f'soundgeo-{self.version}-{platform}{extension}'
             archive.write_bytes(b'archive fixture')
             receipt = {'passed': True, 'file_hashes_verified': True,
-                       'checks': ['desktop-visible-window', 'bundled-video-ocr', 'windows-inbox-or-bundled-dlls-only', 'bundled-url-intake-and-parallel-downloads'], 'source_commit': self.commit,
+                       'checks': ['desktop-visible-window', 'bundled-video-ocr', 'windows-inbox-or-bundled-dlls-only', 'bundled-url-intake-and-parallel-downloads', 'bundled-local-speech-and-translation'], 'source_commit': self.commit,
                        'source_tree': self.tree, 'version': self.version,
                        'archive_sha256': hashlib.sha256(archive.read_bytes()).hexdigest()}
             if runner == 'Windows':
@@ -107,6 +107,14 @@ class PublisherTests(unittest.TestCase):
                         'prerelease': True, 'target_commitish': 'c' * 40}
         with self.assertRaises(AssertionError):
             self.execute()
+        self.assertEqual(self.mutations, [])
+
+    def test_requires_speech_qualification_before_publication(self):
+        receipt = self.root / 'release-artifacts/release-Linux/validation-linux-x64.json'
+        value = json.loads(receipt.read_text())
+        value['checks'].remove('bundled-local-speech-and-translation')
+        receipt.write_text(json.dumps(value))
+        with self.assertRaises(AssertionError): self.execute()
         self.assertEqual(self.mutations, [])
 
     def test_preserves_published_release(self):

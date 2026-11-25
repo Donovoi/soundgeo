@@ -1,0 +1,12 @@
+--- a/examples/cli/main.cpp
++++ b/examples/cli/main.cpp
+@@ -674 +674,9 @@
++    // Load the bundled CPU backend modules before model initialization. The
++    // upstream CLI initializes them for --list-devices, but not file analysis
++    // when built with shared, dynamically dispatched CPU backends.
++    if (transcribe_init_backends_default() != TRANSCRIBE_OK) {
++        std::fprintf(stderr, "error: could not initialize bundled inference backends\n");
++        return EXIT_FAILURE;
++    }
++
+     std::ofstream   output_file;

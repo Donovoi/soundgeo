@@ -20,6 +20,7 @@ pub mod portable;
 mod proposal_checkpoint;
 pub mod sample_archive;
 pub mod search;
+pub mod speech;
 mod subprocess;
 pub mod terrain_archive;
 pub mod timing;

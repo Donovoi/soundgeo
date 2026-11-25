@@ -1,0 +1,38 @@
+[
+  {
+    "url": "https://raw.githubusercontent.com/snakers4/silero-vad/bfa5f8cef40abb5de2bd4a2f4c3f22778172dfec/LICENSE",
+    "filename": "silero-LICENSE",
+    "sha256": "2e63e9a38b6e8fc0c7bc37ce174caca1862870856c6daf5697cfb785e925520b",
+    "size": 1075
+  },
+  {
+    "url": "https://huggingface.co/handy-computer/lang-id-voxlingua107-ecapa-gguf/resolve/e59f0f3847e77723b7d58447ef9456fa0c7e9436/LICENSE",
+    "filename": "ecapa-LICENSE",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "size": 11358
+  },
+  {
+    "url": "https://huggingface.co/handy-computer/lang-id-voxlingua107-ecapa-gguf/resolve/e59f0f3847e77723b7d58447ef9456fa0c7e9436/README.md",
+    "filename": "ecapa-README.md",
+    "sha256": "6d088f87ee95e3a441c5d4a15ee4c445cd120a9540826fc80e150f33635eeb02",
+    "size": 13507
+  },
+  {
+    "url": "https://huggingface.co/ggml-org/whisper-vad/resolve/9ffd54a1e1ee413ddf265af9913beaf518d1639b/README.md",
+    "filename": "silero-README.md",
+    "sha256": "6c1077880c654e84e103c34d2f7560e058ee62fecd2bc868db0249641c5d247e",
+    "size": 182
+  },
+  {
+    "url": "https://huggingface.co/winshades/bengaliai-whisper-medium-ggml/resolve/11cf5cbd282e0e46a761093939952f74906ddce1/LICENSE",
+    "filename": "bengali-LICENSE",
+    "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30",
+    "size": 11358
+  },
+  {
+    "url": "https://huggingface.co/winshades/bengaliai-whisper-medium-ggml/resolve/11cf5cbd282e0e46a761093939952f74906ddce1/README.md",
+    "filename": "bengali-README.md",
+    "sha256": "62c8e55f53f3ccd15c760453d41963c6fcc3811e4d1db84ba2bd79ff384562cc",
+    "size": 2146
+  }
+]

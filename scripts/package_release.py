@@ -129,10 +129,18 @@ def main():
                                  folder / 'runtime-notices/graphics', sources)
         with zipfile.ZipFile(sources, 'a', zipfile.ZIP_DEFLATED) as stream:
             stream.write(ROOT / 'url-tools-build/url-tools-sources.zip', 'url-tools-sources.zip')
+            stream.write(ROOT / 'speech-tools-build/speech-tools-sources.zip', 'speech-tools-sources.zip')
     shutil.copy2(ROOT / 'README.md', folder / 'README.md')
     (folder / 'assets').mkdir()
     for path in (ROOT / 'assets').glob('*.txt'):
         shutil.copy2(path, folder / 'assets' / path.name)
+    with zipfile.ZipFile(ROOT / 'speech-tools-build/speech-tools.zip') as stream:
+        stream.extractall(folder)
+    if sys.platform != 'win32':
+        for helper in (folder / 'speech-tools').glob('*/*'):
+            if helper.name in ('whisper-cli', 'transcribe-cli', 'llama-completion'):
+                helper.chmod(0o755)
+        shutil.copy2(ROOT / 'speech-tools-build/speech-tools-sources.zip', folder / 'speech-tools-sources.zip')
     shutil.copytree(ROOT / 'docs', folder / 'docs')
     shutil.copytree(ROOT / 'validation', folder / 'validation',
                     ignore=shutil.ignore_patterns('__pycache__', '*.pyc'))

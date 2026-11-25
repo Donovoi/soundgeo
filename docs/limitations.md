@@ -326,6 +326,40 @@ A larger hypothesis budget can increase runtime while still ending without a
 useful location. Other active searches affected several recorded runtimes;
 those timings require controlled repeats for performance comparisons.
 
+## Speech analysis
+
+Speech recognition and translation are machine-generated evidence aids. Names,
+numbers, negation, dialects and background speech can be wrong even when the text
+reads fluently. Music, added narration, overlapping speakers, strong noise and
+edited recordings can produce missing or invented words. Review the original
+recording and preserve the original-language transcript alongside translations.
+The initial model comparison uses a small read-speech sample; it does not
+establish accuracy for arbitrary crime or missing-person footage.
+
+Detection samples at most three speech intervals. It can miss a language spoken
+elsewhere in the recording. A recording is transcribed with one selected
+language; mixed-language recordings should be split or reviewed carefully.
+Hindi and Urdu require an explicit script choice because the tested detectors
+confused them even at high model scores. Detection scores are uncalibrated.
+
+The first version supports ten languages and a maximum of two hours of audio.
+It uses the first audio stream, downmixes its channels to mono, and runs on CPU.
+Long clips are divided into speech intervals of up to 24 seconds. Boundaries
+can split words or lose context. There is no speaker identification or reliable
+word-level alignment. Qwen and Bengali times identify speech intervals; Urdu times are
+recognizer estimates. Subtitle formats do not carry that provenance; keep the
+JSON report alongside subtitles used as evidence.
+
+The quality translator needs several GB of disk and memory and can take longer
+than the recording duration on a CPU. The compact option trades quality for
+smaller downloads and memory use. Network access is needed only for uncached
+models and media downloads. A damaged or missing cache fails in offline mode.
+Speech analysis preserves completed originals in a partial report if translation
+fails or the desktop Cancel button is used. It does not infer a recording
+location from the spoken language or change aircraft-based location acceptance.
+
+See [speech use and model downloads](speech.md).
+
 ## Terrain and processing
 
 Terrain tiles supply ground elevation. Microphone height on buildings or towers

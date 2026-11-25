@@ -13,6 +13,11 @@ and dependency notices. You do not need
 to install those tools, a Visual C++ runtime, Python, Rust, or a graphics driver.
 No administrator permission is needed.
 
+Native speech runtimes, small language/speech detectors and fonts are included.
+Recognition and translation weights download on demand after enabling speech
+analysis. They are stored outside the runtime cache. See [speech analysis](speech.md)
+for download sizes, memory needs and offline preparation.
+
 Allow several seconds for first startup and leave at least 1 GB of free disk space.
 The EXE unpacks its embedded files into a versioned cache under
 `%LOCALAPPDATA%\SoundGeo\runtime`. Later launches verify every cached file and
@@ -61,6 +66,7 @@ After extracting, open a terminal in the extracted folder:
 
 ```sh
 chmod +x soundgeo soundgeo-cli
+chmod +x speech-tools/*/*-cli speech-tools/llama/llama-completion
 ./soundgeo-cli --version
 ./soundgeo-cli check-audio --input /path/to/clip.mp4 --output audio-check.json
 ./soundgeo
@@ -96,4 +102,7 @@ also has `runtime-notices` for its bundled tools and graphics. `BUILD.json`
 records source and bundled-file hashes. Windows runtime versions are recorded
 in `RUNTIME.json` and `URL-TOOLS.json`. Media, downloader and graphics sources and build instructions are
 provided in `soundgeo-VERSION-windows-runtime-sources.zip` on the same release.
+`SPEECH-TOOLS.json` records native speech sources and bundled detector hashes;
+`speech-notices` contains their license notices. Speech runtime sources are in
+the Windows source archive and in `speech-tools-sources.zip` inside the Linux package.
 SoundGeo includes FFmpeg under LGPL 2.1 or later as separate executables.
