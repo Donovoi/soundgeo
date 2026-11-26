@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-26",
+  "scope": "Video-clue desktop workflow and tooltips; synthetic functional checks, not location-accuracy measurement",
+  "source_commit": "9c771f5fd4b65bfd7c943aaf8fcc514ca003316a",
+  "source_tree": "8940061659c795c92e5e36fcf05abd62d293b475",
+  "files": {
+    "soundgeo": "ac9807b2f729c7fb0bc54544cbd789dbb44b9a93d3d66e0a590ee6214ab59df5",
+    "soundgeo-cli": "da2e593f41eff090750e9571a208640061a9466807eb5126a68ae3f9acdbf383"
+  },
+  "environment": {
+    "platform": "Linux WSL2 virtual machine",
+    "display": "headless Xvfb, 1550 x 950 window",
+    "cpu_limit": 2,
+    "memory_limit_gib": 6,
+    "host_execution": false
+  },
+  "checks": [
+    "Checkbox is initially off; selecting it does not download data until analysis starts",
+    "Video-clue buttons and checkbox display readable tooltips; advanced paths are collapsed by default",
+    "Analyze recording automatically downloaded the GI catalog and read a synthetic airport name and clock",
+    "Completed clues stayed visible when geolocation reported that the synthetic video had no audio",
+    "Read video clues only reused the automatic cache with Offline mode selected",
+    "With the video checkbox still selected, an audio-only synthetic demo produced a video warning and completed geolocation at 35.00000, -110.00000",
+    "The audio-only run did not prepare the newly selected US catalog",
+    "Offline CLI replay with networking unavailable produced nine frame views, matching place and literal clock text without changing cached files"
+  ],
+  "fixture": {
+    "kind": "synthetic 6-second video with no audio",
+    "sha256": "be05bbb425be33477c2edb7f10d20da93fd91b189bb2243e46a81a514b57dff0",
+    "visible_text": [
+      "Gibraltar International Airport",
+      "2026-11-06 11:59:46",
+      "SYNTHETIC OCR CHECK"
+    ]
+  },
+  "geonames": {
+    "url": "https://download.geonames.org/export/dump/GI.zip",
+    "attribution": "GeoNames",
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "archive_sha256": "a58492ff52c70cdb7697714df515a46d47c411ba82d4559d31f392aa792aeca5",
+    "text_sha256": "83dfc4bc19e7dd8321dde32b231b6e63518a20c4cc79b16ce90800499870a014"
+  },
+  "ocr_version": "tesseract 5.5.0",
+  "screenshots": {
+    "initial": "e4b231ddc11170fef768455db1d7fbd5536e52cc33560e4ce6dd0fad1668c9ba",
+    "checkboxhelp": "9f2f8ba837f428702248ff38d391e60806a7321b9d046a96b401f5363291aa33",
+    "geonameshelp": "020b19576b4662e5b1bddea65e924f5245c14aa9613b43cc9095625de2bd5735",
+    "preparehelp": "65358734700407ba6c1411e54aabaf6fa65e43cdc46b85ad5a260f1a7b940fbb",
+    "ocrhelp": "8fced8861b6e778e3f954b692191573a3ede20690f931217d9b457c08f1ceab3",
+    "languagehelp": "9c416d1c57c0a4cc8fa7e76f8ff3720fa9d0ed8e396917aadd881ebf1e3135f4",
+    "standalonehelp": "78053032b6c9d4ad354d0a041d48dd3c5ebf02318906e9421883591b534bf454",
+    "exporthelp": "2279572114b96ea08603d9e87786cfb8e4c0ed99c5726397039acfb245dc089f",
+    "progress": "9d114756b228164616d4ac7357088dbede2e555b6767fe90fe3d070e22c7232f",
+    "visibletext": "2bb6695d813c3e88142163d297761be08cc53a3f569cdaac928476c75b6b795c",
+    "offlinedone": "c302eb927581bb28ac07117c5df10b5ee34b02f13b7a8ba90486001379f5cda2",
+    "demoprogress": "644d98f518cc57b4087db46cf0261c74f85dda46c271629ce1f43b9cc5f19e0a"
+  },
+  "passed": true
+}

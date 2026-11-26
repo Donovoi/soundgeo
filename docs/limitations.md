@@ -7,7 +7,9 @@ samples remains unfinished. The current location target is within 1 km.
 
 Video text reading is optional. It needs Tesseract 5, English language data,
 FFmpeg, FFprobe, and a local GeoNames file. The Windows portable EXE includes
-the tools and English model; place data is prepared separately through the app.
+the tools and English model. With the video-clue checkbox enabled, the app
+downloads missing place data before the scan and reuses it on later runs.
+Offline mode requires prepared data or a selected local GeoNames file.
 It samples frames across the video
 and reads the full image and the top and bottom edges. Text that appears briefly
 can fall between the sampled frames. Small, blurred, or compressed text can fail.
@@ -23,6 +25,10 @@ they do not establish the camera position or a location error radius.
 Visible dates and times remain text clues. SoundGeo does not infer a timezone
 or pass them into an audio search. Video clues have separate reports and
 validation results. The audio-only benchmark does not use OCR.
+The checkbox runs video clues in the same workflow as location analysis, in
+successive stages. It does not use text matches to narrow the flight search or
+change a candidate's score. OCR failures are shown and location analysis continues;
+cancelling the job stops the remaining stages.
 
 ## Real-video results
 
