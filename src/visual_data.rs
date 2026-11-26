@@ -38,7 +38,7 @@ pub(crate) fn verify_source(text: &Path, hash: &str) -> Result<Option<Source>> {
 }
 
 fn stem(country: &str) -> Result<String> {
-    let country = country.to_ascii_uppercase();
+    let country = country.trim().to_ascii_uppercase();
     if country == "ALL" {
         return Ok("allCountries".into());
     }
@@ -46,6 +46,40 @@ fn stem(country: &str) -> Result<String> {
         bail!("Use a two-letter country code or ALL for worldwide place data");
     }
     Ok(country)
+}
+
+/// Persistent place-data cache used by the desktop's automatic video workflow.
+pub fn default_cache() -> PathBuf {
+    std::env::var_os("LOCALAPPDATA")
+        .or_else(|| std::env::var_os("XDG_CACHE_HOME"))
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|p| PathBuf::from(p).join(".cache")))
+        .unwrap_or_else(std::env::temp_dir)
+        .join("SoundGeo/video-data")
+}
+
+/// A nonempty custom path is explicit: never replace a missing override silently.
+pub fn resolve(
+    custom: &Path,
+    country: &str,
+    cache: &Path,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<PathBuf> {
+    control.check()?;
+    if !custom.as_os_str().is_empty() {
+        if !custom.is_file() {
+            bail!(
+                "The selected GeoNames file is missing. Select it again or clear the override to use automatic place data."
+            );
+        }
+        return Ok(custom.to_path_buf());
+    }
+    progress(
+        "Preparing place data: checking the cache; missing data will be downloaded",
+        0.,
+    );
+    prepare(country, cache, control, progress)
 }
 
 fn archive_size(response: &reqwest::Response) -> Result<u64> {
@@ -183,6 +217,7 @@ mod tests {
     #[test]
     fn country_and_offline_integrity() {
         assert_eq!(stem("us").unwrap(), "US");
+        assert_eq!(stem(" gb ").unwrap(), "GB");
         assert_eq!(stem("all").unwrap(), "allCountries");
         assert!(stem("../US").is_err());
         let dir = tempfile::tempdir().unwrap();
@@ -210,6 +245,59 @@ mod tests {
         std::fs::write(&text, "changed data").unwrap();
         assert!(prepare("US", dir.path(), &control, &|_, _| {}).is_err());
         assert_eq!(std::fs::read_to_string(&text).unwrap(), "changed data");
+    }
+    #[test]
+    fn automatic_data_tracks_country_and_preserves_custom_overrides() {
+        let dir = tempfile::tempdir().unwrap();
+        let control = Control::default().with_offline(true);
+        for country in ["GB", "US"] {
+            let text = dir.path().join(format!("{country}.txt"));
+            std::fs::write(&text, country).unwrap();
+            let source = Source {
+                url: format!("https://download.geonames.org/export/dump/{country}.zip"),
+                attribution: "GeoNames".into(),
+                license: "CC BY 4.0".into(),
+                archive_sha256: "fixture".into(),
+                text_sha256: hash_file(&text, &control).unwrap(),
+            };
+            serde_json::to_writer(File::create(source_path(&text)).unwrap(), &source).unwrap();
+            assert_eq!(
+                resolve(Path::new(""), country, dir.path(), &control, &|_, _| {}).unwrap(),
+                text
+            );
+        }
+        let custom = dir.path().join("custom.txt");
+        std::fs::write(&custom, "user supplied data").unwrap();
+        assert_eq!(
+            resolve(&custom, "invalid", dir.path(), &control, &|_, _| {}).unwrap(),
+            custom
+        );
+        assert!(
+            resolve(
+                &dir.path().join("missing.txt"),
+                "GB",
+                dir.path(),
+                &control,
+                &|_, _| {}
+            )
+            .unwrap_err()
+            .to_string()
+            .contains("selected GeoNames")
+        );
+        assert!(
+            resolve(Path::new(""), "ALL", dir.path(), &control, &|_, _| {})
+                .unwrap_err()
+                .to_string()
+                .contains("Offline")
+        );
+        assert!(!dir.path().join("allCountries.zip").exists());
+        control.stop();
+        assert_eq!(
+            resolve(&custom, "GB", dir.path(), &control, &|_, _| {})
+                .unwrap_err()
+                .to_string(),
+            "Cancelled"
+        );
     }
     #[test]
     fn extracts_only_requested_entry() {

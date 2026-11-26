@@ -23,7 +23,12 @@ enum Message {
     Downloaded(PathBuf),
     Catalog(PathBuf),
     Prepared(usize),
-    VideoClues(Box<soundgeo::visual::Report>),
+    VideoClues {
+        report: Box<soundgeo::visual::Report>,
+        inputs: [PathBuf; 2],
+        terminal: bool,
+    },
+    VideoError(String, bool),
     VideoData(PathBuf),
     Error(String),
 }
@@ -45,6 +50,10 @@ pub struct App {
     visual_options: soundgeo::visual::Options,
     visual_report: Option<soundgeo::visual::Report>,
     visual_country: String,
+    visual_enabled: bool,
+    visual_cache: PathBuf,
+    visual_inputs: [PathBuf; 2],
+    visual_error: Option<String>,
     media_options: soundgeo::media_url::Options,
     media_listing: Option<soundgeo::media_url::Listing>,
     media_item: usize,
@@ -66,6 +75,9 @@ impl App {
             .text_styles
             .insert(egui::TextStyle::Button, egui::FontId::proportional(15.));
         cc.egui_ctx.set_style(style);
+        Self::initial(report)
+    }
+    fn initial(report: Option<Report>) -> Self {
         Self {
             speech: speech_ui::State::default(),
             job: Job {
@@ -98,6 +110,10 @@ impl App {
             visual_options: soundgeo::visual::Options::default(),
             visual_report: None,
             visual_country: "ALL".into(),
+            visual_enabled: false,
+            visual_cache: soundgeo::visual_data::default_cache(),
+            visual_inputs: Default::default(),
+            visual_error: None,
             media_options: Default::default(),
             media_listing: None,
             media_item: 1,
@@ -191,12 +207,17 @@ impl App {
         };
         job.bounds = self.use_bounds.then_some(self.bounds);
         let geo_error = clock_error.or_else(|| job.validate().err().map(|e| e.to_string()));
-        if !self.speech.options.enabled && geo_error.is_some() {
+        if !self.speech.options.enabled && !self.visual_enabled && geo_error.is_some() {
             self.error = geo_error;
             return;
         }
         let options = self.speech.options.clone();
         let prepared = self.speech.current_prepared(&job);
+        let video = self.visual_enabled.then(|| self.video_options());
+        let country = self.visual_country.clone();
+        let cache = self.visual_cache.clone();
+        self.visual_report = None;
+        self.visual_error = None;
         self.speech.mark_requested(&job);
         self.report = None;
         self.selected = 0;
@@ -205,6 +226,13 @@ impl App {
             let progress = |m: &str, p: f32| {
                 let _ = tx.send(Message::Progress(m.into(), p));
             };
+            if let Some(options) = video {
+                read_video_clues(&tx, &options, &country, &cache, &control, false);
+            }
+            if let Err(error) = control.check() {
+                let _ = tx.send(Message::Error(error.to_string()));
+                return;
+            }
             if options.enabled {
                 let speech = speech_ui::analyze(&job, &options, prepared, &control, &progress);
                 match speech {
@@ -223,7 +251,7 @@ impl App {
             }
             if let Some(error) = geo_error {
                 let _ = tx.send(Message::Error(format!(
-                    "Speech results were retained. Geolocation needs attention: {error}"
+                    "Any completed optional results were retained. Geolocation needs attention: {error}"
                 )));
                 return;
             }
@@ -285,6 +313,7 @@ impl App {
                 Message::MediaDownloaded(download) => {
                     self.job.media = download.path;
                     self.visual_report = None;
+                    self.visual_error = None;
                     self.speech.invalidate();
                     self.status = if download.has_audio {
                         "Recording downloaded and ready for analysis"
@@ -295,11 +324,31 @@ impl App {
                     self.progress = 1.;
                     self.receiver = None;
                 }
-                Message::VideoClues(report) => {
+                Message::VideoClues {
+                    report,
+                    inputs,
+                    terminal,
+                } => {
                     self.visual_report = Some(*report);
-                    self.status = "Video clues ready".into();
-                    self.progress = 1.;
-                    self.receiver = None;
+                    self.visual_inputs = inputs;
+                    self.visual_error = None;
+                    if terminal {
+                        self.status = "Video clues ready".into();
+                        self.progress = 1.;
+                        self.receiver = None;
+                    }
+                }
+                Message::VideoError(error, terminal) => {
+                    self.visual_error = Some(error);
+                    if terminal {
+                        self.status = if self.control.check().is_err() {
+                            "Cancelled"
+                        } else {
+                            "Video clues need attention"
+                        }
+                        .into();
+                        self.receiver = None;
+                    }
                 }
                 Message::VideoData(path) => {
                     self.visual_options.gazetteer = path;
@@ -313,7 +362,12 @@ impl App {
                 }
                 Message::Done(report) => {
                     self.report = Some(*report);
-                    self.status = "Analysis complete".into();
+                    self.status = if self.visual_error.is_some() {
+                        "Location analysis complete; video clues need attention"
+                    } else {
+                        "Analysis complete"
+                    }
+                    .into();
                     self.progress = 1.;
                     self.receiver = None;
                 }
@@ -605,41 +659,79 @@ impl App {
     }
     fn video_controls(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         egui::CollapsingHeader::new("Video clues (optional)").show(ui, |ui| {
-            ui.label("Read visible place names and clocks. This runs locally and creates a separate report.");
-            file_field(ui, &mut self.visual_options.gazetteer, "Choose GeoNames .txt…", &["txt"]);
+            ui.checkbox(&mut self.visual_enabled, "Read video clues during analysis")
+                .on_hover_text("When checked, Analyze recording also reads visible place names and clocks. Missing GeoNames place data downloads automatically; OCR runs locally. The findings appear alongside the location results for you to review.");
+            ui.label("Reads visible names and clocks locally. Place data is downloaded once and reused.");
             ui.horizontal(|ui| {
                 ui.label("Country code, or ALL");
-                ui.text_edit_singleline(&mut self.visual_country);
+                ui.add_enabled(self.visual_options.gazetteer.as_os_str().is_empty(), egui::TextEdit::singleline(&mut self.visual_country).desired_width(65.))
+                    .on_hover_text("ALL downloads worldwide GeoNames data (a large download). Use a two-letter code such as GB, US or AU for a smaller country catalog. This selects which visible names can match; it does not set the location-search area.")
+                    .on_disabled_hover_text("A custom GeoNames file is selected. Use automatic place data to select a country again.");
             });
-            if ui.add_enabled(!self.job.offline, egui::Button::new("Prepare place data…")).clicked()
-                && let Some(folder) = rfd::FileDialog::new().pick_folder() {
+            if self.visual_options.gazetteer.as_os_str().is_empty() && self.visual_country.trim().eq_ignore_ascii_case("ALL") {
+                ui.label(RichText::new("Worldwide data is large. Choose a country above if known.").small().color(MUTED));
+            }
+            if ui.button("Read video clues only")
+                .on_hover_text("Run the video-text scan now, using the same automatic place-data setup. This works without flight data and does not run geolocation or speech transcription. Use Analyze recording with the checkbox for the combined workflow.")
+                .clicked() {
+                let options = self.video_options();
                 let country = self.visual_country.clone();
-                self.worker(ctx, move |tx, control| {
-                    let result = soundgeo::visual_data::prepare(&country, &folder, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
-                    let _ = tx.send(match result { Ok(path) => Message::VideoData(path), Err(e) => Message::Error(format!("{e:#}")) });
-                });
-            }
-            let path = self.visual_options.tesseract.get_or_insert_with(|| soundgeo::audio::bundled_tool("tesseract").unwrap_or_else(|| "tesseract".into()));
-            file_field(ui, path, "Choose Tesseract…", &["exe"]);
-            if ui.small_button("Choose Tesseract language folder…").clicked() {
-                self.visual_options.tessdata = rfd::FileDialog::new().pick_folder();
-            }
-            if let Some(path) = &self.visual_options.tessdata { ui.label(path.display().to_string()); }
-            if ui.button("Read video clues").clicked() {
-                let mut options = self.visual_options.clone();
-                options.media = self.job.media.clone();
-                options.ffmpeg = self.job.ffmpeg.clone();
-                options.bounds = self.use_bounds.then_some(self.bounds);
+                let cache = self.visual_cache.clone();
                 self.visual_report = None;
+                self.visual_error = None;
+                self.status = "Starting video clues".into();
                 self.worker(ctx, move |tx, control| {
-                    let result = soundgeo::visual::analyze(&options, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
-                    let _ = tx.send(match result { Ok(report) => Message::VideoClues(Box::new(report)), Err(e) => Message::Error(format!("{e:#}")) });
+                    read_video_clues(&tx, &options, &country, &cache, &control, true);
                 });
             }
+            ui.collapsing("Advanced video settings", |ui| {
+                ui.label("The Windows download includes the OCR tools. Override paths only if needed.");
+                file_field_help(ui, &mut self.visual_options.gazetteer, "Choose GeoNames .txt…", &["txt"],
+                    "Select an already extracted GeoNames place-name database. This overrides automatic downloads and the country selection. Leave the field empty for automatic setup.");
+                if ui.button("Use automatic place data").on_hover_text("Clear the custom GeoNames file and use the selected country's verified cache. Missing data downloads when you run video clues. No files are deleted.").clicked() {
+                    self.visual_options.gazetteer = PathBuf::new();
+                }
+                if ui.button("Prepare place data…").on_hover_text("Prepare the selected country's GeoNames data in a folder you choose, for example before going offline. Cached data is verified; missing data requires a connection. The prepared file becomes the custom database for video clues.").clicked()
+                    && let Some(folder) = rfd::FileDialog::new().pick_folder() {
+                    let country = self.visual_country.clone();
+                    self.worker(ctx, move |tx, control| {
+                        let result = soundgeo::visual_data::prepare(&country, &folder, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
+                        let _ = tx.send(match result { Ok(path) => Message::VideoData(path), Err(e) => Message::Error(format!("{e:#}")) });
+                    });
+                }
+                ui.label(RichText::new(format!("Automatic cache: {}", self.visual_cache.display())).small());
+                let mut path = self.visual_options.tesseract.clone().unwrap_or_default();
+                file_field_help(ui, &mut path, "Choose Tesseract…", &["exe"],
+                    "Optional: select the Tesseract OCR executable, not an installer. An empty field uses the bundled tool or the system installation. Windows users normally leave this empty.");
+                self.visual_options.tesseract = (!path.as_os_str().is_empty()).then_some(path);
+                if ui.small_button("Choose Tesseract language folder…").on_hover_text("Optional: select the tessdata folder containing eng.traineddata. Video OCR currently uses English; this does not select the speech transcription or translation language.").clicked()
+                    && let Some(folder) = rfd::FileDialog::new().pick_folder() {
+                    self.visual_options.tessdata = Some(folder);
+                }
+                if let Some(path) = &self.visual_options.tessdata { ui.label(path.display().to_string()); }
+                if ui.button("Use default OCR tools").on_hover_text("Clear the executable and language-folder overrides. Use SoundGeo's bundled Tesseract and English data, or the system installation on other platforms. No files are deleted.").clicked() {
+                    self.visual_options.tesseract = None;
+                    self.visual_options.tessdata = None;
+                }
+            });
         });
+    }
+    fn video_options(&self) -> soundgeo::visual::Options {
+        soundgeo::visual::Options {
+            media: self.job.media.clone(),
+            ffmpeg: self.job.ffmpeg.clone(),
+            bounds: self.use_bounds.then_some(self.bounds),
+            ..self.visual_options.clone()
+        }
     }
     fn results(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         self.speech.results(ui, ctx, &mut self.error);
+        if let Some(error) = &self.visual_error {
+            ui.heading("Video clues need attention");
+            ui.colored_label(Color32::from_rgb(255, 181, 134), error);
+            ui.label("Location analysis can run independently. Review the video settings and retry the clue scan when ready.");
+            ui.separator();
+        }
         if let Some(report) = &self.visual_report {
             ui.heading("Video text clues");
             if report.places.is_empty() {
@@ -661,14 +753,14 @@ impl App {
                     ui.label(&frame.text);
                 }
             });
-            if ui.button("Save video clue report…").clicked()
+            if ui.button("Save video clue report…").on_hover_text("Save the visible text, frame times, all matching places and data-source hashes as JSON. This is a separate report from the location analysis.").clicked()
                 && let Some(path) = rfd::FileDialog::new()
                     .set_file_name("video-clues.json")
                     .save_file()
                 && let Err(error) = soundgeo::visual::write_report(
                     report,
                     &path,
-                    &[&self.job.media, &self.visual_options.gazetteer],
+                    &[&self.visual_inputs[0], &self.visual_inputs[1]],
                 )
             {
                 self.error = Some(error.to_string());
@@ -1019,6 +1111,21 @@ impl eframe::App for App {
     }
 }
 fn file_field(ui: &mut egui::Ui, path: &mut PathBuf, label: &str, extensions: &[&str]) {
+    file_field_help(
+        ui,
+        path,
+        label,
+        extensions,
+        "Enter a file path or use the button to choose a file.",
+    );
+}
+fn file_field_help(
+    ui: &mut egui::Ui,
+    path: &mut PathBuf,
+    label: &str,
+    extensions: &[&str],
+    help: &str,
+) {
     let mut text = path.display().to_string();
     if ui
         .add(
@@ -1026,11 +1133,12 @@ fn file_field(ui: &mut egui::Ui, path: &mut PathBuf, label: &str, extensions: &[
                 .hint_text("Select a file")
                 .desired_width(f32::INFINITY),
         )
+        .on_hover_text(help)
         .changed()
     {
         *path = PathBuf::from(text);
     }
-    if ui.button(label).clicked()
+    if ui.button(label).on_hover_text(help).clicked()
         && let Some(p) = rfd::FileDialog::new()
             .add_filter("Supported files", extensions)
             .pick_file()
@@ -1038,6 +1146,27 @@ fn file_field(ui: &mut egui::Ui, path: &mut PathBuf, label: &str, extensions: &[
         *path = p;
     }
 }
+fn read_video_clues(
+    tx: &mpsc::Sender<Message>,
+    options: &soundgeo::visual::Options,
+    country: &str,
+    cache: &std::path::Path,
+    control: &Control,
+    terminal: bool,
+) {
+    let result = soundgeo::visual::analyze_with_data(options, country, cache, control, &|m, p| {
+        let _ = tx.send(Message::Progress(m.into(), p));
+    });
+    let _ = tx.send(match result {
+        Ok((report, gazetteer)) => Message::VideoClues {
+            report: Box::new(report),
+            inputs: [options.media.clone(), gazetteer],
+            terminal,
+        },
+        Err(error) => Message::VideoError(format!("{error:#}"), terminal),
+    });
+}
+
 fn timing_results(
     ui: &mut egui::Ui,
     ctx: &egui::Context,
@@ -1291,4 +1420,97 @@ fn curve_plot(ui: &mut egui::Ui, event: &soundgeo::audio::Event, modeled: Option
         egui::FontId::proportional(11.),
         MUTED,
     );
+}
+
+#[cfg(test)]
+mod video_workflow_tests {
+    use super::*;
+
+    #[test]
+    fn optional_video_messages_keep_the_combined_worker_alive() {
+        let mut app = App::initial(None);
+        let (tx, rx) = mpsc::channel();
+        app.receiver = Some(rx);
+        tx.send(Message::VideoError("No video stream".into(), false))
+            .unwrap();
+        app.poll();
+        assert!(app.busy());
+        assert_eq!(app.visual_error.as_deref(), Some("No video stream"));
+        let report = soundgeo::visual::Report {
+            method: "video_text".into(),
+            status: "no_place_clues".into(),
+            offline: true,
+            media_sha256: "media".into(),
+            gazetteer_sha256: "data".into(),
+            gazetteer_source: None,
+            ocr_version: "fixture".into(),
+            bounds: None,
+            frames: vec![],
+            places: vec![],
+            warnings: vec![],
+        };
+        tx.send(Message::VideoClues {
+            report: Box::new(report),
+            inputs: ["original.mp4".into(), "actual-cache.txt".into()],
+            terminal: false,
+        })
+        .unwrap();
+        app.poll();
+        assert!(app.busy());
+        assert!(app.visual_error.is_none());
+        app.job.media = "different.mp4".into();
+        assert_eq!(app.visual_inputs[0], PathBuf::from("original.mp4"));
+        assert_eq!(app.visual_inputs[1], PathBuf::from("actual-cache.txt"));
+        tx.send(Message::Error("Geolocation needs attention".into()))
+            .unwrap();
+        app.poll();
+        assert!(!app.busy());
+        assert!(app.visual_report.is_some());
+    }
+
+    #[test]
+    fn checkbox_runs_optional_stage_despite_invalid_flight_setup() {
+        let mut app = App::initial(None);
+        let ctx = egui::Context::default();
+        app.run(&ctx);
+        assert!(!app.busy()); // Disabled by default: no optional work.
+        assert!(app.error.is_some());
+        assert!(app.visual_error.is_none());
+        app.visual_enabled = true;
+        app.run(&ctx);
+        let deadline = std::time::Instant::now() + Duration::from_secs(5);
+        while app.busy() && std::time::Instant::now() < deadline {
+            app.poll();
+            std::thread::sleep(Duration::from_millis(5));
+        }
+        assert!(!app.busy());
+        assert!(app.visual_error.as_ref().unwrap().contains("local video"));
+        assert!(
+            app.error
+                .as_ref()
+                .unwrap()
+                .contains("Geolocation needs attention")
+        );
+    }
+
+    #[test]
+    fn standalone_video_finishes_and_cancel_stays_cancelled() {
+        let mut app = App::initial(None);
+        let (tx, rx) = mpsc::channel();
+        app.receiver = Some(rx);
+        app.control.stop();
+        read_video_clues(
+            &tx,
+            &app.video_options(),
+            "ALL",
+            &app.visual_cache,
+            &app.control,
+            true,
+        );
+        app.poll();
+        assert!(!app.busy());
+        assert_eq!(app.status, "Cancelled");
+        assert_eq!(app.visual_error.as_deref(), Some("Cancelled"));
+        assert!(app.visual_report.is_none());
+    }
 }

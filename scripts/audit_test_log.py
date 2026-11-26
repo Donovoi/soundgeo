@@ -9,7 +9,11 @@ root = Path(__file__).resolve().parents[1]
 source = []
 for name in subprocess.check_output(['git', 'ls-files'], cwd=root, text=True).splitlines():
     if name.endswith('.rs'):
-        source.extend(re.findall(r'#\[test\]\s*(?:#\[[^\]]*\]\s*)*fn\s+(\w+)', (root / name).read_text(encoding='utf-8')))
+        tests = re.findall(r'#\[test\]\s*(?:#\[[^\]]*\]\s*)*fn\s+(\w+)', (root / name).read_text(encoding='utf-8'))
+        # Both binary entry points include these same modules. Their tests must
+        # pass in both binaries; retain that multiplicity instead of deduplicating.
+        copies = 2 if name in {'src/cli.rs', 'src/ui.rs', 'src/speech_ui.rs'} else 1
+        source.extend(tests * copies)
 log = Path(sys.argv[1]).read_text(encoding='utf-8')
 passed = re.findall(r'^test (\S+) \.\.\. ok$', log, re.M)
 if Counter(source) != Counter(name.rsplit('::', 1)[-1] for name in passed):

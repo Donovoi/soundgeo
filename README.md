@@ -189,6 +189,36 @@ SoundGeo can read visible place names and clocks from a video. This option uses
 local text recognition. It produces a separate JSON report with the text, frame
 times, and matching places on a map. Audio searches keep their own results.
 
+In the desktop app, open **Video clues (optional)** and tick **Read video clues
+during analysis**, then choose **Analyze recording**. SoundGeo checks for a video
+stream, prepares missing place data, reads the text, and continues the location
+analysis. Progress appears as it works. A video-clue error is shown alongside the
+results and does not stop location analysis. Completed clues remain available if
+the flight-data setup needs attention.
+
+The default **ALL** catalog covers the world and is a large download. Enter a
+two-letter country code such as `GB`, `US` or `AU` for a smaller catalog when
+appropriate. This selects the place names that can match; it does not set the
+location-search area. Downloaded data is verified and reused from the app's cache,
+including in offline mode. Audio-only recordings do not download place data.
+
+Use **Read video clues only** to scan a video without running location analysis.
+Hover over each control for instructions. **Advanced video settings** contains
+optional overrides:
+
+| Control | Purpose |
+| --- | --- |
+| Choose GeoNames .txt… | Use an already extracted place-name database instead of automatic preparation. |
+| Use automatic place data | Clear the database override and use the selected country's cache. |
+| Prepare place data… | Prepare the selected country's data in a chosen folder, for example before going offline. |
+| Choose Tesseract… | Select an OCR executable if the bundled or system tool is unsuitable. |
+| Choose Tesseract language folder… | Select the folder containing `eng.traineddata`. Video OCR currently uses English. |
+| Use default OCR tools | Clear the OCR overrides and return to the bundled or system tools. |
+
+The **Save video clue report…** button exports the text, frame times, matches and
+source hashes as JSON. Review the text and named places alongside the location
+results; see the [video-clue limitations](docs/limitations.md).
+
 The Windows EXE includes Tesseract and English language data. On other platforms,
 install [Tesseract 5](https://tesseract-ocr.github.io/tessdoc/Installation.html)
 with its English model and keep FFmpeg and FFprobe together. Prepare free
@@ -213,10 +243,6 @@ Use `--frames 6` to read more frames. Use `--output -` for JSON on standard outp
 Read JSON output as UTF-8.
 The `--require-match` option returns exit code 3 if no place names match.
 Read all entries in `places` and the source text in `frames`.
-
-In the desktop app, open **Video clues (optional)** below the recording field.
-Prepare or select the place data, then choose **Read video clues**. The Windows
-download selects bundled Tesseract automatically.
 
 ## Use the command line
 

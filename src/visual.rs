@@ -286,32 +286,18 @@ fn match_places(
     Ok(places)
 }
 
-/// Reads local media and local reference data only, regardless of the global mode.
-pub fn analyze(options: &Options, control: &Control, progress: &Progress<'_>) -> Result<Report> {
+fn probe_video(options: &Options, control: &Control) -> Result<(f64, f64, usize)> {
     control.check()?;
     if !options.media.is_file() {
         bail!("Select a local video file");
     }
-    if !options.gazetteer.is_file() {
-        bail!("Prepare a GeoNames file with video-data, then select the .txt file");
-    }
     if let Some(bounds) = options.bounds {
         bounds.validate()?;
     }
-    let count = if options.frames == 0 {
-        3
-    } else {
-        options.frames
-    };
-    if count > 12 {
+    if options.frames > 12 {
         bail!("Use 1 to 12 video frames");
     }
     let dir = tempfile::tempdir()?;
-    progress("Checking local video and place data", 0.);
-    let media_sha256 = hash_file(&options.media, control)?;
-    let gazetteer_sha256 = hash_file(&options.gazetteer, control)?;
-    let gazetteer_source =
-        crate::visual_data::verify_source(&options.gazetteer, &gazetteer_sha256)?;
     let ffmpeg = audio::ffmpeg_path(&Job {
         ffmpeg: options.ffmpeg.clone(),
         ..Job::default()
@@ -342,7 +328,66 @@ pub fn analyze(options: &Options, control: &Control, progress: &Progress<'_>) ->
         dir.path(),
         control,
     )?;
-    let (start, duration, packets) = video_span(BufReader::new(File::open(packet_file)?), control)?;
+    video_span(BufReader::new(File::open(packet_file)?), control)
+        .context("Video clues need a readable video stream; audio-only recordings can still use location analysis")
+}
+
+/// Resolves optional reference data after checking the video, then runs local OCR.
+/// Returns the actual database path so report export can protect its input.
+pub fn analyze_with_data(
+    options: &Options,
+    country: &str,
+    cache: &Path,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<(Report, PathBuf)> {
+    progress("Checking for video before preparing place data", 0.);
+    let span = probe_video(options, control)?;
+    let mut options = options.clone();
+    options.gazetteer =
+        crate::visual_data::resolve(&options.gazetteer, country, cache, control, progress)?;
+    let report = analyze_probed(&options, span, control, progress)?;
+    Ok((report, options.gazetteer))
+}
+
+/// Reads local media and local reference data only, regardless of the global mode.
+pub fn analyze(options: &Options, control: &Control, progress: &Progress<'_>) -> Result<Report> {
+    let span = probe_video(options, control)?;
+    analyze_probed(options, span, control, progress)
+}
+
+fn analyze_probed(
+    options: &Options,
+    (start, duration, packets): (f64, f64, usize),
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<Report> {
+    control.check()?;
+    if !options.gazetteer.is_file() {
+        bail!("Prepare a GeoNames file with video-data, then select the .txt file");
+    }
+    if let Some(bounds) = options.bounds {
+        bounds.validate()?;
+    }
+    let count = if options.frames == 0 {
+        3
+    } else {
+        options.frames
+    };
+    if count > 12 {
+        bail!("Use 1 to 12 video frames");
+    }
+    let dir = tempfile::tempdir()?;
+    progress("Checking local video and place data", 0.);
+    let media_sha256 = hash_file(&options.media, control)?;
+    let gazetteer_sha256 = hash_file(&options.gazetteer, control)?;
+    let gazetteer_source =
+        crate::visual_data::verify_source(&options.gazetteer, &gazetteer_sha256)?;
+    let ffmpeg = audio::ffmpeg_path(&Job {
+        ffmpeg: options.ffmpeg.clone(),
+        ..Job::default()
+    });
+    let media = options.media.canonicalize()?;
     let count = count.min(packets);
     let tesseract = options
         .tesseract
@@ -576,6 +621,44 @@ mod tests {
                 .to_string()
                 .contains("local video")
         );
+    }
+
+    #[test]
+    fn audio_only_and_cancelled_runs_do_not_prepare_place_data() {
+        let dir = tempfile::tempdir().unwrap();
+        let media = dir.path().join("audio.wav");
+        let spec = hound::WavSpec {
+            channels: 1,
+            sample_rate: 8000,
+            bits_per_sample: 16,
+            sample_format: hound::SampleFormat::Int,
+        };
+        let mut writer = hound::WavWriter::create(&media, spec).unwrap();
+        for _ in 0..8000 {
+            writer.write_sample(0i16).unwrap();
+        }
+        writer.finalize().unwrap();
+        let cache = dir.path().join("must-not-be-created");
+        let options = Options {
+            media,
+            ..Options::default()
+        };
+        let error = analyze_with_data(&options, "ALL", &cache, &Control::default(), &|_, _| {})
+            .unwrap_err();
+        assert!(
+            error.to_string().contains("readable video stream"),
+            "{error:#}"
+        );
+        assert!(!cache.exists());
+        let control = Control::default();
+        control.stop();
+        assert_eq!(
+            analyze_with_data(&options, "ALL", &cache, &control, &|_, _| {})
+                .unwrap_err()
+                .to_string(),
+            "Cancelled"
+        );
+        assert!(!cache.exists());
     }
 
     #[test]
