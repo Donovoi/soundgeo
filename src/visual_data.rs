@@ -161,20 +161,39 @@ pub fn prepare(
         archive_size(&response)
     })?;
     crate::network::fetch_file(&url, &archive, size, None, control, progress)?;
+    prepare_archive(&archive, &text, &url, control, progress)?;
+    Ok(text)
+}
+
+fn prepare_archive(
+    archive: &Path,
+    text: &Path,
+    url: &str,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<()> {
+    // Publish the database only after both hashes and its source record exist.
+    // Cancellation during extraction or hashing must leave the cache retryable.
+    let staging = tempfile::tempdir_in(text.parent().context("Missing place-data folder")?)?;
+    let name = text.file_name().context("Missing place-data filename")?;
+    let staged_text = staging.path().join(name);
     progress("Extracting GeoNames place data", 0.95);
-    extract(&archive, &format!("{stem}.txt"), &text, control)?;
+    extract(archive, &name.to_string_lossy(), &staged_text, control)?;
+    progress("Verifying prepared GeoNames data", 0.98);
     let source = Source {
-        url,
+        url: url.into(),
         attribution: "GeoNames".into(),
         license: "https://creativecommons.org/licenses/by/4.0/".into(),
-        archive_sha256: hash_file(&archive, control)?,
-        text_sha256: hash_file(&text, control)?,
+        archive_sha256: hash_file(archive, control)?,
+        text_sha256: hash_file(&staged_text, control)?,
     };
-    let (mut temp, destination) = crate::atomic_file::prepare(&source_path(&text))?;
+    control.check()?;
+    let (mut temp, destination) = crate::atomic_file::prepare(&source_path(text))?;
     serde_json::to_writer_pretty(&mut temp, &source)?;
     temp.persist(destination)?;
+    std::fs::rename(staged_text, text)?;
     progress("GeoNames data ready for offline use", 1.);
-    Ok(text)
+    Ok(())
 }
 
 #[cfg(test)]
@@ -326,5 +345,34 @@ mod tests {
             .is_err()
         );
         assert!(!dir.path().join("escape.txt").exists());
+    }
+    #[test]
+    fn interrupted_place_data_verification_is_retryable() {
+        let dir = tempfile::tempdir().unwrap();
+        let archive = dir.path().join("GB.zip");
+        let mut zip = zip::ZipWriter::new(File::create(&archive).unwrap());
+        zip.start_file("GB.txt", zip::write::SimpleFileOptions::default())
+            .unwrap();
+        zip.write_all(b"country fixture").unwrap();
+        zip.finish().unwrap();
+        let text = dir.path().join("GB.txt");
+        let cancelled = Control::default();
+        let error = prepare_archive(&archive, &text, "fixture", &cancelled, &|message, _| {
+            if message == "Verifying prepared GeoNames data" {
+                cancelled.stop();
+            }
+        })
+        .unwrap_err();
+        assert_eq!(error.to_string(), "Cancelled");
+        assert!(!text.exists());
+        assert!(!source_path(&text).exists());
+        let control = Control::default().with_offline(true);
+        prepare_archive(&archive, &text, "fixture", &control, &|_, _| {}).unwrap();
+        assert_eq!(
+            prepare("GB", dir.path(), &control, &|_, _| {}).unwrap(),
+            text
+        );
+        assert_eq!(std::fs::read_to_string(&text).unwrap(), "country fixture");
+        assert_eq!(std::fs::read_dir(dir.path()).unwrap().count(), 3);
     }
 }
