@@ -760,7 +760,12 @@ impl App {
                 && let Err(error) = soundgeo::visual::write_report(
                     report,
                     &path,
-                    &[&self.visual_inputs[0], &self.visual_inputs[1]],
+                    &[
+                        &self.visual_inputs[0],
+                        &self.visual_inputs[1],
+                        &self.job.media,
+                        &self.visual_options.gazetteer,
+                    ],
                 )
             {
                 self.error = Some(error.to_string());
