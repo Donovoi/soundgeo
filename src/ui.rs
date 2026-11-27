@@ -466,7 +466,14 @@ impl App {
                 Message::SpeechError(error) => {
                     self.speech_error = Some(error);
                     if let Some(activity) = &mut self.activity {
-                        activity.stage("Speech", StageState::Attention);
+                        activity.stage(
+                            "Speech",
+                            if self.control.check().is_err() {
+                                StageState::Stopped
+                            } else {
+                                StageState::Attention
+                            },
+                        );
                     }
                 }
                 Message::SpeechPrepared(prepared) => {
@@ -489,7 +496,9 @@ impl App {
                         );
                         activity.stage(
                             "Speech",
-                            if complete {
+                            if self.control.check().is_err() {
+                                StageState::Stopped
+                            } else if complete {
                                 StageState::Complete
                             } else {
                                 StageState::Attention
@@ -499,8 +508,12 @@ impl App {
                     self.speech.report = Some(*report);
                     self.speech.clear_preview();
                     if terminal {
-                        self.status =
-                            "Speech analysis finished; review its status and original text".into();
+                        self.status = if self.control.check().is_err() {
+                            "Speech analysis cancelled; completed text was kept"
+                        } else {
+                            "Speech analysis finished; review its status and original text"
+                        }
+                        .into();
                         self.progress = 1.;
                         self.receiver = None;
                     }
@@ -550,7 +563,14 @@ impl App {
                 }
                 Message::VideoError(error, terminal) => {
                     if let Some(activity) = &mut self.activity {
-                        activity.stage("Video clues", StageState::Attention);
+                        activity.stage(
+                            "Video clues",
+                            if self.control.check().is_err() {
+                                StageState::Stopped
+                            } else {
+                                StageState::Attention
+                            },
+                        );
                     }
                     self.visual_error = Some(error);
                     if terminal {
@@ -1914,6 +1934,10 @@ mod video_workflow_tests {
         let mut app = App::initial(None);
         let (tx, rx) = mpsc::channel();
         app.receiver = Some(rx);
+        let mut activity = Activity::new("Combined analysis");
+        activity.plan(["Video clues", "Location search"]);
+        activity.stage("Video clues", StageState::Running);
+        app.activity = Some(activity);
         app.control.stop();
         read_video_clues(
             &tx,
@@ -1928,5 +1952,12 @@ mod video_workflow_tests {
         assert_eq!(app.status, "Cancelled");
         assert_eq!(app.visual_error.as_deref(), Some("Cancelled"));
         assert!(app.visual_report.is_none());
+        assert_eq!(
+            app.activity.as_ref().unwrap().stages,
+            [
+                ("Video clues", StageState::Stopped),
+                ("Location search", StageState::NotRun)
+            ]
+        );
     }
 }
