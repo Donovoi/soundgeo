@@ -64,13 +64,33 @@ impl State {
             return;
         };
         ui.heading("Speech transcript and English translation");
+        let status = match report.status {
+            speech::Status::Ready => {
+                "Models ready: choose Analyze speech only or Analyze recording to transcribe"
+            }
+            speech::Status::Complete => {
+                "Complete: review the original text and English translation"
+            }
+            speech::Status::Partial => {
+                "Partial result: review the warnings and completed intervals"
+            }
+            speech::Status::NoSpeech => {
+                "No speech detected: no transcript or translation was produced"
+            }
+            speech::Status::NeedsLanguage => {
+                "Language choice needed: select the spoken language under Speech, then retry Analyze speech only. For music without speech, leave transcription unchecked"
+            }
+            speech::Status::UnsupportedLanguage => {
+                "The detected language is not supported. Review the detection before choosing a different language"
+            }
+        };
+        ui.add(egui::Label::new(status).wrap());
         ui.label(format!(
-            "Status: {:?} · Language: {} · {} intervals",
-            report.status,
+            "Language: {} · {} intervals",
             report
                 .selected_language
                 .as_deref()
-                .unwrap_or("awaiting choice"),
+                .unwrap_or("not established"),
             report.segments.len()
         ));
         ui.label(
@@ -331,7 +351,8 @@ impl App {
             let options = self.speech.options.clone();
             let prepared = self.speech.current_prepared(&job);
             self.speech.mark_requested(&job);
-            self.worker(ctx, move |tx, control| {
+            self.speech_error = None;
+            self.worker(ctx, "Transcribing speech and translating to English", move |tx, control| {
                 let result = analyze(&job, &options, prepared, &control, &|message, fraction| {
                     let _ = tx.send(Message::Progress(message.into(), fraction));
                 });
@@ -355,21 +376,26 @@ impl App {
         self.speech.request_key = Some(key);
         let job = self.job.clone();
         let options = self.speech.options.clone();
-        self.worker(ctx, move |tx, control| {
-            let result = speech::prepare(
-                &job.media,
-                &soundgeo::audio::ffmpeg_path(&job),
-                &options,
-                &control,
-                &|message, fraction| {
-                    let _ = tx.send(Message::Progress(message.into(), fraction));
-                },
-            );
-            let _ = tx.send(match result {
-                Ok(Some(prepared)) => Message::SpeechPrepared(Arc::new(prepared)),
-                Ok(None) => Message::Error("Speech analysis is disabled".into()),
-                Err(error) => Message::Error(format!("{error:#}")),
-            });
-        });
+        self.speech_error = None;
+        self.worker(
+            ctx,
+            "Detecting language and preparing speech models",
+            move |tx, control| {
+                let result = speech::prepare(
+                    &job.media,
+                    &soundgeo::audio::ffmpeg_path(&job),
+                    &options,
+                    &control,
+                    &|message, fraction| {
+                        let _ = tx.send(Message::Progress(message.into(), fraction));
+                    },
+                );
+                let _ = tx.send(match result {
+                    Ok(Some(prepared)) => Message::SpeechPrepared(Arc::new(prepared)),
+                    Ok(None) => Message::Error("Speech analysis is disabled".into()),
+                    Err(error) => Message::Error(format!("{error:#}")),
+                });
+            },
+        );
     }
 }

@@ -410,6 +410,9 @@ pub(crate) fn analyze_observations(
         if dates.len() > 1 || discovery.is_some() {
             let mut result =
                 date_search::run(job, report, timing_peaks, &dates, control, progress)?;
+            if let Some(catalog) = &discovery {
+                result.warnings.extend(catalog.coverage_warnings());
+            }
             result.date_search.as_mut().unwrap().provider_discovery = discovery;
             return Ok(result);
         }

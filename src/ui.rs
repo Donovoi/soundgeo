@@ -6,8 +6,11 @@ use std::{
     time::Duration,
 };
 
+#[path = "activity_ui.rs"]
+mod activity_ui;
 #[path = "speech_ui.rs"]
 mod speech_ui;
+use activity_ui::{Activity, State as StageState};
 
 // Keep action explanations available when a control is temporarily disabled.
 trait ResponseHelp {
@@ -33,6 +36,8 @@ enum MediaFeedback {
 }
 
 enum Message {
+    Stage(&'static str),
+    SpeechError(String),
     SpeechPrepared(std::sync::Arc<soundgeo::speech::Prepared>),
     SpeechReport(Box<soundgeo::speech::Report>, bool),
     MediaListing(Box<soundgeo::media_url::Listing>),
@@ -78,6 +83,8 @@ pub struct App {
     media_listing: Option<soundgeo::media_url::Listing>,
     media_item: usize,
     media_feedback: MediaFeedback,
+    activity: Option<Activity>,
+    speech_error: Option<String>,
 }
 impl App {
     pub fn new(cc: &eframe::CreationContext<'_>, report: Option<Report>) -> Self {
@@ -139,10 +146,68 @@ impl App {
             media_listing: None,
             media_item: 1,
             media_feedback: MediaFeedback::None,
+            activity: None,
+            speech_error: None,
         }
     }
     fn busy(&self) -> bool {
         self.receiver.is_some()
+    }
+    fn activity_panel(&mut self, ui: &mut egui::Ui) {
+        let busy = self.busy();
+        let cancelling = busy && self.control.check().is_err();
+        if let Some(activity) = &self.activity {
+            egui::Frame::new().fill(PANEL).corner_radius(10.).inner_margin(14.).show(ui, |ui| {
+                ui.set_width(ui.available_width());
+                ui.horizontal_wrapped(|ui| {
+                    if busy { ui.spinner(); }
+                    ui.heading(if cancelling { "Stopping background work" } else if busy { "Working in the background" } else { "Task finished" });
+                    ui.label(format!("Elapsed: {}", activity_ui::duration(activity.elapsed())));
+                    if busy && ui.add_enabled(!cancelling, egui::Button::new("Cancel task"))
+                        .help("Stop the active background task and skip stages that have not started. Completed reports and the original recording are kept. Wait for confirmation before starting another task.").clicked() {
+                        self.control.stop();
+                        self.status = "Cancelling: stopping the current operation; remaining stages will not run.".into();
+                    }
+                });
+                ui.label(RichText::new(&activity.title).strong());
+                ui.horizontal_wrapped(|ui| {
+                    for (name, state) in &activity.stages {
+                        ui.label(format!("{name}: {}", state.label()));
+                    }
+                });
+                ui.add(egui::Label::new(&self.status).wrap());
+                if busy {
+                    if self.progress > 0. && self.progress < 1. && !cancelling {
+                        ui.add(egui::ProgressBar::new(self.progress).animate(true));
+                        ui.label(RichText::new("Progress is for the current operation; it can restart for the next stage or file.").small().color(MUTED));
+                    }
+                    let age = activity.updated.elapsed().as_secs();
+                    ui.label(RichText::new(format!("Last worker update: {} ago. You can keep using your computer.", activity_ui::duration(age))).small().color(MUTED));
+                    if age >= 15 {
+                        ui.label("Waiting for the next progress update. No completion time is available; you can cancel this task.");
+                    }
+                    if !activity.stages.is_empty() {
+                        ui.label(RichText::new("Checked stages run in order. Recordings are processed locally; missing reference data or models may download when online.").small().color(MUTED));
+                    }
+                }
+            });
+            ui.add_space(10.);
+        }
+        if let Some(error) = &self.error {
+            ui.heading(if self.control.check().is_err() {
+                "Task cancelled"
+            } else {
+                "Action needed"
+            });
+            ui.add(
+                egui::Label::new(RichText::new(error).color(Color32::from_rgb(255, 181, 134)))
+                    .wrap(),
+            );
+            if self.control.check().is_ok() {
+                ui.label("Review the settings mentioned above, then retry the task. Any completed reports remain available below.");
+            }
+            ui.separator();
+        }
     }
     pub fn with_speech(mut self, report: Option<soundgeo::speech::Report>) -> Self {
         self.speech.report = report;
@@ -164,7 +229,7 @@ impl App {
                 let options = self.media_options.clone(); self.media_listing = None;
                 self.status = "Finding downloadable clips".into();
                 self.media_feedback = MediaFeedback::Working(self.status.clone());
-                self.worker(ctx, move |tx, control| {
+                self.worker(ctx, "Finding downloadable clips", move |tx, control| {
                     let progress = |m: &str, p| { let _ = tx.send(Message::Progress(m.into(), p)); };
                     let result = soundgeo::media_url::discover(&options, &control, &progress);
                     let _ = tx.send(match result { Ok(value) => Message::MediaListing(Box::new(value)), Err(error) => Message::Error(format!("{error:#}")) });
@@ -180,7 +245,7 @@ impl App {
                     let listing = listing.clone(); let options = self.media_options.clone(); let item = self.media_item;
                     self.status = "Downloading selected clip".into();
                     self.media_feedback = MediaFeedback::Working(self.status.clone());
-                    self.worker(ctx, move |tx, control| {
+                    self.worker(ctx, "Downloading selected clip", move |tx, control| {
                         let progress = |m: &str, p| { let _ = tx.send(Message::Progress(m.into(), p)); };
                         let result = soundgeo::media_url::download(&options, &listing, item, &control, &progress);
                         let _ = tx.send(match result { Ok(value) => Message::MediaDownloaded(Box::new(value)), Err(error) => Message::Error(format!("{error:#}")) });
@@ -251,9 +316,12 @@ impl App {
     fn worker(
         &mut self,
         ctx: &egui::Context,
+        title: &str,
         task: impl FnOnce(mpsc::Sender<Message>, Control) + Send + 'static,
     ) {
         self.error = None;
+        self.status = title.into();
+        self.activity = Some(Activity::new(title));
         self.progress = 0.;
         self.control = Control::default().with_offline(self.job.offline);
         let control = self.control.clone();
@@ -289,6 +357,8 @@ impl App {
         job.bounds = self.use_bounds.then_some(self.bounds);
         let geo_error = clock_error.or_else(|| job.validate().err().map(|e| e.to_string()));
         if !self.speech.options.enabled && !self.visual_enabled && geo_error.is_some() {
+            self.activity = None;
+            self.status = "Analysis needs attention before it can start".into();
             self.error = geo_error;
             return;
         }
@@ -299,15 +369,25 @@ impl App {
         let cache = self.visual_cache.clone();
         self.visual_report = None;
         self.visual_error = None;
+        self.speech_error = None;
         self.speech.mark_requested(&job);
         self.report = None;
         self.selected = 0;
         self.status = "Starting analysis".into();
-        self.worker(ctx, move |tx, control| {
+        let mut stages = Vec::new();
+        if video.is_some() {
+            stages.push("Video clues");
+        }
+        if options.enabled {
+            stages.push("Speech");
+        }
+        stages.push("Location search");
+        self.worker(ctx, "Analyzing recording", move |tx, control| {
             let progress = |m: &str, p: f32| {
                 let _ = tx.send(Message::Progress(m.into(), p));
             };
             if let Some(options) = video {
+                let _ = tx.send(Message::Stage("Video clues"));
                 read_video_clues(&tx, &options, &country, &cache, &control, false);
             }
             if let Err(error) = control.check() {
@@ -315,14 +395,14 @@ impl App {
                 return;
             }
             if options.enabled {
+                let _ = tx.send(Message::Stage("Speech"));
                 let speech = speech_ui::analyze(&job, &options, prepared, &control, &progress);
                 match speech {
                     Ok(report) => {
                         let _ = tx.send(Message::SpeechReport(Box::new(report), false));
                     }
                     Err(error) => {
-                        let _ = tx.send(Message::Error(format!("Speech analysis: {error:#}")));
-                        return;
+                        let _ = tx.send(Message::SpeechError(format!("{error:#}")));
                     }
                 }
             }
@@ -330,6 +410,7 @@ impl App {
                 let _ = tx.send(Message::Error(error.to_string()));
                 return;
             }
+            let _ = tx.send(Message::Stage("Location search"));
             if let Some(error) = geo_error {
                 let _ = tx.send(Message::Error(format!(
                     "Any completed optional results were retained. Geolocation needs attention: {error}"
@@ -342,11 +423,12 @@ impl App {
                 Err(e) => Message::Error(format!("{e:#}")),
             });
         });
+        self.activity.as_mut().unwrap().plan(stages);
     }
     fn load_demo(&mut self, ctx: &egui::Context) {
         let dir = std::env::temp_dir().join(format!("soundgeo-demo-{}", std::process::id()));
         self.status = "Creating synthetic demo".into();
-        self.worker(ctx, move |tx, _| {
+        self.worker(ctx, "Creating synthetic demo", move |tx, _| {
             let result = soundgeo::demo::create(&dir);
             let _ = tx.send(match result {
                 Ok(job) => Message::Demo(Box::new(job)),
@@ -355,13 +437,45 @@ impl App {
         });
     }
     fn poll(&mut self) {
-        let messages: Vec<_> = self
-            .receiver
-            .as_ref()
-            .map(|r| r.try_iter().collect())
-            .unwrap_or_default();
+        let mut messages = Vec::new();
+        let mut disconnected = false;
+        if let Some(receiver) = &self.receiver {
+            loop {
+                match receiver.try_recv() {
+                    Ok(message) => messages.push(message),
+                    Err(mpsc::TryRecvError::Empty) => break,
+                    Err(mpsc::TryRecvError::Disconnected) => {
+                        disconnected = true;
+                        break;
+                    }
+                }
+            }
+        }
         for message in messages {
+            if let Some(activity) = &mut self.activity {
+                activity.updated = std::time::Instant::now();
+            }
             match message {
+                Message::Stage(name) => {
+                    if let Some(activity) = &mut self.activity {
+                        activity.stage(name, StageState::Running);
+                    }
+                    self.progress = 0.;
+                    self.status = format!("{name}: starting");
+                }
+                Message::SpeechError(error) => {
+                    self.speech_error = Some(error);
+                    if let Some(activity) = &mut self.activity {
+                        activity.stage(
+                            "Speech",
+                            if self.control.check().is_err() {
+                                StageState::Stopped
+                            } else {
+                                StageState::Attention
+                            },
+                        );
+                    }
+                }
                 Message::SpeechPrepared(prepared) => {
                     self.status = if prepared.ready() {
                         "Speech models ready".into()
@@ -375,11 +489,31 @@ impl App {
                     self.receiver = None;
                 }
                 Message::SpeechReport(report, terminal) => {
+                    if let Some(activity) = &mut self.activity {
+                        let complete = matches!(
+                            report.status,
+                            soundgeo::speech::Status::Complete | soundgeo::speech::Status::NoSpeech
+                        );
+                        activity.stage(
+                            "Speech",
+                            if self.control.check().is_err() {
+                                StageState::Stopped
+                            } else if complete {
+                                StageState::Complete
+                            } else {
+                                StageState::Attention
+                            },
+                        );
+                    }
                     self.speech.report = Some(*report);
                     self.speech.clear_preview();
                     if terminal {
-                        self.status =
-                            "Speech analysis finished; review its status and original text".into();
+                        self.status = if self.control.check().is_err() {
+                            "Speech analysis cancelled; completed text was kept"
+                        } else {
+                            "Speech analysis finished; review its status and original text"
+                        }
+                        .into();
                         self.progress = 1.;
                         self.receiver = None;
                     }
@@ -415,6 +549,9 @@ impl App {
                     inputs,
                     terminal,
                 } => {
+                    if let Some(activity) = &mut self.activity {
+                        activity.stage("Video clues", StageState::Complete);
+                    }
                     self.visual_report = Some(*report);
                     self.visual_inputs = inputs;
                     self.visual_error = None;
@@ -425,6 +562,16 @@ impl App {
                     }
                 }
                 Message::VideoError(error, terminal) => {
+                    if let Some(activity) = &mut self.activity {
+                        activity.stage(
+                            "Video clues",
+                            if self.control.check().is_err() {
+                                StageState::Stopped
+                            } else {
+                                StageState::Attention
+                            },
+                        );
+                    }
                     self.visual_error = Some(error);
                     if terminal {
                         self.status = if self.control.check().is_err() {
@@ -446,17 +593,38 @@ impl App {
                     if let MediaFeedback::Working(message) = &mut self.media_feedback {
                         message.clone_from(&m);
                     }
-                    self.status = m;
+                    if self.control.check().is_ok() {
+                        self.status = m;
+                    }
                     self.progress = p;
                 }
                 Message::Done(report) => {
-                    self.report = Some(*report);
-                    self.status = if self.visual_error.is_some() {
-                        "Location analysis complete; video clues need attention"
-                    } else {
-                        "Analysis complete"
+                    if let Some(activity) = &mut self.activity {
+                        activity.stage("Location search", StageState::Complete);
                     }
-                    .into();
+                    let outcome = if report.status == "candidates_found" {
+                        "Location candidates found; review the evidence"
+                    } else if report.status == "ambiguous" {
+                        "No verified location: competing candidates remain"
+                    } else {
+                        "No location found: insufficient evidence"
+                    };
+                    let optional_attention = self.visual_error.is_some()
+                        || self.speech_error.is_some()
+                        || (self.speech.options.enabled
+                            && self.speech.report.as_ref().is_some_and(|r| {
+                                !matches!(
+                                    r.status,
+                                    soundgeo::speech::Status::Complete
+                                        | soundgeo::speech::Status::NoSpeech
+                                )
+                            }));
+                    self.report = Some(*report);
+                    self.status = if optional_attention {
+                        format!("{outcome}. Optional clues need attention.")
+                    } else {
+                        outcome.into()
+                    };
                     self.progress = 1.;
                     self.receiver = None;
                 }
@@ -508,6 +676,16 @@ impl App {
                     self.receiver = None;
                 }
             }
+        }
+        if disconnected && self.receiver.is_some() {
+            self.error = Some("The background task ended without a result. Review the settings and retry; completed reports are kept.".into());
+            self.status = "Needs attention".into();
+            self.receiver = None;
+        }
+        if self.receiver.is_none()
+            && let Some(activity) = &mut self.activity
+        {
+            activity.finish(self.control.check().is_err());
         }
     }
     fn input_panel(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
@@ -584,7 +762,7 @@ impl App {
                 let mut job = self.job.clone();
                 job.bounds = self.use_bounds.then_some(self.bounds);
                 self.status = if refresh_gaps { "Retrying unavailable source files" } else { "Preparing offline data" }.into();
-                self.worker(ctx, move |tx, control| {
+                self.worker(ctx, "Preparing flight data for offline use", move |tx, control| {
                     let control = if refresh_gaps { control.with_source_gap_refresh() } else { control };
                     let result = soundgeo::prepare_data(&job, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
                     let _ = tx.send(match result { Ok(data) => Message::Prepared(data.flight_sources.len()), Err(e) => Message::Error(format!("{e:#}")) });
@@ -598,7 +776,7 @@ impl App {
                     if chrono::NaiveDate::parse_from_str(&self.date,"%Y-%m-%d").is_err(){self.error=Some("Enter an archive date in YYYY-MM-DD format.".into());}
                     else if let Some(dir)=rfd::FileDialog::new().set_title("Choose flight archive cache").pick_folder(){
                         let date=self.date.clone();self.status="Downloading flight archive".into();
-                        self.worker(ctx,move|tx,control|{let result=soundgeo::data::download_day(&date,&dir,&control,&|m,p|{let _=tx.send(Message::Progress(m.into(),p));});let _=tx.send(match result{Ok(p)=>Message::Downloaded(p),Err(e)=>Message::Error(format!("{e:#}"))});});
+                        self.worker(ctx,"Downloading flight archive",move|tx,control|{let result=soundgeo::data::download_day(&date,&dir,&control,&|m,p|{let _=tx.send(Message::Progress(m.into(),p));});let _=tx.send(match result{Ok(p)=>Message::Downloaded(p),Err(e)=>Message::Error(format!("{e:#}"))});});
                     }
                 }
                 ui.hyperlink_to("Archive coverage and data licence","https://www.adsb.lol/docs/open-data/historical").help("Open ADSB.lol documentation for historical-data coverage and licensing.");
@@ -727,7 +905,7 @@ impl App {
                 .set_file_name("aircraft-types.json")
                 .save_file()
         {
-            self.worker(ctx, move |tx, control| {
+            self.worker(ctx, "Preparing aircraft type catalog", move |tx, control| {
                 let result = control
                     .require_network(&path.display().to_string())
                     .and_then(|_| soundgeo::aircraft::download(&path));
@@ -790,7 +968,7 @@ impl App {
                 self.visual_report = None;
                 self.visual_error = None;
                 self.status = "Starting video clues".into();
-                self.worker(ctx, move |tx, control| {
+                self.worker(ctx, "Reading video clues", move |tx, control| {
                     read_video_clues(&tx, &options, &country, &cache, &control, true);
                 });
             }
@@ -804,7 +982,7 @@ impl App {
                 if ui.button("Prepare place data…").help("Prepare the selected country's GeoNames data in a folder you choose, for example before going offline. Cached data is verified; missing data requires a connection. The prepared file becomes the custom database for video clues.").clicked()
                     && let Some(folder) = rfd::FileDialog::new().pick_folder() {
                     let country = self.visual_country.clone();
-                    self.worker(ctx, move |tx, control| {
+                    self.worker(ctx, "Preparing place data", move |tx, control| {
                         let result = soundgeo::visual_data::prepare(&country, &folder, &control, &|m,p| { let _ = tx.send(Message::Progress(m.into(),p)); });
                         let _ = tx.send(match result { Ok(path) => Message::VideoData(path), Err(e) => Message::Error(format!("{e:#}")) });
                     });
@@ -835,6 +1013,12 @@ impl App {
         }
     }
     fn results(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        if let Some(error) = &self.speech_error {
+            ui.heading("Speech needs attention");
+            ui.colored_label(Color32::from_rgb(255, 181, 134), error);
+            ui.label("Completed text is kept. Review the speech settings and retry Analyze speech only. Location analysis continues independently.");
+            ui.separator();
+        }
         self.speech.results(ui, ctx, &mut self.error);
         if let Some(error) = &self.visual_error {
             ui.heading("Video clues need attention");
@@ -886,6 +1070,9 @@ impl App {
             }
         }
         let Some(report) = &self.report else {
+            if self.busy() || self.error.is_some() || self.speech.report.is_some() {
+                return;
+            }
             ui.add_space(65.);
             ui.label(
                 RichText::new("A LOCATION IS A HYPOTHESIS.")
@@ -937,6 +1124,20 @@ impl App {
             );
             return;
         };
+        if let Some(catalog) = report
+            .date_search
+            .as_ref()
+            .and_then(|coverage| coverage.provider_discovery.as_ref())
+        {
+            for warning in catalog.coverage_warnings() {
+                ui.add(
+                    egui::Label::new(
+                        RichText::new(warning).color(Color32::from_rgb(255, 181, 134)),
+                    )
+                    .wrap(),
+                );
+            }
+        }
         ui.horizontal(|ui| {
             ui.vertical(|ui| {
                 ui.label(RichText::new("ANALYSIS").small().color(ACCENT));
@@ -1187,7 +1388,7 @@ impl eframe::App for App {
             });
         egui::TopBottomPanel::bottom("footer").show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.label(RichText::new(&self.status).small().color(MUTED));
+                ui.add(egui::Label::new(RichText::new(&self.status).small().color(MUTED)).truncate());
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     ui.hyperlink_to(
                         "Method inspiration",
@@ -1213,6 +1414,7 @@ impl eframe::App for App {
                     .inner_margin(24.),
             )
             .show(ctx, |ui| {
+                self.activity_panel(ui);
                 egui::ScrollArea::vertical()
                     .id_salt("results-scroll")
                     .show(ui, |ui| {
@@ -1253,6 +1455,7 @@ fn file_field_help(
     if ui
         .add(
             egui::TextEdit::singleline(&mut text)
+                .id(egui::Id::new(("file-path", label)))
                 .hint_text("Select a file")
                 .desired_width(f32::INFINITY),
         )
@@ -1688,10 +1891,54 @@ mod video_workflow_tests {
     }
 
     #[test]
+    fn failed_optional_speech_does_not_prevent_location_stage() {
+        let mut app = App::initial(None);
+        app.speech.options.enabled = true;
+        app.run(&egui::Context::default());
+        let deadline = std::time::Instant::now() + Duration::from_secs(5);
+        while app.busy() && std::time::Instant::now() < deadline {
+            app.poll();
+            std::thread::sleep(Duration::from_millis(5));
+        }
+        assert!(!app.busy());
+        assert!(app.speech_error.is_some());
+        assert!(
+            app.error
+                .as_ref()
+                .unwrap()
+                .contains("Geolocation needs attention")
+        );
+        assert_eq!(
+            app.activity.as_ref().unwrap().stages,
+            [
+                ("Speech", StageState::Attention),
+                ("Location search", StageState::Attention)
+            ]
+        );
+    }
+
+    #[test]
+    fn disconnected_worker_finishes_instead_of_spinning_forever() {
+        let mut app = App::initial(None);
+        let (tx, rx) = mpsc::channel();
+        app.receiver = Some(rx);
+        app.activity = Some(Activity::new("Background test"));
+        drop(tx);
+        app.poll();
+        assert!(!app.busy());
+        assert!(app.activity.as_ref().unwrap().finished.is_some());
+        assert!(app.error.as_ref().unwrap().contains("without a result"));
+    }
+
+    #[test]
     fn standalone_video_finishes_and_cancel_stays_cancelled() {
         let mut app = App::initial(None);
         let (tx, rx) = mpsc::channel();
         app.receiver = Some(rx);
+        let mut activity = Activity::new("Combined analysis");
+        activity.plan(["Video clues", "Location search"]);
+        activity.stage("Video clues", StageState::Running);
+        app.activity = Some(activity);
         app.control.stop();
         read_video_clues(
             &tx,
@@ -1706,5 +1953,12 @@ mod video_workflow_tests {
         assert_eq!(app.status, "Cancelled");
         assert_eq!(app.visual_error.as_deref(), Some("Cancelled"));
         assert!(app.visual_report.is_none());
+        assert_eq!(
+            app.activity.as_ref().unwrap().stages,
+            [
+                ("Video clues", StageState::Stopped),
+                ("Location search", StageState::NotRun)
+            ]
+        );
     }
 }

@@ -8,6 +8,12 @@ New results must state which target they use.
 
 ## Current checks
 
+The [piano intake and progress record](piano-intake-and-progress.json) records a
+music clip's audio detections, uncertain speech language, and video-text scan
+without place matches. The offline location attempt stopped for missing flight
+data. A separate provider check exposed the release-listing limit. These are
+workflow diagnostics and add no accepted location or accuracy result.
+
 The [URL intake record](url-intake.json) covers clip selection, yt-dlp,
 gallery-dl, browser impersonation, concurrent transfers and verified offline
 reuse. It preserves failed attempts and separates exploratory public-source

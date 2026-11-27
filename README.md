@@ -49,6 +49,15 @@ Hover over any app button for an explanation of its action and what to do next.
 Tooltips also cover disabled buttons, checkboxes, dropdown choices, result tabs,
 links and expandable section headings.
 
+While a task runs, the main panel shows **Working in the background**, its current
+operation, elapsed time and the time since the worker last sent an update.
+Combined analysis lists video clues, speech and location search in order, with
+each stage marked waiting, working, complete or needing attention. **Cancel task**
+stays visible. Progress bars describe the current operation and can restart for
+another stage or file. Completion, cancellation and errors remain visible.
+An optional clue failure does not stop the other stages; cancellation stops the
+remaining work. A finished analysis can still report no location or ambiguity.
+
 URL discovery and download progress, cancellation and errors appear beside the
 URL controls. A completed download shows its title, size and duration and selects
 it as the recording. Downloading does not start location analysis: set the flight
@@ -77,6 +86,9 @@ When online, it can upgrade a saved ADSB.lol staging archive to a production
 archive. It keeps the previous files until the replacement is verified.
 With blank dates, online analysis discovers the provider's available days and
 downloads missing files as it searches. Offline analysis searches prepared days.
+If GitHub limits a date listing, SoundGeo keeps the verified dates and reports
+incomplete automatic coverage. Enter a known date range to check older days
+directly. This does not establish when a recording was made.
 
 Select **Worldwide: ADSB.lol** for the worldwide archive.
 For a first-of-month recording, you can also select **Free evaluation sample:

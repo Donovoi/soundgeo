@@ -34,6 +34,13 @@ pub struct Catalog {
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub recent_checked_utc: Option<String>,
 }
+impl Catalog {
+    pub fn coverage_warnings(&self) -> Vec<String> {
+        self.sources.iter().filter(|source| source.status == 422).map(|source| {
+            format!("Flight-date discovery is incomplete: GitHub limited a release listing to 1,000 results ({}). Only listed and previously cached dates can be searched automatically. Enter a known date range to check older days directly.", source.url)
+        }).collect()
+    }
+}
 #[derive(Serialize, Deserialize)]
 struct Stored {
     format: u32,
@@ -301,13 +308,18 @@ async fn refresh_recent(
     // discovery of older releases. Keep both sets of source receipts.
     catalog.recent_checked_utc = Some(now.to_rfc3339());
     catalog.sources.extend(fetch.sources);
-    catalog.basis = "All release pages were read during full discovery. Recent publication checks add new dates and preserve the earlier list.".into();
+    catalog.basis = if catalog.coverage_warnings().is_empty() {
+        "All release pages were read during full discovery. Recent publication checks add new dates and preserve the earlier list."
+    } else {
+        "Release discovery reached the provider's listing limit. Recent publication checks add dates; older unlisted dates may be missing."
+    }.into();
     Ok(catalog)
 }
 
 struct Fetcher {
     client: reqwest::Client,
     sources: Vec<Source>,
+    release_limit: bool,
 }
 impl Fetcher {
     fn new() -> Result<Self> {
@@ -318,6 +330,7 @@ impl Fetcher {
                 .timeout(Duration::from_secs(60))
                 .build()?,
             sources: vec![],
+            release_limit: false,
         })
     }
     async fn get(
@@ -326,6 +339,7 @@ impl Fetcher {
         form: Option<&str>,
         control: &Control,
     ) -> Result<Option<Vec<u8>>> {
+        self.release_limit = false;
         let request = if let Some(body) = form {
             self.client
                 .post(url)
@@ -336,9 +350,6 @@ impl Fetcher {
         };
         let mut response = cancelable(request.send(), control).await??;
         let status = response.status();
-        if status != reqwest::StatusCode::NOT_FOUND {
-            response = response.error_for_status()?;
-        }
         ensure!(
             response
                 .content_length()
@@ -353,14 +364,43 @@ impl Fetcher {
             );
             bytes.extend_from_slice(&part);
         }
+        self.release_limit = is_release_listing_limit(url, status.as_u16(), &bytes);
+        if status != reqwest::StatusCode::NOT_FOUND && !self.release_limit {
+            response.error_for_status_ref()?;
+        }
         self.sources.push(Source {
             url: url.into(),
             sha256: hash(&bytes),
             status: status.as_u16(),
             request_body_sha256: form.map(|s| hash(s.as_bytes())),
         });
-        Ok((status != reqwest::StatusCode::NOT_FOUND).then_some(bytes))
+        Ok((status != reqwest::StatusCode::NOT_FOUND && !self.release_limit).then_some(bytes))
     }
+}
+
+fn is_release_listing_limit(url: &str, status: u16, bytes: &[u8]) -> bool {
+    if status != 422 {
+        return false;
+    }
+    let Ok(url) = reqwest::Url::parse(url) else {
+        return false;
+    };
+    let Some(year) = url
+        .path()
+        .strip_prefix("/repos/adsblol/globe_history_")
+        .and_then(|path| path.strip_suffix("/releases"))
+    else {
+        return false;
+    };
+    url.scheme() == "https"
+        && url.host_str() == Some("api.github.com")
+        && year.len() == 4
+        && year.bytes().all(|value| value.is_ascii_digit())
+        && url.query_pairs().any(|(name, value)| {
+            name == "page" && value.parse::<usize>().is_ok_and(|page| page > 1)
+        })
+        && serde_json::from_slice::<serde_json::Value>(bytes)
+            .is_ok_and(|value| value["message"] == "Only the first 1000 results are available.")
 }
 pub(crate) fn query(fields: &[(&str, &str)]) -> String {
     fn encode(value: &str) -> String {
@@ -434,9 +474,17 @@ async fn discover_online(
                     );
                     let Some(bytes) = fetch.get(&url, None, control).await? else {
                         ensure!(
-                            page == 1,
+                            page == 1 || fetch.release_limit,
                             "An archive index page disappeared during discovery"
                         );
+                        if fetch.release_limit {
+                            progress(
+                                &format!(
+                                    "Flight dates for {year}: GitHub listing limit reached. Keeping verified dates; automatic date coverage is incomplete."
+                                ),
+                                0.,
+                            );
+                        }
                         break;
                     };
                     let releases: Vec<serde_json::Value> = serde_json::from_slice(&bytes)?;
@@ -531,7 +579,11 @@ async fn discover_online(
         retrieved_utc: Utc::now().to_rfc3339(),
         recent_checked_utc: None,
         dates: dates.into_iter().collect(),
-        basis: basis.into(),
+        basis: if fetch.sources.iter().any(|source| source.status == 422) {
+            "Published daily releases up to the provider's listing limit. Automatic date coverage is incomplete; older unlisted days may be missing.".into()
+        } else {
+            basis.into()
+        },
         sources: fetch.sources,
     };
     validate(&catalog, provider, today)?;
@@ -624,6 +676,43 @@ async fn prefixes(
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn release_limit_is_specific_and_survives_cache_roundtrip() {
+        let url =
+            "https://api.github.com/repos/adsblol/globe_history_2026/releases?per_page=100&page=11";
+        let body = br#"{"message":"Only the first 1000 results are available."}"#;
+        assert!(is_release_listing_limit(url, 422, body));
+        assert!(!is_release_listing_limit(url, 403, body));
+        assert!(!is_release_listing_limit(
+            url,
+            422,
+            br#"{"message":"Validation Failed"}"#
+        ));
+        assert!(!is_release_listing_limit(
+            &url.replace("page=11", "page=1"),
+            422,
+            body
+        ));
+        assert!(!is_release_listing_limit(
+            &url.replace("api.github.com", "example.org"),
+            422,
+            body
+        ));
+        let mut catalog = daily_fixture(Utc::now());
+        catalog.sources.push(Source {
+            url: url.into(),
+            sha256: hash(body),
+            status: 422,
+            request_body_sha256: None,
+        });
+        let directory = tempfile::tempdir().unwrap();
+        save(directory.path(), &catalog).unwrap();
+        let restored = load(directory.path(), ArchiveProvider::AdsbLol).unwrap();
+        assert_eq!(restored.dates, catalog.dates);
+        assert_eq!(restored.coverage_warnings().len(), 1);
+        assert!(restored.coverage_warnings()[0].contains("incomplete"));
+        assert!(restored.coverage_warnings()[0].contains(url));
+    }
     #[test]
     fn date_catalog_is_verified_and_can_be_read_with_networking_disabled() {
         let dir = tempfile::tempdir().unwrap();

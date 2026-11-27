@@ -3,6 +3,12 @@
 SoundGeo is in development. Reliable location recovery from varied internet
 samples remains unfinished. The current location target is within 1 km.
 
+Automatic flight-date discovery can reach GitHub's 1,000-release listing limit
+for a yearly archive. SoundGeo retains verified dates and records the limitation
+in the date catalog and analysis warnings. Older unlisted days can be absent from
+automatic searches. An explicit date range checks those days directly. A search
+only evaluates its recorded data coverage.
+
 ## Video text clues
 
 Video text reading is optional. It needs Tesseract 5, English language data,
