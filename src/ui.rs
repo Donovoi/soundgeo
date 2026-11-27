@@ -357,6 +357,8 @@ impl App {
         job.bounds = self.use_bounds.then_some(self.bounds);
         let geo_error = clock_error.or_else(|| job.validate().err().map(|e| e.to_string()));
         if !self.speech.options.enabled && !self.visual_enabled && geo_error.is_some() {
+            self.activity = None;
+            self.status = "Analysis needs attention before it can start".into();
             self.error = geo_error;
             return;
         }
@@ -589,13 +591,14 @@ impl App {
                     };
                     let optional_attention = self.visual_error.is_some()
                         || self.speech_error.is_some()
-                        || self.speech.report.as_ref().is_some_and(|r| {
-                            !matches!(
-                                r.status,
-                                soundgeo::speech::Status::Complete
-                                    | soundgeo::speech::Status::NoSpeech
-                            )
-                        });
+                        || (self.speech.options.enabled
+                            && self.speech.report.as_ref().is_some_and(|r| {
+                                !matches!(
+                                    r.status,
+                                    soundgeo::speech::Status::Complete
+                                        | soundgeo::speech::Status::NoSpeech
+                                )
+                            }));
                     self.report = Some(*report);
                     self.status = if optional_attention {
                         format!("{outcome}. Optional clues need attention.")
@@ -1365,7 +1368,7 @@ impl eframe::App for App {
             });
         egui::TopBottomPanel::bottom("footer").show(ctx, |ui| {
             ui.horizontal(|ui| {
-                ui.label(RichText::new(&self.status).small().color(MUTED));
+                ui.add(egui::Label::new(RichText::new(&self.status).small().color(MUTED)).truncate());
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                     ui.hyperlink_to(
                         "Method inspiration",
