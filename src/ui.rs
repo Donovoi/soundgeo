@@ -197,7 +197,7 @@ impl App {
             MediaFeedback::Working(message) => {
                 ui.horizontal(|ui| {
                     ui.spinner();
-                    ui.label(message);
+                    ui.add(egui::Label::new(message).wrap());
                 });
                 if ui.button("Cancel media task").help("Stop the current clip discovery or download. Partial downloads remain in the cache so a later attempt can resume.").clicked() {
                     self.control.stop();
