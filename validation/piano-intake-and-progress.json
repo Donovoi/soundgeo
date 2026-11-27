@@ -1,0 +1,57 @@
+{
+  "scope": "Media intake and workflow diagnostics; no geolocation accuracy claim",
+  "source_url": "https://www.youtube.com/watch?v=u1OTuGij6dM",
+  "baseline_version": "0.4.0-alpha.3",
+  "baseline_source_commit": "2f0ce96b14e7457086e854d93ae6413bd461651e",
+  "baseline_source_tree": "1603fed5d192142653fc209d1894c63d39e62bd5",
+  "equivalent_release_commit": "615b5945f4a10592e9572d4b35e14091231eaa31",
+  "environment": "Resource-limited Linux VM; no host application execution",
+  "media_sha256": "51787f3cd980f11f03a9c9ff31ab4153ba22287ccd310cff409c4c05ad58d0c6",
+  "media_bytes": 82844307,
+  "audio_duration_s": 307.80375,
+  "recording_clock_supplied": false,
+  "search_bounds_supplied": false,
+  "audio_check": {
+    "status": "audio_observations_found",
+    "doppler_observations": 3,
+    "timing_peaks": 8,
+    "passage_timing_eligible": false,
+    "passage_timing_reason": "Recording is shorter than the required 480 seconds",
+    "interpretation": "Detections are not confirmed aircraft. Music can produce descending tones and sound peaks."
+  },
+  "speech": {
+    "status": "needs_language",
+    "selected_language": null,
+    "transcript_intervals": 0,
+    "interpretation": "Detection was uncertain; no language was forced and no transcript was invented."
+  },
+  "video_text": {
+    "status": "no_place_clues",
+    "sampled_frames": 12,
+    "views_per_frame": 3,
+    "place_catalog": "Worldwide GeoNames",
+    "place_matches": 0
+  },
+  "location_attempt": {
+    "mode": "Offline, without supplied date or bounds",
+    "completed": false,
+    "exit_code": 1,
+    "reason": "No cached dates found for this provider",
+    "verified_location": null,
+    "interpretation": "This failure is not a completed flight search or evidence that every possible location was excluded. No residential location search was pursued."
+  },
+  "independent_provider_diagnostic": {
+    "operation": "List available dates without downloading flight archives",
+    "failed_url": "https://api.github.com/repos/adsblol/globe_history_2026/releases?per_page=100&page=11",
+    "status": 422,
+    "response_message": "Only the first 1000 results are available.",
+    "fix": "Keep verified dates, preserve the limiting response provenance, and report incomplete automatic date coverage. Other HTTP errors remain errors."
+  },
+  "workflow_changes": [
+    "Persistent main-panel task status, elapsed time, last update age and cancellation",
+    "Explicit waiting, working, complete, attention and not-run analysis stages",
+    "Optional speech failures allow later stages to continue",
+    "Disconnected workers report an error instead of leaving a permanent spinner",
+    "Language-choice instructions explain the next action"
+  ]
+}
