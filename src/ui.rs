@@ -1455,6 +1455,7 @@ fn file_field_help(
     if ui
         .add(
             egui::TextEdit::singleline(&mut text)
+                .id(egui::Id::new(("file-path", label)))
                 .hint_text("Select a file")
                 .desired_width(f32::INFINITY),
         )
