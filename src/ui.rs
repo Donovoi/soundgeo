@@ -9,9 +9,29 @@ use std::{
 #[path = "speech_ui.rs"]
 mod speech_ui;
 
+// Keep action explanations available when a control is temporarily disabled.
+trait ResponseHelp {
+    fn help(self, text: &str) -> Self;
+}
+impl ResponseHelp for egui::Response {
+    fn help(self, text: &str) -> Self {
+        self.on_hover_text(text).on_disabled_hover_text(text)
+    }
+}
+
 const ACCENT: Color32 = Color32::from_rgb(76, 224, 194);
 const MUTED: Color32 = Color32::from_rgb(147, 164, 188);
 const PANEL: Color32 = Color32::from_rgb(21, 31, 47);
+#[derive(Default)]
+enum MediaFeedback {
+    #[default]
+    None,
+    Working(String),
+    Info(String),
+    Ready(Box<soundgeo::media_url::Download>),
+    Error(String),
+}
+
 enum Message {
     SpeechPrepared(std::sync::Arc<soundgeo::speech::Prepared>),
     SpeechReport(Box<soundgeo::speech::Report>, bool),
@@ -57,6 +77,7 @@ pub struct App {
     media_options: soundgeo::media_url::Options,
     media_listing: Option<soundgeo::media_url::Listing>,
     media_item: usize,
+    media_feedback: MediaFeedback,
 }
 impl App {
     pub fn new(cc: &eframe::CreationContext<'_>, report: Option<Report>) -> Self {
@@ -117,6 +138,7 @@ impl App {
             media_options: Default::default(),
             media_listing: None,
             media_item: 1,
+            media_feedback: MediaFeedback::None,
         }
     }
     fn busy(&self) -> bool {
@@ -128,19 +150,20 @@ impl App {
     }
     fn url_controls(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         ui.collapsing("Or paste a video / page URL", |ui| {
-            if ui.add(egui::TextEdit::singleline(&mut self.media_options.url).hint_text("https://…").desired_width(f32::INFINITY)).changed() { self.media_listing = None; }
+            if ui.add(egui::TextEdit::singleline(&mut self.media_options.url).hint_text("https://…").desired_width(f32::INFINITY)).changed() { self.media_listing = None; self.media_feedback = MediaFeedback::None; }
             let previous = (self.media_options.engine, self.media_options.impersonate);
             egui::ComboBox::from_id_salt("media_engine").selected_text(format!("{:?}", self.media_options.engine)).show_ui(ui, |ui| {
                 use soundgeo::media_url::Engine;
-                ui.selectable_value(&mut self.media_options.engine, Engine::Auto, "Automatic: yt-dlp, then gallery-dl");
-                ui.selectable_value(&mut self.media_options.engine, Engine::YtDlp, "yt-dlp");
-                ui.selectable_value(&mut self.media_options.engine, Engine::GalleryDl, "gallery-dl");
-            });
-            ui.checkbox(&mut self.media_options.impersonate, "Browser impersonation (Chrome)");
-            if previous != (self.media_options.engine, self.media_options.impersonate) { self.media_listing = None; }
-            if ui.add_enabled(!self.media_options.url.trim().is_empty(), egui::Button::new("Find media")).clicked() {
+                ui.selectable_value(&mut self.media_options.engine, Engine::Auto, "Automatic: yt-dlp, then gallery-dl").help("Try yt-dlp first, then gallery-dl if discovery fails or finds no playable media.");
+                ui.selectable_value(&mut self.media_options.engine, Engine::YtDlp, "yt-dlp").help("Use yt-dlp to discover and download clips from the supplied URL.");
+                ui.selectable_value(&mut self.media_options.engine, Engine::GalleryDl, "gallery-dl").help("Use gallery-dl to discover and download clips from the supplied URL.");
+            }).response.help("Choose which downloader finds clips at the supplied URL. Automatic tries yt-dlp, then gallery-dl.");
+            ui.checkbox(&mut self.media_options.impersonate, "Browser impersonation (Chrome)").help("Ask yt-dlp to use Chrome-compatible request behavior for sites that need browser-like requests. Automatic download mode can also retry with this enabled.");
+            if previous != (self.media_options.engine, self.media_options.impersonate) { self.media_listing = None; self.media_feedback = MediaFeedback::None; }
+            if ui.add_enabled(!self.media_options.url.trim().is_empty(), egui::Button::new("Find media")).help("Enter a public video or page URL, then list its downloadable clips. Choose a clip before downloading it. New listings require a connection; offline mode reuses a saved listing.").clicked() {
                 let options = self.media_options.clone(); self.media_listing = None;
                 self.status = "Finding downloadable clips".into();
+                self.media_feedback = MediaFeedback::Working(self.status.clone());
                 self.worker(ctx, move |tx, control| {
                     let progress = |m: &str, p| { let _ = tx.send(Message::Progress(m.into(), p)); };
                     let result = soundgeo::media_url::discover(&options, &control, &progress);
@@ -150,12 +173,13 @@ impl App {
             if let Some(listing) = &self.media_listing {
                 ui.label("Select the recording to download:");
                 for candidate in &listing.candidates {
-                    ui.radio_value(&mut self.media_item, candidate.item, format!("{}: {}", candidate.item, candidate.title));
+                    ui.radio_value(&mut self.media_item, candidate.item, format!("{}: {}", candidate.item, candidate.title)).help("Select this clip from the discovered page results, then choose Download and use selected clip.");
                 }
                 ui.label(RichText::new("Up to 20 clips. Downloaded page metadata is kept as provenance; it does not set the search location or clock.").small().color(MUTED));
-                if ui.button("Download and use selected clip").clicked() {
+                if ui.button("Download and use selected clip").help("Download the selected clip into the media cache and select it as your recording. Then choose Analyze recording to run the analysis.").clicked() {
                     let listing = listing.clone(); let options = self.media_options.clone(); let item = self.media_item;
                     self.status = "Downloading selected clip".into();
+                    self.media_feedback = MediaFeedback::Working(self.status.clone());
                     self.worker(ctx, move |tx, control| {
                         let progress = |m: &str, p| { let _ = tx.send(Message::Progress(m.into(), p)); };
                         let result = soundgeo::media_url::download(&options, &listing, item, &control, &progress);
@@ -164,8 +188,65 @@ impl App {
                 }
             }
             ui.label(RichText::new(format!("Media cache: {}", self.media_options.cache.display())).small().color(MUTED));
-            if ui.small_button("Choose media cache folder…").clicked() && let Some(path) = rfd::FileDialog::new().pick_folder() { self.media_options.cache = path; self.media_listing = None; }
-        });
+            if ui.small_button("Choose media cache folder…").help("Choose where downloaded recordings and their source metadata are stored. Existing cached files stay in their current folder.").clicked() && let Some(path) = rfd::FileDialog::new().pick_folder() { self.media_options.cache = path; self.media_listing = None; self.media_feedback = MediaFeedback::None; }
+        }).header_response.help("Expand to find and download a recording from a public video or page URL.");
+    }
+    fn media_feedback(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
+        match &self.media_feedback {
+            MediaFeedback::None => {}
+            MediaFeedback::Working(message) => {
+                ui.horizontal(|ui| {
+                    ui.spinner();
+                    ui.add(egui::Label::new(message).wrap());
+                });
+                if ui.button("Cancel media task").help("Stop the current clip discovery or download. Partial downloads remain in the cache so a later attempt can resume.").clicked() {
+                    self.control.stop();
+                    self.media_feedback = MediaFeedback::Working("Cancelling media task…".into());
+                }
+            }
+            MediaFeedback::Info(message) => {
+                ui.label(message);
+            }
+            MediaFeedback::Error(message) => {
+                ui.colored_label(
+                    Color32::from_rgb(255, 181, 134),
+                    "Recording download needs attention",
+                );
+                ui.collapsing("Media error details", |ui| { ui.label(message); })
+                    .header_response.help("Show the download error and diagnostic log location. Correct the issue, then retry Find media or Download and use selected clip.");
+            }
+            MediaFeedback::Ready(download) if download.path == self.job.media => {
+                ui.colored_label(ACCENT, "Download complete — recording selected");
+                if let Some(candidate) = download
+                    .source
+                    .candidates
+                    .iter()
+                    .find(|c| c.item == download.selected_item)
+                {
+                    ui.label(&candidate.title);
+                }
+                ui.label(format!(
+                    "{:.1} MB · {:.0} seconds · {}",
+                    download.size as f64 / 1_000_000.,
+                    download.duration_s,
+                    if download.has_audio {
+                        "audio available"
+                    } else {
+                        "no audio stream"
+                    }
+                ));
+                if download.has_audio {
+                    ui.label("Set the flight-data options, then start analysis.");
+                    if ui.add_enabled(!self.busy(), egui::Button::new("Analyze downloaded recording"))
+                        .help("Start the same analysis as Analyze recording using this selected download and your current flight-data, video-clue and speech settings. Wait for any current task to finish first.").clicked() {
+                        self.run(ctx);
+                    }
+                } else {
+                    ui.label("Use Read video clues only to inspect visible text. Location analysis needs audio.");
+                }
+            }
+            MediaFeedback::Ready(_) => {}
+        }
     }
     fn worker(
         &mut self,
@@ -304,6 +385,10 @@ impl App {
                     }
                 }
                 Message::MediaListing(listing) => {
+                    self.media_feedback = MediaFeedback::Info(format!(
+                        "Found {} clip(s). Select one above, then download it.",
+                        listing.candidates.len()
+                    ));
                     self.media_item = listing.candidates.first().map(|c| c.item).unwrap_or(1);
                     self.media_listing = Some(*listing);
                     self.status = "Choose a clip, then download it".into();
@@ -311,7 +396,7 @@ impl App {
                     self.receiver = None;
                 }
                 Message::MediaDownloaded(download) => {
-                    self.job.media = download.path;
+                    self.job.media = download.path.clone();
                     self.visual_report = None;
                     self.visual_error = None;
                     self.speech.invalidate();
@@ -321,6 +406,7 @@ impl App {
                         "Video downloaded; no audio stream, so only video clues are available"
                     }
                     .into();
+                    self.media_feedback = MediaFeedback::Ready(download);
                     self.progress = 1.;
                     self.receiver = None;
                 }
@@ -357,6 +443,9 @@ impl App {
                     self.receiver = None;
                 }
                 Message::Progress(m, p) => {
+                    if let MediaFeedback::Working(message) = &mut self.media_feedback {
+                        message.clone_from(&m);
+                    }
                     self.status = m;
                     self.progress = p;
                 }
@@ -395,6 +484,15 @@ impl App {
                     self.receiver = None;
                 }
                 Message::Error(error) => {
+                    if matches!(self.media_feedback, MediaFeedback::Working(_)) {
+                        self.media_feedback = if error == "Cancelled" {
+                            MediaFeedback::Info(
+                                "Media task cancelled. You can retry from the URL controls.".into(),
+                            )
+                        } else {
+                            MediaFeedback::Error(error.clone())
+                        };
+                    }
                     self.status = if error == "Cancelled" {
                         "Cancelled"
                     } else {
@@ -424,16 +522,28 @@ impl App {
             .color(MUTED),
         );
         ui.add_space(12.);
-        ui.add_enabled_ui(!self.busy(),|ui|{
+        ui.add_enabled_ui(!self.busy(), |ui| {
             ui.label(RichText::new("1  Video or audio").strong());
-            file_field(ui,&mut self.job.media,"Choose recording…",&["mp4","mov","mkv","webm","avi","wav","mp3","flac","m4a"]);
+            file_field(
+                ui,
+                &mut self.job.media,
+                "Choose recording…",
+                &[
+                    "mp4", "mov", "mkv", "webm", "avi", "wav", "mp3", "flac", "m4a",
+                ],
+            );
             self.url_controls(ui, ctx);
+        });
+        // Keep download feedback and cancellation visible beside the URL controls,
+        // outside the disabled input group while a worker is running.
+        self.media_feedback(ui, ctx);
+        ui.add_enabled_ui(!self.busy(),|ui|{
             self.video_controls(ui, ctx);
             ui.label(RichText::new("You can also drop a file into this window.").small().color(MUTED));
             ui.add_space(6.);ui.label(RichText::new("2  Historical flight data").strong());
-            ui.checkbox(&mut self.job.offline, "Offline mode: use cached data only");
+            ui.checkbox(&mut self.job.offline, "Offline mode: use cached data only").help("Use local recordings, prepared flight data and cached models. Missing downloads require returning online and turning this option off.");
             let mut automatic = self.job.archive.is_some();
-            if ui.checkbox(&mut automatic,"Download missing flight data automatically").changed() {
+            if ui.checkbox(&mut automatic,"Download missing flight data automatically").help("Find and prepare missing historical flight data during analysis. Turn this off to choose your own flight-data file or archive folder.").changed() {
                 self.job.archive = automatic.then(|| soundgeo::archive::ArchiveRequest {date_from:self.date.clone(),date_to:None,cache:PathBuf::from("flight-cache"),provider:Default::default()});
             }
             if let Some(request) = &mut self.job.archive {
@@ -445,31 +555,31 @@ impl App {
                     ArchiveProvider::WebtrakChicago => "Chicago: public airport replay",
                     ArchiveProvider::WebtrakLax => "LAX: public airport replay",
                 }).show_ui(ui,|ui|{
-                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbLol,"Worldwide: ADSB.lol");
-                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbExchangeSample,"Free evaluation sample: first of each month");
-                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbExchangeSampleHires,"Free evaluation sample: high resolution");
-                    ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakChicago,"Chicago: public airport replay");
-                    ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakLax,"LAX: public airport replay");
-                });
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbLol,"Worldwide: ADSB.lol").help("Search worldwide historical ADSB.lol flight data for the selected dates. Coverage depends on received aircraft positions.");
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbExchangeSample,"Free evaluation sample: first of each month").help("Use the ADS-B Exchange monthly evaluation sample. Select the first day of a month and a search area; discovery uses five-minute snapshots.");
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::AdsbExchangeSampleHires,"Free evaluation sample: high resolution").help("Use high-resolution tracks from the monthly evaluation sample. Select the first day of a month and a search area; discovery can still miss flights between snapshots.");
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakChicago,"Chicago: public airport replay").help("Use public airport-replay tracks around Chicago. Choose dates and a search area covered by that source.");
+                    ui.selectable_value(&mut request.provider,ArchiveProvider::WebtrakLax,"LAX: public airport replay").help("Use public airport-replay tracks around Los Angeles International Airport. Choose dates and a search area covered by that source.");
+                }).response.help("Choose the historical flight-data source. Available dates, geographic coverage and download size differ by source.");
                 ui.label(RichText::new("Optional date range. Blank dates find the provider's available days online. Offline mode searches prepared dates.").small().color(MUTED));
                 if request.provider.sample_resolution().is_some() {
                     ui.label(RichText::new("Use the first day of a month and set a search area below. This free sample is for testing and evaluation. It can miss flights between five-minute discovery snapshots.").small().color(MUTED));
-                    ui.hyperlink_to("Free sample coverage and terms", "https://www.adsbexchange.com/data-products/sample-data/");
+                    ui.hyperlink_to("Free sample coverage and terms", "https://www.adsbexchange.com/data-products/sample-data/").help("Open the data provider website to review evaluation-sample coverage and usage terms.");
                 }
                 ui.add(egui::TextEdit::singleline(&mut request.date_from).hint_text("First date, or blank to find dates").desired_width(f32::INFINITY));
                 let mut several = request.date_to.is_some();
-                if ui.checkbox(&mut several,"Search several possible dates").changed(){request.date_to=several.then(String::new);}
+                if ui.checkbox(&mut several,"Search several possible dates").help("Search an inclusive range of possible recording dates. Enter the first and last UTC dates; a wider range increases download and search work.").changed(){request.date_to=several.then(String::new);}
                 if let Some(to)=&mut request.date_to{ui.add(egui::TextEdit::singleline(to).hint_text("Last date, inclusive (YYYY-MM-DD)").desired_width(f32::INFINITY));}
                 let mut cache=request.cache.display().to_string();
                 if ui.text_edit_singleline(&mut cache).changed(){request.cache=PathBuf::from(cache);}
-                if ui.small_button("Choose cache folder…").clicked() && let Some(path)=rfd::FileDialog::new().pick_folder(){request.cache=path;}
+                if ui.small_button("Choose cache folder…").help("Choose where historical flight downloads and prepared data are stored. Reuse this folder for offline analysis.").clicked() && let Some(path)=rfd::FileDialog::new().pick_folder(){request.cache=path;}
             } else {
             file_field(ui,&mut self.job.tracks,"Choose flight data…",&["csv","json","gz","aa","tar"]);
-            if ui.small_button("Or choose an archive folder").clicked()&& let Some(p)=rfd::FileDialog::new().pick_folder(){self.job.tracks=p;}
+            if ui.small_button("Or choose an archive folder").help("Select a folder containing local flight archives or prepared flight data to search with automatic downloads turned off.").clicked()&& let Some(p)=rfd::FileDialog::new().pick_folder(){self.job.tracks=p;}
             }
-            let prepare_data = self.job.archive.is_some() && ui.add_enabled(!self.job.offline, egui::Button::new("Prepare data for offline use")).clicked();
+            let prepare_data = self.job.archive.is_some() && ui.add_enabled(!self.job.offline, egui::Button::new("Prepare data for offline use")).help("Download and prepare flight data for the selected provider, dates and search area before going offline. Turn off Offline mode to enable this action.").clicked();
             let refresh_gaps = self.job.archive.as_ref().is_some_and(|request| request.provider.sample_resolution().is_some())
-                && ui.add_enabled(!self.job.offline, egui::Button::new("Retry unavailable source files")).clicked();
+                && ui.add_enabled(!self.job.offline, egui::Button::new("Retry unavailable source files")).help("Retry flight-source files previously recorded as unavailable, then update the prepared data. Requires a connection and Offline mode turned off.").clicked();
             if prepare_data || refresh_gaps {
                 let mut job = self.job.clone();
                 job.bounds = self.use_bounds.then_some(self.bounds);
@@ -484,15 +594,15 @@ impl App {
             egui::CollapsingHeader::new("Download a public flight archive").show(ui,|ui|{
                 ui.label("Choose a possible recording date. Each day is several GB; no API key is needed.");
                 ui.add(egui::TextEdit::singleline(&mut self.date).hint_text("YYYY-MM-DD").desired_width(f32::INFINITY));
-                if ui.button("Download day…").clicked(){
+                if ui.button("Download day…").help("Enter a UTC date as YYYY-MM-DD, then choose a folder for that full day of ADSB.lol flight data. Each day can be several GB. Requires a connection.").clicked(){
                     if chrono::NaiveDate::parse_from_str(&self.date,"%Y-%m-%d").is_err(){self.error=Some("Enter an archive date in YYYY-MM-DD format.".into());}
                     else if let Some(dir)=rfd::FileDialog::new().set_title("Choose flight archive cache").pick_folder(){
                         let date=self.date.clone();self.status="Downloading flight archive".into();
                         self.worker(ctx,move|tx,control|{let result=soundgeo::data::download_day(&date,&dir,&control,&|m,p|{let _=tx.send(Message::Progress(m.into(),p));});let _=tx.send(match result{Ok(p)=>Message::Downloaded(p),Err(e)=>Message::Error(format!("{e:#}"))});});
                     }
                 }
-                ui.hyperlink_to("Archive coverage and data licence","https://www.adsb.lol/docs/open-data/historical");
-            });
+                ui.hyperlink_to("Archive coverage and data licence","https://www.adsb.lol/docs/open-data/historical").help("Open ADSB.lol documentation for historical-data coverage and licensing.");
+            }).header_response.help("Expand to download a complete day of historical flight data into a folder you choose.");
             ui.add_space(6.);ui.label(RichText::new("3  Recording time").strong());
             ui.add(egui::TextEdit::singleline(&mut self.clock).hint_text("Unknown — infer from flyovers").desired_width(f32::INFINITY));
             ui.label(RichText::new("Optional: 2026-09-08T10:00:00Z. With no time, two separate flyovers are much more useful.").small().color(MUTED));
@@ -500,47 +610,47 @@ impl App {
             ui.add_space(6.);
             egui::CollapsingHeader::new("Search area & terrain").show(ui,|ui|{
                 self.aircraft_controls(ui,ctx);
-                ui.checkbox(&mut self.use_bounds,"Limit the search area");
+                ui.checkbox(&mut self.use_bounds,"Limit the search area").help("Restrict candidate locations to the south, north, west and east bounds entered below. Use independently supported bounds so the true location is not excluded.");
                 if self.use_bounds {egui::Grid::new("bounds").num_columns(2).show(ui,|ui|{
                     for (label,value) in [("South",&mut self.bounds.south),("North",&mut self.bounds.north),("West",&mut self.bounds.west),("East",&mut self.bounds.east)]{ui.label(label);ui.add(egui::DragValue::new(value).speed(0.001).max_decimals(5));ui.end_row();}
                 });}else{ui.label("Uses the flight-data extent. Narrow a large archive for a finer search.");}
                 ui.horizontal(|ui|{ui.label("Fallback elevation (m)");ui.add(egui::DragValue::new(&mut self.job.ground_m).range(-500. ..=9000.));});
                 ui.label("Fallback height datum");
                 ui.horizontal(|ui| {
-                    ui.selectable_value(&mut self.job.ground_datum, soundgeo::geo::ElevationDatum::Egm96, "Sea level (EGM96)");
-                    ui.selectable_value(&mut self.job.ground_datum, soundgeo::geo::ElevationDatum::Wgs84Ellipsoid, "WGS84 ellipsoid");
+                    ui.selectable_value(&mut self.job.ground_datum, soundgeo::geo::ElevationDatum::Egm96, "Sea level (EGM96)").help("Interpret the fallback elevation as height above mean sea level using the EGM96 datum.");
+                    ui.selectable_value(&mut self.job.ground_datum, soundgeo::geo::ElevationDatum::Wgs84Ellipsoid, "WGS84 ellipsoid").help("Interpret the fallback elevation as height above the WGS84 reference ellipsoid, as used by ellipsoidal GPS heights.");
                 });
                 ui.checkbox(&mut self.job.smooth_tracks, "Reduce flight-position noise")
-                    .on_hover_text("Centered 10-second local linear fit. Keeps track endpoints and timestamps; can blur rapid maneuvers.");
-                if ui.checkbox(&mut self.job.download_terrain,"Download missing terrain from free sources").changed() && self.job.download_terrain && self.job.terrain.is_none() {
+                    .help("Centered 10-second local linear fit. Keeps track endpoints and timestamps; can blur rapid maneuvers.");
+                if ui.checkbox(&mut self.job.download_terrain,"Download missing terrain from free sources").help("Fetch missing elevation tiles for the chosen search area and cache them locally. Requires a connection; heights describe the ground, not microphone height.").changed() && self.job.download_terrain && self.job.terrain.is_none() {
                     self.job.terrain=Some(PathBuf::from("terrain-cache"));
                 }
                 if self.job.download_terrain {
                     ui.label("Set a search area. Terrain gives ground height, not microphone height above ground.");
-                    ui.hyperlink_to("Mapzen Terrain Tiles and provider credits", "https://github.com/tilezen/joerd/blob/master/docs/attribution.md");
+                    ui.hyperlink_to("Mapzen Terrain Tiles and provider credits", "https://github.com/tilezen/joerd/blob/master/docs/attribution.md").help("Open the terrain-data provider credits and attribution requirements.");
                 }
-                if ui.button("Choose terrain folder…").clicked() && let Some(path)=rfd::FileDialog::new().pick_folder(){self.job.terrain=Some(path);}
-                if let Some(p)=&self.job.terrain{ui.label(RichText::new(p.display().to_string()).small());if ui.small_button("Clear terrain").clicked(){self.job.terrain=None;self.job.download_terrain=false;}}
-            });
+                if ui.button("Choose terrain folder…").help("Select a folder containing elevation tiles, or a cache for terrain downloads. Terrain supplies ground height for the sound-travel calculation.").clicked() && let Some(path)=rfd::FileDialog::new().pick_folder(){self.job.terrain=Some(path);}
+                if let Some(p)=&self.job.terrain{ui.label(RichText::new(p.display().to_string()).small());if ui.small_button("Clear terrain").help("Stop using the selected terrain folder and turn off terrain downloads. Use the fallback elevation instead. Cached files are kept.").clicked(){self.job.terrain=None;self.job.download_terrain=false;}}
+            }).header_response.help("Expand to set geographic bounds, aircraft filters, quiet-gap handling and elevation data.");
             ui.label("Sound matching method");
             egui::ComboBox::from_id_salt("analysis-method")
                 .selected_text(match self.job.analysis_method {soundgeo::AnalysisMethod::Doppler=>"Doppler curves",soundgeo::AnalysisMethod::PassageTiming=>"Flight passage timing"})
                 .show_ui(ui,|ui| {
-                    ui.selectable_value(&mut self.job.analysis_method,soundgeo::AnalysisMethod::Doppler,"Doppler curves");
-                    ui.selectable_value(&mut self.job.analysis_method,soundgeo::AnalysisMethod::PassageTiming,"Flight passage timing");
-                });
+                    ui.selectable_value(&mut self.job.analysis_method,soundgeo::AnalysisMethod::Doppler,"Doppler curves").help("Match descending aircraft-tone pitch curves against flight tracks, fitting sound travel time and a shared recording clock.");
+                    ui.selectable_value(&mut self.job.analysis_method,soundgeo::AnalysisMethod::PassageTiming,"Flight passage timing").help("Compare sound-peak times with predicted flight passages. Set a search area and use at least eight minutes of continuous audio; shuffled controls screen for a timing signal.");
+                }).response.help("Choose pitch-curve matching or flight-passage timing. Each method has different recording and search-area requirements.");
             if self.job.analysis_method == soundgeo::AnalysisMethod::PassageTiming {
                 ui.label("Set a search area. Use at least eight minutes of continuous audio. The app checks 19 shuffled-sound controls before it reports a timing signal.");
                 ui.label("Timing results are possible locations. Their accuracy is not guaranteed.");
             }
             egui::CollapsingHeader::new("Advanced audio & search").show(ui,|ui|{
                 if self.job.analysis_method == soundgeo::AnalysisMethod::Doppler {
-                ui.checkbox(&mut self.job.fast_flyovers,"Also detect short flyovers (500–3900 Hz)");
+                ui.checkbox(&mut self.job.fast_flyovers,"Also detect short flyovers (500–3900 Hz)").help("Add a detector for short, higher-frequency flyovers to the regular Doppler scan. Lower contrast settings can introduce more false detections.");
                 if self.job.fast_flyovers {ui.horizontal(|ui|{ui.label("Short-pass contrast (dB)");ui.add(egui::DragValue::new(&mut self.job.fast_min_snr_db).range(6. ..=60.));});}
                 use soundgeo::search::SearchMode;
                 egui::ComboBox::from_id_salt("search-mode").selected_text(match self.job.search_mode{SearchMode::Auto=>"Automatic search method",SearchMode::RegionalGrid=>"Regional grid",SearchMode::FlightCorridors=>"Indexed flight corridors"}).show_ui(ui,|ui|{
-                    ui.selectable_value(&mut self.job.search_mode,SearchMode::Auto,"Automatic search method");ui.selectable_value(&mut self.job.search_mode,SearchMode::FlightCorridors,"Indexed flight corridors");ui.selectable_value(&mut self.job.search_mode,SearchMode::RegionalGrid,"Regional grid");
-                });
+                    ui.selectable_value(&mut self.job.search_mode,SearchMode::Auto,"Automatic search method").help("Let SoundGeo choose the location-search method for the available flight data and search area.");ui.selectable_value(&mut self.job.search_mode,SearchMode::FlightCorridors,"Indexed flight corridors").help("Generate location hypotheses near indexed flight corridors, then evaluate how well their predicted sounds match the recording.");ui.selectable_value(&mut self.job.search_mode,SearchMode::RegionalGrid,"Regional grid").help("Evaluate locations on a grid inside the search area. Large areas or finer spacing can require more search work.");
+                }).response.help("Choose how location hypotheses are generated, or leave the choice automatic.");
                 egui::Grid::new("advanced").num_columns(2).show(ui,|ui|{
                     for (label,value) in [("Low frequency (Hz)",&mut self.job.min_hz),("High frequency (Hz)",&mut self.job.max_hz),("Min contrast (dB)",&mut self.job.min_snr_db),("Temperature (°C)",&mut self.job.temperature_c),("Grid target (m)",&mut self.job.grid_m)]{ui.label(label);ui.add(egui::DragValue::new(value).speed(1.));ui.end_row();}
                     ui.label("Media clock drift limit (ppm)");ui.add(egui::DragValue::new(&mut self.job.max_clock_drift_ppm).range(0. ..=5000.));ui.end_row();
@@ -548,9 +658,9 @@ impl App {
                     ui.label("Hypotheses per batch");ui.add(egui::DragValue::new(&mut self.job.max_hypotheses).range(100..=100_000_000));ui.end_row();
                     ui.label("Flight-corridor workers");ui.horizontal(|ui|{
                         let mut automatic=self.job.search_threads.is_none();
-                        if ui.checkbox(&mut automatic,"Automatic").changed(){self.job.search_threads=(!automatic).then_some(4);}
+                        if ui.checkbox(&mut automatic,"Automatic").help("Let SoundGeo use up to four flight-corridor workers. Clear this option to choose the worker limit yourself; more workers can use more CPU.").changed(){self.job.search_threads=(!automatic).then_some(4);}
                         if let Some(workers)=&mut self.job.search_threads{ui.add(egui::DragValue::new(workers).range(1..=std::thread::available_parallelism().map_or(1,|n|n.get())));}
-                    }).response.on_hover_text("Automatic uses up to 4 workers. A higher limit can use more CPU capacity. Searches with terrain tiles use one worker.");ui.end_row();
+                    }).response.help("Automatic uses up to 4 workers. A higher limit can use more CPU capacity. Searches with terrain tiles use one worker.");ui.end_row();
                 });
                 } else {
                     egui::Grid::new("timing-options").num_columns(2).show(ui,|ui| {
@@ -560,18 +670,18 @@ impl App {
                         ui.label("Temperature (°C)");ui.add(egui::DragValue::new(&mut self.job.temperature_c).range(-50. ..=60.));ui.end_row();
                     });
                 }
-                if ui.button("Choose FFmpeg executable…").clicked(){self.job.ffmpeg=rfd::FileDialog::new().pick_file();}
-            });
+                if ui.button("Choose FFmpeg executable…").help("Select an FFmpeg executable to decode recordings. The Windows download includes FFmpeg; an override is normally unnecessary.").clicked(){self.job.ffmpeg=rfd::FileDialog::new().pick_file();}
+            }).header_response.help("Expand to adjust sound detection, location-search settings, CPU use and the media decoder.");
             ui.add_space(10.);
             self.speech_controls(ui, ctx);
-            if ui.add_sized([ui.available_width(),42.],egui::Button::new(RichText::new("Analyze recording").strong().color(Color32::from_rgb(9,26,30))).fill(ACCENT)).clicked(){self.run(ctx);}
-            if ui.add_sized([ui.available_width(),34.],egui::Button::new("Try a synthetic demo")).clicked(){self.load_demo(ctx);}
+            if ui.add_sized([ui.available_width(),42.],egui::Button::new(RichText::new("Analyze recording").strong().color(Color32::from_rgb(9,26,30))).fill(ACCENT)).help("Analyze the selected recording against the flight data. Checked video-clue and speech options run as stages of the same analysis, with progress shown below.").clicked(){self.run(ctx);}
+            if ui.add_sized([ui.available_width(),34.],egui::Button::new("Try a synthetic demo")).help("Create and select a small generated recording with matching flight tracks. Then click Analyze recording to try a known synthetic example.").clicked(){self.load_demo(ctx);}
         });
         if self.busy() {
             ui.add_space(12.);
             ui.add(egui::ProgressBar::new(self.progress).animate(true));
             ui.label(&self.status);
-            if ui.button("Cancel").clicked() {
+            if ui.button("Cancel").help("Request that the current task stop and skip remaining analysis stages. Cancellation may take a moment; the original recording is kept.").clicked() {
                 self.control.stop();
                 self.status = "Cancelling…".into();
             }
@@ -595,24 +705,24 @@ impl App {
                     &mut self.job.aircraft_filter,
                     AircraftFilter::PropellerOrUnknown,
                     "Propellers + unknown types",
-                );
+                ).help("Keep known propeller aircraft and aircraft whose type is unknown. A type catalog improves classification.");
                 ui.selectable_value(
                     &mut self.job.aircraft_filter,
                     AircraftFilter::PropellerOnly,
                     "Known propellers only",
-                );
+                ).help("Keep only aircraft classified as propeller-driven by the type catalog. Missing or incorrect type data can exclude a relevant flight.");
                 ui.selectable_value(
                     &mut self.job.aircraft_filter,
                     AircraftFilter::All,
                     "All aircraft",
-                );
-            });
-        if ui.button("Choose aircraft type catalog…").clicked() {
+                ).help("Keep aircraft of every known and unknown type in the flight search.");
+            }).response.help("Choose which aircraft types to include. Known-type filters use the aircraft-type catalog.");
+        if ui.button("Choose aircraft type catalog…").help("Select an existing aircraft-type JSON catalog to distinguish propeller aircraft from other or unknown types.").clicked() {
             self.job.type_catalog = rfd::FileDialog::new()
                 .add_filter("Type catalog", &["json"])
                 .pick_file();
         }
-        if ui.button("Download type catalog…").clicked()
+        if ui.button("Download type catalog…").help("Download an aircraft-type catalog, save it to the file you choose, and use it for aircraft filtering. Requires a connection.").clicked()
             && let Some(path) = rfd::FileDialog::new()
                 .set_file_name("aircraft-types.json")
                 .save_file()
@@ -642,37 +752,37 @@ impl App {
                     &mut self.job.silence_mode,
                     SilenceMode::SupportingEvidence,
                     "Use as supporting evidence",
-                );
+                ).help("Record conflicts between predicted flyovers and quiet audio intervals as supporting evidence for review.");
                 ui.selectable_value(
                     &mut self.job.silence_mode,
                     SilenceMode::Strict,
                     "Reject conflicting flyovers",
-                );
+                ).help("Reject candidates with conflicting predicted flyovers during quiet intervals. This assumes closer known propellers would be audible and can reject a true location.");
                 ui.selectable_value(
                     &mut self.job.silence_mode,
                     SilenceMode::Off,
                     "Ignore quiet gaps",
-                );
-            });
+                ).help("Do not use quiet intervals between detected flyovers to evaluate candidate locations.");
+            }).response.help("Choose how quiet gaps between flyovers affect candidate evaluation. Strict rejection makes stronger audibility assumptions.");
         ui.label(RichText::new("Strict mode assumes closer known propellers would be audible. It can reject the true location.").small().color(MUTED));
         ui.separator();
     }
     fn video_controls(&mut self, ui: &mut egui::Ui, ctx: &egui::Context) {
         egui::CollapsingHeader::new("Video clues (optional)").show(ui, |ui| {
             ui.checkbox(&mut self.visual_enabled, "Read video clues during analysis")
-                .on_hover_text("When checked, Analyze recording also reads visible place names and clocks. Missing GeoNames place data downloads automatically; OCR runs locally. The findings appear alongside the location results for you to review.");
+                .help("When checked, Analyze recording also reads visible place names and clocks. Missing GeoNames place data downloads automatically; OCR runs locally. The findings appear alongside the location results for you to review.");
             ui.label("Reads visible names and clocks locally. Place data is downloaded once and reused.");
             ui.horizontal(|ui| {
                 ui.label("Country code, or ALL");
                 ui.add_enabled(self.visual_options.gazetteer.as_os_str().is_empty(), egui::TextEdit::singleline(&mut self.visual_country).desired_width(65.))
-                    .on_hover_text("ALL downloads worldwide GeoNames data (a large download). Use a two-letter code such as GB, US or AU for a smaller country catalog. This selects which visible names can match; it does not set the location-search area.")
+                    .help("ALL downloads worldwide GeoNames data (a large download). Use a two-letter code such as GB, US or AU for a smaller country catalog. This selects which visible names can match; it does not set the location-search area.")
                     .on_disabled_hover_text("A custom GeoNames file is selected. Use automatic place data to select a country again.");
             });
             if self.visual_options.gazetteer.as_os_str().is_empty() && self.visual_country.trim().eq_ignore_ascii_case("ALL") {
                 ui.label(RichText::new("Worldwide data is large. Choose a country above if known.").small().color(MUTED));
             }
             if ui.button("Read video clues only")
-                .on_hover_text("Run the video-text scan now, using the same automatic place-data setup. This works without flight data and does not run geolocation or speech transcription. Use Analyze recording with the checkbox for the combined workflow.")
+                .help("Run the video-text scan now, using the same automatic place-data setup. This works without flight data and does not run geolocation or speech transcription. Use Analyze recording with the checkbox for the combined workflow.")
                 .clicked() {
                 let options = self.video_options();
                 let country = self.visual_country.clone();
@@ -688,10 +798,10 @@ impl App {
                 ui.label("The Windows download includes the OCR tools. Override paths only if needed.");
                 file_field_help(ui, &mut self.visual_options.gazetteer, "Choose GeoNames .txt…", &["txt"],
                     "Select an already extracted GeoNames place-name database. This overrides automatic downloads and the country selection. Leave the field empty for automatic setup.");
-                if ui.button("Use automatic place data").on_hover_text("Clear the custom GeoNames file and use the selected country's verified cache. Missing data downloads when you run video clues. No files are deleted.").clicked() {
+                if ui.button("Use automatic place data").help("Clear the custom GeoNames file and use the selected country's verified cache. Missing data downloads when you run video clues. No files are deleted.").clicked() {
                     self.visual_options.gazetteer = PathBuf::new();
                 }
-                if ui.button("Prepare place data…").on_hover_text("Prepare the selected country's GeoNames data in a folder you choose, for example before going offline. Cached data is verified; missing data requires a connection. The prepared file becomes the custom database for video clues.").clicked()
+                if ui.button("Prepare place data…").help("Prepare the selected country's GeoNames data in a folder you choose, for example before going offline. Cached data is verified; missing data requires a connection. The prepared file becomes the custom database for video clues.").clicked()
                     && let Some(folder) = rfd::FileDialog::new().pick_folder() {
                     let country = self.visual_country.clone();
                     self.worker(ctx, move |tx, control| {
@@ -704,17 +814,17 @@ impl App {
                 file_field_help(ui, &mut path, "Choose Tesseract…", &["exe"],
                     "Optional: select the Tesseract OCR executable, not an installer. An empty field uses the bundled tool or the system installation. Windows users normally leave this empty.");
                 self.visual_options.tesseract = (!path.as_os_str().is_empty()).then_some(path);
-                if ui.small_button("Choose Tesseract language folder…").on_hover_text("Optional: select the tessdata folder containing eng.traineddata. Video OCR currently uses English; this does not select the speech transcription or translation language.").clicked()
+                if ui.small_button("Choose Tesseract language folder…").help("Optional: select the tessdata folder containing eng.traineddata. Video OCR currently uses English; this does not select the speech transcription or translation language.").clicked()
                     && let Some(folder) = rfd::FileDialog::new().pick_folder() {
                     self.visual_options.tessdata = Some(folder);
                 }
                 if let Some(path) = &self.visual_options.tessdata { ui.label(path.display().to_string()); }
-                if ui.button("Use default OCR tools").on_hover_text("Clear the executable and language-folder overrides. Use SoundGeo's bundled Tesseract and English data, or the system installation on other platforms. No files are deleted.").clicked() {
+                if ui.button("Use default OCR tools").help("Clear the executable and language-folder overrides. Use SoundGeo's bundled Tesseract and English data, or the system installation on other platforms. No files are deleted.").clicked() {
                     self.visual_options.tesseract = None;
                     self.visual_options.tessdata = None;
                 }
-            });
-        });
+            }).header_response.help("Expand to override the automatic place-data cache or bundled OCR tools, or prepare data before going offline.");
+        }).header_response.help("Expand to include local reading of visible place names and clocks, or run a separate video-text scan.");
     }
     fn video_options(&self) -> soundgeo::visual::Options {
         soundgeo::visual::Options {
@@ -739,7 +849,7 @@ impl App {
             }
             for place in report.places.iter().take(25) {
                 ui.horizontal(|ui| {
-                    ui.hyperlink_to(&place.name, &place.source_url);
+                    ui.hyperlink_to(&place.name, &place.source_url).help("Open the GeoNames source for this matched place name in your browser. A visible name does not establish the camera position.");
                     ui.label(format!(
                         "{:.6}, {:.6} · {}",
                         place.latitude, place.longitude, place.country
@@ -752,8 +862,8 @@ impl App {
                     ui.label(format!("{:.1}s · {}", frame.offset_s, frame.view));
                     ui.label(&frame.text);
                 }
-            });
-            if ui.button("Save video clue report…").on_hover_text("Save the visible text, frame times, all matching places and data-source hashes as JSON. This is a separate report from the location analysis.").clicked()
+            }).header_response.help("Expand to inspect the text read from sampled video frames and its time in the recording.");
+            if ui.button("Save video clue report…").help("Save the visible text, frame times, all matching places and data-source hashes as JSON. This is a separate report from the location analysis.").clicked()
                 && let Some(path) = rfd::FileDialog::new()
                     .set_file_name("video-clues.json")
                     .save_file()
@@ -839,7 +949,7 @@ impl App {
                 });
             });
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
-                if ui.button("Export report…").clicked()
+                if ui.button("Export report…").help("Save the location-analysis results, candidates and matching evidence as a JSON report. Speech and video clues have their own export buttons.").clicked()
                     && let Some(p) = rfd::FileDialog::new()
                         .add_filter("JSON report", &["json"])
                         .set_file_name("soundgeo-report.json")
@@ -885,9 +995,9 @@ impl App {
             return;
         }
         ui.horizontal(|ui| {
-            ui.selectable_value(&mut self.tab, 0, "Locations");
-            ui.selectable_value(&mut self.tab, 1, "Doppler evidence");
-            ui.selectable_value(&mut self.tab, 2, "Limitations");
+            ui.selectable_value(&mut self.tab, 0, "Locations").help("Show candidate coordinates, the location plot and competing location fits.");
+            ui.selectable_value(&mut self.tab, 1, "Doppler evidence").help("Inspect the detected pitch curves and how predicted aircraft tones fit them.");
+            ui.selectable_value(&mut self.tab, 2, "Limitations").help("Read the assumptions and limitations that affect interpretation of these location results.");
         });
         ui.separator();
         if self.tab == 0 {
@@ -948,8 +1058,8 @@ impl App {
                                     current.latitude,
                                     current.longitude
                                 ),
-                            );
-                            if ui.small_button("Copy coordinates").clicked() {
+                            ).help("Open this candidate location in your web browser on OpenStreetMap. Opening the map does not verify the location.");
+                            if ui.small_button("Copy coordinates").help("Copy this candidate latitude and longitude to the clipboard in decimal degrees. A candidate still needs independent verification.").clicked() {
                                 ctx.copy_text(format!(
                                     "{:.6}, {:.6}",
                                     current.latitude, current.longitude
@@ -971,7 +1081,7 @@ impl App {
                                 c.longitude,
                                 c.relative_error_percent
                             ),
-                        )
+                        ).help("Select this candidate to inspect its coordinates and matching evidence. Compare competing candidates before drawing a location conclusion.")
                         .clicked()
                     {
                         self.selected = i;
@@ -1082,7 +1192,7 @@ impl eframe::App for App {
                     ui.hyperlink_to(
                         "Method inspiration",
                         "https://www.youtube.com/watch?v=UytYrhYLOKI",
-                    );
+                    ).help("Open the source YouTube video that inspired the aircraft-sound location method.");
                 });
             });
         });
@@ -1121,7 +1231,15 @@ fn file_field(ui: &mut egui::Ui, path: &mut PathBuf, label: &str, extensions: &[
         path,
         label,
         extensions,
-        "Enter a file path or use the button to choose a file.",
+        match label {
+            "Choose recording…" => {
+                "Select a video or audio recording from this computer. Then choose Analyze recording; the original file is kept."
+            }
+            "Choose flight data…" => {
+                "Select local historical flight data or an archive to compare with the recording. Use the archive-folder button for a directory of data."
+            }
+            _ => "Enter a file path or use the button to choose a file.",
+        },
     );
 }
 fn file_field_help(
@@ -1138,12 +1256,12 @@ fn file_field_help(
                 .hint_text("Select a file")
                 .desired_width(f32::INFINITY),
         )
-        .on_hover_text(help)
+        .help(help)
         .changed()
     {
         *path = PathBuf::from(text);
     }
-    if ui.button(label).on_hover_text(help).clicked()
+    if ui.button(label).help(help).clicked()
         && let Some(p) = rfd::FileDialog::new()
             .add_filter("Supported files", extensions)
             .pick_file()
@@ -1206,8 +1324,8 @@ fn timing_results(
                             "https://www.openstreetmap.org/?mlat={}&mlon={}#map=15/{}/{}",
                             region.latitude, region.longitude, region.latitude, region.longitude
                         ),
-                    );
-                    if ui.small_button("Copy area center").clicked() {
+                    ).help("Open the suggested area center in your web browser on OpenStreetMap.");
+                    if ui.small_button("Copy area center").help("Copy the suggested area center latitude and longitude to the clipboard. The area spread is not a verified location-error bound.").clicked() {
                         ctx.copy_text(format!("{:.6}, {:.6}", region.latitude, region.longitude));
                     }
                 });
@@ -1232,8 +1350,8 @@ fn timing_results(
                 ui.label(format!("Spread of competitive search locations: {:.0} m. This is not an accuracy radius.",spread));
             }
             ui.horizontal(|ui| {
-                ui.hyperlink_to("Open in OpenStreetMap",format!("https://www.openstreetmap.org/?mlat={}&mlon={}#map=15/{}/{}",candidate.latitude,candidate.longitude,candidate.latitude,candidate.longitude));
-                if ui.small_button("Copy coordinates").clicked() {ctx.copy_text(format!("{:.6}, {:.6}",candidate.latitude,candidate.longitude));}
+                ui.hyperlink_to("Open in OpenStreetMap",format!("https://www.openstreetmap.org/?mlat={}&mlon={}#map=15/{}/{}",candidate.latitude,candidate.longitude,candidate.latitude,candidate.longitude)).help("Open this candidate location in your web browser on OpenStreetMap. Opening the map does not verify the location.");
+                if ui.small_button("Copy coordinates").help("Copy this candidate latitude and longitude to the clipboard in decimal degrees. A candidate still needs independent verification.").clicked() {ctx.copy_text(format!("{:.6}, {:.6}",candidate.latitude,candidate.longitude));}
             });
         });
         ui.add_space(10.);
@@ -1252,7 +1370,7 @@ fn timing_results(
                                 candidate.longitude,
                                 candidate.log_likelihood_ratio
                             ),
-                        )
+                        ).help("Select this candidate to inspect its coordinates and matching evidence. Compare competing candidates before drawing a location conclusion.")
                         .clicked()
                     {
                         *selected = index;
@@ -1268,7 +1386,7 @@ fn timing_results(
                     ));
                 }
             }
-        });
+        }).header_response.help("Expand to inspect the sound peaks paired with flight passages for the selected timing candidate.");
     }
     ui.collapsing("Sound peaks and shuffled controls", |ui| {
         ui.label(format!(
@@ -1291,12 +1409,12 @@ fn timing_results(
                 peak.time_s, peak.excess_db, peak.width_s
             ));
         }
-    });
+    }).header_response.help("Expand to inspect detected sound peaks and the shuffled-sound control results used to screen the timing signal.");
     ui.collapsing("Limitations", |ui| {
         for warning in &report.warnings {
             ui.label(warning);
         }
-    });
+    }).header_response.help("Expand to read the assumptions and limitations that affect interpretation of these timing results.");
 }
 
 fn location_plot(ui: &mut egui::Ui, report: &Report, selected: usize) {
@@ -1430,6 +1548,77 @@ fn curve_plot(ui: &mut egui::Ui, event: &soundgeo::audio::Event, modeled: Option
 #[cfg(test)]
 mod video_workflow_tests {
     use super::*;
+
+    #[test]
+    fn downloaded_recording_is_selected_and_feedback_survives_later_analysis() {
+        let mut app = App::initial(None);
+        let (tx, rx) = mpsc::channel();
+        app.receiver = Some(rx);
+        app.media_feedback = MediaFeedback::Working("Downloading".into());
+        tx.send(Message::Progress("Verifying recording".into(), 0.9))
+            .unwrap();
+        app.poll();
+        assert!(app.busy());
+        assert!(
+            matches!(&app.media_feedback, MediaFeedback::Working(message) if message == "Verifying recording")
+        );
+        let download = soundgeo::media_url::Download {
+            schema: 1,
+            source: soundgeo::media_url::Listing {
+                schema: 1,
+                source_url: "https://example.com/video".into(),
+                engine: soundgeo::media_url::Engine::YtDlp,
+                engine_version: "fixture".into(),
+                impersonate: false,
+                fetched_utc: String::new(),
+                candidates: vec![],
+                notices: vec![],
+            },
+            selected_item: 1,
+            path: "selected-clip.mkv".into(),
+            sha256: "fixture".into(),
+            size: 1234,
+            duration_s: 60.,
+            has_audio: true,
+            has_video: true,
+            downloaded_utc: String::new(),
+        };
+        tx.send(Message::MediaDownloaded(Box::new(download)))
+            .unwrap();
+        app.poll();
+        assert_eq!(app.job.media, PathBuf::from("selected-clip.mkv"));
+        assert!(!app.busy()); // Downloading alone must not start a flight search.
+        assert!(
+            matches!(&app.media_feedback, MediaFeedback::Ready(download) if download.path == app.job.media)
+        );
+        let (tx, rx) = mpsc::channel();
+        app.receiver = Some(rx);
+        tx.send(Message::Progress("Analyzing audio".into(), 0.2))
+            .unwrap();
+        tx.send(Message::Error("Flight data needs attention".into()))
+            .unwrap();
+        app.poll();
+        assert!(matches!(app.media_feedback, MediaFeedback::Ready(_)));
+        assert_eq!(app.job.media, PathBuf::from("selected-clip.mkv"));
+    }
+
+    #[test]
+    fn media_failure_and_cancellation_leave_visible_feedback() {
+        let mut app = App::initial(None);
+        for error in ["Download failed", "Cancelled"] {
+            let (tx, rx) = mpsc::channel();
+            app.receiver = Some(rx);
+            app.media_feedback = MediaFeedback::Working("Downloading".into());
+            tx.send(Message::Error(error.into())).unwrap();
+            app.poll();
+            assert!(!app.busy());
+            match &app.media_feedback {
+                MediaFeedback::Error(message) => assert_eq!(message, "Download failed"),
+                MediaFeedback::Info(message) => assert!(message.contains("cancelled")),
+                _ => panic!("A stopped media task must leave feedback beside the URL controls"),
+            }
+        }
+    }
 
     #[test]
     fn optional_video_messages_keep_the_combined_worker_alive() {

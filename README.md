@@ -45,6 +45,15 @@ and dependency notices are provided with each release.
 
 ## Use the desktop application
 
+Hover over any app button for an explanation of its action and what to do next.
+Tooltips also cover disabled buttons, checkboxes, dropdown choices, result tabs,
+links and expandable section headings.
+
+URL discovery and download progress, cancellation and errors appear beside the
+URL controls. A completed download shows its title, size and duration and selects
+it as the recording. Downloading does not start location analysis: set the flight
+data, then choose **Analyze downloaded recording** or **Analyze recording**.
+
 1. Start `soundgeo.exe`.
 2. Select a recording, drag a file into the window, or open **Or paste a video / page URL**. Paste the link, select **Find media**, choose the clip, then **Download and use selected clip**.
 3. Keep **Download missing flight data automatically** selected.
