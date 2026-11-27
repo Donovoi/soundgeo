@@ -1,4 +1,4 @@
-use super::{App, MUTED, Message};
+use super::{App, MUTED, Message, ResponseHelp};
 use eframe::egui::{self, RichText};
 use soundgeo::{
     Control, Job, Progress,
@@ -88,7 +88,7 @@ impl State {
                     ui.label(format!("{:.1}–{:.1}s: {} · score {:.3}", detection.start_s,
                         detection.end_s, detection.language, detection.score));
                 }
-            });
+            }).header_response.help("Expand to inspect the sampled speech intervals, suggested languages and model scores. These scores are not calibrated probabilities.");
         }
         if report.segments.is_empty() {
             ui.separator();
@@ -106,13 +106,13 @@ impl State {
                         ExportFormat::Srt,
                         ExportFormat::Vtt,
                     ] {
-                        ui.selectable_value(&mut format, candidate, format!("{candidate:?}"));
+                        ui.selectable_value(&mut format, candidate, format!("{candidate:?}")).help("Choose this export format: JSON keeps the full report, TXT gives readable text, and SRT/VTT give timed subtitles.");
                     }
-                });
+                }).response.help("Choose JSON for the complete report, TXT for readable text, or SRT/VTT for timed subtitles.");
             if format != ExportFormat::Json {
-                ui.checkbox(&mut self.export_english, "English translation");
+                ui.checkbox(&mut self.export_english, "English translation").help("Export English text when checked, or the original-language transcript when cleared. JSON always preserves the full report.");
             }
-            if ui.button("Save speech report…").clicked() {
+            if ui.button("Save speech report…").help("Choose where to save the transcript in the selected format. JSON contains the full report; text and subtitle exports use the selected original or English text.").clicked() {
                 let extension = format!("{format:?}").to_lowercase();
                 if let Some(path) = rfd::FileDialog::new()
                     .set_file_name(format!("speech-report.{extension}"))
@@ -128,7 +128,7 @@ impl State {
         let pages = report.segments.len().div_ceil(10);
         ui.horizontal(|ui| {
             if ui
-                .add_enabled(self.page > 0, egui::Button::new("Previous intervals"))
+                .add_enabled(self.page > 0, egui::Button::new("Previous intervals")).help("Show the previous page of up to ten speech intervals. Unavailable on the first page.")
                 .clicked()
             {
                 self.page -= 1;
@@ -136,7 +136,7 @@ impl State {
             }
             ui.label(format!("Page {} of {pages}", self.page + 1));
             if ui
-                .add_enabled(self.page + 1 < pages, egui::Button::new("Next intervals"))
+                .add_enabled(self.page + 1 < pages, egui::Button::new("Next intervals")).help("Show the next page of up to ten speech intervals. Unavailable on the last page.")
                 .clicked()
             {
                 self.page += 1;
@@ -180,7 +180,7 @@ impl State {
                         "recognizer segment"
                     }
                 ));
-                if ui.small_button("Copy original").clicked() {
+                if ui.small_button("Copy original").help("Copy the full original-language transcript for this interval to the clipboard, including text that does not fit in the preview.").clicked() {
                     ctx.copy_text(segment.original.clone());
                 }
             });
@@ -252,7 +252,7 @@ impl App {
         ui.checkbox(
             &mut self.speech.options.enabled,
             "Transcribe speech and translate to English",
-        );
+        ).help("Prepare local speech models for the selected recording and include transcription and English translation when you analyze it. First use downloads the required models.");
         ui.label(RichText::new("Local, open-source models. First use downloads up to 7.4 GB; quality translation needs about 10 GB of free memory.").small().color(MUTED));
         if !self.speech.options.enabled {
             return;
@@ -270,7 +270,7 @@ impl App {
                     &mut self.speech.options.language,
                     None,
                     "Detect automatically",
-                );
+                ).help("Sample speech locally to suggest a language before preparing recognition and translation models. Uncertain detection may need a manual language choice.");
                 for (code, name) in speech::LANGUAGES {
                     let label = match code {
                         "hi" => "Hindi (Devanagari)",
@@ -281,9 +281,9 @@ impl App {
                         &mut self.speech.options.language,
                         Some(code.into()),
                         label,
-                    );
+                    ).help("Use this spoken language for local transcription and English translation. Choose it when you know the recording language or need to correct automatic detection.");
                 }
-            });
+            }).response.help("Detect the spoken language locally or select it yourself when known. This selects speech models, separately from video OCR.");
         egui::ComboBox::from_id_salt("speech-quality")
             .selected_text(format!(
                 "{:?} translation",
@@ -294,13 +294,13 @@ impl App {
                     &mut self.speech.options.translation_quality,
                     TranslationQuality::Quality,
                     "Quality · 5.15 GB translator",
-                );
+                ).help("Use the larger local English-translation model for quality. The translator download is about 5.15 GB and needs about 10 GB of free memory.");
                 ui.selectable_value(
                     &mut self.speech.options.translation_quality,
                     TranslationQuality::Compact,
                     "Compact · 1.35 GB translator",
-                );
-            });
+                ).help("Use the smaller local English-translation model to reduce download and memory requirements, with a quality tradeoff.");
+            }).response.help("Choose the local English-translation model size. English recordings skip the translation download.");
         ui.label(RichText::new("English recordings skip translation downloads. Downloaded models are verified and reused offline.").small().color(MUTED));
         if !self.job.media.is_file() {
             ui.label("Choose or download a recording to detect its language and prepare models.");
@@ -311,20 +311,20 @@ impl App {
                 "Model cache: {}",
                 self.speech.options.cache.display()
             ));
-            if ui.button("Choose speech cache…").clicked()
+            if ui.button("Choose speech cache…").help("Choose where downloaded speech and translation models are verified and reused. Existing models stay in their current folder.").clicked()
                 && let Some(path) = rfd::FileDialog::new().pick_folder()
             {
                 self.speech.options.cache = path;
             }
-            if ui.button("Retry speech preparation").clicked() {
+            if ui.button("Retry speech preparation").help("Retry language detection and preparation of the required local models for this recording. Choose a recording first; missing models require a connection.").clicked() {
                 self.speech.invalidate();
             }
-        });
+        }).header_response.help("Expand to choose speech CPU use and the model cache, or retry language and model preparation.");
         if ui
             .add_enabled(
                 self.job.media.is_file(),
                 egui::Button::new("Analyze speech only"),
-            )
+            ).help("Transcribe the selected recording and translate non-English speech to English without searching flight locations. Choose or download a recording to enable this action.")
             .clicked()
         {
             let job = self.job.clone();
