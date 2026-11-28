@@ -70,12 +70,23 @@ $bitmap.Dispose()
 ''',encoding='utf-8')
     subprocess.run([str(Path(os.environ['SystemRoot'])/'System32/WindowsPowerShell/v1.0/powershell.exe'),'-NoProfile','-File',str(ps),str(OUT/(name+'.png'))],check=True,timeout=30)
 
-def uia(name,action='snapshot',media=None):
+def uia(name,action='snapshot',media=None,**selectors):
     path=OUT/(name+'.json')
     args=[str(Path(os.environ['SystemRoot'])/'System32/WindowsPowerShell/v1.0/powershell.exe'),'-NoProfile','-File',str(ROOT/'scripts/released_exe_uia.ps1'),'-Action',action,'-OutputPath',str(path)]
     if media:args+=['-MediaPath',str(media)]
+    for key,value in selectors.items():args+=['-'+key,str(value)]
     subprocess.run(args,check=True,timeout=30)
     return json.loads(path.read_text(encoding='utf-8-sig'))
+
+def control(label,action,**selectors):
+    for attempt in range(12):
+        rows=uia(label+'-reveal-'+str(attempt),'reveal',**selectors)
+        found=[r for r in rows if all(not value or r[{'MatchName':'name','MatchHelp':'help','MatchValue':'value','MatchType':'type'}[key]]==value for key,value in selectors.items() if key.startswith('Match'))]
+        row=found[int(selectors.get('Ordinal',0))]
+        if 90<=row['box'][1] and row['box'][1]+row['box'][3]<=690:break
+        time.sleep(.3)
+    uia(label,action,**selectors)
+    time.sleep(.5)
 
 def desktop_check(media):
     with (OUT/'desktop-recording.log').open('x',encoding='utf-8') as log:
@@ -89,6 +100,18 @@ def desktop_check(media):
             ctypes.windll.user32.ShowWindow(ctypes.c_void_p(hwnd),3)
             ctypes.windll.user32.SetForegroundWindow(ctypes.c_void_p(hwnd))
             time.sleep(2)
+            control('provider-open','invoke',MatchValue='Worldwide: ADSB.lol')
+            control('provider-select','invoke',MatchName='LAX: public airport replay')
+            control('date-set','set',MatchHelp='First date, or blank to find dates',NewValue='2026-11-17')
+            control('method-open','invoke',MatchValue='Doppler curves')
+            control('method-select','invoke',MatchName='Flight passage timing')
+            control('bounds-open','invoke',MatchName='Search area & terrain')
+            control('bounds-enable','invoke',MatchName='Limit the search area')
+            for index,value in enumerate(('33.76','34.12','-118.65','-118.15')):
+                control('bounds-'+str(index),'set',MatchType='ControlType.Spinner',Ordinal=index,NewValue=value)
+            control('bounds-close','invoke',MatchName='Search area & terrain')
+            screenshot('desktop-configured')
+            control('media-visible','reveal',MatchHelp='Select a file')
             uia('ui-before-media','set_media',media)
             for index in range(120):
                 time.sleep(5)
@@ -101,6 +124,33 @@ def desktop_check(media):
                     save()
                     break
             else:raise RuntimeError('Desktop automatic check did not reach checked locally')
+            cache=PROFILE/'SoundGeo/flight-data'
+            assert not cache.exists(), 'Flight cache was populated before GUI analysis'
+            PROOF['flight_cache_empty_before_gui_analysis']=True
+            control('analysis-start','invoke',MatchName='Analyze recording')
+            PROOF['desktop_analysis_started']=True
+            save()
+            started=time.monotonic()
+            prior=''
+            for index in range(540):
+                time.sleep(10)
+                rows=uia('ui-analysis-'+str(index))
+                text='\n'.join(row['name'] for row in rows)
+                if text!=prior:
+                    with (OUT/'desktop-progress.jsonl').open('a',encoding='utf-8') as progress:
+                        progress.write(json.dumps({'elapsed_s':time.monotonic()-started,'text':text})+'\n')
+                    prior=text
+                if index in (0,1,3,6,12,30,60,120,240):screenshot('desktop-analysis-'+str(index))
+                if 'Export report…' in text:
+                    screenshot('desktop-analysis-complete')
+                    PROOF['desktop_analysis_completed']=True
+                    PROOF['desktop_analysis_elapsed_s']=time.monotonic()-started
+                    save()
+                    break
+                if 'Cancel task' not in text and index>3:
+                    screenshot('desktop-analysis-stopped')
+                    raise RuntimeError('Desktop stopped without a report; see UI snapshot')
+            else:raise RuntimeError('Desktop analysis exceeded 90 minutes')
         finally:
             for hwnd in windows():ctypes.windll.user32.PostMessageW(ctypes.c_void_p(hwnd),0x0010,0,0)
             gui.wait(timeout=30)
@@ -178,12 +228,11 @@ def main():
         (OUT/'desktop-check-failure.txt').write_text(traceback.format_exc(),encoding='utf-8')
         save()
     cache=PROFILE/'SoundGeo/flight-data'
-    assert not cache.exists(), 'Flight downloads occurred before analysis'
+    PROOF['flight_cache_empty_before_cli_analysis']=not cache.exists()
     job={'media':str(media),'bounds':{'south':33.76,'north':34.12,'west':-118.65,'east':-118.15},
          'analysis_method':'passage_timing','ground_m':0,'ground_datum':'egm96','offline':False,
          'archive':{'date_from':'2026-11-17','date_to':None,'cache':str(cache),'provider':'webtrak_lax'},'search_threads':2}
     (OUT/'job.json').write_text(json.dumps(job,indent=2),encoding='utf-8')
-    PROOF['flight_cache_empty_before_analysis']=True
     save()
     run('full-analysis',[EXE,'analyze','--config',OUT/'job.json','--output',OUT/'report.json','--require-unambiguous'],timeout=5400,allowed=(0,3,4))
     PROOF['flight_cache_after']=[{'name':str(p.relative_to(cache)),'bytes':p.stat().st_size} for p in cache.rglob('*') if p.is_file()]
