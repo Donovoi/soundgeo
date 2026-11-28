@@ -8,7 +8,9 @@ exe=root/'candidate-release/soundgeo-0.4.0-alpha.6-windows-x64.exe'
 receipt=json.loads((root/'candidate-release/validation-windows-x64.json').read_text())
 with exe.open('rb') as f:digest=hashlib.file_digest(f,'sha256').hexdigest()
 assert digest==receipt['archive_sha256'] and receipt['passed']
-assert receipt['source_commit']=='08bbfc7eff2bdeb1abd8144d7c39e006e2c6b475'
+# pull_request CI checks out GitHub's test-merge commit, whose tree is pinned below.
+assert receipt['source_commit']=='6623c3d26c7a6eb3a95483ea56857420d9c90608'
+assert digest=='75c37b5ea296663671d81c37b1113f4ffe2e8d9431284bddf33ba4a9820ac556'
 assert receipt['source_tree']=='ac4baaedcefcf5fa00db684659733b451b49b022'
 with winreg.CreateKey(winreg.HKEY_CURRENT_USER,r'Software\Microsoft\Windows\CurrentVersion\Themes\Personalize') as key:
     winreg.SetValueEx(key,'AppsUseLightTheme',0,winreg.REG_DWORD,1)
