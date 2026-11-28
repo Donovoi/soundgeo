@@ -4,6 +4,7 @@ on:
     branches: [codex/released-exe-field-checks]
 permissions:
   contents: read
+  actions: read
 jobs:
   released-exe:
     runs-on: windows-latest
@@ -14,7 +15,8 @@ jobs:
       RAYON_NUM_THREADS: '2'
       FIELD_UI_PROBE_ONLY: '0'
       FIELD_DESKTOP_ONLY: '1'
-      FIELD_DESKTOP_INTAKE_ONLY: '1'
+      FIELD_DESKTOP_INTAKE_ONLY: '0'
+      FIELD_CANDIDATE: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -25,6 +27,13 @@ jobs:
         with:
           path: field-cache
           key: public-exe-alpha5-lax-nov17-1200-4800-v1
+      - uses: actions/download-artifact@v4
+        if: env.FIELD_CANDIDATE == '1'
+        with:
+          name: release-Windows
+          run-id: 46131408187
+          github-token: ${{ github.token }}
+          path: candidate-release
       - name: Test the public EXE with frozen real-video inputs
         run: python scripts/released_exe_field.py
       - uses: actions/cache/save@v4

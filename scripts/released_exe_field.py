@@ -7,14 +7,17 @@ CACHE = ROOT / 'field-cache'
 OUT = ROOT / 'field-evidence'
 CACHE.mkdir(exist_ok=True)
 OUT.mkdir(exist_ok=False)
-EXE = CACHE / 'soundgeo-0.4.0-alpha.5-windows-x64.exe'
-EXE_SHA = '334942971cb72104d031e134df138a30aefdc11f2183c5685c1ad32b5caf570a'
+CANDIDATE = os.environ.get('FIELD_CANDIDATE')=='1'
+VERSION = '0.4.0-alpha.6' if CANDIDATE else '0.4.0-alpha.5'
+EXE = (ROOT/'candidate-release' if CANDIDATE else CACHE)/('soundgeo-'+VERSION+'-windows-x64.exe')
+EXE_SHA = '75c37b5ea296663671d81c37b1113f4ffe2e8d9431284bddf33ba4a9820ac556' if CANDIDATE else '334942971cb72104d031e134df138a30aefdc11f2183c5685c1ad32b5caf570a'
 URL = 'https://www.youtube.com/watch?v=s3Fxioc-OxI'
 PROFILE = ROOT / 'Isolated Windows Profile'
 PROFILE.mkdir(exist_ok=False)
 os.environ['LOCALAPPDATA'] = str(PROFILE)
 os.environ['PATH'] = str(Path(os.environ['SystemRoot']) / 'System32')
-PROOF = {'release': 'v0.4.0-alpha.5', 'source_commit': '6169da0f65aec8fc5fb648c8652044f9453d9aa1',
+PROOF = {'release': 'v'+VERSION, 'source_commit': '6623c3d26c7a6eb3a95483ea56857420d9c90608' if CANDIDATE else '6169da0f65aec8fc5fb648c8652044f9453d9aa1',
+         'candidate_regression_only':CANDIDATE,
          'exe_sha256': EXE_SHA, 'source_url': URL, 'source_section_s': [1200,4800],
          'camera_position_supplied': False, 'recording_clock_supplied': False,
          'possible_date': '2026-11-17', 'execution': 'GitHub Windows VM', 'runs': []}
@@ -155,6 +158,11 @@ def desktop_check(media):
                     screenshot('desktop-analysis-complete')
                     PROOF['desktop_analysis_completed']=True
                     PROOF['desktop_analysis_elapsed_s']=time.monotonic()-started
+                    PROOF['desktop_result_snapshot']='ui-analysis-'+str(index)+'.json'
+                    PROOF['flight_cache_after']=[{'name':str(p.relative_to(cache)),'bytes':p.stat().st_size} for p in cache.rglob('*') if p.is_file()]
+                    PROOF['media_unchanged_after_analysis']=sha(media)==PROOF['media_sha256']
+                    for manifest in cache.glob('*/provider-manifest.json'):
+                        (OUT/('desktop-'+manifest.parent.name+'-manifest.json')).write_bytes(manifest.read_bytes())
                     save()
                     break
                 if 'Cancel task' not in text and index>3:
@@ -167,11 +175,12 @@ def desktop_check(media):
 
 def main():
     if not EXE.exists():
+        assert not CANDIDATE, 'Frozen candidate artifact is missing'
         req=urllib.request.Request('https://github.com/Donovoi/soundgeo/releases/download/v0.4.0-alpha.5/'+EXE.name,headers={'User-Agent':'SoundGeo-release-field-validation'})
         with urllib.request.urlopen(req,timeout=60) as response,EXE.open('xb') as f:
             while b:=response.read(1024*1024):f.write(b)
     assert sha(EXE)==EXE_SHA
-    assert '0.4.0-alpha.5' in run('public-exe-version',[EXE,'--version'])
+    assert VERSION in run('public-exe-version',[EXE,'--version'])
     extracted=ROOT/'Extracted Public Release'
     run('extract-public-exe',[EXE,'--portable-extract',extracted])
     product,=extracted.iterdir()
