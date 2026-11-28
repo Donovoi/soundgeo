@@ -25,12 +25,18 @@ for ($i=0;$i -lt $nodes.Count;$i++) {
 }
 $rows | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $OutputPath -Encoding UTF8
 if ($Action -eq 'escape') { [Windows.Forms.SendKeys]::SendWait('{ESC}'); exit }
-if ($Action -in @('invoke','set','patterns','reveal')) {
+if ($Action -in @('invoke','activate','set','patterns','reveal')) {
     $matched=@($rows | Where-Object { (!$MatchName -or $_.name -eq $MatchName) -and (!$MatchHelp -or $_.help -eq $MatchHelp) -and (!$MatchValue -or $_.value -eq $MatchValue) -and (!$MatchType -or $_.type -eq $MatchType) })
     if ($matched.Count -le $Ordinal) { throw "No matching control: $MatchName $MatchHelp $MatchValue $MatchType [$Ordinal]" }
     $selected=$matched[$Ordinal]
     $node=$nodes.Item($selected.index)
     if ($Action -eq 'patterns') { $node.GetSupportedPatterns() | ForEach-Object {$_.ProgrammaticName}; exit }
+    if ($Action -eq 'activate') {
+        if (-not $selected.enabled) { throw 'Selected control is disabled' }
+        $activatePattern=$node.GetCurrentPattern([Windows.Automation.InvokePattern]::Pattern)
+        $activatePattern.Invoke()
+        exit
+    }
     if ($selected.box[1] -lt 90 -or $selected.box[1]+$selected.box[3] -gt 690) {
         if ($Action -eq 'reveal') {
             [FieldMouse]::SetCursorPos(170,580) | Out-Null
@@ -43,7 +49,9 @@ if ($Action -in @('invoke','set','patterns','reveal')) {
     if ($Action -in @('invoke','set')) {
         if (-not $selected.enabled) { throw 'Selected control is disabled' }
         [FieldMouse]::SetCursorPos([int]($selected.box[0]+$selected.box[2]/2),[int]($selected.box[1]+$selected.box[3]/2)) | Out-Null
+        Start-Sleep -Milliseconds 200
         [FieldMouse]::mouse_event(2,0,0,0,[UIntPtr]::Zero)
+        Start-Sleep -Milliseconds 100
         [FieldMouse]::mouse_event(4,0,0,0,[UIntPtr]::Zero)
         if ($Action -eq 'set') {
             if ($NewValue -notmatch '^[A-Za-z0-9_:/\\ .-]+$') { throw 'Unsupported test value for literal keyboard entry' }

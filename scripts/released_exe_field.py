@@ -89,6 +89,11 @@ def control(label,action,**selectors):
         if 90<=row['box'][1] and row['box'][1]+row['box'][3]<=690:break
         time.sleep(.3)
     else:raise RuntimeError('Could not scroll control into view: '+label)
+    if label=='analysis-start':
+        current=uia('verified-analysis-inputs')
+        values=[row.get('value') for row in current]
+        assert all(value in values for value in ('2026-11-17','LAX: public airport replay','Flight passage timing')), values
+        assert any(row.get('help')=='Unknown — infer from flyovers' and not row.get('value') for row in current)
     uia(label,action,**selectors)
     time.sleep(.5)
     if label.endswith('-select'):
@@ -100,6 +105,16 @@ def control(label,action,**selectors):
         if selectors.get('MatchType')=='ControlType.Spinner':
             assert any(value is not None and abs(float(value)-float(expected))<1e-6 for value in values if value and value.replace('-','',1).replace('.','',1).isdigit()), (label,expected,values)
         else:assert expected in values,(label,expected,values)
+
+def select_combo(label,current,desired):
+    control(label+'-open','invoke',MatchValue=current)
+    # Accessibility activation avoids popup movement during physical scrolling.
+    uia(label+'-select','activate',MatchName=desired)
+    time.sleep(1)
+    uia(label+'-close-popup','escape')
+    time.sleep(.5)
+    rows=uia(label+'-selected-verify')
+    assert any(row.get('type')=='ControlType.ComboBox' and row.get('value')==desired for row in rows), (label,desired)
 
 def desktop_check(media):
     with (OUT/'desktop-recording.log').open('x',encoding='utf-8') as log:
@@ -113,11 +128,9 @@ def desktop_check(media):
             ctypes.windll.user32.ShowWindow(ctypes.c_void_p(hwnd),3)
             ctypes.windll.user32.SetForegroundWindow(ctypes.c_void_p(hwnd))
             time.sleep(2)
-            control('provider-open','invoke',MatchValue='Worldwide: ADSB.lol')
-            control('provider-select','invoke',MatchName='LAX: public airport replay')
+            select_combo('provider','Worldwide: ADSB.lol','LAX: public airport replay')
             control('date-set','set',MatchHelp='First date, or blank to find dates',NewValue='2026-11-17')
-            control('method-open','invoke',MatchValue='Doppler curves')
-            control('method-select','invoke',MatchName='Flight passage timing')
+            select_combo('method','Doppler curves','Flight passage timing')
             control('bounds-open','invoke',MatchName='Search area & terrain')
             control('bounds-enable','invoke',MatchName='Limit the search area')
             for index,value in enumerate(('33.76','34.12','-118.65','-118.15')):
