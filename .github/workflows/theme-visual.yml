@@ -1,0 +1,30 @@
+name: Windows theme visual verification
+on:
+  push:
+    branches: [codex/windows-theme-visual]
+permissions:
+  contents: read
+  actions: read
+jobs:
+  visual:
+    runs-on: windows-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14.10'
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-Windows
+          run-id: 46131408187
+          github-token: ${{ github.token }}
+          path: candidate-release
+      - name: Inspect candidate under the Windows light system theme
+        run: python scripts/theme_visual_probe.py
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-theme-visual-evidence
+          path: theme-visual-evidence
+          retention-days: 14
