@@ -128,7 +128,7 @@ def desktop_check(media):
             for index in range(120):
                 time.sleep(5)
                 rows=uia('ui-check-'+str(index))
-                text='\n'.join(row['name'] for row in rows)
+                text='\n'.join(row.get('name') or '' for row in rows)
                 if index in (0,3,10,20,40):screenshot('desktop-check-'+str(index))
                 if 'checked locally' in text:
                     screenshot('desktop-checked')
@@ -148,7 +148,7 @@ def desktop_check(media):
             for index in range(540):
                 time.sleep(10)
                 rows=uia('ui-analysis-'+str(index))
-                text='\n'.join(row['name'] for row in rows)
+                text='\n'.join(row.get('name') or '' for row in rows)
                 if text!=prior:
                     with (OUT/'desktop-progress.jsonl').open('a',encoding='utf-8') as progress:
                         progress.write(json.dumps({'elapsed_s':time.monotonic()-started,'text':text})+'\n')
