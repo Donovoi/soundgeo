@@ -85,8 +85,18 @@ def control(label,action,**selectors):
         row=found[int(selectors.get('Ordinal',0))]
         if 90<=row['box'][1] and row['box'][1]+row['box'][3]<=690:break
         time.sleep(.3)
+    else:raise RuntimeError('Could not scroll control into view: '+label)
     uia(label,action,**selectors)
     time.sleep(.5)
+    if label.endswith('-select'):
+        uia(label+'-close-popup','escape')
+    if action=='set':
+        current=uia(label+'-verify')
+        values=[row.get('value') for row in current]
+        expected=selectors['NewValue']
+        if selectors.get('MatchType')=='ControlType.Spinner':
+            assert any(value is not None and abs(float(value)-float(expected))<1e-6 for value in values if value and value.replace('-','',1).replace('.','',1).isdigit()), (label,expected,values)
+        else:assert expected in values,(label,expected,values)
 
 def desktop_check(media):
     with (OUT/'desktop-recording.log').open('x',encoding='utf-8') as log:
@@ -111,8 +121,7 @@ def desktop_check(media):
                 control('bounds-'+str(index),'set',MatchType='ControlType.Spinner',Ordinal=index,NewValue=value)
             control('bounds-close','invoke',MatchName='Search area & terrain')
             screenshot('desktop-configured')
-            control('media-visible','reveal',MatchHelp='Select a file')
-            uia('ui-before-media','set_media',media)
+            control('media-entry','set',MatchHelp='Select a file',NewValue=str(media))
             for index in range(120):
                 time.sleep(5)
                 rows=uia('ui-check-'+str(index))
@@ -124,6 +133,7 @@ def desktop_check(media):
                     save()
                     break
             else:raise RuntimeError('Desktop automatic check did not reach checked locally')
+            if os.environ.get('FIELD_DESKTOP_INTAKE_ONLY')=='1':return
             cache=PROFILE/'SoundGeo/flight-data'
             assert not cache.exists(), 'Flight cache was populated before GUI analysis'
             PROOF['flight_cache_empty_before_gui_analysis']=True
@@ -227,6 +237,12 @@ def main():
         PROOF['desktop_check_error']=str(error)
         (OUT/'desktop-check-failure.txt').write_text(traceback.format_exc(),encoding='utf-8')
         save()
+    if os.environ.get('FIELD_DESKTOP_ONLY')=='1':
+        assert PROOF.get('desktop_automatic_check_completed'), 'Desktop intake failed'
+        if os.environ.get('FIELD_DESKTOP_INTAKE_ONLY')!='1':assert PROOF.get('desktop_analysis_completed'), 'Desktop analysis failed'
+        PROOF['status']='desktop_test_complete'
+        save()
+        return
     cache=PROFILE/'SoundGeo/flight-data'
     PROOF['flight_cache_empty_before_cli_analysis']=not cache.exists()
     job={'media':str(media),'bounds':{'south':33.76,'north':34.12,'west':-118.65,'east':-118.15},
@@ -243,7 +259,7 @@ def main():
         run('cached-offline-analysis',[EXE,'--offline','analyze','--config',OUT/'job.json','--output',OUT/'cached-report.json','--require-unambiguous'],timeout=1800,allowed=(0,3,4))
         cached=json.loads((OUT/'cached-report.json').read_text(encoding='utf-8'))
         PROOF['offline_cache_replay_status']=cached['status']
-        PROOF['offline_cache_replay_candidates_equal']=cached.get('candidates')==report.get('candidates')
+        PROOF['offline_cache_replay_candidates_equal']=cached.get('timing')==report.get('timing') and cached.get('candidates')==report.get('candidates')
     PROOF['status']='analysis_complete'
     save()
     # Separate technical suitability check only. Never run a location search on

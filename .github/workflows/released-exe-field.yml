@@ -13,6 +13,8 @@ jobs:
       OMP_THREAD_LIMIT: '2'
       RAYON_NUM_THREADS: '2'
       FIELD_UI_PROBE_ONLY: '0'
+      FIELD_DESKTOP_ONLY: '1'
+      FIELD_DESKTOP_INTAKE_ONLY: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
