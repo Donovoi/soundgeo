@@ -475,11 +475,19 @@ mod tests {
                     Err(error) => panic!("{error}"),
                 }
             };
+            // Accepted sockets can inherit the listener's nonblocking mode.
+            connection.set_nonblocking(false).unwrap();
             connection
                 .set_read_timeout(Some(Duration::from_secs(10)))
                 .unwrap();
-            let mut request = [0; 2048];
-            let _ = connection.read(&mut request);
+            let mut request = Vec::new();
+            while !request.windows(4).any(|bytes| bytes == b"\r\n\r\n") {
+                let mut buffer = [0; 2048];
+                let count = connection.read(&mut buffer).unwrap();
+                assert!(count > 0, "Fixture request ended before its headers");
+                request.extend_from_slice(&buffer[..count]);
+                assert!(request.len() <= 16384, "Fixture request headers too large");
+            }
             let header = format!(
                 "HTTP/1.1 200 OK\r\nContent-Length: {declared}\r\nConnection: close\r\n\r\n"
             );
@@ -490,6 +498,36 @@ mod tests {
             let _ = connection.write_all(body);
         });
         (format!("http://{address}/part"), thread)
+    }
+    #[test]
+    fn fixture_waits_for_complete_request_headers() {
+        let body = b"fragmented request fixture";
+        let (url, thread) = server(body, body.len(), false);
+        let address = url
+            .strip_prefix("http://")
+            .unwrap()
+            .strip_suffix("/part")
+            .unwrap();
+        let mut connection = std::net::TcpStream::connect(address).unwrap();
+        connection
+            .set_read_timeout(Some(Duration::from_millis(150)))
+            .unwrap();
+        connection
+            .write_all(b"GET /part HTTP/1.1\r\nHost: localhost\r\n")
+            .unwrap();
+        let early = connection.read(&mut [0; 1]);
+        assert!(
+            matches!(early, Err(error) if matches!(error.kind(), std::io::ErrorKind::WouldBlock | std::io::ErrorKind::TimedOut)),
+            "Fixture responded before the complete request headers"
+        );
+        connection.write_all(b"\r\n").unwrap();
+        connection
+            .set_read_timeout(Some(Duration::from_secs(10)))
+            .unwrap();
+        let mut response = Vec::new();
+        connection.read_to_end(&mut response).unwrap();
+        thread.join().unwrap();
+        assert!(response.ends_with(body));
     }
     #[test]
     fn download_verifies_digest_and_reuses_cache() {

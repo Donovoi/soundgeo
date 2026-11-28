@@ -49,6 +49,25 @@ Hover over any app button for an explanation of its action and what to do next.
 Tooltips also cover disabled buttons, checkboxes, dropdown choices, result tabs,
 links and expandable section headings.
 
+**Recording requirements** is visible immediately. Choosing, dropping or
+downloading a recording starts a local duration and sound check automatically.
+It shows the measured duration, detected sound counts and whether each method
+meets its input minimum:
+
+| Method | Minimum for desktop location analysis |
+| --- | --- |
+| Doppler curves | 20 seconds of audio and 2 separate detected pitch curves. |
+| Flight passage timing | 8 minutes of continuous audio and 6 detected sound peaks; a search area is also required. |
+
+Both methods support at most 2 hours of audio. Stream metadata gives an early
+duration estimate; the completed check uses decoded audio. Detected sounds can
+come from music or speech. Meeting these minimums permits a search and does not
+verify aircraft, uninterrupted recording, or a location within 1 km.
+The check downloads no flight data. Analysis reuses the scan after verifying
+the file and detector settings. A changed file or settings requires another check.
+Below-minimum recordings can still run checked video-clue or speech options;
+their location search is skipped without downloading flight data.
+
 While a task runs, the main panel shows **Working in the background**, its current
 operation, elapsed time and the time since the worker last sent an update.
 Combined analysis lists video clues, speech and location search in order, with
@@ -60,14 +79,26 @@ remaining work. A finished analysis can still report no location or ambiguity.
 
 URL discovery and download progress, cancellation and errors appear beside the
 URL controls. A completed download shows its title, size and duration and selects
-it as the recording. Downloading does not start location analysis: set the flight
-data, then choose **Analyze downloaded recording** or **Analyze recording**.
+it as the recording and starts the local requirements check. Once the check
+finishes, choose **Analyze downloaded recording** or **Analyze recording**.
+Both buttons use the same input checks and selected options.
+
+Flight downloads are enabled by default. When an eligible location search needs
+data, SoundGeo verifies and reuses cached files and downloads missing files
+automatically, with progress. **Offline mode** explicitly blocks downloads;
+the requirements panel shows this and offers **Go online and download missing
+flight data**. That action changes the setting; **Analyze recording** starts
+the search. Selecting local flight files also shows that automatic downloads
+are off, with an action to enable them.
+New desktop caches use the user's SoundGeo cache folder instead of the launch
+folder. An existing `flight-cache` folder in the launch folder is reused. You
+can still choose an existing cache in the flight-data settings.
 
 1. Start `soundgeo.exe`.
 2. Select a recording, drag a file into the window, or open **Or paste a video / page URL**. Paste the link, select **Find media**, choose the clip, then **Download and use selected clip**.
 3. Keep **Download missing flight data automatically** selected.
 4. Leave the dates blank to find and search available days. You can also enter a UTC date range.
-5. Select a folder for the downloaded data.
+5. Use the default flight cache, or select another folder in the flight-data settings.
 6. Leave **Recording time** empty if you do not know the start time.
 7. Set a search area if you know the region.
 8. Enter an approximate ground elevation, or select **Download missing terrain from free sources**.

@@ -8,6 +8,8 @@ use std::{
 
 #[path = "activity_ui.rs"]
 mod activity_ui;
+#[path = "readiness_ui.rs"]
+mod readiness_ui;
 #[path = "speech_ui.rs"]
 mod speech_ui;
 use activity_ui::{Activity, State as StageState};
@@ -36,6 +38,11 @@ enum MediaFeedback {
 }
 
 enum Message {
+    RecordingInfo(String, soundgeo::audio_check::MediaInfo),
+    RecordingChecked(
+        String,
+        Result<std::sync::Arc<soundgeo::audio_check::Prepared>, String>,
+    ),
     Stage(&'static str),
     SpeechError(String),
     SpeechPrepared(std::sync::Arc<soundgeo::speech::Prepared>),
@@ -58,6 +65,7 @@ enum Message {
     Error(String),
 }
 pub struct App {
+    readiness: readiness_ui::State,
     speech: speech_ui::State,
     job: Job,
     clock: String,
@@ -107,13 +115,14 @@ impl App {
     }
     fn initial(report: Option<Report>) -> Self {
         Self {
+            readiness: readiness_ui::State::default(),
             speech: speech_ui::State::default(),
             job: Job {
                 ground_datum: soundgeo::geo::ElevationDatum::Egm96,
                 archive: Some(soundgeo::archive::ArchiveRequest {
                     date_from: String::new(),
                     date_to: None,
-                    cache: PathBuf::from("flight-cache"),
+                    cache: soundgeo::archive::default_cache(),
                     provider: Default::default(),
                 }),
                 ..Job::default()
@@ -301,9 +310,9 @@ impl App {
                     }
                 ));
                 if download.has_audio {
-                    ui.label("Set the flight-data options, then start analysis.");
-                    if ui.add_enabled(!self.busy(), egui::Button::new("Analyze downloaded recording"))
-                        .help("Start the same analysis as Analyze recording using this selected download and your current flight-data, video-clue and speech settings. Wait for any current task to finish first.").clicked() {
+                    ui.label("The local requirements check starts automatically. Review its result, then start analysis.");
+                    if ui.add_enabled(self.can_analyze(), egui::Button::new("Analyze downloaded recording"))
+                        .help("After the recording check finishes, run the same combined analysis as Analyze recording. Below-minimum recordings can run checked video or speech options only; their location search will not download flight data.").clicked() {
                         self.run(ctx);
                     }
                 } else {
@@ -341,6 +350,14 @@ impl App {
         });
     }
     fn run(&mut self, ctx: &egui::Context) {
+        if self.busy() {
+            return;
+        }
+        if self.job.media.is_file() && !self.readiness.complete(&self.job) {
+            self.status = "Checking recording requirements before analysis can start".into();
+            ctx.request_repaint();
+            return;
+        }
         let mut job = self.job.clone();
         let clock_error = if self.clock.trim().is_empty() {
             job.start_utc = None;
@@ -355,7 +372,11 @@ impl App {
             }
         };
         job.bounds = self.use_bounds.then_some(self.bounds);
-        let geo_error = clock_error.or_else(|| job.validate().err().map(|e| e.to_string()));
+        let geo_error = self
+            .readiness
+            .problem(&job)
+            .or(clock_error)
+            .or_else(|| job.validate().err().map(|e| e.to_string()));
         if !self.speech.options.enabled && !self.visual_enabled && geo_error.is_some() {
             self.activity = None;
             self.status = "Analysis needs attention before it can start".into();
@@ -363,6 +384,7 @@ impl App {
             return;
         }
         let options = self.speech.options.clone();
+        let checked = self.readiness.prepared(&job);
         let prepared = self.speech.current_prepared(&job);
         let video = self.visual_enabled.then(|| self.video_options());
         let country = self.visual_country.clone();
@@ -410,14 +432,19 @@ impl App {
                 let _ = tx.send(Message::Error(error.to_string()));
                 return;
             }
-            let _ = tx.send(Message::Stage("Location search"));
             if let Some(error) = geo_error {
                 let _ = tx.send(Message::Error(format!(
                     "Any completed optional results were retained. Geolocation needs attention: {error}"
                 )));
                 return;
             }
-            let result = soundgeo::analyze(&job, &control, &progress);
+            let _ = tx.send(Message::Stage("Location search"));
+            progress(if job.offline { "Using cached flight data only; offline mode blocks missing downloads" }
+                else if job.archive.is_some() { "Automatic flight data: reuse verified cache and download missing data when needed" }
+                else { "Using selected local flight data; automatic downloads are off" }, 0.);
+            let result = if let Some(checked) = checked {
+                soundgeo::analyze_checked(&job, &checked, &control, &progress)
+            } else { soundgeo::analyze(&job, &control, &progress) };
             let _ = tx.send(match result {
                 Ok(r) => Message::Done(Box::new(r)),
                 Err(e) => Message::Error(format!("{e:#}")),
@@ -456,6 +483,28 @@ impl App {
                 activity.updated = std::time::Instant::now();
             }
             match message {
+                Message::RecordingInfo(key, info) => {
+                    if key == readiness_ui::key(&self.job) {
+                        self.readiness.info = Some(info);
+                    }
+                }
+                Message::RecordingChecked(key, result) => {
+                    if key == readiness_ui::key(&self.job) {
+                        self.readiness.finish(result);
+                        self.status = if self.control.check().is_err() {
+                            "Recording check cancelled: choose Recheck recording to retry"
+                        } else if self.readiness.problem(&self.job).is_some() {
+                            "Recording check complete: review the selected method's requirements"
+                        } else {
+                            "Recording checked: choose Analyze recording when ready"
+                        }
+                        .into();
+                    } else {
+                        self.readiness.running = false;
+                    }
+                    self.progress = 1.;
+                    self.receiver = None;
+                }
                 Message::Stage(name) => {
                     if let Some(activity) = &mut self.activity {
                         activity.stage(name, StageState::Running);
@@ -682,6 +731,12 @@ impl App {
             self.status = "Needs attention".into();
             self.receiver = None;
         }
+        if self.receiver.is_none() && self.readiness.running {
+            self.readiness
+                .finish(Err(self.error.clone().unwrap_or_else(|| {
+                    "Recording check stopped; choose Recheck recording to retry.".into()
+                })));
+        }
         if self.receiver.is_none()
             && let Some(activity) = &mut self.activity
         {
@@ -722,7 +777,7 @@ impl App {
             ui.checkbox(&mut self.job.offline, "Offline mode: use cached data only").help("Use local recordings, prepared flight data and cached models. Missing downloads require returning online and turning this option off.");
             let mut automatic = self.job.archive.is_some();
             if ui.checkbox(&mut automatic,"Download missing flight data automatically").help("Find and prepare missing historical flight data during analysis. Turn this off to choose your own flight-data file or archive folder.").changed() {
-                self.job.archive = automatic.then(|| soundgeo::archive::ArchiveRequest {date_from:self.date.clone(),date_to:None,cache:PathBuf::from("flight-cache"),provider:Default::default()});
+                self.job.archive = automatic.then(|| soundgeo::archive::ArchiveRequest {date_from:self.date.clone(),date_to:None,cache:soundgeo::archive::default_cache(),provider:Default::default()});
             }
             if let Some(request) = &mut self.job.archive {
                 use soundgeo::archive::ArchiveProvider;
@@ -852,7 +907,11 @@ impl App {
             }).header_response.help("Expand to adjust sound detection, location-search settings, CPU use and the media decoder.");
             ui.add_space(10.);
             self.speech_controls(ui, ctx);
-            if ui.add_sized([ui.available_width(),42.],egui::Button::new(RichText::new("Analyze recording").strong().color(Color32::from_rgb(9,26,30))).fill(ACCENT)).help("Analyze the selected recording against the flight data. Checked video-clue and speech options run as stages of the same analysis, with progress shown below.").clicked(){self.run(ctx);}
+            let input_checked = self.readiness.complete(&self.job);
+            let can_analyze = self.can_analyze();
+            if !input_checked { ui.label("The recording check must finish before combined analysis can start."); }
+            else if self.readiness.problem(&self.job).is_some() { ui.label("Location input minimums are not met. Checked video or speech options can still run; flight data will not download for this search."); }
+            if ui.add_enabled(can_analyze, egui::Button::new(RichText::new("Analyze recording").strong().color(Color32::from_rgb(9,26,30))).fill(ACCENT).min_size(Vec2::new(ui.available_width(),42.))).help("After the automatic recording check, run the selected analysis and optional video/speech stages. Eligible location searches reuse cached flight data and download missing data when automatic downloads are enabled. Below-minimum recordings can run checked optional stages only.").clicked(){self.run(ctx);}
             if ui.add_sized([ui.available_width(),34.],egui::Button::new("Try a synthetic demo")).help("Create and select a small generated recording with matching flight tracks. Then click Analyze recording to try a known synthetic example.").clicked(){self.load_demo(ctx);}
         });
         if self.busy() {
@@ -1028,6 +1087,10 @@ impl App {
         }
         if let Some(report) = &self.visual_report {
             ui.heading("Video text clues");
+            ui.label(format!("Recording: {}", self.visual_inputs[0].display()));
+            if self.visual_inputs[0] != self.job.media {
+                ui.colored_label(Color32::from_rgb(255, 181, 134), "These video clues are from the previous recording. Run video clues again for your current selection.");
+            }
             if report.places.is_empty() {
                 ui.label("No place names matched the prepared data.");
             }
@@ -1124,6 +1187,14 @@ impl App {
             );
             return;
         };
+        ui.label(format!(
+            "Completed analysis for: {}",
+            report.media.display()
+        ));
+        if report.media != self.job.media || report.job.analysis_method != self.job.analysis_method
+        {
+            ui.colored_label(Color32::from_rgb(255, 181, 134), "These saved results use a previous recording or method. The requirements panel above applies to your current selection.");
+        }
         if let Some(catalog) = report
             .date_search
             .as_ref()
@@ -1416,12 +1487,16 @@ impl eframe::App for App {
             .show(ctx, |ui| {
                 self.activity_panel(ui);
                 egui::ScrollArea::vertical()
-                    .id_salt("results-scroll")
+                    .id_salt(("results-scroll", self.job.media.clone()))
                     .show(ui, |ui| {
+                        self.readiness_panel(ui);
                         self.results(ui, ctx);
                     });
             });
-        self.schedule_speech(ctx);
+        self.schedule_readiness(ctx);
+        if self.readiness.complete(&self.job) && self.control.check().is_ok() {
+            self.schedule_speech(ctx);
+        }
     }
     fn on_exit(&mut self, _gl: Option<&eframe::glow::Context>) {
         self.control.stop();
@@ -1912,7 +1987,7 @@ mod video_workflow_tests {
             app.activity.as_ref().unwrap().stages,
             [
                 ("Speech", StageState::Attention),
-                ("Location search", StageState::Attention)
+                ("Location search", StageState::NotRun)
             ]
         );
     }
