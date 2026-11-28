@@ -27,7 +27,8 @@ SoundGeo is an independent implementation.
 
 SoundGeo is in development. The current location target is within 1 km.
 See [limitations](docs/limitations.md) for input coverage and model constraints.
-The [validation record](validation/README.md) contains test results, sources, and build checks.
+The [validation record](validation/README.md) contains test results, sources, and build checks,
+including a [public Windows EXE field and download check](validation/released-exe-lax-20261117-workflow.json).
 
 ## Requirements
 

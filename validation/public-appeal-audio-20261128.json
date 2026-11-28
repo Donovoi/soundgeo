@@ -1,0 +1,49 @@
+{
+  "scope": "Technical audio suitability of police-released public footage; no location search or investigative lead",
+  "source_url": "https://www.abc.net.au/news/2026-07-05/cctv-footage-missing-dandenong-woman-yun/106881548",
+  "source_context": "Police-supplied CCTV distributed by ABC. The publication describes the filming setting, so this is not an unknown-location benchmark. Current case status was not established.",
+  "private_whereabouts_inference": false,
+  "location_search_run": false,
+  "flight_downloads_used": false,
+  "windows_public_exe_replay": {
+    "run": "https://github.com/Donovoi/soundgeo/actions/runs/46132676162",
+    "exe_sha256": "334942971cb72104d031e134df138a30aefdc11f2183c5685c1ad32b5caf570a",
+    "bundled_downloaders_used": true,
+    "media_bytes": 3486419,
+    "media_hash_and_audio_result_match_linux": true,
+    "fetch_exit_code": 0,
+    "require_searchable_exit_code": 3,
+    "fetch_elapsed_s": 9.869647299999997,
+    "audio_check_elapsed_s": 1.1000010000002476
+  },
+  "audio_check": {
+    "release": "0.4.0-alpha.5",
+    "source_commit": "6169da0f65aec8fc5fb648c8652044f9453d9aa1",
+    "source_tree": "557de8670c2bc219d64590898919741ef1ee859d",
+    "execution": "Public Linux release in a resource-limited WSL2 VM",
+    "cli_sha256": "3f07c943abb98d94fe262b0083fd5a073fb88cd7bbf14b996cf3b0449db21ca5",
+    "media_sha256": "2ec2fb5560376d52709f3cca060de1c02ebdb40dc23253161c16f21a2f06e926",
+    "fetch_exit_code": 0,
+    "fetch_elapsed_s": 4.181449050000001,
+    "audio_stream_present": true,
+    "duration_s": 27.144125,
+    "doppler_curves": 0,
+    "timing_peaks": 0,
+    "doppler_eligible": false,
+    "passage_timing_eligible": false,
+    "status": "insufficient_evidence",
+    "require_searchable_exit_code": 3,
+    "audio_check_elapsed_s": 0.43263798799999975,
+    "interpretation": "The clip fails the two-curve Doppler minimum and both the six-peak and eight-minute passage-timing minimums. It provides no sound-based location result."
+  },
+  "linux_prerequisites": {
+    "yt_dlp": "2026.11.23",
+    "gallery_dl": "1.32.21",
+    "deno": "2.9.8",
+    "aria2c": "1.37.0"
+  },
+  "preserved_setup_attempts": [
+    "The first Linux attempt stopped because its separately installed URL helpers were absent from PATH. These are documented Linux prerequisites; Windows bundles them.",
+    "A second harness attempt stopped before fetching because the selected helper directory did not contain gallery-dl. The completed attempt used the qualified real downloader tools and recorded their versions and hashes."
+  ]
+}

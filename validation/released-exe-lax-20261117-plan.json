@@ -1,0 +1,22 @@
+{
+  "status": "planned_before_soundgeo_results",
+  "release": "v0.4.0-alpha.5",
+  "exe_sha256": "334942971cb72104d031e134df138a30aefdc11f2183c5685c1ad32b5caf570a",
+  "video": "https://www.youtube.com/watch?v=s3Fxioc-OxI",
+  "section_seconds": [1200, 4800],
+  "possible_date": "2026-11-17",
+  "bounds": {"south":33.76,"north":34.12,"west":-118.65,"east":-118.15},
+  "primary_method": "passage_timing",
+  "provider": "webtrak_lax",
+  "start_utc": null,
+  "reference_position_supplied_to_app": false,
+  "reference_site": "H Hotel Los Angeles rooftop; publisher's 17 November post identifies broadcast site",
+  "reference_position": {"latitude":33.945922471428574,"longitude":-118.39281822857143},
+  "reference_allowance_m": 200,
+  "reference_basis": ["https://twitter.com/airlinevideos", "https://hhotellosangeles.com/", "https://www.openstreetmap.org/way/413226781"],
+  "reference_limit": "Published commercial camera site and building footprint; microphone not surveyed. Check video continuity and camera changes before accuracy interpretation.",
+  "location_target_m": 1000,
+  "acceptance": "Completed native candidates_found result with screened region, and center-to-reference distance plus 200 m allowance <=1000 m. Raw first-candidate distance is reported separately. Preserve ambiguity and all failures.",
+  "scope": "New recording at a familiar benchmark site, not an unseen-site test. Use the public released EXE in a GitHub Windows VM with an initially empty flight cache. No detector tuning from this result.",
+  "redistribute_media": false
+}

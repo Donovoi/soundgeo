@@ -1,0 +1,2638 @@
+{
+  "release": "v0.4.0-alpha.5",
+  "exe_sha256": "334942971cb72104d031e134df138a30aefdc11f2183c5685c1ad32b5caf570a",
+  "source_url": "https://www.youtube.com/watch?v=s3Fxioc-OxI",
+  "source_section_seconds": [
+    1200,
+    4800
+  ],
+  "media_sha256": "25bd8533ae6ae4c81d345ae439ce7a90485b039d94827974a8218ccbc4b2cef9",
+  "plan_sha256": "dd35185f35e4b0cf23e3cfd60070847077cd439f5c8e79a9b278d5857d084dee",
+  "report_sha256": "c40ad7f6ac1ed0fc876277546c0b7f12d7f3541cfab9a893e4ac744cd2538e36",
+  "supplied_inputs": {
+    "possible_date": "2026-11-17",
+    "bounds": {
+      "south": 33.76,
+      "north": 34.12,
+      "west": -118.65,
+      "east": -118.15
+    },
+    "provider": "webtrak_lax",
+    "camera_position": false,
+    "recording_clock": false
+  },
+  "reference": {
+    "latitude": 33.945922471428574,
+    "longitude": -118.39281822857143
+  },
+  "reference_allowance_m": 200,
+  "reference_limit": "Published commercial camera site and building footprint; microphone not surveyed. Check video continuity and camera changes before accuracy interpretation.",
+  "scope": "New recording at a familiar benchmark site, not an unseen-site test. Use the public released EXE in a GitHub Windows VM with an initially empty flight cache. No detector tuning from this result.",
+  "status": "candidates_found",
+  "screen": "timing_candidate",
+  "explanation": "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 fit within 1 km of the reported region center. This is a model screen, not a verified accuracy radius.",
+  "audio_duration_s": 3599.9935,
+  "sound_peaks": 32,
+  "flight_segments": 5580,
+  "controls_completed": 19,
+  "maximum_shuffled_score": 17.277118705970295,
+  "leading_raw_candidate": {
+    "latitude": 33.94,
+    "longitude": -118.4,
+    "elevation_m": -35.896860137939484,
+    "offset_utc": 1794943257.9575589,
+    "log_likelihood_ratio": 19.65203770925782,
+    "reference_passages": 35,
+    "reference_exposure": 35.0,
+    "background_expected_events": 20.566944016730886,
+    "detection_probability": 0.3266587423791175,
+    "matched_pairs": 13,
+    "reference_distance_m": 934.1226044224641,
+    "distance_plus_reference_allowance_m": 1134.122604422464
+  },
+  "screened_region": {
+    "latitude": 33.93865671641791,
+    "longitude": -118.3935064935065,
+    "enclosing_radius_m": 748.4791679566822,
+    "competitive_points": 9
+  },
+  "retained_candidates": [
+    {
+      "rank": 1,
+      "latitude": 33.94,
+      "longitude": -118.4,
+      "log_likelihood_ratio": 19.65203770925782,
+      "offset_utc": 1794943257.9575589,
+      "matched_pairs": 13,
+      "reference_distance_m": 934.1226044224641,
+      "distance_plus_reference_allowance_m": 1134.122604422464
+    },
+    {
+      "rank": 2,
+      "latitude": 33.93731343283582,
+      "longitude": -118.4,
+      "log_likelihood_ratio": 17.60076633517987,
+      "offset_utc": 1794943257.8783634,
+      "matched_pairs": 13,
+      "reference_distance_m": 1164.1735725466297,
+      "distance_plus_reference_allowance_m": 1364.1735725466297
+    },
+    {
+      "rank": 3,
+      "latitude": 33.94268656716417,
+      "longitude": -118.3935064935065,
+      "log_likelihood_ratio": 16.999529345810394,
+      "offset_utc": 1794943249.5432835,
+      "matched_pairs": 10,
+      "reference_distance_m": 365.37449365567073,
+      "distance_plus_reference_allowance_m": 565.3744936556707
+    },
+    {
+      "rank": 4,
+      "latitude": 33.94,
+      "longitude": -118.39025974025975,
+      "log_likelihood_ratio": 16.394192583840365,
+      "offset_utc": 1794943243.882096,
+      "matched_pairs": 14,
+      "reference_distance_m": 699.5628028386641,
+      "distance_plus_reference_allowance_m": 899.5628028386641
+    },
+    {
+      "rank": 5,
+      "latitude": 33.94,
+      "longitude": -118.3935064935065,
+      "log_likelihood_ratio": 16.334143586234575,
+      "offset_utc": 1794943249.0910656,
+      "matched_pairs": 13,
+      "reference_distance_m": 661.6022110003915,
+      "distance_plus_reference_allowance_m": 861.6022110003915
+    },
+    {
+      "rank": 6,
+      "latitude": 33.94268656716417,
+      "longitude": -118.39025974025975,
+      "log_likelihood_ratio": 16.32462691644757,
+      "offset_utc": 1794943244.4033399,
+      "matched_pairs": 10,
+      "reference_distance_m": 430.3109567424115,
+      "distance_plus_reference_allowance_m": 630.3109567424115
+    },
+    {
+      "rank": 7,
+      "latitude": 33.94,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 15.92321895130111,
+      "offset_utc": 1794943238.518426,
+      "matched_pairs": 12,
+      "reference_distance_m": 848.8001428264673,
+      "distance_plus_reference_allowance_m": 1048.8001428264674
+    },
+    {
+      "rank": 8,
+      "latitude": 33.93462686567164,
+      "longitude": -118.4,
+      "log_likelihood_ratio": 15.767024753920204,
+      "offset_utc": 1794943259.154786,
+      "matched_pairs": 13,
+      "reference_distance_m": 1420.0343489510217,
+      "distance_plus_reference_allowance_m": 1620.0343489510217
+    },
+    {
+      "rank": 9,
+      "latitude": 33.93731343283582,
+      "longitude": -118.3935064935065,
+      "log_likelihood_ratio": 15.542116290308421,
+      "offset_utc": 1794943249.534371,
+      "matched_pairs": 12,
+      "reference_distance_m": 959.3846097820933,
+      "distance_plus_reference_allowance_m": 1159.3846097820933
+    },
+    {
+      "rank": 10,
+      "latitude": 33.93731343283582,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 14.962169272123695,
+      "offset_utc": 1794943238.9724867,
+      "matched_pairs": 13,
+      "reference_distance_m": 1096.891949489964,
+      "distance_plus_reference_allowance_m": 1296.891949489964
+    },
+    {
+      "rank": 11,
+      "latitude": 33.93731343283582,
+      "longitude": -118.39025974025975,
+      "log_likelihood_ratio": 14.766077225169468,
+      "offset_utc": 1794943244.6670823,
+      "matched_pairs": 14,
+      "reference_distance_m": 985.9467985456104,
+      "distance_plus_reference_allowance_m": 1185.9467985456104
+    },
+    {
+      "rank": 12,
+      "latitude": 33.93462686567164,
+      "longitude": -118.3935064935065,
+      "log_likelihood_ratio": 14.666124466995726,
+      "offset_utc": 1794943251.0090418,
+      "matched_pairs": 13,
+      "reference_distance_m": 1257.6178085062359,
+      "distance_plus_reference_allowance_m": 1457.6178085062359
+    },
+    {
+      "rank": 13,
+      "latitude": 33.93462686567164,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 14.383970913813483,
+      "offset_utc": 1794943240.6058307,
+      "matched_pairs": 14,
+      "reference_distance_m": 1365.4173697936865,
+      "distance_plus_reference_allowance_m": 1565.4173697936865
+    },
+    {
+      "rank": 14,
+      "latitude": 33.94,
+      "longitude": -118.37727272727274,
+      "log_likelihood_ratio": 14.366730046481637,
+      "offset_utc": 1794943226.502648,
+      "matched_pairs": 13,
+      "reference_distance_m": 1578.0050723237505,
+      "distance_plus_reference_allowance_m": 1778.0050723237505
+    },
+    {
+      "rank": 15,
+      "latitude": 33.93731343283582,
+      "longitude": -118.38051948051948,
+      "log_likelihood_ratio": 14.243630785284717,
+      "offset_utc": 1794943226.8309102,
+      "matched_pairs": 12,
+      "reference_distance_m": 1484.4391075394312,
+      "distance_plus_reference_allowance_m": 1684.4391075394312
+    },
+    {
+      "rank": 16,
+      "latitude": 33.93462686567164,
+      "longitude": -118.39025974025975,
+      "log_likelihood_ratio": 14.229355726447901,
+      "offset_utc": 1794943246.102036,
+      "matched_pairs": 14,
+      "reference_distance_m": 1277.9970433583223,
+      "distance_plus_reference_allowance_m": 1477.9970433583223
+    },
+    {
+      "rank": 17,
+      "latitude": 33.93731343283582,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 14.10938746253116,
+      "offset_utc": 1794943254.0375526,
+      "matched_pairs": 13,
+      "reference_distance_m": 1023.7944953360377,
+      "distance_plus_reference_allowance_m": 1223.7944953360377
+    },
+    {
+      "rank": 18,
+      "latitude": 33.94,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 14.103436410155625,
+      "offset_utc": 1794943254.0021787,
+      "matched_pairs": 13,
+      "reference_distance_m": 751.9639578921759,
+      "distance_plus_reference_allowance_m": 951.9639578921759
+    },
+    {
+      "rank": 19,
+      "latitude": 33.94268656716417,
+      "longitude": -118.38051948051948,
+      "log_likelihood_ratio": 13.828603644632508,
+      "offset_utc": 1794943226.368678,
+      "matched_pairs": 9,
+      "reference_distance_m": 1190.1924937254246,
+      "distance_plus_reference_allowance_m": 1390.1924937254246
+    },
+    {
+      "rank": 20,
+      "latitude": 33.94268656716417,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 13.799550748963583,
+      "offset_utc": 1794943238.421379,
+      "matched_pairs": 9,
+      "reference_distance_m": 645.1618359402781,
+      "distance_plus_reference_allowance_m": 845.1618359402781
+    },
+    {
+      "rank": 21,
+      "latitude": 33.94,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 13.757896213558567,
+      "offset_utc": 1794943261.570034,
+      "matched_pairs": 10,
+      "reference_distance_m": 1165.8144036104313,
+      "distance_plus_reference_allowance_m": 1365.8144036104313
+    },
+    {
+      "rank": 22,
+      "latitude": 33.94,
+      "longitude": -118.38051948051948,
+      "log_likelihood_ratio": 13.593178473029504,
+      "offset_utc": 1794943226.322559,
+      "matched_pairs": 12,
+      "reference_distance_m": 1311.7993861665193,
+      "distance_plus_reference_allowance_m": 1511.7993861665193
+    },
+    {
+      "rank": 23,
+      "latitude": 33.93731343283582,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 13.511451789924536,
+      "offset_utc": 1794943261.3143783,
+      "matched_pairs": 12,
+      "reference_distance_m": 1357.149086941482,
+      "distance_plus_reference_allowance_m": 1557.149086941482
+    },
+    {
+      "rank": 24,
+      "latitude": 33.94,
+      "longitude": -118.41623376623377,
+      "log_likelihood_ratio": 13.223973177638953,
+      "offset_utc": 1794943274.0292435,
+      "matched_pairs": 8,
+      "reference_distance_m": 2258.1641481517863,
+      "distance_plus_reference_allowance_m": 2458.1641481517863
+    },
+    {
+      "rank": 25,
+      "latitude": 33.93462686567164,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 13.124630933703687,
+      "offset_utc": 1794943255.5088282,
+      "matched_pairs": 12,
+      "reference_distance_m": 1307.4184189095024,
+      "distance_plus_reference_allowance_m": 1507.4184189095024
+    },
+    {
+      "rank": 26,
+      "latitude": 33.93462686567164,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 13.121005183223629,
+      "offset_utc": 1794943262.490182,
+      "matched_pairs": 12,
+      "reference_distance_m": 1582.1082270993195,
+      "distance_plus_reference_allowance_m": 1782.1082270993195
+    },
+    {
+      "rank": 27,
+      "latitude": 33.93731343283582,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 12.480548404317728,
+      "offset_utc": 1794943233.1666238,
+      "matched_pairs": 11,
+      "reference_distance_m": 1270.2997312194648,
+      "distance_plus_reference_allowance_m": 1470.2997312194648
+    },
+    {
+      "rank": 28,
+      "latitude": 33.94,
+      "longitude": -118.40649350649352,
+      "log_likelihood_ratio": 12.45748928307296,
+      "offset_utc": 1794943264.838821,
+      "matched_pairs": 10,
+      "reference_distance_m": 1423.0475551433235,
+      "distance_plus_reference_allowance_m": 1623.0475551433235
+    },
+    {
+      "rank": 29,
+      "latitude": 33.94,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 12.024356751352954,
+      "offset_utc": 1794943270.6719887,
+      "matched_pairs": 8,
+      "reference_distance_m": 1973.6148036787015,
+      "distance_plus_reference_allowance_m": 2173.6148036787017
+    },
+    {
+      "rank": 30,
+      "latitude": 33.93731343283582,
+      "longitude": -118.42597402597403,
+      "log_likelihood_ratio": 11.909603088801354,
+      "offset_utc": 1794943283.3604732,
+      "matched_pairs": 8,
+      "reference_distance_m": 3204.8664727541027,
+      "distance_plus_reference_allowance_m": 3404.8664727541027
+    },
+    {
+      "rank": 31,
+      "latitude": 33.94,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 11.809128201593348,
+      "offset_utc": 1794943232.531014,
+      "matched_pairs": 12,
+      "reference_distance_m": 1063.45577595388,
+      "distance_plus_reference_allowance_m": 1263.45577595388
+    },
+    {
+      "rank": 32,
+      "latitude": 34.03134328358209,
+      "longitude": -118.42922077922078,
+      "log_likelihood_ratio": 11.584907085427467,
+      "offset_utc": 1794944364.2686229,
+      "matched_pairs": 5,
+      "reference_distance_m": 10073.877105968917,
+      "distance_plus_reference_allowance_m": 10273.877105968917
+    },
+    {
+      "rank": 33,
+      "latitude": 33.82179104477612,
+      "longitude": -118.15,
+      "log_likelihood_ratio": 11.54028007148814,
+      "offset_utc": 1794952000.7086291,
+      "matched_pairs": 9,
+      "reference_distance_m": 26323.65976987011,
+      "distance_plus_reference_allowance_m": 26523.65976987011
+    },
+    {
+      "rank": 34,
+      "latitude": 33.93462686567164,
+      "longitude": -118.41948051948053,
+      "log_likelihood_ratio": 11.419163489143727,
+      "offset_utc": 1794943277.1511145,
+      "matched_pairs": 8,
+      "reference_distance_m": 2761.7249625106297,
+      "distance_plus_reference_allowance_m": 2961.7249625106297
+    },
+    {
+      "rank": 35,
+      "latitude": 33.93731343283582,
+      "longitude": -118.42272727272727,
+      "log_likelihood_ratio": 11.416038331550167,
+      "offset_utc": 1794943280.0758927,
+      "matched_pairs": 8,
+      "reference_distance_m": 2920.403294558626,
+      "distance_plus_reference_allowance_m": 3120.403294558626
+    },
+    {
+      "rank": 36,
+      "latitude": 33.93731343283582,
+      "longitude": -118.41948051948053,
+      "log_likelihood_ratio": 11.391733761736665,
+      "offset_utc": 1794943276.8037047,
+      "matched_pairs": 8,
+      "reference_distance_m": 2639.2707873983422,
+      "distance_plus_reference_allowance_m": 2839.2707873983422
+    },
+    {
+      "rank": 37,
+      "latitude": 33.94,
+      "longitude": -118.40974025974026,
+      "log_likelihood_ratio": 11.35099323081743,
+      "offset_utc": 1794943267.9996853,
+      "matched_pairs": 10,
+      "reference_distance_m": 1694.2279660729691,
+      "distance_plus_reference_allowance_m": 1894.2279660729691
+    },
+    {
+      "rank": 38,
+      "latitude": 33.93731343283582,
+      "longitude": -118.40649350649352,
+      "log_likelihood_ratio": 11.333359741623049,
+      "offset_utc": 1794943264.498126,
+      "matched_pairs": 10,
+      "reference_distance_m": 1583.6084679312767,
+      "distance_plus_reference_allowance_m": 1783.6084679312767
+    },
+    {
+      "rank": 39,
+      "latitude": 33.93462686567164,
+      "longitude": -118.41623376623377,
+      "log_likelihood_ratio": 11.169451167698725,
+      "offset_utc": 1794943274.1824875,
+      "matched_pairs": 8,
+      "reference_distance_m": 2498.696578140258,
+      "distance_plus_reference_allowance_m": 2698.696578140258
+    },
+    {
+      "rank": 40,
+      "latitude": 33.956119402985074,
+      "longitude": -118.3448051948052,
+      "log_likelihood_ratio": 11.126032260909831,
+      "offset_utc": 1794954479.2396913,
+      "matched_pairs": 7,
+      "reference_distance_m": 4571.465073296402,
+      "distance_plus_reference_allowance_m": 4771.465073296402
+    },
+    {
+      "rank": 41,
+      "latitude": 33.93731343283582,
+      "longitude": -118.41623376623377,
+      "log_likelihood_ratio": 11.094664116673364,
+      "offset_utc": 1794943273.759918,
+      "matched_pairs": 8,
+      "reference_distance_m": 2362.6581997340404,
+      "distance_plus_reference_allowance_m": 2562.6581997340404
+    },
+    {
+      "rank": 42,
+      "latitude": 33.93462686567164,
+      "longitude": -118.40649350649352,
+      "log_likelihood_ratio": 11.092318582704245,
+      "offset_utc": 1794943265.53224,
+      "matched_pairs": 10,
+      "reference_distance_m": 1780.1824602496708,
+      "distance_plus_reference_allowance_m": 1980.1824602496708
+    },
+    {
+      "rank": 43,
+      "latitude": 33.93462686567164,
+      "longitude": -118.42272727272727,
+      "log_likelihood_ratio": 11.02030019878108,
+      "offset_utc": 1794943280.333304,
+      "matched_pairs": 8,
+      "reference_distance_m": 3031.530834715864,
+      "distance_plus_reference_allowance_m": 3231.530834715864
+    },
+    {
+      "rank": 44,
+      "latitude": 33.805671641791044,
+      "longitude": -118.17922077922078,
+      "log_likelihood_ratio": 11.010391715424044,
+      "offset_utc": 1794874581.2004414,
+      "matched_pairs": 5,
+      "reference_distance_m": 25140.703843346557,
+      "distance_plus_reference_allowance_m": 25340.703843346557
+    },
+    {
+      "rank": 45,
+      "latitude": 33.956119402985074,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 10.98575705570913,
+      "offset_utc": 1794954483.7928631,
+      "matched_pairs": 7,
+      "reference_distance_m": 4281.993304799467,
+      "distance_plus_reference_allowance_m": 4481.993304799467
+    },
+    {
+      "rank": 46,
+      "latitude": 33.956119402985074,
+      "longitude": -118.34155844155845,
+      "log_likelihood_ratio": 10.961818083328566,
+      "offset_utc": 1794954474.9099655,
+      "matched_pairs": 7,
+      "reference_distance_m": 4862.14850809769,
+      "distance_plus_reference_allowance_m": 5062.14850809769
+    },
+    {
+      "rank": 47,
+      "latitude": 33.829850746268654,
+      "longitude": -118.15974025974026,
+      "log_likelihood_ratio": 10.921007424094093,
+      "offset_utc": 1794954876.9770515,
+      "matched_pairs": 5,
+      "reference_distance_m": 25088.953104879496,
+      "distance_plus_reference_allowance_m": 25288.953104879496
+    },
+    {
+      "rank": 48,
+      "latitude": 33.95880597014925,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 10.881348523792425,
+      "offset_utc": 1794954483.1722822,
+      "matched_pairs": 7,
+      "reference_distance_m": 4370.538157005999,
+      "distance_plus_reference_allowance_m": 4570.538157005999
+    },
+    {
+      "rank": 49,
+      "latitude": 33.950746268656715,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 10.838049137388545,
+      "offset_utc": 1794887004.7335348,
+      "matched_pairs": 10,
+      "reference_distance_m": 1936.1656264628175,
+      "distance_plus_reference_allowance_m": 2136.1656264628173
+    },
+    {
+      "rank": 50,
+      "latitude": 33.95880597014925,
+      "longitude": -118.34155844155845,
+      "log_likelihood_ratio": 10.821652663995678,
+      "offset_utc": 1794954474.1808753,
+      "matched_pairs": 7,
+      "reference_distance_m": 4940.289236323295,
+      "distance_plus_reference_allowance_m": 5140.289236323295
+    },
+    {
+      "rank": 51,
+      "latitude": 33.93462686567164,
+      "longitude": -118.42597402597403,
+      "log_likelihood_ratio": 10.818822455564883,
+      "offset_utc": 1794943283.5945058,
+      "matched_pairs": 8,
+      "reference_distance_m": 3306.455487057866,
+      "distance_plus_reference_allowance_m": 3506.455487057866
+    },
+    {
+      "rank": 52,
+      "latitude": 33.95880597014925,
+      "longitude": -118.3448051948052,
+      "log_likelihood_ratio": 10.81246471352032,
+      "offset_utc": 1794954478.573241,
+      "matched_pairs": 7,
+      "reference_distance_m": 4654.497730110002,
+      "distance_plus_reference_allowance_m": 4854.497730110002
+    },
+    {
+      "rank": 53,
+      "latitude": 33.93731343283582,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 10.807632967485382,
+      "offset_utc": 1794943270.4126868,
+      "matched_pairs": 8,
+      "reference_distance_m": 2092.3589182857404,
+      "distance_plus_reference_allowance_m": 2292.3589182857404
+    },
+    {
+      "rank": 54,
+      "latitude": 33.93462686567164,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 10.787345976830792,
+      "offset_utc": 1794943271.031342,
+      "matched_pairs": 8,
+      "reference_distance_m": 2244.8293178751483,
+      "distance_plus_reference_allowance_m": 2444.8293178751483
+    },
+    {
+      "rank": 55,
+      "latitude": 33.81910447761194,
+      "longitude": -118.16298701298702,
+      "log_likelihood_ratio": 10.569129003599677,
+      "offset_utc": 1794953049.4296083,
+      "matched_pairs": 8,
+      "reference_distance_m": 25475.07022188155,
+      "distance_plus_reference_allowance_m": 25675.07022188155
+    },
+    {
+      "rank": 56,
+      "latitude": 33.95343283582089,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 10.526501232340443,
+      "offset_utc": 1794887004.8457243,
+      "matched_pairs": 10,
+      "reference_distance_m": 2039.20051800319,
+      "distance_plus_reference_allowance_m": 2239.20051800319
+    },
+    {
+      "rank": 57,
+      "latitude": 33.956119402985074,
+      "longitude": -118.3512987012987,
+      "log_likelihood_ratio": 10.518980448559553,
+      "offset_utc": 1794954487.8573985,
+      "matched_pairs": 7,
+      "reference_distance_m": 3993.9966644088736,
+      "distance_plus_reference_allowance_m": 4193.996664408874
+    },
+    {
+      "rank": 58,
+      "latitude": 33.956119402985074,
+      "longitude": -118.33831168831169,
+      "log_likelihood_ratio": 10.474177449242433,
+      "offset_utc": 1794954470.5617015,
+      "matched_pairs": 7,
+      "reference_distance_m": 5153.838594182413,
+      "distance_plus_reference_allowance_m": 5353.838594182413
+    },
+    {
+      "rank": 59,
+      "latitude": 33.93731343283582,
+      "longitude": -118.40974025974026,
+      "log_likelihood_ratio": 10.468283452161089,
+      "offset_utc": 1794943267.633041,
+      "matched_pairs": 10,
+      "reference_distance_m": 1831.170803856883,
+      "distance_plus_reference_allowance_m": 2031.170803856883
+    },
+    {
+      "rank": 60,
+      "latitude": 33.95880597014925,
+      "longitude": -118.33831168831169,
+      "log_likelihood_ratio": 10.450934078293464,
+      "offset_utc": 1794954469.7685394,
+      "matched_pairs": 7,
+      "reference_distance_m": 5227.612230827453,
+      "distance_plus_reference_allowance_m": 5427.612230827453
+    },
+    {
+      "rank": 61,
+      "latitude": 33.824477611940296,
+      "longitude": -118.15,
+      "log_likelihood_ratio": 10.40018529213954,
+      "offset_utc": 1794952000.981929,
+      "matched_pairs": 7,
+      "reference_distance_m": 26167.95404718528,
+      "distance_plus_reference_allowance_m": 26367.95404718528
+    },
+    {
+      "rank": 62,
+      "latitude": 33.93462686567164,
+      "longitude": -118.40974025974026,
+      "log_likelihood_ratio": 10.326447183706465,
+      "offset_utc": 1794943268.4673345,
+      "matched_pairs": 10,
+      "reference_distance_m": 2003.6084947178847,
+      "distance_plus_reference_allowance_m": 2203.6084947178847
+    },
+    {
+      "rank": 63,
+      "latitude": 33.94805970149253,
+      "longitude": -118.41948051948053,
+      "log_likelihood_ratio": 10.323014412895384,
+      "offset_utc": 1794900272.3175175,
+      "matched_pairs": 7,
+      "reference_distance_m": 2470.845214141288,
+      "distance_plus_reference_allowance_m": 2670.845214141288
+    },
+    {
+      "rank": 64,
+      "latitude": 33.950746268656715,
+      "longitude": -118.41948051948053,
+      "log_likelihood_ratio": 10.308374852602887,
+      "offset_utc": 1794900272.2471564,
+      "matched_pairs": 7,
+      "reference_distance_m": 2517.1637696224793,
+      "distance_plus_reference_allowance_m": 2717.1637696224793
+    },
+    {
+      "rank": 65,
+      "latitude": 33.956119402985074,
+      "longitude": -118.33506493506493,
+      "log_likelihood_ratio": 10.11162261117672,
+      "offset_utc": 1794954466.1922262,
+      "matched_pairs": 7,
+      "reference_distance_m": 5446.3735947605965,
+      "distance_plus_reference_allowance_m": 5646.3735947605965
+    },
+    {
+      "rank": 66,
+      "latitude": 33.8110447761194,
+      "longitude": -118.16948051948053,
+      "log_likelihood_ratio": 10.088110613753855,
+      "offset_utc": 1794943418.0182223,
+      "matched_pairs": 9,
+      "reference_distance_m": 25495.531372496513,
+      "distance_plus_reference_allowance_m": 25695.531372496513
+    },
+    {
+      "rank": 67,
+      "latitude": 33.81910447761194,
+      "longitude": -118.15,
+      "log_likelihood_ratio": 10.007958741400131,
+      "offset_utc": 1794952001.7078831,
+      "matched_pairs": 8,
+      "reference_distance_m": 26481.819990093452,
+      "distance_plus_reference_allowance_m": 26681.819990093452
+    },
+    {
+      "rank": 68,
+      "latitude": 33.8110447761194,
+      "longitude": -118.35454545454546,
+      "log_likelihood_ratio": 9.961745945349406,
+      "offset_utc": 1794931786.408249,
+      "matched_pairs": 5,
+      "reference_distance_m": 15408.277015144016,
+      "distance_plus_reference_allowance_m": 15608.277015144016
+    },
+    {
+      "rank": 69,
+      "latitude": 33.82716417910448,
+      "longitude": -118.16298701298702,
+      "log_likelihood_ratio": 9.830416910818073,
+      "offset_utc": 1794930243.718748,
+      "matched_pairs": 4,
+      "reference_distance_m": 24989.285782494644,
+      "distance_plus_reference_allowance_m": 25189.285782494644
+    },
+    {
+      "rank": 70,
+      "latitude": 33.94,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 9.799400193544713,
+      "offset_utc": 1794916621.5784192,
+      "matched_pairs": 4,
+      "reference_distance_m": 751.9639578921759,
+      "distance_plus_reference_allowance_m": 951.9639578921759
+    },
+    {
+      "rank": 71,
+      "latitude": 33.81373134328358,
+      "longitude": -118.17922077922078,
+      "log_likelihood_ratio": 9.787079602053998,
+      "offset_utc": 1794932987.0488853,
+      "matched_pairs": 7,
+      "reference_distance_m": 24594.079596442127,
+      "distance_plus_reference_allowance_m": 24794.079596442127
+    },
+    {
+      "rank": 72,
+      "latitude": 33.829850746268654,
+      "longitude": -118.15974025974026,
+      "log_likelihood_ratio": 9.768795505450463,
+      "offset_utc": 1794944259.7308722,
+      "matched_pairs": 4,
+      "reference_distance_m": 25088.953104879496,
+      "distance_plus_reference_allowance_m": 25288.953104879496
+    },
+    {
+      "rank": 73,
+      "latitude": 33.95343283582089,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 9.768093303227552,
+      "offset_utc": 1794895237.358819,
+      "matched_pairs": 8,
+      "reference_distance_m": 1273.8550876344314,
+      "distance_plus_reference_allowance_m": 1473.8550876344314
+    },
+    {
+      "rank": 74,
+      "latitude": 33.93731343283582,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 9.76624798167547,
+      "offset_utc": 1794916621.7372923,
+      "matched_pairs": 4,
+      "reference_distance_m": 1023.7944953360377,
+      "distance_plus_reference_allowance_m": 1223.7944953360377
+    },
+    {
+      "rank": 75,
+      "latitude": 33.81910447761194,
+      "longitude": -118.15649350649352,
+      "log_likelihood_ratio": 9.745788301817576,
+      "offset_utc": 1794936306.8436103,
+      "matched_pairs": 8,
+      "reference_distance_m": 25976.406265472087,
+      "distance_plus_reference_allowance_m": 26176.406265472087
+    },
+    {
+      "rank": 76,
+      "latitude": 33.82179104477612,
+      "longitude": -118.16298701298702,
+      "log_likelihood_ratio": 9.737011193175917,
+      "offset_utc": 1794953048.7214866,
+      "matched_pairs": 8,
+      "reference_distance_m": 25310.65233176498,
+      "distance_plus_reference_allowance_m": 25510.65233176498
+    },
+    {
+      "rank": 77,
+      "latitude": 33.94,
+      "longitude": -118.37727272727274,
+      "log_likelihood_ratio": 9.715496045109893,
+      "offset_utc": 1794946586.1387467,
+      "matched_pairs": 8,
+      "reference_distance_m": 1578.0050723237505,
+      "distance_plus_reference_allowance_m": 1778.0050723237505
+    },
+    {
+      "rank": 78,
+      "latitude": 33.80298507462686,
+      "longitude": -118.15324675324676,
+      "log_likelihood_ratio": 9.706613396660188,
+      "offset_utc": 1794880101.9385512,
+      "matched_pairs": 7,
+      "reference_distance_m": 27235.9387985707,
+      "distance_plus_reference_allowance_m": 27435.9387985707
+    },
+    {
+      "rank": 79,
+      "latitude": 33.95880597014925,
+      "longitude": -118.33506493506493,
+      "log_likelihood_ratio": 9.704746735334275,
+      "offset_utc": 1794954465.0410504,
+      "matched_pairs": 6,
+      "reference_distance_m": 5516.227407274635,
+      "distance_plus_reference_allowance_m": 5716.227407274635
+    },
+    {
+      "rank": 80,
+      "latitude": 33.94,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 9.70462534188072,
+      "offset_utc": 1794916596.7409964,
+      "matched_pairs": 4,
+      "reference_distance_m": 1063.45577595388,
+      "distance_plus_reference_allowance_m": 1263.45577595388
+    },
+    {
+      "rank": 81,
+      "latitude": 33.93462686567164,
+      "longitude": -118.42922077922078,
+      "log_likelihood_ratio": 9.684661007546715,
+      "offset_utc": 1794943287.581683,
+      "matched_pairs": 7,
+      "reference_distance_m": 3585.321579020452,
+      "distance_plus_reference_allowance_m": 3785.321579020452
+    },
+    {
+      "rank": 82,
+      "latitude": 33.95880597014925,
+      "longitude": -118.37727272727274,
+      "log_likelihood_ratio": 9.629418600472698,
+      "offset_utc": 1794938739.474319,
+      "matched_pairs": 6,
+      "reference_distance_m": 2026.880302181797,
+      "distance_plus_reference_allowance_m": 2226.880302181797
+    },
+    {
+      "rank": 83,
+      "latitude": 33.99641791044776,
+      "longitude": -118.47792207792209,
+      "log_likelihood_ratio": 9.61501218569245,
+      "offset_utc": 1794941660.6308756,
+      "matched_pairs": 4,
+      "reference_distance_m": 9649.69167564488,
+      "distance_plus_reference_allowance_m": 9849.69167564488
+    },
+    {
+      "rank": 84,
+      "latitude": 33.85134328358209,
+      "longitude": -118.26363636363637,
+      "log_likelihood_ratio": 9.611672333770032,
+      "offset_utc": 1794956070.1865134,
+      "matched_pairs": 4,
+      "reference_distance_m": 15898.252181755126,
+      "distance_plus_reference_allowance_m": 16098.252181755126
+    },
+    {
+      "rank": 85,
+      "latitude": 33.956119402985074,
+      "longitude": -118.35454545454546,
+      "log_likelihood_ratio": 9.603468970783311,
+      "offset_utc": 1794954491.9546063,
+      "matched_pairs": 7,
+      "reference_distance_m": 3707.818900326769,
+      "distance_plus_reference_allowance_m": 3907.818900326769
+    },
+    {
+      "rank": 86,
+      "latitude": 33.93462686567164,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 9.533246255582766,
+      "offset_utc": 1794916622.8986652,
+      "matched_pairs": 4,
+      "reference_distance_m": 1307.4184189095024,
+      "distance_plus_reference_allowance_m": 1507.4184189095024
+    },
+    {
+      "rank": 87,
+      "latitude": 33.93462686567164,
+      "longitude": -118.43246753246754,
+      "log_likelihood_ratio": 9.531324071656229,
+      "offset_utc": 1794943290.7933776,
+      "matched_pairs": 7,
+      "reference_distance_m": 3867.2765625428424,
+      "distance_plus_reference_allowance_m": 4067.2765625428424
+    },
+    {
+      "rank": 88,
+      "latitude": 33.93462686567164,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 9.51223248620434,
+      "offset_utc": 1794876389.2735214,
+      "matched_pairs": 10,
+      "reference_distance_m": 1307.4184189095024,
+      "distance_plus_reference_allowance_m": 1507.4184189095024
+    },
+    {
+      "rank": 89,
+      "latitude": 33.95343283582089,
+      "longitude": -118.35454545454546,
+      "log_likelihood_ratio": 9.507849564702425,
+      "offset_utc": 1794954492.950521,
+      "matched_pairs": 7,
+      "reference_distance_m": 3627.688161337101,
+      "distance_plus_reference_allowance_m": 3827.688161337101
+    },
+    {
+      "rank": 90,
+      "latitude": 34.028656716417906,
+      "longitude": -118.4422077922078,
+      "log_likelihood_ratio": 9.4856800845306,
+      "offset_utc": 1794929932.678224,
+      "matched_pairs": 4,
+      "reference_distance_m": 10264.933091781004,
+      "distance_plus_reference_allowance_m": 10464.933091781004
+    },
+    {
+      "rank": 91,
+      "latitude": 33.93731343283582,
+      "longitude": -118.41948051948053,
+      "log_likelihood_ratio": 9.48191033685319,
+      "offset_utc": 1794886473.4840302,
+      "matched_pairs": 6,
+      "reference_distance_m": 2639.2707873983422,
+      "distance_plus_reference_allowance_m": 2839.2707873983422
+    },
+    {
+      "rank": 92,
+      "latitude": 33.950746268656715,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 9.38789995121835,
+      "offset_utc": 1794895237.5150197,
+      "matched_pairs": 8,
+      "reference_distance_m": 1101.3742856402596,
+      "distance_plus_reference_allowance_m": 1301.3742856402596
+    },
+    {
+      "rank": 93,
+      "latitude": 33.94268656716417,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 9.364276610861367,
+      "offset_utc": 1794947202.7267075,
+      "matched_pairs": 7,
+      "reference_distance_m": 909.2289841215697,
+      "distance_plus_reference_allowance_m": 1109.2289841215697
+    },
+    {
+      "rank": 94,
+      "latitude": 33.94,
+      "longitude": -118.40974025974026,
+      "log_likelihood_ratio": 9.361310595156665,
+      "offset_utc": 1794895964.2151325,
+      "matched_pairs": 5,
+      "reference_distance_m": 1694.2279660729691,
+      "distance_plus_reference_allowance_m": 1894.2279660729691
+    },
+    {
+      "rank": 95,
+      "latitude": 33.94805970149253,
+      "longitude": -118.40649350649352,
+      "log_likelihood_ratio": 9.329596080533847,
+      "offset_utc": 1794895244.8841095,
+      "matched_pairs": 8,
+      "reference_distance_m": 1283.6293456922433,
+      "distance_plus_reference_allowance_m": 1483.6293456922433
+    },
+    {
+      "rank": 96,
+      "latitude": 33.88626865671642,
+      "longitude": -118.26363636363637,
+      "log_likelihood_ratio": 9.322879893491377,
+      "offset_utc": 1794937647.4472358,
+      "matched_pairs": 5,
+      "reference_distance_m": 13641.630286959095,
+      "distance_plus_reference_allowance_m": 13841.630286959095
+    },
+    {
+      "rank": 97,
+      "latitude": 33.829850746268654,
+      "longitude": -118.16948051948053,
+      "log_likelihood_ratio": 9.31686296947163,
+      "offset_utc": 1794948609.9149165,
+      "matched_pairs": 4,
+      "reference_distance_m": 24322.35742217525,
+      "distance_plus_reference_allowance_m": 24522.35742217525
+    },
+    {
+      "rank": 98,
+      "latitude": 33.94,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 9.307046469141492,
+      "offset_utc": 1794892248.611567,
+      "matched_pairs": 9,
+      "reference_distance_m": 751.9639578921759,
+      "distance_plus_reference_allowance_m": 951.9639578921759
+    },
+    {
+      "rank": 99,
+      "latitude": 33.94,
+      "longitude": -118.3512987012987,
+      "log_likelihood_ratio": 9.305985317584252,
+      "offset_utc": 1794910635.9555883,
+      "matched_pairs": 4,
+      "reference_distance_m": 3886.2404230295974,
+      "distance_plus_reference_allowance_m": 4086.2404230295974
+    },
+    {
+      "rank": 100,
+      "latitude": 33.94268656716417,
+      "longitude": -118.3512987012987,
+      "log_likelihood_ratio": 9.305812462290582,
+      "offset_utc": 1794910635.6989918,
+      "matched_pairs": 4,
+      "reference_distance_m": 3846.840632739662,
+      "distance_plus_reference_allowance_m": 4046.840632739662
+    },
+    {
+      "rank": 101,
+      "latitude": 33.93731343283582,
+      "longitude": -118.3512987012987,
+      "log_likelihood_ratio": 9.292909928616389,
+      "offset_utc": 1794910637.0702205,
+      "matched_pairs": 4,
+      "reference_distance_m": 3947.9144817089723,
+      "distance_plus_reference_allowance_m": 4147.914481708973
+    },
+    {
+      "rank": 102,
+      "latitude": 33.82716417910448,
+      "longitude": -118.15,
+      "log_likelihood_ratio": 9.270075758582022,
+      "offset_utc": 1794930550.1410646,
+      "matched_pairs": 5,
+      "reference_distance_m": 26014.746894691878,
+      "distance_plus_reference_allowance_m": 26214.746894691878
+    },
+    {
+      "rank": 103,
+      "latitude": 33.95880597014925,
+      "longitude": -118.33181818181819,
+      "log_likelihood_ratio": 9.257474684719249,
+      "offset_utc": 1794954460.5766778,
+      "matched_pairs": 6,
+      "reference_distance_m": 5805.942064301397,
+      "distance_plus_reference_allowance_m": 6005.942064301397
+    },
+    {
+      "rank": 104,
+      "latitude": 33.805671641791044,
+      "longitude": -118.15649350649352,
+      "log_likelihood_ratio": 9.247787595352989,
+      "offset_utc": 1794880096.3048213,
+      "matched_pairs": 7,
+      "reference_distance_m": 26818.004593021167,
+      "distance_plus_reference_allowance_m": 27018.004593021167
+    },
+    {
+      "rank": 105,
+      "latitude": 33.829850746268654,
+      "longitude": -118.15974025974026,
+      "log_likelihood_ratio": 9.245397031049677,
+      "offset_utc": 1794953648.3752751,
+      "matched_pairs": 4,
+      "reference_distance_m": 25088.953104879496,
+      "distance_plus_reference_allowance_m": 25288.953104879496
+    },
+    {
+      "rank": 106,
+      "latitude": 33.94268656716417,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 9.243108534414802,
+      "offset_utc": 1794943232.1794634,
+      "matched_pairs": 7,
+      "reference_distance_m": 909.2289841215697,
+      "distance_plus_reference_allowance_m": 1109.2289841215697
+    },
+    {
+      "rank": 107,
+      "latitude": 33.95343283582089,
+      "longitude": -118.38051948051948,
+      "log_likelihood_ratio": 9.215579513895321,
+      "offset_utc": 1794889069.059248,
+      "matched_pairs": 6,
+      "reference_distance_m": 1408.6674953999725,
+      "distance_plus_reference_allowance_m": 1608.6674953999725
+    },
+    {
+      "rank": 108,
+      "latitude": 33.956119402985074,
+      "longitude": -118.38051948051948,
+      "log_likelihood_ratio": 9.214362816081676,
+      "offset_utc": 1794889068.7168298,
+      "matched_pairs": 6,
+      "reference_distance_m": 1603.9004146959744,
+      "distance_plus_reference_allowance_m": 1803.9004146959744
+    },
+    {
+      "rank": 109,
+      "latitude": 33.93194029850746,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 9.202421134625503,
+      "offset_utc": 1794878140.0932264,
+      "matched_pairs": 8,
+      "reference_distance_m": 1596.5628876556095,
+      "distance_plus_reference_allowance_m": 1796.5628876556095
+    },
+    {
+      "rank": 110,
+      "latitude": 33.950746268656715,
+      "longitude": -118.38051948051948,
+      "log_likelihood_ratio": 9.202412423895112,
+      "offset_utc": 1794889070.2746944,
+      "matched_pairs": 6,
+      "reference_distance_m": 1254.8601762545222,
+      "distance_plus_reference_allowance_m": 1454.8601762545222
+    },
+    {
+      "rank": 111,
+      "latitude": 33.81910447761194,
+      "longitude": -118.15649350649352,
+      "log_likelihood_ratio": 9.201409756216144,
+      "offset_utc": 1794954840.2188277,
+      "matched_pairs": 9,
+      "reference_distance_m": 25976.406265472087,
+      "distance_plus_reference_allowance_m": 26176.406265472087
+    },
+    {
+      "rank": 112,
+      "latitude": 33.94537313432836,
+      "longitude": -118.34155844155845,
+      "log_likelihood_ratio": 9.188135335067074,
+      "offset_utc": 1794924462.572998,
+      "matched_pairs": 4,
+      "reference_distance_m": 4728.787696778225,
+      "distance_plus_reference_allowance_m": 4928.787696778225
+    },
+    {
+      "rank": 113,
+      "latitude": 33.93731343283582,
+      "longitude": -118.37727272727274,
+      "log_likelihood_ratio": 9.185758981601197,
+      "offset_utc": 1794922463.837272,
+      "matched_pairs": 7,
+      "reference_distance_m": 1724.2001388557721,
+      "distance_plus_reference_allowance_m": 1924.2001388557721
+    },
+    {
+      "rank": 114,
+      "latitude": 34.01253731343283,
+      "longitude": -118.44870129870131,
+      "log_likelihood_ratio": 9.177990764909545,
+      "offset_utc": 1794952989.0722694,
+      "matched_pairs": 4,
+      "reference_distance_m": 9023.231964515993,
+      "distance_plus_reference_allowance_m": 9223.231964515993
+    },
+    {
+      "rank": 115,
+      "latitude": 33.829850746268654,
+      "longitude": -118.17272727272727,
+      "log_likelihood_ratio": 9.17414426664893,
+      "offset_utc": 1794928397.3670015,
+      "matched_pairs": 4,
+      "reference_distance_m": 24068.86315573605,
+      "distance_plus_reference_allowance_m": 24268.86315573605
+    },
+    {
+      "rank": 116,
+      "latitude": 33.93731343283582,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 9.172295322565546,
+      "offset_utc": 1794892248.7722287,
+      "matched_pairs": 9,
+      "reference_distance_m": 1023.7944953360377,
+      "distance_plus_reference_allowance_m": 1223.7944953360377
+    },
+    {
+      "rank": 117,
+      "latitude": 33.94805970149253,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 9.160456242849726,
+      "offset_utc": 1794895238.9963417,
+      "matched_pairs": 8,
+      "reference_distance_m": 990.8714484713751,
+      "distance_plus_reference_allowance_m": 1190.871448471375
+    },
+    {
+      "rank": 118,
+      "latitude": 33.950746268656715,
+      "longitude": -118.40974025974026,
+      "log_likelihood_ratio": 9.15293625467229,
+      "offset_utc": 1794925790.6942306,
+      "matched_pairs": 8,
+      "reference_distance_m": 1650.490747281999,
+      "distance_plus_reference_allowance_m": 1850.490747281999
+    },
+    {
+      "rank": 119,
+      "latitude": 33.956119402985074,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 9.149719525450033,
+      "offset_utc": 1794889073.388804,
+      "matched_pairs": 6,
+      "reference_distance_m": 1408.0940325825345,
+      "distance_plus_reference_allowance_m": 1608.0940325825345
+    },
+    {
+      "rank": 120,
+      "latitude": 33.950746268656715,
+      "longitude": -118.40649350649352,
+      "log_likelihood_ratio": 9.131904163310907,
+      "offset_utc": 1794895243.608438,
+      "matched_pairs": 8,
+      "reference_distance_m": 1370.7233010014431,
+      "distance_plus_reference_allowance_m": 1570.7233010014431
+    },
+    {
+      "rank": 121,
+      "latitude": 34.039402985074624,
+      "longitude": -118.37727272727274,
+      "log_likelihood_ratio": 9.11332863122658,
+      "offset_utc": 1794888812.3994637,
+      "matched_pairs": 5,
+      "reference_distance_m": 10492.895890519401,
+      "distance_plus_reference_allowance_m": 10692.895890519401
+    },
+    {
+      "rank": 122,
+      "latitude": 33.94268656716417,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 9.112003314699093,
+      "offset_utc": 1794925912.980379,
+      "matched_pairs": 6,
+      "reference_distance_m": 645.1618359402781,
+      "distance_plus_reference_allowance_m": 845.1618359402781
+    },
+    {
+      "rank": 123,
+      "latitude": 33.95343283582089,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 9.09295566965577,
+      "offset_utc": 1794889073.6255858,
+      "matched_pairs": 6,
+      "reference_distance_m": 1180.913949880644,
+      "distance_plus_reference_allowance_m": 1380.913949880644
+    },
+    {
+      "rank": 124,
+      "latitude": 33.88626865671642,
+      "longitude": -118.2474025974026,
+      "log_likelihood_ratio": 9.072739926898391,
+      "offset_utc": 1794936640.8588505,
+      "matched_pairs": 5,
+      "reference_distance_m": 14968.33210341167,
+      "distance_plus_reference_allowance_m": 15168.33210341167
+    },
+    {
+      "rank": 125,
+      "latitude": 33.78686567164179,
+      "longitude": -118.32207792207792,
+      "log_likelihood_ratio": 9.072166768924703,
+      "offset_utc": 1794945347.0041146,
+      "matched_pairs": 4,
+      "reference_distance_m": 18853.7765507801,
+      "distance_plus_reference_allowance_m": 19053.7765507801
+    },
+    {
+      "rank": 126,
+      "latitude": 33.81910447761194,
+      "longitude": -118.16298701298702,
+      "log_likelihood_ratio": 9.07153485575472,
+      "offset_utc": 1794941723.8036246,
+      "matched_pairs": 6,
+      "reference_distance_m": 25475.07022188155,
+      "distance_plus_reference_allowance_m": 25675.07022188155
+    },
+    {
+      "rank": 127,
+      "latitude": 33.891641791044776,
+      "longitude": -118.24415584415586,
+      "log_likelihood_ratio": 9.06680507942317,
+      "offset_utc": 1794936105.5032191,
+      "matched_pairs": 4,
+      "reference_distance_m": 14986.65346294663,
+      "distance_plus_reference_allowance_m": 15186.65346294663
+    },
+    {
+      "rank": 128,
+      "latitude": 33.93462686567164,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 9.053600963649252,
+      "offset_utc": 1794892249.9461737,
+      "matched_pairs": 9,
+      "reference_distance_m": 1307.4184189095024,
+      "distance_plus_reference_allowance_m": 1507.4184189095024
+    },
+    {
+      "rank": 129,
+      "latitude": 34.039402985074624,
+      "longitude": -118.37402597402598,
+      "log_likelihood_ratio": 9.035574435771096,
+      "offset_utc": 1794888820.2643206,
+      "matched_pairs": 5,
+      "reference_distance_m": 10537.95240163798,
+      "distance_plus_reference_allowance_m": 10737.95240163798
+    },
+    {
+      "rank": 130,
+      "latitude": 33.950746268656715,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 9.03327157009501,
+      "offset_utc": 1794889074.8424087,
+      "matched_pairs": 6,
+      "reference_distance_m": 992.4057070241,
+      "distance_plus_reference_allowance_m": 1192.4057070241001
+    },
+    {
+      "rank": 131,
+      "latitude": 33.93462686567164,
+      "longitude": -118.41623376623377,
+      "log_likelihood_ratio": 9.031585923636868,
+      "offset_utc": 1794886470.2574673,
+      "matched_pairs": 6,
+      "reference_distance_m": 2498.696578140258,
+      "distance_plus_reference_allowance_m": 2698.696578140258
+    },
+    {
+      "rank": 132,
+      "latitude": 33.96149253731343,
+      "longitude": -118.33831168831169,
+      "log_likelihood_ratio": 8.95917626314889,
+      "offset_utc": 1794924282.7512877,
+      "matched_pairs": 5,
+      "reference_distance_m": 5317.169299426262,
+      "distance_plus_reference_allowance_m": 5517.169299426262
+    },
+    {
+      "rank": 133,
+      "latitude": 33.950746268656715,
+      "longitude": -118.37727272727274,
+      "log_likelihood_ratio": 8.943686363787094,
+      "offset_utc": 1794889065.9081404,
+      "matched_pairs": 6,
+      "reference_distance_m": 1530.9667942142075,
+      "distance_plus_reference_allowance_m": 1730.9667942142075
+    },
+    {
+      "rank": 134,
+      "latitude": 33.95343283582089,
+      "longitude": -118.37727272727274,
+      "log_likelihood_ratio": 8.921307429415892,
+      "offset_utc": 1794889064.6890185,
+      "matched_pairs": 6,
+      "reference_distance_m": 1659.3688842119418,
+      "distance_plus_reference_allowance_m": 1859.3688842119418
+    },
+    {
+      "rank": 135,
+      "latitude": 33.96149253731343,
+      "longitude": -118.32857142857144,
+      "log_likelihood_ratio": 8.907844953414918,
+      "offset_utc": 1794893278.1543145,
+      "matched_pairs": 8,
+      "reference_distance_m": 6173.538205058248,
+      "distance_plus_reference_allowance_m": 6373.538205058248
+    },
+    {
+      "rank": 136,
+      "latitude": 33.99641791044776,
+      "longitude": -118.44545454545455,
+      "log_likelihood_ratio": 8.902506290470072,
+      "offset_utc": 1794884225.0406036,
+      "matched_pairs": 4,
+      "reference_distance_m": 7422.052190858406,
+      "distance_plus_reference_allowance_m": 7622.052190858406
+    },
+    {
+      "rank": 137,
+      "latitude": 33.8110447761194,
+      "longitude": -118.18246753246754,
+      "log_likelihood_ratio": 8.899190474919449,
+      "offset_utc": 1794948088.0030403,
+      "matched_pairs": 5,
+      "reference_distance_m": 24536.131993364143,
+      "distance_plus_reference_allowance_m": 24736.131993364143
+    },
+    {
+      "rank": 138,
+      "latitude": 33.956119402985074,
+      "longitude": -118.35779220779222,
+      "log_likelihood_ratio": 8.878131760138054,
+      "offset_utc": 1794954496.4653869,
+      "matched_pairs": 7,
+      "reference_distance_m": 3423.9161192265506,
+      "distance_plus_reference_allowance_m": 3623.9161192265506
+    },
+    {
+      "rank": 139,
+      "latitude": 34.028656716417906,
+      "longitude": -118.34155844155845,
+      "log_likelihood_ratio": 8.870669203300023,
+      "offset_utc": 1794890381.2145503,
+      "matched_pairs": 4,
+      "reference_distance_m": 10342.580502410108,
+      "distance_plus_reference_allowance_m": 10542.580502410108
+    },
+    {
+      "rank": 140,
+      "latitude": 34.00716417910448,
+      "longitude": -118.45519480519481,
+      "log_likelihood_ratio": 8.868511293824154,
+      "offset_utc": 1794881249.9714615,
+      "matched_pairs": 4,
+      "reference_distance_m": 8913.789284822213,
+      "distance_plus_reference_allowance_m": 9113.789284822213
+    },
+    {
+      "rank": 141,
+      "latitude": 33.96149253731343,
+      "longitude": -118.32532467532468,
+      "log_likelihood_ratio": 8.8553255169965,
+      "offset_utc": 1794893273.9007025,
+      "matched_pairs": 8,
+      "reference_distance_m": 6461.53109165158,
+      "distance_plus_reference_allowance_m": 6661.53109165158
+    },
+    {
+      "rank": 142,
+      "latitude": 33.94,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 8.851995132023163,
+      "offset_utc": 1794876365.0108745,
+      "matched_pairs": 9,
+      "reference_distance_m": 1063.45577595388,
+      "distance_plus_reference_allowance_m": 1263.45577595388
+    },
+    {
+      "rank": 143,
+      "latitude": 33.94268656716417,
+      "longitude": -118.35454545454546,
+      "log_likelihood_ratio": 8.849405431716946,
+      "offset_utc": 1794910639.765883,
+      "matched_pairs": 4,
+      "reference_distance_m": 3548.766911958014,
+      "distance_plus_reference_allowance_m": 3748.766911958014
+    },
+    {
+      "rank": 144,
+      "latitude": 33.956119402985074,
+      "longitude": -118.37727272727274,
+      "log_likelihood_ratio": 8.846409061604533,
+      "offset_utc": 1794889064.2316818,
+      "matched_pairs": 6,
+      "reference_distance_m": 1828.0134678623494,
+      "distance_plus_reference_allowance_m": 2028.0134678623494
+    },
+    {
+      "rank": 145,
+      "latitude": 33.95880597014925,
+      "longitude": -118.31233766233767,
+      "log_likelihood_ratio": 8.838576486591023,
+      "offset_utc": 1794955195.1144304,
+      "matched_pairs": 4,
+      "reference_distance_m": 7560.210476532189,
+      "distance_plus_reference_allowance_m": 7760.210476532189
+    },
+    {
+      "rank": 146,
+      "latitude": 33.94537313432836,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 8.833183344172113,
+      "offset_utc": 1794904049.9910898,
+      "matched_pairs": 4,
+      "reference_distance_m": 1861.446108683987,
+      "distance_plus_reference_allowance_m": 2061.446108683987
+    },
+    {
+      "rank": 147,
+      "latitude": 33.95880597014925,
+      "longitude": -118.32532467532468,
+      "log_likelihood_ratio": 8.826572628981308,
+      "offset_utc": 1794893274.363895,
+      "matched_pairs": 8,
+      "reference_distance_m": 6388.070909785226,
+      "distance_plus_reference_allowance_m": 6588.070909785226
+    },
+    {
+      "rank": 148,
+      "latitude": 33.95880597014925,
+      "longitude": -118.32857142857144,
+      "log_likelihood_ratio": 8.804673575914833,
+      "offset_utc": 1794893278.5561829,
+      "matched_pairs": 8,
+      "reference_distance_m": 6096.599459404362,
+      "distance_plus_reference_allowance_m": 6296.599459404362
+    },
+    {
+      "rank": 149,
+      "latitude": 33.93462686567164,
+      "longitude": -118.40974025974026,
+      "log_likelihood_ratio": 8.800270144520367,
+      "offset_utc": 1794895964.9900172,
+      "matched_pairs": 5,
+      "reference_distance_m": 2003.6084947178847,
+      "distance_plus_reference_allowance_m": 2203.6084947178847
+    },
+    {
+      "rank": 150,
+      "latitude": 33.94268656716417,
+      "longitude": -118.3448051948052,
+      "log_likelihood_ratio": 8.794185170400482,
+      "offset_utc": 1794924466.4831285,
+      "matched_pairs": 4,
+      "reference_distance_m": 4443.562439364765,
+      "distance_plus_reference_allowance_m": 4643.562439364765
+    },
+    {
+      "rank": 151,
+      "latitude": 33.94805970149253,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 8.790598928998433,
+      "offset_utc": 1794886989.969442,
+      "matched_pairs": 8,
+      "reference_distance_m": 990.8714484713751,
+      "distance_plus_reference_allowance_m": 1190.871448471375
+    },
+    {
+      "rank": 152,
+      "latitude": 33.95880597014925,
+      "longitude": -118.32857142857144,
+      "log_likelihood_ratio": 8.780894266290872,
+      "offset_utc": 1794954456.1553636,
+      "matched_pairs": 6,
+      "reference_distance_m": 6096.599459404362,
+      "distance_plus_reference_allowance_m": 6296.599459404362
+    },
+    {
+      "rank": 153,
+      "latitude": 33.950746268656715,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 8.775516537354205,
+      "offset_utc": 1794886988.4714553,
+      "matched_pairs": 8,
+      "reference_distance_m": 1101.3742856402596,
+      "distance_plus_reference_allowance_m": 1301.3742856402596
+    },
+    {
+      "rank": 154,
+      "latitude": 33.94,
+      "longitude": -118.3448051948052,
+      "log_likelihood_ratio": 8.774294709257028,
+      "offset_utc": 1794924466.9497957,
+      "matched_pairs": 4,
+      "reference_distance_m": 4477.73213247828,
+      "distance_plus_reference_allowance_m": 4677.73213247828
+    },
+    {
+      "rank": 155,
+      "latitude": 33.93731343283582,
+      "longitude": -118.3448051948052,
+      "log_likelihood_ratio": 8.759162124981508,
+      "offset_utc": 1794924468.1071434,
+      "matched_pairs": 4,
+      "reference_distance_m": 4531.380065507476,
+      "distance_plus_reference_allowance_m": 4731.380065507476
+    },
+    {
+      "rank": 156,
+      "latitude": 33.81373134328358,
+      "longitude": -118.35454545454546,
+      "log_likelihood_ratio": 8.747772566469934,
+      "offset_utc": 1794931790.2816331,
+      "matched_pairs": 5,
+      "reference_distance_m": 15117.646478979797,
+      "distance_plus_reference_allowance_m": 15317.646478979797
+    },
+    {
+      "rank": 157,
+      "latitude": 33.93731343283582,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 8.738607354479285,
+      "offset_utc": 1794910632.6609104,
+      "matched_pairs": 4,
+      "reference_distance_m": 4239.105180975926,
+      "distance_plus_reference_allowance_m": 4439.105180975926
+    },
+    {
+      "rank": 158,
+      "latitude": 33.83253731343283,
+      "longitude": -118.17272727272727,
+      "log_likelihood_ratio": 8.737725604149588,
+      "offset_utc": 1794955272.4931474,
+      "matched_pairs": 5,
+      "reference_distance_m": 23909.730106239003,
+      "distance_plus_reference_allowance_m": 24109.730106239003
+    },
+    {
+      "rank": 159,
+      "latitude": 33.79223880597015,
+      "longitude": -118.32207792207792,
+      "log_likelihood_ratio": 8.736155253663235,
+      "offset_utc": 1794933163.3823004,
+      "matched_pairs": 4,
+      "reference_distance_m": 18294.405240482876,
+      "distance_plus_reference_allowance_m": 18494.405240482876
+    },
+    {
+      "rank": 160,
+      "latitude": 33.94,
+      "longitude": -118.34155844155845,
+      "log_likelihood_ratio": 8.722661746112443,
+      "offset_utc": 1794924462.9185867,
+      "matched_pairs": 4,
+      "reference_distance_m": 4774.180520383564,
+      "distance_plus_reference_allowance_m": 4974.180520383564
+    },
+    {
+      "rank": 161,
+      "latitude": 33.94805970149253,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 8.71851727017026,
+      "offset_utc": 1794904048.5831137,
+      "matched_pairs": 4,
+      "reference_distance_m": 1875.531467984371,
+      "distance_plus_reference_allowance_m": 2075.531467984371
+    },
+    {
+      "rank": 162,
+      "latitude": 33.800298507462685,
+      "longitude": -118.16623376623377,
+      "log_likelihood_ratio": 8.717897725234891,
+      "offset_utc": 1794877972.4123151,
+      "matched_pairs": 4,
+      "reference_distance_m": 26453.671329122066,
+      "distance_plus_reference_allowance_m": 26653.671329122066
+    },
+    {
+      "rank": 163,
+      "latitude": 33.94268656716417,
+      "longitude": -118.34155844155845,
+      "log_likelihood_ratio": 8.707959462628956,
+      "offset_utc": 1794924462.4042368,
+      "matched_pairs": 4,
+      "reference_distance_m": 4742.138250635333,
+      "distance_plus_reference_allowance_m": 4942.138250635333
+    },
+    {
+      "rank": 164,
+      "latitude": 33.94,
+      "longitude": -118.35454545454546,
+      "log_likelihood_ratio": 8.700805167897414,
+      "offset_utc": 1794910639.8382602,
+      "matched_pairs": 4,
+      "reference_distance_m": 3591.428517578131,
+      "distance_plus_reference_allowance_m": 3791.428517578131
+    },
+    {
+      "rank": 165,
+      "latitude": 34.01522388059701,
+      "longitude": -118.45519480519481,
+      "log_likelihood_ratio": 8.700656123436069,
+      "offset_utc": 1794952993.0909016,
+      "matched_pairs": 4,
+      "reference_distance_m": 9615.688747824152,
+      "distance_plus_reference_allowance_m": 9815.688747824152
+    },
+    {
+      "rank": 166,
+      "latitude": 33.93731343283582,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 8.693138112028763,
+      "offset_utc": 1794933968.1339645,
+      "matched_pairs": 10,
+      "reference_distance_m": 1096.891949489964,
+      "distance_plus_reference_allowance_m": 1296.891949489964
+    },
+    {
+      "rank": 167,
+      "latitude": 33.848656716417906,
+      "longitude": -118.26363636363637,
+      "log_likelihood_ratio": 8.686184618479762,
+      "offset_utc": 1794947576.7215323,
+      "matched_pairs": 4,
+      "reference_distance_m": 16097.562440272362,
+      "distance_plus_reference_allowance_m": 16297.562440272362
+    },
+    {
+      "rank": 168,
+      "latitude": 33.93462686567164,
+      "longitude": -118.42597402597403,
+      "log_likelihood_ratio": 8.684215822166165,
+      "offset_utc": 1794896758.707956,
+      "matched_pairs": 6,
+      "reference_distance_m": 3306.455487057866,
+      "distance_plus_reference_allowance_m": 3506.455487057866
+    },
+    {
+      "rank": 169,
+      "latitude": 33.94,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 8.676024882044317,
+      "offset_utc": 1794916603.590643,
+      "matched_pairs": 4,
+      "reference_distance_m": 848.8001428264673,
+      "distance_plus_reference_allowance_m": 1048.8001428264674
+    },
+    {
+      "rank": 170,
+      "latitude": 33.8110447761194,
+      "longitude": -118.16948051948053,
+      "log_likelihood_ratio": 8.668856613763666,
+      "offset_utc": 1794933688.1654866,
+      "matched_pairs": 7,
+      "reference_distance_m": 25495.531372496513,
+      "distance_plus_reference_allowance_m": 25695.531372496513
+    },
+    {
+      "rank": 171,
+      "latitude": 33.93731343283582,
+      "longitude": -118.41623376623377,
+      "log_likelihood_ratio": 8.667696469390009,
+      "offset_utc": 1794886469.8013012,
+      "matched_pairs": 6,
+      "reference_distance_m": 2362.6581997340404,
+      "distance_plus_reference_allowance_m": 2562.6581997340404
+    },
+    {
+      "rank": 172,
+      "latitude": 33.93731343283582,
+      "longitude": -118.39025974025975,
+      "log_likelihood_ratio": 8.666316403381112,
+      "offset_utc": 1794878329.8468432,
+      "matched_pairs": 8,
+      "reference_distance_m": 985.9467985456104,
+      "distance_plus_reference_allowance_m": 1185.9467985456104
+    },
+    {
+      "rank": 173,
+      "latitude": 33.93731343283582,
+      "longitude": -118.42272727272727,
+      "log_likelihood_ratio": 8.664489364580442,
+      "offset_utc": 1794886476.8254414,
+      "matched_pairs": 5,
+      "reference_distance_m": 2920.403294558626,
+      "distance_plus_reference_allowance_m": 3120.403294558626
+    },
+    {
+      "rank": 174,
+      "latitude": 33.891641791044776,
+      "longitude": -118.23116883116883,
+      "log_likelihood_ratio": 8.648016481329888,
+      "offset_utc": 1794954053.8938563,
+      "matched_pairs": 6,
+      "reference_distance_m": 16090.757636217235,
+      "distance_plus_reference_allowance_m": 16290.757636217235
+    },
+    {
+      "rank": 175,
+      "latitude": 33.93462686567164,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 8.647424216818692,
+      "offset_utc": 1794895968.2087224,
+      "matched_pairs": 5,
+      "reference_distance_m": 2244.8293178751483,
+      "distance_plus_reference_allowance_m": 2444.8293178751483
+    },
+    {
+      "rank": 176,
+      "latitude": 33.96149253731343,
+      "longitude": -118.31233766233767,
+      "log_likelihood_ratio": 8.636695341363563,
+      "offset_utc": 1794887836.6967888,
+      "matched_pairs": 7,
+      "reference_distance_m": 7622.348739766283,
+      "distance_plus_reference_allowance_m": 7822.348739766283
+    },
+    {
+      "rank": 177,
+      "latitude": 33.93462686567164,
+      "longitude": -118.38051948051948,
+      "log_likelihood_ratio": 8.636254127829426,
+      "offset_utc": 1794888002.396727,
+      "matched_pairs": 8,
+      "reference_distance_m": 1692.5671849166451,
+      "distance_plus_reference_allowance_m": 1892.5671849166451
+    },
+    {
+      "rank": 178,
+      "latitude": 33.95880597014925,
+      "longitude": -118.37402597402598,
+      "log_likelihood_ratio": 8.621016150145664,
+      "offset_utc": 1794934271.6440415,
+      "matched_pairs": 6,
+      "reference_distance_m": 2248.7150714498357,
+      "distance_plus_reference_allowance_m": 2448.7150714498357
+    },
+    {
+      "rank": 179,
+      "latitude": 33.8755223880597,
+      "longitude": -118.26038961038961,
+      "log_likelihood_ratio": 8.615306149358384,
+      "offset_utc": 1794948577.2184796,
+      "matched_pairs": 4,
+      "reference_distance_m": 14512.94355723509,
+      "distance_plus_reference_allowance_m": 14712.94355723509
+    },
+    {
+      "rank": 180,
+      "latitude": 33.800298507462685,
+      "longitude": -118.15,
+      "log_likelihood_ratio": 8.612704442573623,
+      "offset_utc": 1794874637.5467176,
+      "matched_pairs": 6,
+      "reference_distance_m": 27654.047807909486,
+      "distance_plus_reference_allowance_m": 27854.047807909486
+    },
+    {
+      "rank": 181,
+      "latitude": 34.01253731343283,
+      "longitude": -118.45194805194805,
+      "log_likelihood_ratio": 8.60873417416488,
+      "offset_utc": 1794952994.6836047,
+      "matched_pairs": 4,
+      "reference_distance_m": 9197.477262957405,
+      "distance_plus_reference_allowance_m": 9397.477262957405
+    },
+    {
+      "rank": 182,
+      "latitude": 33.95343283582089,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 8.607084511856634,
+      "offset_utc": 1794886988.0781393,
+      "matched_pairs": 8,
+      "reference_distance_m": 1273.8550876344314,
+      "distance_plus_reference_allowance_m": 1473.8550876344314
+    },
+    {
+      "rank": 183,
+      "latitude": 33.78686567164179,
+      "longitude": -118.31883116883118,
+      "log_likelihood_ratio": 8.604275649028253,
+      "offset_utc": 1794945340.2001152,
+      "matched_pairs": 4,
+      "reference_distance_m": 18959.710127691756,
+      "distance_plus_reference_allowance_m": 19159.710127691756
+    },
+    {
+      "rank": 184,
+      "latitude": 33.93731343283582,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 8.598011673392485,
+      "offset_utc": 1794895967.5824094,
+      "matched_pairs": 5,
+      "reference_distance_m": 2092.3589182857404,
+      "distance_plus_reference_allowance_m": 2292.3589182857404
+    },
+    {
+      "rank": 185,
+      "latitude": 33.95343283582089,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 8.59550126473866,
+      "offset_utc": 1794900249.2816284,
+      "matched_pairs": 5,
+      "reference_distance_m": 910.5814631812609,
+      "distance_plus_reference_allowance_m": 1110.581463181261
+    },
+    {
+      "rank": 186,
+      "latitude": 33.921194029850746,
+      "longitude": -118.30259740259741,
+      "log_likelihood_ratio": 8.594228566716943,
+      "offset_utc": 1794947435.402217,
+      "matched_pairs": 5,
+      "reference_distance_m": 8765.907712729748,
+      "distance_plus_reference_allowance_m": 8965.907712729748
+    },
+    {
+      "rank": 187,
+      "latitude": 33.878208955223876,
+      "longitude": -118.2409090909091,
+      "log_likelihood_ratio": 8.585931914043451,
+      "offset_utc": 1794955582.811031,
+      "matched_pairs": 7,
+      "reference_distance_m": 15912.303376631025,
+      "distance_plus_reference_allowance_m": 16112.303376631025
+    },
+    {
+      "rank": 188,
+      "latitude": 33.94,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 8.5769563223054,
+      "offset_utc": 1794910631.5103874,
+      "matched_pairs": 4,
+      "reference_distance_m": 4181.718950084545,
+      "distance_plus_reference_allowance_m": 4381.718950084545
+    },
+    {
+      "rank": 189,
+      "latitude": 33.800298507462685,
+      "longitude": -118.16298701298702,
+      "log_likelihood_ratio": 8.572502969334458,
+      "offset_utc": 1794877977.7448564,
+      "matched_pairs": 4,
+      "reference_distance_m": 26691.333058226104,
+      "distance_plus_reference_allowance_m": 26891.333058226104
+    },
+    {
+      "rank": 190,
+      "latitude": 33.95343283582089,
+      "longitude": -118.40649350649352,
+      "log_likelihood_ratio": 8.569883936892042,
+      "offset_utc": 1794895243.3771296,
+      "matched_pairs": 8,
+      "reference_distance_m": 1512.7930510373706,
+      "distance_plus_reference_allowance_m": 1712.7930510373706
+    },
+    {
+      "rank": 191,
+      "latitude": 34.101194029850745,
+      "longitude": -118.31558441558442,
+      "log_likelihood_ratio": 8.569582505988535,
+      "offset_utc": 1794911651.973943,
+      "matched_pairs": 3,
+      "reference_distance_m": 18675.049052465336,
+      "distance_plus_reference_allowance_m": 18875.049052465336
+    },
+    {
+      "rank": 192,
+      "latitude": 33.93731343283582,
+      "longitude": -118.35454545454546,
+      "log_likelihood_ratio": 8.567198880376367,
+      "offset_utc": 1794910640.7999997,
+      "matched_pairs": 4,
+      "reference_distance_m": 3658.066888258837,
+      "distance_plus_reference_allowance_m": 3858.066888258837
+    },
+    {
+      "rank": 193,
+      "latitude": 33.85134328358209,
+      "longitude": -118.27012987012988,
+      "log_likelihood_ratio": 8.55126494266352,
+      "offset_utc": 1794944724.7399924,
+      "matched_pairs": 3,
+      "reference_distance_m": 15453.885466764474,
+      "distance_plus_reference_allowance_m": 15653.885466764474
+    },
+    {
+      "rank": 194,
+      "latitude": 33.78955223880597,
+      "longitude": -118.16623376623377,
+      "log_likelihood_ratio": 8.549769114477291,
+      "offset_utc": 1794941706.6788661,
+      "matched_pairs": 3,
+      "reference_distance_m": 27202.532415161266,
+      "distance_plus_reference_allowance_m": 27402.532415161266
+    },
+    {
+      "rank": 195,
+      "latitude": 33.93731343283582,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 8.54808652119796,
+      "offset_utc": 1794916597.020639,
+      "matched_pairs": 4,
+      "reference_distance_m": 1270.2997312194648,
+      "distance_plus_reference_allowance_m": 1470.2997312194648
+    },
+    {
+      "rank": 196,
+      "latitude": 33.93462686567164,
+      "longitude": -118.39025974025975,
+      "log_likelihood_ratio": 8.542731476935451,
+      "offset_utc": 1794878331.6418676,
+      "matched_pairs": 8,
+      "reference_distance_m": 1277.9970433583223,
+      "distance_plus_reference_allowance_m": 1477.9970433583223
+    },
+    {
+      "rank": 197,
+      "latitude": 33.87283582089552,
+      "longitude": -118.26363636363637,
+      "log_likelihood_ratio": 8.541415505805233,
+      "offset_utc": 1794937940.0015512,
+      "matched_pairs": 4,
+      "reference_distance_m": 14427.85597073761,
+      "distance_plus_reference_allowance_m": 14627.85597073761
+    },
+    {
+      "rank": 198,
+      "latitude": 33.824477611940296,
+      "longitude": -118.15324675324676,
+      "log_likelihood_ratio": 8.541029989043325,
+      "offset_utc": 1794883200.8706274,
+      "matched_pairs": 5,
+      "reference_distance_m": 25911.701530930994,
+      "distance_plus_reference_allowance_m": 26111.701530930994
+    },
+    {
+      "rank": 199,
+      "latitude": 34.05283582089552,
+      "longitude": -118.23116883116883,
+      "log_likelihood_ratio": 8.538613713728274,
+      "offset_utc": 1794947456.5642357,
+      "matched_pairs": 3,
+      "reference_distance_m": 19062.815551927895,
+      "distance_plus_reference_allowance_m": 19262.815551927895
+    },
+    {
+      "rank": 200,
+      "latitude": 33.94268656716417,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 8.53117408085754,
+      "offset_utc": 1794924470.530984,
+      "matched_pairs": 4,
+      "reference_distance_m": 4145.1195849489395,
+      "distance_plus_reference_allowance_m": 4345.1195849489395
+    },
+    {
+      "rank": 201,
+      "latitude": 33.81641791044776,
+      "longitude": -118.16948051948053,
+      "log_likelihood_ratio": 8.526728813586963,
+      "offset_utc": 1794935752.5500631,
+      "matched_pairs": 7,
+      "reference_distance_m": 25148.183346730304,
+      "distance_plus_reference_allowance_m": 25348.183346730304
+    },
+    {
+      "rank": 202,
+      "latitude": 33.8755223880597,
+      "longitude": -118.23116883116883,
+      "log_likelihood_ratio": 8.52499542057268,
+      "offset_utc": 1794955830.7049897,
+      "matched_pairs": 4,
+      "reference_distance_m": 16846.485753934758,
+      "distance_plus_reference_allowance_m": 17046.485753934758
+    },
+    {
+      "rank": 203,
+      "latitude": 33.94,
+      "longitude": -118.38376623376624,
+      "log_likelihood_ratio": 8.522216166125673,
+      "offset_utc": 1794924150.0330791,
+      "matched_pairs": 7,
+      "reference_distance_m": 1063.45577595388,
+      "distance_plus_reference_allowance_m": 1263.45577595388
+    },
+    {
+      "rank": 204,
+      "latitude": 34.06895522388059,
+      "longitude": -118.17922077922078,
+      "log_likelihood_ratio": 8.519860038514897,
+      "offset_utc": 1794875689.8985538,
+      "matched_pairs": 3,
+      "reference_distance_m": 23975.07085272192,
+      "distance_plus_reference_allowance_m": 24175.07085272192
+    },
+    {
+      "rank": 205,
+      "latitude": 33.94537313432836,
+      "longitude": -118.42922077922078,
+      "log_likelihood_ratio": 8.511129864776253,
+      "offset_utc": 1794941532.709002,
+      "matched_pairs": 7,
+      "reference_distance_m": 3358.462045777355,
+      "distance_plus_reference_allowance_m": 3558.462045777355
+    },
+    {
+      "rank": 206,
+      "latitude": 33.79223880597015,
+      "longitude": -118.30259740259741,
+      "log_likelihood_ratio": 8.50596015967062,
+      "offset_utc": 1794954922.688964,
+      "matched_pairs": 3,
+      "reference_distance_m": 19010.88552119655,
+      "distance_plus_reference_allowance_m": 19210.88552119655
+    },
+    {
+      "rank": 207,
+      "latitude": 33.93731343283582,
+      "longitude": -118.40974025974026,
+      "log_likelihood_ratio": 8.505207654962362,
+      "offset_utc": 1794895964.2063174,
+      "matched_pairs": 5,
+      "reference_distance_m": 1831.170803856883,
+      "distance_plus_reference_allowance_m": 2031.170803856883
+    },
+    {
+      "rank": 208,
+      "latitude": 33.79223880597015,
+      "longitude": -118.16623376623377,
+      "log_likelihood_ratio": 8.504482723063544,
+      "offset_utc": 1794941712.8859267,
+      "matched_pairs": 3,
+      "reference_distance_m": 27012.30805462274,
+      "distance_plus_reference_allowance_m": 27212.30805462274
+    },
+    {
+      "rank": 209,
+      "latitude": 33.78417910447761,
+      "longitude": -118.16948051948053,
+      "log_likelihood_ratio": 8.501442641082521,
+      "offset_utc": 1794941691.9013107,
+      "matched_pairs": 3,
+      "reference_distance_m": 27362.12705548818,
+      "distance_plus_reference_allowance_m": 27562.12705548818
+    },
+    {
+      "rank": 210,
+      "latitude": 33.87283582089552,
+      "longitude": -118.27012987012988,
+      "log_likelihood_ratio": 8.488628310026728,
+      "offset_utc": 1794938454.1685967,
+      "matched_pairs": 3,
+      "reference_distance_m": 13936.81062333442,
+      "distance_plus_reference_allowance_m": 14136.81062333442
+    },
+    {
+      "rank": 211,
+      "latitude": 33.78149253731343,
+      "longitude": -118.16948051948053,
+      "log_likelihood_ratio": 8.477042506482064,
+      "offset_utc": 1794941685.6781123,
+      "matched_pairs": 3,
+      "reference_distance_m": 27559.645033393026,
+      "distance_plus_reference_allowance_m": 27759.645033393026
+    },
+    {
+      "rank": 212,
+      "latitude": 33.94,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 8.463472545740366,
+      "offset_utc": 1794924470.834519,
+      "matched_pairs": 4,
+      "reference_distance_m": 4181.718950084545,
+      "distance_plus_reference_allowance_m": 4381.718950084545
+    },
+    {
+      "rank": 213,
+      "latitude": 33.96149253731343,
+      "longitude": -118.33181818181819,
+      "log_likelihood_ratio": 8.459996265032188,
+      "offset_utc": 1794893282.6327767,
+      "matched_pairs": 8,
+      "reference_distance_m": 5886.690198439706,
+      "distance_plus_reference_allowance_m": 6086.690198439706
+    },
+    {
+      "rank": 214,
+      "latitude": 33.95343283582089,
+      "longitude": -118.35779220779222,
+      "log_likelihood_ratio": 8.45362252119972,
+      "offset_utc": 1794954497.107508,
+      "matched_pairs": 7,
+      "reference_distance_m": 3336.9653978077913,
+      "distance_plus_reference_allowance_m": 3536.9653978077913
+    },
+    {
+      "rank": 215,
+      "latitude": 33.7976119402985,
+      "longitude": -118.33506493506493,
+      "log_likelihood_ratio": 8.441483302753838,
+      "offset_utc": 1794944460.437745,
+      "matched_pairs": 3,
+      "reference_distance_m": 17331.928148263512,
+      "distance_plus_reference_allowance_m": 17531.928148263512
+    },
+    {
+      "rank": 216,
+      "latitude": 33.93462686567164,
+      "longitude": -118.39025974025975,
+      "log_likelihood_ratio": 8.435640263578179,
+      "offset_utc": 1794933975.1770926,
+      "matched_pairs": 9,
+      "reference_distance_m": 1277.9970433583223,
+      "distance_plus_reference_allowance_m": 1477.9970433583223
+    },
+    {
+      "rank": 217,
+      "latitude": 33.956119402985074,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 8.433757269622442,
+      "offset_utc": 1794889078.0552816,
+      "matched_pairs": 6,
+      "reference_distance_m": 1253.9258479983787,
+      "distance_plus_reference_allowance_m": 1453.9258479983787
+    },
+    {
+      "rank": 218,
+      "latitude": 34.02328358208955,
+      "longitude": -118.44545454545455,
+      "log_likelihood_ratio": 8.426967522791998,
+      "offset_utc": 1794926025.926046,
+      "matched_pairs": 3,
+      "reference_distance_m": 9876.751892315036,
+      "distance_plus_reference_allowance_m": 10076.751892315036
+    },
+    {
+      "rank": 219,
+      "latitude": 33.94268656716417,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 8.422690525535856,
+      "offset_utc": 1794910631.1471758,
+      "matched_pairs": 4,
+      "reference_distance_m": 4145.1195849489395,
+      "distance_plus_reference_allowance_m": 4345.1195849489395
+    },
+    {
+      "rank": 220,
+      "latitude": 33.88895522388059,
+      "longitude": -118.26038961038961,
+      "log_likelihood_ratio": 8.419503909451114,
+      "offset_utc": 1794943414.3151019,
+      "matched_pairs": 3,
+      "reference_distance_m": 13764.005638077566,
+      "distance_plus_reference_allowance_m": 13964.005638077566
+    },
+    {
+      "rank": 221,
+      "latitude": 33.805671641791044,
+      "longitude": -118.16298701298702,
+      "log_likelihood_ratio": 8.414804799684369,
+      "offset_utc": 1794880085.605899,
+      "matched_pairs": 7,
+      "reference_distance_m": 26332.619227169052,
+      "distance_plus_reference_allowance_m": 26532.619227169052
+    },
+    {
+      "rank": 222,
+      "latitude": 34.009850746268654,
+      "longitude": -118.45844155844156,
+      "log_likelihood_ratio": 8.413320416325378,
+      "offset_utc": 1794881248.8030076,
+      "matched_pairs": 4,
+      "reference_distance_m": 9335.197830301244,
+      "distance_plus_reference_allowance_m": 9535.197830301244
+    },
+    {
+      "rank": 223,
+      "latitude": 33.950746268656715,
+      "longitude": -118.40974025974026,
+      "log_likelihood_ratio": 8.410925180429068,
+      "offset_utc": 1794895249.1866088,
+      "matched_pairs": 8,
+      "reference_distance_m": 1650.490747281999,
+      "distance_plus_reference_allowance_m": 1850.490747281999
+    },
+    {
+      "rank": 224,
+      "latitude": 33.93731343283582,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 8.407427997434723,
+      "offset_utc": 1794924471.9353657,
+      "matched_pairs": 4,
+      "reference_distance_m": 4239.105180975926,
+      "distance_plus_reference_allowance_m": 4439.105180975926
+    },
+    {
+      "rank": 225,
+      "latitude": 33.950746268656715,
+      "longitude": -118.41298701298702,
+      "log_likelihood_ratio": 8.40694004372564,
+      "offset_utc": 1794904048.280952,
+      "matched_pairs": 4,
+      "reference_distance_m": 1936.1656264628175,
+      "distance_plus_reference_allowance_m": 2136.1656264628173
+    },
+    {
+      "rank": 226,
+      "latitude": 33.99910447761194,
+      "longitude": -118.49415584415586,
+      "log_likelihood_ratio": 8.403616624592773,
+      "offset_utc": 1794951335.5864308,
+      "matched_pairs": 3,
+      "reference_distance_m": 11058.738307479382,
+      "distance_plus_reference_allowance_m": 11258.738307479382
+    },
+    {
+      "rank": 227,
+      "latitude": 33.95343283582089,
+      "longitude": -118.37402597402598,
+      "log_likelihood_ratio": 8.389924038763043,
+      "offset_utc": 1794934272.11971,
+      "matched_pairs": 6,
+      "reference_distance_m": 1924.0687877885746,
+      "distance_plus_reference_allowance_m": 2124.068787788575
+    },
+    {
+      "rank": 228,
+      "latitude": 33.956119402985074,
+      "longitude": -118.37402597402598,
+      "log_likelihood_ratio": 8.389210306149764,
+      "offset_utc": 1794934271.526977,
+      "matched_pairs": 6,
+      "reference_distance_m": 2071.265048008967,
+      "distance_plus_reference_allowance_m": 2271.265048008967
+    },
+    {
+      "rank": 229,
+      "latitude": 33.84597014925373,
+      "longitude": -118.27662337662338,
+      "log_likelihood_ratio": 8.387184030141919,
+      "offset_utc": 1794932265.7820003,
+      "matched_pairs": 3,
+      "reference_distance_m": 15444.741795582213,
+      "distance_plus_reference_allowance_m": 15644.741795582213
+    },
+    {
+      "rank": 230,
+      "latitude": 33.95343283582089,
+      "longitude": -118.41623376623377,
+      "log_likelihood_ratio": 8.386109588828324,
+      "offset_utc": 1794925708.9675462,
+      "matched_pairs": 5,
+      "reference_distance_m": 2315.6637616758376,
+      "distance_plus_reference_allowance_m": 2515.6637616758376
+    },
+    {
+      "rank": 231,
+      "latitude": 33.824477611940296,
+      "longitude": -118.1922077922078,
+      "log_likelihood_ratio": 8.377421739073341,
+      "offset_utc": 1794942467.0071483,
+      "matched_pairs": 3,
+      "reference_distance_m": 22919.034169364062,
+      "distance_plus_reference_allowance_m": 23119.034169364062
+    },
+    {
+      "rank": 232,
+      "latitude": 33.92925373134328,
+      "longitude": -118.1922077922078,
+      "log_likelihood_ratio": 8.376742068079444,
+      "offset_utc": 1794943321.9934487,
+      "matched_pairs": 3,
+      "reference_distance_m": 18599.383505126938,
+      "distance_plus_reference_allowance_m": 18799.383505126938
+    },
+    {
+      "rank": 233,
+      "latitude": 33.78149253731343,
+      "longitude": -118.17272727272727,
+      "log_likelihood_ratio": 8.376675600998539,
+      "offset_utc": 1794955599.7265558,
+      "matched_pairs": 3,
+      "reference_distance_m": 27336.06033263483,
+      "distance_plus_reference_allowance_m": 27536.06033263483
+    },
+    {
+      "rank": 234,
+      "latitude": 33.95343283582089,
+      "longitude": -118.42272727272727,
+      "log_likelihood_ratio": 8.37590990273575,
+      "offset_utc": 1794887992.953885,
+      "matched_pairs": 4,
+      "reference_distance_m": 2882.419527376044,
+      "distance_plus_reference_allowance_m": 3082.419527376044
+    },
+    {
+      "rank": 235,
+      "latitude": 33.805671641791044,
+      "longitude": -118.15974025974026,
+      "log_likelihood_ratio": 8.372032810600679,
+      "offset_utc": 1794880091.152008,
+      "matched_pairs": 7,
+      "reference_distance_m": 26574.729730434385,
+      "distance_plus_reference_allowance_m": 26774.729730434385
+    },
+    {
+      "rank": 236,
+      "latitude": 33.824477611940296,
+      "longitude": -118.16298701298702,
+      "log_likelihood_ratio": 8.368949822161028,
+      "offset_utc": 1794948597.5016475,
+      "matched_pairs": 4,
+      "reference_distance_m": 25148.708154282554,
+      "distance_plus_reference_allowance_m": 25348.708154282554
+    },
+    {
+      "rank": 237,
+      "latitude": 33.94805970149253,
+      "longitude": -118.40974025974026,
+      "log_likelihood_ratio": 8.364733800772093,
+      "offset_utc": 1794895250.043341,
+      "matched_pairs": 8,
+      "reference_distance_m": 1578.9136510282146,
+      "distance_plus_reference_allowance_m": 1778.9136510282146
+    },
+    {
+      "rank": 238,
+      "latitude": 34.10388059701492,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 8.364602646908558,
+      "offset_utc": 1794930273.9349196,
+      "matched_pairs": 3,
+      "reference_distance_m": 18042.153524257214,
+      "distance_plus_reference_allowance_m": 18242.153524257214
+    },
+    {
+      "rank": 239,
+      "latitude": 33.93731343283582,
+      "longitude": -118.39675324675325,
+      "log_likelihood_ratio": 8.341637641488312,
+      "offset_utc": 1794876388.5606246,
+      "matched_pairs": 10,
+      "reference_distance_m": 1023.7944953360377,
+      "distance_plus_reference_allowance_m": 1223.7944953360377
+    },
+    {
+      "rank": 240,
+      "latitude": 33.956119402985074,
+      "longitude": -118.40324675324676,
+      "log_likelihood_ratio": 8.337142272610905,
+      "offset_utc": 1794900241.1480377,
+      "matched_pairs": 5,
+      "reference_distance_m": 1486.8996701403087,
+      "distance_plus_reference_allowance_m": 1686.8996701403087
+    },
+    {
+      "rank": 241,
+      "latitude": 33.87014925373134,
+      "longitude": -118.26363636363637,
+      "log_likelihood_ratio": 8.331604431509183,
+      "offset_utc": 1794944896.0798304,
+      "matched_pairs": 3,
+      "reference_distance_m": 14598.365135518317,
+      "distance_plus_reference_allowance_m": 14798.365135518317
+    },
+    {
+      "rank": 242,
+      "latitude": 33.81910447761194,
+      "longitude": -118.16298701298702,
+      "log_likelihood_ratio": 8.331193732287643,
+      "offset_utc": 1794943958.1104286,
+      "matched_pairs": 6,
+      "reference_distance_m": 25475.07022188155,
+      "distance_plus_reference_allowance_m": 25675.07022188155
+    },
+    {
+      "rank": 243,
+      "latitude": 33.805671641791044,
+      "longitude": -118.34805194805196,
+      "log_likelihood_ratio": 8.326103517774555,
+      "offset_utc": 1794942411.0100255,
+      "matched_pairs": 6,
+      "reference_distance_m": 16133.493881139711,
+      "distance_plus_reference_allowance_m": 16333.493881139711
+    },
+    {
+      "rank": 244,
+      "latitude": 33.8755223880597,
+      "longitude": -118.23441558441559,
+      "log_likelihood_ratio": 8.319961137143004,
+      "offset_utc": 1794955824.0688772,
+      "matched_pairs": 4,
+      "reference_distance_m": 16581.766428988023,
+      "distance_plus_reference_allowance_m": 16781.766428988023
+    },
+    {
+      "rank": 245,
+      "latitude": 33.88089552238806,
+      "longitude": -118.2409090909091,
+      "log_likelihood_ratio": 8.318653771283072,
+      "offset_utc": 1794955582.8092668,
+      "matched_pairs": 7,
+      "reference_distance_m": 15772.948196381905,
+      "distance_plus_reference_allowance_m": 15972.948196381905
+    },
+    {
+      "rank": 246,
+      "latitude": 33.81641791044776,
+      "longitude": -118.16948051948053,
+      "log_likelihood_ratio": 8.300928647006536,
+      "offset_utc": 1794927513.1343126,
+      "matched_pairs": 5,
+      "reference_distance_m": 25148.183346730304,
+      "distance_plus_reference_allowance_m": 25348.183346730304
+    },
+    {
+      "rank": 247,
+      "latitude": 33.94,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 8.29942239625116,
+      "offset_utc": 1794874296.1910477,
+      "matched_pairs": 10,
+      "reference_distance_m": 848.8001428264673,
+      "distance_plus_reference_allowance_m": 1048.8001428264674
+    },
+    {
+      "rank": 248,
+      "latitude": 33.95880597014925,
+      "longitude": -118.33181818181819,
+      "log_likelihood_ratio": 8.293665416218971,
+      "offset_utc": 1794893282.9655533,
+      "matched_pairs": 8,
+      "reference_distance_m": 5805.942064301397,
+      "distance_plus_reference_allowance_m": 6005.942064301397
+    },
+    {
+      "rank": 249,
+      "latitude": 33.79223880597015,
+      "longitude": -118.16298701298702,
+      "log_likelihood_ratio": 8.292754920103762,
+      "offset_utc": 1794939768.9378603,
+      "matched_pairs": 3,
+      "reference_distance_m": 27245.119029271154,
+      "distance_plus_reference_allowance_m": 27445.119029271154
+    },
+    {
+      "rank": 250,
+      "latitude": 33.88089552238806,
+      "longitude": -118.23116883116883,
+      "log_likelihood_ratio": 8.291638659384489,
+      "offset_utc": 1794950102.1738498,
+      "matched_pairs": 4,
+      "reference_distance_m": 16576.880096351233,
+      "distance_plus_reference_allowance_m": 16776.880096351233
+    },
+    {
+      "rank": 251,
+      "latitude": 33.93731343283582,
+      "longitude": -118.39025974025975,
+      "log_likelihood_ratio": 8.290763494748553,
+      "offset_utc": 1794933973.7312474,
+      "matched_pairs": 9,
+      "reference_distance_m": 985.9467985456104,
+      "distance_plus_reference_allowance_m": 1185.9467985456104
+    },
+    {
+      "rank": 252,
+      "latitude": 33.94,
+      "longitude": -118.33831168831169,
+      "log_likelihood_ratio": 8.285819974409598,
+      "offset_utc": 1794924459.0852625,
+      "matched_pairs": 4,
+      "reference_distance_m": 5070.987788162632,
+      "distance_plus_reference_allowance_m": 5270.987788162632
+    },
+    {
+      "rank": 253,
+      "latitude": 33.94805970149253,
+      "longitude": -118.4,
+      "log_likelihood_ratio": 8.284299717288077,
+      "offset_utc": 1794935424.4520006,
+      "matched_pairs": 10,
+      "reference_distance_m": 703.7997647729834,
+      "distance_plus_reference_allowance_m": 903.7997647729834
+    },
+    {
+      "rank": 254,
+      "latitude": 33.82179104477612,
+      "longitude": -118.15324675324676,
+      "log_likelihood_ratio": 8.277172700844789,
+      "offset_utc": 1794883198.025104,
+      "matched_pairs": 4,
+      "reference_distance_m": 26068.929804628784,
+      "distance_plus_reference_allowance_m": 26268.929804628784
+    },
+    {
+      "rank": 255,
+      "latitude": 33.95343283582089,
+      "longitude": -118.387012987013,
+      "log_likelihood_ratio": 8.275442792772168,
+      "offset_utc": 1794889078.0983462,
+      "matched_pairs": 6,
+      "reference_distance_m": 992.0413437775786,
+      "distance_plus_reference_allowance_m": 1192.0413437775787
+    },
+    {
+      "rank": 256,
+      "latitude": 33.883582089552235,
+      "longitude": -118.25064935064935,
+      "log_likelihood_ratio": 8.275193042122794,
+      "offset_utc": 1794937565.4857323,
+      "matched_pairs": 4,
+      "reference_distance_m": 14837.733234508512,
+      "distance_plus_reference_allowance_m": 15037.733234508512
+    }
+  ],
+  "screened_region_reference_distance_m": 810.4059847886604,
+  "competitive_location_spread_m": 1200.6453206603235,
+  "raw_leading_within_1km_including_allowance": false,
+  "accepted_within_1km": false,
+  "independent_investigative_lead": false,
+  "public_reference_audio_location_not_surveyed": true,
+  "warnings": [
+    "Experimental: candidate rankings are not calibrated location probabilities or a verified fix.",
+    "LAX public airport data covers its local radar area. Altitudes are converted from MSL to WGS84 using EGM96; their original sensor/pressure provenance is unknown. Recorded coverage does not establish that every flight is present.",
+    "Passage timing includes 149 short flight segments with 3 to 7 recorded positions. Positions are not added and gaps are not extended.",
+    "243 flight segments have unknown aircraft type. Load the type catalog or use propeller-only mode to exclude unclassified aircraft.",
+    "Flight positions use a centered 10-second local linear fit to reduce quantization noise. Track endpoints, gaps and timestamps are preserved; curved/accelerating motion may still incur model error.",
+    "Missing/void terrain used the configured fallback height of 0 m (Egm96). Candidate heights are WGS84 ellipsoid heights.",
+    "The timing score exceeded all 19 shuffled controls. The evaluated locations within a likelihood factor of 100 fit within 1 km of the reported region center. This is a model screen, not a verified accuracy radius.",
+    "Passage timing uses nearby aircraft, a fixed media clock rate and a timing width of 1 seconds. Speech, missing flights, changing sound power and nonstationary noise can invalidate this model. See the limitations document for result interpretation."
+  ],
+  "cached_offline_timing_and_candidates_equal": true
+}

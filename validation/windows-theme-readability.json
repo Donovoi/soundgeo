@@ -1,0 +1,38 @@
+{
+  "scope": "Packaged Windows desktop readability; no location-accuracy claim",
+  "baseline": {
+    "version": "0.4.0-alpha.5",
+    "source_commit": "6169da0f65aec8fc5fb648c8652044f9453d9aa1",
+    "exe_sha256": "334942971cb72104d031e134df138a30aefdc11f2183c5685c1ad32b5caf570a",
+    "run": "https://github.com/Donovoi/soundgeo/actions/runs/46130408265",
+    "screenshot_sha256": "8560a9b90471930109e9bb120a0084538a8442c593a4f0c6652c53b96121f3d8",
+    "observed": "Windows light mode replaced the styled controls with a white sidebar and black text on fixed dark panels. Requirements and progress text became difficult to read."
+  },
+  "fix": {
+    "version": "0.4.0-alpha.6",
+    "change": "Set the egui theme to Dark before applying the workbench style, so later system-theme events preserve consistent text and controls.",
+    "branch_commit": "08bbfc7eff2bdeb1abd8144d7c39e006e2c6b475",
+    "ci_test_merge_commit": "6623c3d26c7a6eb3a95483ea56857420d9c90608",
+    "source_tree": "ac4baaedcefcf5fa00db684659733b451b49b022",
+    "exe_sha256": "75c37b5ea296663671d81c37b1113f4ffe2e8d9431284bddf33ba4a9820ac556",
+    "local_vm_commit": "ee2093383b1e2ee1f6a6b7ec73fd752dac540aed",
+    "same_source_tree_in_local_and_ci_checks": true,
+    "required_local_checks_passed": true,
+    "rust_tests_per_platform": 316,
+    "test_names_match_source": true,
+    "tests_failed_or_excluded": 0,
+    "windows_and_linux_package_checks": "https://github.com/Donovoi/soundgeo/actions/runs/46131408187",
+    "visual_check": "https://github.com/Donovoi/soundgeo/actions/runs/46135055931",
+    "visual_artifact_sha256": "da9c215697a764f8ad64ff44a6fa5ef1795fcc4a736daf00c78106fa6505483c",
+    "screenshot_sha256": "937e01ceebd313e1b669ff6e870a8373b2b887071893dd71e66b025480178ca4",
+    "windows_apps_and_system_light_theme_enabled": true,
+    "observed": "The exact packaged candidate keeps a dark sidebar and readable white text after startup and after waiting for system-theme updates.",
+    "full_desktop_workflow": "released-exe-lax-20261117-workflow.json#fixed_candidate_desktop_replay"
+  },
+  "preserved_harness_failure": {
+    "run": "https://github.com/Donovoi/soundgeo/actions/runs/46134889525",
+    "reason": "The visual harness expected the branch commit instead of GitHub's PR test-merge commit and stopped before launching the app.",
+    "correction": "Verify the test-merge parents and matching source tree, then pin the observed commit and EXE hash."
+  },
+  "execution": "Resource-limited WSL2 and GitHub Windows/Linux VMs; no host application execution"
+}
