@@ -304,10 +304,10 @@ mod tests {
         assert!(app.readiness.error.as_ref().unwrap().contains("20 seconds"));
         assert!(!app.can_analyze());
         assert!(!cache.exists());
-        app.visual_enabled = true;
-        assert!(app.can_analyze());
         app.run(&egui::Context::default());
         assert!(!app.busy());
         assert!(!cache.exists());
+        app.visual_enabled = true;
+        assert!(app.can_analyze());
     }
 }
