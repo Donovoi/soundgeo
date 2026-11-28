@@ -112,6 +112,8 @@ jobs:
       - name: Prepare speech runtime and fonts for VM tests
         run: python scripts/prepare_speech_test_tools.py
       - run: cargo fmt --all -- --check
+      - name: Check fragmented HTTP requests before full compilation
+        run: python scripts/check_http_fixture.py
       - run: python -m unittest discover -s validation -p test_run_timing.py
       - run: python -m unittest discover -s scripts -p test_publish_release.py
       - run: cargo clippy --release --all-targets --locked -- -D warnings

@@ -475,6 +475,8 @@ mod tests {
                     Err(error) => panic!("{error}"),
                 }
             };
+            // Accepted sockets can inherit the listener's nonblocking mode.
+            connection.set_nonblocking(false).unwrap();
             connection
                 .set_read_timeout(Some(Duration::from_secs(10)))
                 .unwrap();
