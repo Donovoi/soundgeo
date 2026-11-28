@@ -53,8 +53,14 @@ if ($Action -in @('invoke','set','patterns','reveal')) {
             [FieldMouse]::mouse_event(4,0,0,0,[UIntPtr]::Zero)
             Start-Sleep -Milliseconds 100
             [Windows.Forms.SendKeys]::SendWait('^a')
-            [Windows.Forms.SendKeys]::SendWait($NewValue)
+            Start-Sleep -Milliseconds 200
+            foreach ($character in $NewValue.ToCharArray()) {
+                [Windows.Forms.SendKeys]::SendWait([string]$character)
+                Start-Sleep -Milliseconds 120
+            }
+            Start-Sleep -Milliseconds 250
             [Windows.Forms.SendKeys]::SendWait('{TAB}')
+            Start-Sleep -Milliseconds 250
         }
     }
 }
