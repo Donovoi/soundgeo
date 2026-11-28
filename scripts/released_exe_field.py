@@ -70,6 +70,41 @@ $bitmap.Dispose()
 ''',encoding='utf-8')
     subprocess.run([str(Path(os.environ['SystemRoot'])/'System32/WindowsPowerShell/v1.0/powershell.exe'),'-NoProfile','-File',str(ps),str(OUT/(name+'.png'))],check=True,timeout=30)
 
+def uia(name,action='snapshot',media=None):
+    path=OUT/(name+'.json')
+    args=[str(Path(os.environ['SystemRoot'])/'System32/WindowsPowerShell/v1.0/powershell.exe'),'-NoProfile','-File',str(ROOT/'scripts/released_exe_uia.ps1'),'-Action',action,'-OutputPath',str(path)]
+    if media:args+=['-MediaPath',str(media)]
+    subprocess.run(args,check=True,timeout=30)
+    return json.loads(path.read_text(encoding='utf-8-sig'))
+
+def desktop_check(media):
+    with (OUT/'desktop-recording.log').open('x',encoding='utf-8') as log:
+        gui=subprocess.Popen([str(EXE)],stdout=log,stderr=subprocess.STDOUT)
+        try:
+            deadline=time.monotonic()+90
+            while not windows():
+                assert gui.poll() is None and time.monotonic()<deadline
+                time.sleep(.25)
+            hwnd=windows()[0]
+            ctypes.windll.user32.ShowWindow(ctypes.c_void_p(hwnd),3)
+            ctypes.windll.user32.SetForegroundWindow(ctypes.c_void_p(hwnd))
+            time.sleep(2)
+            uia('ui-before-media','set_media',media)
+            for index in range(120):
+                time.sleep(5)
+                rows=uia('ui-check-'+str(index))
+                text='\n'.join(row['name'] for row in rows)
+                if index in (0,3,10,20,40):screenshot('desktop-check-'+str(index))
+                if 'checked locally' in text:
+                    screenshot('desktop-checked')
+                    PROOF['desktop_automatic_check_completed']=True
+                    save()
+                    break
+            else:raise RuntimeError('Desktop automatic check did not reach checked locally')
+        finally:
+            for hwnd in windows():ctypes.windll.user32.PostMessageW(ctypes.c_void_p(hwnd),0x0010,0,0)
+            gui.wait(timeout=30)
+
 def main():
     if not EXE.exists():
         req=urllib.request.Request('https://github.com/Donovoi/soundgeo/releases/download/v0.4.0-alpha.5/'+EXE.name,headers={'User-Agent':'SoundGeo-release-field-validation'})
@@ -99,25 +134,78 @@ def main():
             ctypes.windll.user32.SetForegroundWindow(ctypes.c_void_p(hwnd))
             time.sleep(2)
             screenshot('desktop-initial')
+            try:uia('ui-initial')
+            except Exception as error:
+                PROOF['initial_uia_error']=str(error)
+                (OUT/'initial-uia-failure.txt').write_text(traceback.format_exc(),encoding='utf-8')
+                save()
         finally:
             for hwnd in windows():ctypes.windll.user32.PostMessageW(ctypes.c_void_p(hwnd),0x0010,0,0)
             gui.wait(timeout=30)
+    if os.environ.get('FIELD_UI_PROBE_ONLY')=='1':
+        PROOF['status']='desktop_probe_complete'
+        save()
+        return
     # Keep the original source interval fixed, independent of detector or search results.
     media=CACHE/'recording.mkv'
+    transfer_path=ROOT/'scripts/field-transfer.json'
+    if not media.exists() and transfer_path.exists():
+        transfer=json.loads(transfer_path.read_text())
+        with urllib.request.urlopen(transfer['url'],timeout=120) as response,media.open('xb') as f:
+            while chunk:=response.read(1024*1024):f.write(chunk)
+        assert sha(media)==transfer['sha256']
+        assert media.stat().st_size==transfer['bytes']
+        PROOF['media_transfer']={'sha256_verified':True,'source':'Identical frozen public video downloaded in WSL VM; GitHub VM source request was challenged'}
     if not media.exists():
         run('public-video-download',[product/'yt-dlp.exe','--ignore-config','--no-playlist','--socket-timeout','30','--retries','2','--fragment-retries','2',
             '--js-runtimes','deno:'+str(product/'deno.exe'),'--ffmpeg-location',product,
             '-f','bv*[height<=360]+ba/b[height<=360]/b','--download-sections','*1200-4800',
             '--merge-output-format','mkv','--remux-video','mkv','-o',str(CACHE/'recording.%(ext)s'),URL],timeout=1800)
     assert media.exists()
+    if transfer_path.exists():
+        transfer=json.loads(transfer_path.read_text())
+        assert sha(media)==transfer['sha256'] and media.stat().st_size==transfer['bytes']
     PROOF['media_sha256']=sha(media)
     PROOF['media_bytes']=media.stat().st_size
     PROOF['status']='media_ready'
+    (CACHE/'media-verified.json').write_text(json.dumps({'sha256':PROOF['media_sha256'],'source_url':URL,'source_section_s':[1200,4800]},indent=2),encoding='utf-8')
     save()
     run('audio-check',[EXE,'check-audio','--input',media,'--output',OUT/'audio-check.json'],timeout=600)
     run('media-probe',[product/'ffprobe.exe','-v','error','-show_format','-show_streams','-of','json',media])
-    # This first probe verifies acquisition and the public executable before GUI automation.
-    PROOF['status']='intake_complete'
+    try:desktop_check(media)
+    except Exception as error:
+        PROOF['desktop_check_error']=str(error)
+        (OUT/'desktop-check-failure.txt').write_text(traceback.format_exc(),encoding='utf-8')
+        save()
+    cache=PROFILE/'SoundGeo/flight-data'
+    assert not cache.exists(), 'Flight downloads occurred before analysis'
+    job={'media':str(media),'bounds':{'south':33.76,'north':34.12,'west':-118.65,'east':-118.15},
+         'analysis_method':'passage_timing','ground_m':0,'ground_datum':'egm96','offline':False,
+         'archive':{'date_from':'2026-11-17','date_to':None,'cache':str(cache),'provider':'webtrak_lax'},'search_threads':2}
+    (OUT/'job.json').write_text(json.dumps(job,indent=2),encoding='utf-8')
+    PROOF['flight_cache_empty_before_analysis']=True
+    save()
+    run('full-analysis',[EXE,'analyze','--config',OUT/'job.json','--output',OUT/'report.json','--require-unambiguous'],timeout=5400,allowed=(0,3,4))
+    PROOF['flight_cache_after']=[{'name':str(p.relative_to(cache)),'bytes':p.stat().st_size} for p in cache.rglob('*') if p.is_file()]
+    PROOF['media_unchanged_after_analysis']=sha(media)==PROOF['media_sha256']
+    report=json.loads((OUT/'report.json').read_text(encoding='utf-8'))
+    PROOF['native_status']=report['status']
+    if PROOF['flight_cache_after']:
+        run('cached-offline-analysis',[EXE,'--offline','analyze','--config',OUT/'job.json','--output',OUT/'cached-report.json','--require-unambiguous'],timeout=1800,allowed=(0,3,4))
+        cached=json.loads((OUT/'cached-report.json').read_text(encoding='utf-8'))
+        PROOF['offline_cache_replay_status']=cached['status']
+        PROOF['offline_cache_replay_candidates_equal']=cached.get('candidates')==report.get('candidates')
+    PROOF['status']='analysis_complete'
+    save()
+    # Separate technical suitability check only. Never run a location search on
+    # the police appeal, infer whereabouts, identify people, or send a lead.
+    appeal_url='https://www.abc.net.au/news/2026-07-05/cctv-footage-missing-dandenong-woman-yun/106881548'
+    PROOF['appeal_scope']='Police-supplied public CCTV: download and audio suitability only; publication already describes the filming setting, so it is not an unidentified-location test.'
+    run('appeal-intake',[EXE,'fetch-media','--url',appeal_url,'--cache',CACHE/'appeal-media','--output',OUT/'appeal-download.json'],timeout=600,allowed=(0,1))
+    if (OUT/'appeal-download.json').exists():
+        appeal=json.loads((OUT/'appeal-download.json').read_text(encoding='utf-8'))
+        run('appeal-audio-check',[EXE,'check-audio','--input',appeal['path'],'--output',OUT/'appeal-audio-check.json','--require-searchable'],timeout=300,allowed=(0,1,3))
+    PROOF['appeal_location_search_run']=False
     save()
 
 try:main()

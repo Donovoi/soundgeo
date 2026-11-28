@@ -12,17 +12,24 @@ jobs:
       OMP_NUM_THREADS: '2'
       OMP_THREAD_LIMIT: '2'
       RAYON_NUM_THREADS: '2'
+      FIELD_UI_PROBE_ONLY: '1'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
           python-version: '3.14.10'
-      - uses: actions/cache@v4
+      - uses: actions/cache/restore@v4
+        id: cache
         with:
           path: field-cache
           key: public-exe-alpha5-lax-nov17-1200-4800-v1
       - name: Test the public EXE with frozen real-video inputs
         run: python scripts/released_exe_field.py
+      - uses: actions/cache/save@v4
+        if: always() && steps.cache.outputs.cache-hit != 'true' && hashFiles('field-cache/media-verified.json') != ''
+        with:
+          path: field-cache
+          key: public-exe-alpha5-lax-nov17-1200-4800-v1
       - uses: actions/upload-artifact@v4
         if: always()
         with:
