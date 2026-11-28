@@ -8,6 +8,34 @@ New results must state which target they use.
 
 ## Current checks
 
+The [public EXE LAX field check](released-exe-lax-20261117-workflow.json) used a
+new hour with a possible date and broad region, without camera coordinates or
+the recording clock. The model passed all 19 shuffled controls. Its reported
+region center was 810.41 m from the published site reference, or 1,010.41 m with
+the fixed 200 m microphone allowance. This narrowly misses the predeclared 1 km
+rule and adds no accepted location. [All retained candidate errors](released-exe-lax-20261117-evaluation.json)
+are recorded. Automatic downloads populated an empty flight cache; the full
+online run took 26 minutes and the identical offline timing replay took 68 seconds.
+The released desktop also passed automatic intake and displayed both minimums
+and measured sound counts. The fixed alpha.6 desktop completed the same passage-timing
+search from an empty flight cache in 25.7 minutes. Its displayed region center and all
+256 displayed candidate coordinates and scores matched the baseline. Screenshots and
+accessibility snapshots confirmed download counters, worker-update times, waiting
+messages and completion. Source-access and automation failures are retained.
+
+The [Windows theme check](windows-theme-readability.json) found unreadable dark
+text on fixed dark panels in the public alpha.5 EXE when Windows used light mode.
+The alpha.6 candidate keeps its dark theme and readable text. The exact packaged
+candidate was visually checked in a Windows VM with light mode enabled. Required
+checks passed in local Linux, hosted Linux and Windows VMs, with all 316 Rust
+tests matching the source on each platform. This is a display correction.
+
+The [public police-footage audio check](public-appeal-audio-20261128.json) used a
+27.14-second CCTV clip distributed by ABC. It produced no Doppler curves or sound
+peaks and failed both methods' input minimums. No flight data or location search
+was used. The publication describes the scene, so this is a technical suitability
+check and adds no unknown-location result or investigative lead.
+
 The [piano intake and progress record](piano-intake-and-progress.json) records a
 music clip's audio detections, uncertain speech language, and video-text scan
 without place matches. The offline location attempt stopped for missing flight

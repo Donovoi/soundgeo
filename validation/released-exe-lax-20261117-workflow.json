@@ -1,0 +1,142 @@
+{
+  "scope": "Public released Windows EXE, fixed real-video inputs, cold flight cache and offline replay",
+  "plan": "released-exe-lax-20261117-plan.json",
+  "evaluation": "released-exe-lax-20261117-evaluation.json",
+  "release": "v0.4.0-alpha.5",
+  "source_commit": "6169da0f65aec8fc5fb648c8652044f9453d9aa1",
+  "exe_sha256": "334942971cb72104d031e134df138a30aefdc11f2183c5685c1ad32b5caf570a",
+  "run": "https://github.com/Donovoi/soundgeo/actions/runs/46132676162",
+  "evidence_artifact_sha256": "b0a3e783206eabdfc1109b2807e66f42056f3de1563dd0be1e6bf705aece14db",
+  "source": {
+    "video": "https://www.youtube.com/watch?v=s3Fxioc-OxI",
+    "section_seconds": [
+      1200,
+      4800
+    ],
+    "media_sha256": "25bd8533ae6ae4c81d345ae439ce7a90485b039d94827974a8218ccbc4b2cef9",
+    "media_bytes": 158854092,
+    "audio_reencoded": false,
+    "publisher_post": "https://x.com/airlinevideos/status/2122716742648799607",
+    "publisher_post_mirror": "https://teapaw.org/airlinevideos/status/2122716742648799607",
+    "reference_site": "https://hhotellosangeles.com/",
+    "reference_basis": "The publisher's post links the exact broadcast and identifies H Hotel rooftop. The original post returned HTTP 403; its text was read through a public mirror. The hotel describes its rooftop airport view.",
+    "reference_limit": "Five sampled frames and advancing displayed clocks were consistent with the announced site. This does not establish uninterrupted audio or survey the microphone. The frozen evaluation includes a 200 m allowance.",
+    "camera_coordinates_supplied": false,
+    "recording_clock_supplied": false,
+    "visual_text_used_in_search": false,
+    "possible_date_and_broad_region_supplied": true,
+    "source_access": "The GitHub Windows VM received a YouTube sign-in challenge. The same public recording was downloaded without cookies in WSL, stream-copied to the fixed interval and transferred with a verified hash. The temporary single-file transfer service then stopped. This is not a successful YouTube URL-download check from the hosted Windows VM."
+  },
+  "audio_intake": {
+    "duration_s": 3599.9935,
+    "doppler_curves": 2,
+    "timing_peaks": 32,
+    "both_input_minimums_met": true,
+    "elapsed_s": 50.67080140000007
+  },
+  "cold_analysis": {
+    "flight_cache_initially_empty": true,
+    "provider": "webtrak_lax",
+    "date": "2026-11-17",
+    "automatic_downloads": true,
+    "provider_request_concurrency": 8,
+    "time_intervals_retrieved": 2880,
+    "positions_saved": 962123,
+    "intervals_not_marked_online": 0,
+    "cache_files": 5765,
+    "cache_bytes": 385528819,
+    "flight_segments": 5580,
+    "search_grid_m": 300,
+    "grid_points": 20925,
+    "shuffled_controls_completed": 19,
+    "elapsed_s": 1559.3147332999997,
+    "exit_code": 0,
+    "native_status": "candidates_found",
+    "screen": "timing_candidate",
+    "reference_error_m": 810.4059847886604,
+    "reference_error_plus_allowance_m": 1010.4059847886604,
+    "fixed_1km_rule_passed": false,
+    "media_unchanged_after_analysis": true,
+    "cli_progress": "Reports audio extraction, archive preparation, numbered replay intervals, saved positions, flight loading, searched grid points, each shuffled control and completion."
+  },
+  "offline_replay": {
+    "elapsed_s": 68.45777809999981,
+    "exit_code": 0,
+    "native_status": "candidates_found",
+    "verified_full_day_cache_reused": true,
+    "complete_timing_object_and_candidates_equal": true,
+    "verification": "Compared the full timing assessment and candidate data independently. The first harness's generic candidates-only equality field was insufficient for passage timing; that harness check was corrected."
+  },
+  "released_exe_desktop_intake": {
+    "run": "https://github.com/Donovoi/soundgeo/actions/runs/46136594517",
+    "artifact_sha256": "00089642543d70359feea3c7018da632818138e6d9c99e59f07b3ec647d43239",
+    "all_entered_values_verified": true,
+    "automatic_check_completed": true,
+    "observed": "The desktop shows the minimums immediately, starts a check when the file is entered, and then shows 59:59 of audio, two Doppler curves and 32 timing peaks. Both input minimums are marked met. The original light-theme display defect remains visible in this baseline screenshot."
+  },
+  "preserved_desktop_harness_attempts": [
+    "The first UI Automation ValuePattern setters silently left text and numeric values unchanged. No desktop location analysis ran; the separate CLI cold run completed normally.",
+    "The first physical-keyboard attempt pressed Tab before the final digit was processed. Value verification caught the wrong bounds and stopped before analysis. Slower key events and a pause before focus changes passed the intake check.",
+    "Candidate desktop run 46137126886 reached 1260/2880 automatic-download intervals with visible progress before the recorder encountered an unnamed accessibility element. Its Python text join raised TypeError and the harness closed the still-running app. Artifact SHA-256: 40b3823e2c91db2d387407cb8c4676f0f3aea3cf73b991f6dabf82cf00e5987d. The recorder was corrected to accept empty names; this was not an app crash.",
+    "Candidate desktop run 46138869930 completed, but an independent input audit found that a physical menu click had left Doppler curves selected. It downloaded all 2880 intervals from an empty cache and finished with ambiguous candidates in 1512.94 seconds. This is not the planned passage-timing replay. Artifact SHA-256: d4b8167910c29a0c11d443019659e9aee0ce0481e93ddd6f2e06e603c15ff560. The recorder now activates menu items through accessibility and verifies dropdown values immediately and again before analysis."
+  ],
+  "execution": "GitHub Windows VMs; media preparation and independent evaluation in bounded WSL2; no host application execution",
+  "new_recording_at_familiar_site": true,
+  "thresholds_tuned_from_this_result": false,
+  "accepted_new_location": false,
+  "fixed_candidate_desktop_replay": {
+    "run": "https://github.com/Donovoi/soundgeo/actions/runs/46141400150",
+    "artifact_sha256": "e5ed495e11161e781eb6a0c7a3db0446c0c02719a6c9ffb4b53f66fb110d764e",
+    "version": "0.4.0-alpha.6",
+    "source_commit": "6623c3d26c7a6eb3a95483ea56857420d9c90608",
+    "source_tree": "ac4baaedcefcf5fa00db684659733b451b49b022",
+    "exe_sha256": "75c37b5ea296663671d81c37b1113f4ffe2e8d9431284bddf33ba4a9820ac556",
+    "independent_input_audit_passed": true,
+    "method": "passage_timing",
+    "bounds": [
+      33.76,
+      34.12,
+      -118.65,
+      -118.15
+    ],
+    "recording_clock_blank": true,
+    "flight_cache_initially_empty": true,
+    "elapsed_s": 1540.9194260999998,
+    "cache_files": 5765,
+    "cache_bytes": 385528738,
+    "provider_manifest": {
+      "format": 1,
+      "date": "2026-11-17",
+      "provider": "webtrak_lax",
+      "complete": true,
+      "chunks": 2880,
+      "rows": 962123,
+      "offline_chunks": 0,
+      "csv_sha256": "6a8f7a762ea795ac37a97d99faae1b3f2bbc2564825d7c5f42da19d237de6f50",
+      "source": "https://webtrak-us02.emsbk.com/WebTrak/lax4/data/",
+      "altitude": "Field 18 MSL metres + EGM96 N; original sensor/pressure provenance unknown"
+    },
+    "progress_observed": [
+      "Immediate recording minimums and checked sound counts",
+      "Working in the background, elapsed time and Cancel task",
+      "Replay interval counter and progress bar",
+      "Time since last worker update and explicit waiting message",
+      "Shuffled-control progress; samples captured at 4, 8, 12 and 16 of 19",
+      "Task finished and location-search completion; result confirms all 19 controls"
+    ],
+    "displayed_region_center": [
+      33.93866,
+      -118.39351
+    ],
+    "all_256_displayed_candidate_coordinates_and_scores_match_baseline": true,
+    "comparison_limit": "Compared GUI coordinates at five decimal places and scores at three decimal places. The complete GUI report was not exported, so no full-precision equality claim is made.",
+    "media_unchanged": true,
+    "screenshots": {
+      "desktop-analysis-0.png": "c5bb0853eca8d792a2a422e1c74e6b7dcd8fd41085753c6678cabe1b553d0353",
+      "desktop-analysis-60.png": "1c49e1664e33e0e0482c5efb3449931772fbbfb92ad50069f452ed54d80706b9",
+      "desktop-analysis-120.png": "43652e773f0c27e00fb94f6913b759bb6d9bf3f180d63acc306a22a7fe080464",
+      "desktop-analysis-complete.png": "e378888e99e056188566432a7c7b743d13965dcffb7c54fd868b5f4a0f4d9f9d"
+    },
+    "scope": "Regression and desktop workflow check. The public alpha.5 run remains the primary accuracy result; this repeat adds no independent recording or accepted location."
+  }
+}

@@ -96,6 +96,8 @@ pub struct App {
 }
 impl App {
     pub fn new(cc: &eframe::CreationContext<'_>, report: Option<Report>) -> Self {
+        // Fixed dark panels need matching text and controls after system-theme updates.
+        cc.egui_ctx.set_theme(egui::Theme::Dark);
         let mut style = (*cc.egui_ctx.style()).clone();
         style.visuals = egui::Visuals::dark();
         style.visuals.panel_fill = Color32::from_rgb(12, 20, 33);

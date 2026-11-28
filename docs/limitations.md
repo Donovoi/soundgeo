@@ -85,7 +85,16 @@ unresolved. These checks cover a small part of the variation in internet audio.
 Lake Hood, Southampton, and LAX returned no accepted audio location. Expanded
 Maho tests searched three, ten, and twelve prepared sample dates with the same result:
 one accepted recording, one ambiguous, and one insufficient.
-The app has not been verified against a complete historical flight archive.
+These tests do not establish the completeness of the providers' historical flight data.
+
+A [new LAX hour tested with the public Windows alpha.5 EXE](../validation/released-exe-lax-20261117-evaluation.json)
+passed the model's 19 shuffled controls. Its reported region center was 810.41 m
+from the published camera-site reference. Adding the predeclared 200 m allowance
+for the unsurveyed microphone gives 1,010.41 m, so it misses that test's fixed
+1 km acceptance rule. The leading raw candidate was 934.12 m away. The app received
+a possible date and broad search area, with no camera coordinates or recording
+clock. This new recording at a familiar site adds no accepted location; it also
+shows why a model screen and measured location accuracy must be assessed separately.
 
 The [cached-attribution change](../validation/archive-attribution-reuse.json)
 passed all 226 Rust tests, 10 Python tests and the required local Linux checks,
