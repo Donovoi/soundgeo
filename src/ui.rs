@@ -1087,6 +1087,10 @@ impl App {
         }
         if let Some(report) = &self.visual_report {
             ui.heading("Video text clues");
+            ui.label(format!("Recording: {}", self.visual_inputs[0].display()));
+            if self.visual_inputs[0] != self.job.media {
+                ui.colored_label(Color32::from_rgb(255, 181, 134), "These video clues are from the previous recording. Run video clues again for your current selection.");
+            }
             if report.places.is_empty() {
                 ui.label("No place names matched the prepared data.");
             }
