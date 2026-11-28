@@ -149,12 +149,12 @@ pub fn decode(job: &Job, control: &Control) -> Result<Vec<f32>> {
     let samples: Vec<f32> = reader
         .samples::<f32>()
         .collect::<std::result::Result<_, _>>()?;
-    if samples.len() > SAMPLE_RATE * 7200 {
+    if samples.len() > SAMPLE_RATE * crate::audio_check::MAX_SECONDS as usize {
         bail!(
             "Recordings longer than two hours must be split into shorter clips; keep their relative offsets when interpreting results."
         );
     }
-    if samples.len() < SAMPLE_RATE * 20 {
+    if samples.len() < SAMPLE_RATE * crate::audio_check::DOPPLER_MIN_SECONDS as usize {
         bail!("Use at least 20 seconds of audio to resolve a flyover curve.");
     }
     if samples.iter().any(|x| !x.is_finite()) {

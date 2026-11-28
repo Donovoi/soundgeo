@@ -3,6 +3,16 @@
 SoundGeo is in development. Reliable location recovery from varied internet
 samples remains unfinished. The current location target is within 1 km.
 
+The desktop checks duration and sound counts before location analysis. These
+are input minimums, not aircraft identification or accuracy guarantees. Audio
+metadata is an early estimate; decoded audio establishes the checked duration.
+The check cannot prove that a recording is continuous or unedited. Doppler's
+two-sound minimum is for the unit-rate location screen; fitted clock drift needs
+four matched sounds, and larger detection sets need consensus. The command-line
+diagnostic search can still inspect a single curve and report ambiguity.
+Offline mode blocks every missing download. A valid input does not imply that
+the chosen provider has complete flight coverage for its recording date.
+
 Automatic flight-date discovery can reach GitHub's 1,000-release listing limit
 for a yearly archive. SoundGeo retains verified dates and records the limitation
 in the date catalog and analysis warnings. Older unlisted days can be absent from

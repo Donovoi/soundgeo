@@ -46,6 +46,21 @@ pub struct ArchiveRequest {
     pub provider: ArchiveProvider,
 }
 
+/// A writable desktop cache, independent of the folder used to launch the EXE.
+pub fn default_cache() -> PathBuf {
+    // Reuse an existing desktop cache from earlier releases before choosing a new folder.
+    let legacy = PathBuf::from("flight-cache");
+    if legacy.is_dir() {
+        return legacy.canonicalize().unwrap_or(legacy);
+    }
+    std::env::var_os("LOCALAPPDATA")
+        .or_else(|| std::env::var_os("XDG_CACHE_HOME"))
+        .map(PathBuf::from)
+        .or_else(|| std::env::var_os("HOME").map(|p| PathBuf::from(p).join(".cache")))
+        .unwrap_or_else(std::env::temp_dir)
+        .join("SoundGeo/flight-data")
+}
+
 impl ArchiveRequest {
     pub fn validate(&self) -> Result<()> {
         if self.cache.as_os_str().is_empty() {

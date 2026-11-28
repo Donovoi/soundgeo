@@ -5,7 +5,7 @@ use anyhow::Result;
 use serde::{Deserialize, Serialize};
 
 const CONTROLS: usize = 19;
-pub(super) const MIN_MATCHES: usize = 6;
+pub(super) const MIN_MATCHES: usize = crate::audio_check::TIMING_MIN_SOUNDS;
 const REGION_M: f64 = 1000.;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
@@ -99,7 +99,7 @@ fn assess_inner(
 ) -> Result<Assessment> {
     control.check()?;
     let mut result = Assessment::pending(peaks);
-    if result.peaks.len() < MIN_MATCHES || duration < 480. {
+    if result.peaks.len() < MIN_MATCHES || duration < crate::audio_check::TIMING_MIN_SECONDS {
         return Ok(result);
     }
     let times: Vec<_> = result.peaks.iter().map(|p| p.time_s).collect();

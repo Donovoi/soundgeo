@@ -309,6 +309,25 @@ impl Report {
 }
 
 pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<Report> {
+    analyze_with_check(job, None, control, progress)
+}
+
+/// Reuse a local intake scan after verifying its file hash and detector settings.
+pub fn analyze_checked(
+    job: &Job,
+    checked: &audio_check::Prepared,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<Report> {
+    analyze_with_check(job, Some(checked), control, progress)
+}
+
+fn analyze_with_check(
+    job: &Job,
+    checked: Option<&audio_check::Prepared>,
+    control: &Control,
+    progress: &Progress<'_>,
+) -> Result<Report> {
     let mut effective = job.clone();
     if effective.type_catalog.is_none() {
         let parent = if effective.tracks.is_dir() {
@@ -325,6 +344,10 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
     let control = &control.with_offline(effective.offline);
     let job = &effective;
     job.validate()?;
+    if let Some(checked) = checked {
+        progress("Verifying the recording and reusing its audio check", 0.02);
+        checked.verify(job, control)?;
+    }
     let checkpoint_dates = if control.date_checkpoints.is_some() {
         anyhow::ensure!(
             control.offline && job.archive.is_some(),
@@ -345,6 +368,22 @@ pub fn analyze(job: &Job, control: &Control, progress: &Progress<'_>) -> Result<
         None
     };
     control.check()?;
+    if let Some(checked) = checked {
+        let intake = checked.report();
+        let (events, peaks) = match job.analysis_method {
+            AnalysisMethod::Doppler => (intake.events.clone(), None),
+            AnalysisMethod::PassageTiming => (vec![], Some(intake.timing_peaks.clone())),
+        };
+        return analyze_observations(
+            job,
+            intake.duration_s,
+            events,
+            peaks,
+            checkpoint_dates.map(|dates| (dates, None)),
+            control,
+            progress,
+        );
+    }
     progress("Extracting audio locally", 0.02);
     let samples = audio::decode(job, control)?;
     let duration_s = samples.len() as f64 / audio::SAMPLE_RATE as f64;
@@ -386,7 +425,8 @@ pub(crate) fn analyze_observations(
         candidates: vec![], doppler_competition: doppler_assessment::Competition::from_candidates(&[]), doppler_assessment: None, warnings: vec!["Experimental: candidate rankings are not calibrated location probabilities or a verified fix.".into()],
         search_grid_m: job.grid_m, search_method:String::new(),hypotheses:0,created_utc: chrono::Utc::now().to_rfc3339(),reference_sources:vec![],terrain_sources:vec![],timing:None,date_search:None,doppler_partitions:vec![] };
     if let Some(peaks) = &timing_peaks
-        && (peaks.len() < 6 || duration_s < 480.)
+        && (peaks.len() < audio_check::TIMING_MIN_SOUNDS
+            || duration_s < audio_check::TIMING_MIN_SECONDS)
     {
         report.search_method = "passage_timing".into();
         report.search_grid_m = job.timing_options.grid_m;
