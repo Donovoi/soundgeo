@@ -79,8 +79,9 @@ remaining work. A finished analysis can still report no location or ambiguity.
 
 URL discovery and download progress, cancellation and errors appear beside the
 URL controls. A completed download shows its title, size and duration and selects
-it as the recording. Downloading does not start location analysis: set the flight
-data, then choose **Analyze downloaded recording** or **Analyze recording**.
+it as the recording and starts the local requirements check. Once the check
+finishes, choose **Analyze downloaded recording** or **Analyze recording**.
+Both buttons use the same input checks and selected options.
 
 Flight downloads are enabled by default. When an eligible location search needs
 data, SoundGeo verifies and reuses cached files and downloads missing files
@@ -97,7 +98,7 @@ can still choose an existing cache in the flight-data settings.
 2. Select a recording, drag a file into the window, or open **Or paste a video / page URL**. Paste the link, select **Find media**, choose the clip, then **Download and use selected clip**.
 3. Keep **Download missing flight data automatically** selected.
 4. Leave the dates blank to find and search available days. You can also enter a UTC date range.
-5. Select a folder for the downloaded data.
+5. Use the default flight cache, or select another folder in the flight-data settings.
 6. Leave **Recording time** empty if you do not know the start time.
 7. Set a search area if you know the region.
 8. Enter an approximate ground elevation, or select **Download missing terrain from free sources**.

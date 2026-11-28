@@ -108,6 +108,14 @@ fn minimum_duration(seconds: f64) -> String {
 }
 
 impl App {
+    pub(super) fn can_analyze(&self) -> bool {
+        !self.busy()
+            && self.readiness.complete(&self.job)
+            && (self.readiness.problem(&self.job).is_none()
+                || self.visual_enabled
+                || self.speech.options.enabled)
+    }
+
     pub(super) fn schedule_readiness(&mut self, ctx: &egui::Context) {
         if self.busy() || !self.job.media.is_file() {
             return;
@@ -173,7 +181,7 @@ impl App {
                     let check = if method == AnalysisMethod::Doppler { &report.doppler } else { &report.passage_timing };
                     let meets = check.enough_observations_to_search;
                     ui.colored_label(if meets { ACCENT } else { egui::Color32::from_rgb(255,181,134) },
-                        format!("{} · {} audio · {} / {sounds} sounds", if meets { "Meets duration and sound-count minimum" } else { "Below minimum" }, duration(report.duration_s), check.observation_count));
+                        format!("{} · {} audio · {} sounds detected (need {sounds})", if meets { "Meets duration and sound-count minimum" } else { "Below minimum" }, duration(report.duration_s), check.observation_count));
                 } else if current && let Some(info) = &self.readiness.info {
                     ui.label(if !info.has_audio { "Not eligible: no audio stream".into() }
                         else if info.duration_s.is_some_and(|n| n > audio_check::MAX_SECONDS) { "Duration appears above the 2-hour maximum".into() }
@@ -181,7 +189,7 @@ impl App {
                         else { "Sound count is not checked yet".into() });
                 }
             }
-            ui.label(RichText::new("Maximum audio length: 2 hours. Passage timing also needs continuous audio and a search area. Sounds are unconfirmed; meeting the input minimum does not verify a location.").small().color(MUTED));
+            ui.label(RichText::new("Maximum audio length: 2 hours. Passage timing also needs continuous audio and a search area. Sounds are unconfirmed; meeting the input minimum does not verify a location.").color(MUTED));
             if self.job.analysis_method == AnalysisMethod::PassageTiming && !self.use_bounds {
                 ui.colored_label(egui::Color32::from_rgb(255,181,134), "Passage timing also needs a search area: open Search area & terrain to set it.");
             }
@@ -277,6 +285,11 @@ mod tests {
         app.job.media = media;
         let cache = dir.path().join("flight-cache");
         app.job.archive.as_mut().unwrap().cache = cache.clone();
+        // Every Analyze entry point must wait for the local check.
+        assert!(!app.can_analyze());
+        app.run(&egui::Context::default());
+        assert!(!app.busy());
+        assert!(!cache.exists());
         app.readiness.observed = Some(key(&app.job));
         app.readiness.changed = Some(Instant::now() - Duration::from_secs(1));
         app.schedule_readiness(&egui::Context::default());
@@ -289,7 +302,10 @@ mod tests {
         assert!(!app.busy());
         assert!(app.readiness.complete(&app.job));
         assert!(app.readiness.error.as_ref().unwrap().contains("20 seconds"));
+        assert!(!app.can_analyze());
         assert!(!cache.exists());
+        app.visual_enabled = true;
+        assert!(app.can_analyze());
         app.run(&egui::Context::default());
         assert!(!app.busy());
         assert!(!cache.exists());

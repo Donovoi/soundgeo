@@ -310,9 +310,9 @@ impl App {
                     }
                 ));
                 if download.has_audio {
-                    ui.label("Set the flight-data options, then start analysis.");
-                    if ui.add_enabled(!self.busy(), egui::Button::new("Analyze downloaded recording"))
-                        .help("Start the same analysis as Analyze recording using this selected download and your current flight-data, video-clue and speech settings. Wait for any current task to finish first.").clicked() {
+                    ui.label("The local requirements check starts automatically. Review its result, then start analysis.");
+                    if ui.add_enabled(self.can_analyze(), egui::Button::new("Analyze downloaded recording"))
+                        .help("After the recording check finishes, run the same combined analysis as Analyze recording. Below-minimum recordings can run checked video or speech options only; their location search will not download flight data.").clicked() {
                         self.run(ctx);
                     }
                 } else {
@@ -350,6 +350,14 @@ impl App {
         });
     }
     fn run(&mut self, ctx: &egui::Context) {
+        if self.busy() {
+            return;
+        }
+        if self.job.media.is_file() && !self.readiness.complete(&self.job) {
+            self.status = "Checking recording requirements before analysis can start".into();
+            ctx.request_repaint();
+            return;
+        }
         let mut job = self.job.clone();
         let clock_error = if self.clock.trim().is_empty() {
             job.start_utc = None;
@@ -900,7 +908,7 @@ impl App {
             ui.add_space(10.);
             self.speech_controls(ui, ctx);
             let input_checked = self.readiness.complete(&self.job);
-            let can_analyze = input_checked && (self.readiness.problem(&self.job).is_none() || self.visual_enabled || self.speech.options.enabled);
+            let can_analyze = self.can_analyze();
             if !input_checked { ui.label("The recording check must finish before combined analysis can start."); }
             else if self.readiness.problem(&self.job).is_some() { ui.label("Location input minimums are not met. Checked video or speech options can still run; flight data will not download for this search."); }
             if ui.add_enabled(can_analyze, egui::Button::new(RichText::new("Analyze recording").strong().color(Color32::from_rgb(9,26,30))).fill(ACCENT).min_size(Vec2::new(ui.available_width(),42.))).help("After the automatic recording check, run the selected analysis and optional video/speech stages. Eligible location searches reuse cached flight data and download missing data when automatic downloads are enabled. Below-minimum recordings can run checked optional stages only.").clicked(){self.run(ctx);}
@@ -1175,6 +1183,14 @@ impl App {
             );
             return;
         };
+        ui.label(format!(
+            "Completed analysis for: {}",
+            report.media.display()
+        ));
+        if report.media != self.job.media || report.job.analysis_method != self.job.analysis_method
+        {
+            ui.colored_label(Color32::from_rgb(255, 181, 134), "These saved results use a previous recording or method. The requirements panel above applies to your current selection.");
+        }
         if let Some(catalog) = report
             .date_search
             .as_ref()
